@@ -1,5 +1,25 @@
 @import "tailwindcss";
-@import "toastory/themes/all.css";
+@import "toastory/themes/ios-glass.css";
+@import "toastory/themes/liquid-glass.css";
+@import "toastory/themes/aurora.css";
+@import "toastory/themes/essentials.css";
+@import "toastory/themes/showcase.css";
+@import "toastory/themes/classic-stack.css";
+@import "toastory/themes/classic-bar.css";
+@import "toastory/themes/pill.css";
+@import "toastory/themes/ripple.css";
+@import "toastory/themes/gradient-strip.css";
+@import "toastory/themes/sweet.css";
+@import "toastory/themes/material.css";
+@import "toastory/themes/basic.css";
+@import "toastory/themes/minimal.css";
+@import "toastory/themes/flat.css";
+@import "toastory/themes/outline.css";
+@import "toastory/themes/neon.css";
+@import "toastory/themes/gradient.css";
+@import "toastory/themes/brutal.css";
+@import "toastory/themes/pastel.css";
+@import "toastory/themes/dialogs.css";
 
 :root {
   --site-bg: #0b0c12;
