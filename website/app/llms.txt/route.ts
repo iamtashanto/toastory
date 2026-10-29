@@ -1,11 +1,11 @@
 import { DOC_NAVIGATION } from '@/lib/docs/docs-data';
 
 export async function GET() {
-  let output = `# glazekit — AI Assistant Summary (llms.txt)
+  let output = `# toastory — AI Assistant Summary (llms.txt)
 > Complete UI feedback toolkit for modern web and mobile: toasts, dialogs, bottom sheets, and loading overlays with an Apple-style frosted glass aesthetic. Zero runtime dependencies.
 
 ## Key APIs
-- \`import { ui, toast } from 'glazekit'\`
+- \`import { ui, toast } from 'toastory'\`
 - \`toast.success(message, options)\` / \`toast.error()\` / \`toast.warning()\` / \`toast.info()\`
 - \`toast.promise(promise, { loading, success, error })\`
 - \`await ui.confirm({ title, text, tone: 'danger' })\`

@@ -10,7 +10,7 @@ const dist = join(root, 'dist');
 
 const formatKb = (bytes) => (bytes / 1024).toFixed(2);
 
-console.log('--- glazekit Size Budget Verification ---');
+console.log('--- toastory Size Budget Verification ---');
 
 // Budget 1: Core + toast + one theme < 6 KB (6144 bytes)
 const toastCoreBundle = (

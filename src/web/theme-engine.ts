@@ -59,7 +59,7 @@ export interface CustomThemeDefinition {
 const customThemes = new Map<string, ThemeDefinition>();
 
 /**
- * Defines a custom theme. Compiles the tokens to CSS, registers the theme name with glazekit,
+ * Defines a custom theme. Compiles the tokens to CSS, registers the theme name with toastory,
  * and automatically injects a `<style data-gk-theme="<name>">` element when called in the browser.
  *
  * @returns The compiled CSS string.

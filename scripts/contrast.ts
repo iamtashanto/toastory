@@ -181,7 +181,7 @@ export function evaluateContrast(): {
 }
 
 function run(): void {
-  console.log('--- glazekit Contrast Verification Tool (WCAG 2.2 AA) ---');
+  console.log('--- toastory Contrast Verification Tool (WCAG 2.2 AA) ---');
   const { failures, totalChecks } = evaluateContrast();
 
   const themesCount = THEMES.length;

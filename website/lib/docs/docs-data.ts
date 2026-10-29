@@ -84,9 +84,9 @@ export const DOC_NAVIGATION: DocSection[] = [
   {
     title: 'API Reference',
     items: [
-      { slug: 'api/core', title: 'glazekit/core', summary: 'Core store, managers, timers, clock, accessibility rules' },
-      { slug: 'api/web', title: 'glazekit (Web)', summary: 'Default web export: ui helper, toast API, DOM toaster' },
-      { slug: 'api/react', title: 'glazekit/react', summary: 'React Toaster component, useToast() hook, SSR safety' },
+      { slug: 'api/core', title: 'toastory/core', summary: 'Core store, managers, timers, clock, accessibility rules' },
+      { slug: 'api/web', title: 'toastory (Web)', summary: 'Default web export: ui helper, toast API, DOM toaster' },
+      { slug: 'api/react', title: 'toastory/react', summary: 'React Toaster component, useToast() hook, SSR safety' },
       { slug: 'api/frameworks', title: 'Framework Adapters', summary: 'Vue, Angular, Svelte, and React Native subpaths' },
     ],
   },

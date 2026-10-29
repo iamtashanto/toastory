@@ -19,7 +19,7 @@ afterEach(() => {
   document.body.replaceChildren();
 });
 
-describe('glazekit/react adapter', () => {
+describe('toastory/react adapter', () => {
   it('renders Toaster component and applies props to configuration', async () => {
     const container = document.getElementById('root') as HTMLElement;
     const root = createRoot(container);

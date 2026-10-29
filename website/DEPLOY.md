@@ -1,6 +1,6 @@
-# glazekit Website Deployment Guide
+# toastory Website Deployment Guide
 
-This guide details the continuous integration and deployment architecture for the official glazekit website.
+This guide details the continuous integration and deployment architecture for the official toastory website.
 
 ---
 

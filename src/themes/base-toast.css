@@ -1,4 +1,4 @@
-/* glazekit toast structure. Colors, radius, blur and motion come from the --gk-* tokens of a theme. */
+/* toastory toast structure. Colors, radius, blur and motion come from the --gk-* tokens of a theme. */
 .gk-root,
 .gk-root * {
   box-sizing: border-box;

@@ -12,10 +12,10 @@ export default function HomePage() {
   const [installCopied, setInstallCopied] = useState(false);
 
   const installCommands = {
-    npm: 'npm install glazekit',
-    pnpm: 'pnpm add glazekit',
-    yarn: 'yarn add glazekit',
-    bun: 'bun add glazekit',
+    npm: 'npm install toastory',
+    pnpm: 'pnpm add toastory',
+    yarn: 'yarn add toastory',
+    bun: 'bun add toastory',
   };
 
   const handleCopyInstall = async () => {
@@ -42,7 +42,7 @@ export default function HomePage() {
           {/* Badge row */}
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-gray-300">
             <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="font-semibold text-white">glazekit v0.1.0</span>
+            <span className="font-semibold text-white">toastory v0.1.0</span>
             <span className="text-gray-500">•</span>
             <span>Zero Dependencies</span>
             <span className="text-gray-500">•</span>
@@ -161,7 +161,7 @@ export default function HomePage() {
               Migrating from Sonner, SweetAlert2 or React-Toastify?
             </h3>
             <p className="text-sm text-gray-400 mb-6 leading-relaxed">
-              glazekit provides drop-in compatibility patterns with detailed side-by-side option maps so you can replace legacy dependencies in minutes.
+              toastory provides drop-in compatibility patterns with detailed side-by-side option maps so you can replace legacy dependencies in minutes.
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <Link

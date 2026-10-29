@@ -16,7 +16,7 @@ import { sanitizeToFragment } from './sanitize';
 
 function requireDom(): void {
   if (typeof document === 'undefined') {
-    throw new Error('glazekit: DOM required');
+    throw new Error('toastory: DOM required');
   }
 }
 

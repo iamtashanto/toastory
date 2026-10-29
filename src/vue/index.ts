@@ -7,7 +7,7 @@ import { toast, ui } from '../web/ui';
 export { ui, toast };
 export type { Ui } from '../web/ui';
 
-/** Vue component that manages the glazekit Toaster lifecycle. */
+/** Vue component that manages the toastory Toaster lifecycle. */
 export const GlazeToaster = defineComponent({
   name: 'GlazeToaster',
   props: {
@@ -95,7 +95,7 @@ export function useGlazekit(): {
   return { ui, toast: engine.toast, toasts, config };
 }
 
-/** Vue plugin installing glazekit and registering GlazeToaster globally. */
+/** Vue plugin installing toastory and registering GlazeToaster globally. */
 export const glazekitPlugin = {
   install(app: App, options?: Partial<GlazeConfig>): void {
     if (options) {

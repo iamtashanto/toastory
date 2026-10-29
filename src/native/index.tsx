@@ -112,7 +112,7 @@ export interface GlazeProviderProps {
   children?: React.ReactNode;
 }
 
-/** Root provider for React Native glazekit overlay hosting. */
+/** Root provider for React Native toastory overlay hosting. */
 export function GlazeProvider({ children }: GlazeProviderProps): React.JSX.Element {
   return <>{children}</>;
 }

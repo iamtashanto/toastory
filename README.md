@@ -1,14 +1,14 @@
-# glazekit
+# toastory
 
 Complete UI feedback toolkit: toast notifications, confirm / prompt / alert dialogs, sheets and loading overlays with frosted glass design. One API for modern web and mobile.
 
 [![CI](https://img.shields.io/github/actions/workflow/status/iamtashanto/glazekit/ci.yml?branch=main&label=CI)](https://github.com/iamtashanto/glazekit/actions)
-[![npm version](https://img.shields.io/npm/v/glazekit?color=blue)](https://www.npmjs.com/package/glazekit)
+[![npm version](https://img.shields.io/npm/v/toastory?color=blue)](https://www.npmjs.com/package/toastory)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-[![Bundle Size](https://img.shields.io/badge/gzip-5.97%20KB-brightgreen)](https://bundlephobia.com/package/glazekit)
+[![Bundle Size](https://img.shields.io/badge/gzip-5.97%20KB-brightgreen)](https://bundlephobia.com/package/toastory)
 [![TypeScript](https://img.shields.io/badge/Types-included-blue)](https://www.typescriptlang.org/)
-[![Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](https://www.npmjs.com/package/glazekit?activeTab=dependencies)
-[![Provenance](https://img.shields.io/badge/provenance-verified-success)](https://www.npmjs.com/package/glazekit)
+[![Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](https://www.npmjs.com/package/toastory?activeTab=dependencies)
+[![Provenance](https://img.shields.io/badge/provenance-verified-success)](https://www.npmjs.com/package/toastory)
 
 > **Unofficial.** Not affiliated with, endorsed by, or sponsored by Sonner, React-Toastify, react-hot-toast, Notyf, SweetAlert2, or their maintainers.
 
@@ -29,19 +29,19 @@ Complete UI feedback toolkit: toast notifications, confirm / prompt / alert dial
 ## Install
 
 ```bash
-npm install glazekit
+npm install toastory
 ```
 
 ```bash
-pnpm add glazekit
+pnpm add toastory
 ```
 
 ```bash
-yarn add glazekit
+yarn add toastory
 ```
 
 ```bash
-bun add glazekit
+bun add toastory
 ```
 
 ---
@@ -53,10 +53,10 @@ bun add glazekit
 ```html
 <link
   rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/glazekit@0.1.0/dist/themes/ios-glass.css"
+  href="https://cdn.jsdelivr.net/npm/toastory@0.1.0/dist/themes/ios-glass.css"
 />
 <script type="module">
-  import { ui, toast } from 'https://cdn.jsdelivr.net/npm/glazekit@0.1.0/dist/index.js';
+  import { ui, toast } from 'https://cdn.jsdelivr.net/npm/toastory@0.1.0/dist/index.js';
   toast.success('Deployment successful!');
   const res = await ui.confirm({ title: 'Delete repository?', tone: 'danger' });
   if (res.isConfirmed) toast.info('Repository removed');
@@ -66,8 +66,8 @@ bun add glazekit
 ### React
 
 ```tsx
-import { Toaster, toast } from 'glazekit/react';
-import 'glazekit/themes/ios-glass.css';
+import { Toaster, toast } from 'toastory/react';
+import 'toastory/themes/ios-glass.css';
 
 export function App() {
   return (
@@ -82,8 +82,8 @@ export function App() {
 ### Next.js (App Router)
 
 ```tsx
-import { Toaster } from 'glazekit/react';
-import 'glazekit/themes/ios-glass.css';
+import { Toaster } from 'toastory/react';
+import 'toastory/themes/ios-glass.css';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -101,8 +101,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 ```vue
 <script setup>
-import { GlazeToaster, toast } from 'glazekit/vue';
-import 'glazekit/themes/ios-glass.css';
+import { GlazeToaster, toast } from 'toastory/vue';
+import 'toastory/themes/ios-glass.css';
 </script>
 
 <template>
@@ -115,8 +115,8 @@ import 'glazekit/themes/ios-glass.css';
 
 ```ts
 // plugins/glazekit.client.ts
-import { glazekitPlugin } from 'glazekit/vue';
-import 'glazekit/themes/ios-glass.css';
+import { glazekitPlugin } from 'toastory/vue';
+import 'toastory/themes/ios-glass.css';
 
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.use(glazekitPlugin);
@@ -127,8 +127,8 @@ export default defineNuxtPlugin((nuxtApp) => {
 
 ```ts
 import { Component } from '@angular/core';
-import { GlazeToasterComponent, GlazeService } from 'glazekit/angular';
-import 'glazekit/themes/ios-glass.css';
+import { GlazeToasterComponent, GlazeService } from 'toastory/angular';
+import 'toastory/themes/ios-glass.css';
 
 @Component({
   standalone: true,
@@ -144,8 +144,8 @@ export class AppComponent {
 
 ```svelte
 <script>
-  import { toast } from 'glazekit/svelte';
-  import 'glazekit/themes/ios-glass.css';
+  import { toast } from 'toastory/svelte';
+  import 'toastory/themes/ios-glass.css';
 </script>
 
 <button on:click={() => toast.success('Saved to cloud!')}>Save</button>
@@ -154,8 +154,8 @@ export class AppComponent {
 ### Electron
 
 ```js
-import { ui, toast } from 'glazekit';
-import 'glazekit/themes/ios-glass.css';
+import { ui, toast } from 'toastory';
+import 'toastory/themes/ios-glass.css';
 
 toast.success('Application initialized in renderer');
 ```
@@ -163,7 +163,7 @@ toast.success('Application initialized in renderer');
 ### React Native
 
 ```tsx
-import { GlazeProvider, Toaster, toast } from 'glazekit/native';
+import { GlazeProvider, Toaster, toast } from 'toastory/native';
 import { Button } from 'react-native';
 
 export default function App() {
@@ -180,7 +180,7 @@ export default function App() {
 
 ## Themes
 
-![glazekit showcase themes](https://raw.githubusercontent.com/iamtashanto/glazekit/main/design-refs/toasts-showcase-1.png)
+![toastory showcase themes](https://raw.githubusercontent.com/iamtashanto/glazekit/main/design-refs/toasts-showcase-1.png)
 
 Ships with 21 handcrafted themes supporting light, dark, and auto modes: `ios-glass`, `liquid-glass`, `aurora`, `classic-stack`, `classic-bar`, `pill`, `ripple`, `gradient-strip`, `sweet`, `material`, `basic`, `minimal`, `flat`, `outline`, `neon`, `gradient`, `brutal`, `pastel`, `essentials`, `showcase`, `dialogs`.
 
@@ -220,7 +220,7 @@ Ships with 21 handcrafted themes supporting light, dark, and auto modes: `ios-gl
 
 ## Comparison
 
-| Feature                       |  `glazekit`   |   Sonner   | React-Toastify | react-hot-toast | SweetAlert2  |
+| Feature                       |  `toastory`   |   Sonner   | React-Toastify | react-hot-toast | SweetAlert2  |
 | ----------------------------- | :-----------: | :--------: | :------------: | :-------------: | :----------: |
 | **Zero Runtime Dependencies** | **Yes (0 B)** |     No     |       No       |       No        |     Yes      |
 | **Gzip Core + Toast Size**    |  **5.97 KB**  |  ~4.5 KB   |     ~14 KB     |     ~5.2 KB     |    ~15 KB    |
@@ -235,8 +235,8 @@ Ships with 21 handcrafted themes supporting light, dark, and auto modes: `ios-gl
 
 Glazekit supports familiar API signatures for quick migrations:
 
-- **From Sonner**: Replace `sonner` with `glazekit/react`. `toast(msg)`, `toast.success()`, `toast.promise()` work identically.
-- **From React-Toastify**: Import `<Toaster />` from `glazekit/react` and call `toast(...)`.
+- **From Sonner**: Replace `sonner` with `toastory/react`. `toast(msg)`, `toast.success()`, `toast.promise()` work identically.
+- **From React-Toastify**: Import `<Toaster />` from `toastory/react` and call `toast(...)`.
 - **From SweetAlert2**: Replace `Swal.fire({ ... })` with `await ui.confirm({ ... })` or `await ui.prompt({ ... })`.
 
 [Read the comprehensive Migration Guide](https://glazekit.dev/docs/migration)
@@ -251,4 +251,4 @@ Contributions are welcome! Please read [`CONTRIBUTING.md`](https://github.com/ia
 
 ## License
 
-[MIT](https://opensource.org/licenses/MIT) © 2026 glazekit contributors
+[MIT](https://opensource.org/licenses/MIT) © 2026 toastory contributors

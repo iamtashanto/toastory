@@ -229,19 +229,19 @@ export const SEARCH_INDEX: SearchEntry[] = [
 
   // API Reference
   {
-    title: 'Core API: glazekit/core',
+    title: 'Core API: toastory/core',
     category: 'API Reference',
     url: '/docs/api/core',
     snippet: 'Framework-agnostic Node-safe engine, store, timers, accessibility rules, and managers.',
   },
   {
-    title: 'Web API: glazekit',
+    title: 'Web API: toastory',
     category: 'API Reference',
     url: '/docs/api/web',
     snippet: 'Default web export containing ui helper, toast API, dialog controllers, and DOM toaster.',
   },
   {
-    title: 'React API: glazekit/react',
+    title: 'React API: toastory/react',
     category: 'API Reference',
     url: '/docs/api/react',
     snippet: 'React integration: <Toaster /> component, useToast() hook, and SSR hydration safety.',

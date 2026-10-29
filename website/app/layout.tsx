@@ -4,11 +4,11 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 
 export const metadata: Metadata = {
-  title: 'glazekit — Complete UI feedback toolkit for modern web and mobile',
+  title: 'toastory — Complete UI feedback toolkit for modern web and mobile',
   description:
     'Toast notifications, confirm / alert / prompt dialogs, bottom sheets, and loading overlays with an Apple-style frosted glass design. Zero runtime dependencies. 21 themes.',
   keywords: [
-    'glazekit',
+    'toastory',
     'toast',
     'notification',
     'dialog',
@@ -24,19 +24,19 @@ export const metadata: Metadata = {
     'angular',
     'react-native',
   ],
-  authors: [{ name: 'glazekit maintainers' }],
+  authors: [{ name: 'toastory maintainers' }],
   openGraph: {
-    title: 'glazekit — Complete UI Feedback Toolkit',
+    title: 'toastory — Complete UI Feedback Toolkit',
     description:
       'Toast notifications, dialogs, bottom sheets, and loading overlays with Apple glass design and zero dependencies.',
     url: 'https://glazekit.dev',
-    siteName: 'glazekit',
+    siteName: 'toastory',
     images: [
       {
         url: 'https://glazekit.dev/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'glazekit — Apple-style glass UI feedback toolkit',
+        alt: 'toastory — Apple-style glass UI feedback toolkit',
       },
     ],
     locale: 'en_US',
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'glazekit — Complete UI Feedback Toolkit',
+    title: 'toastory — Complete UI Feedback Toolkit',
     description:
       'Toast notifications, dialogs, bottom sheets, and loading overlays with Apple glass design and zero dependencies.',
   },

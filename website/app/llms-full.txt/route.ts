@@ -2,8 +2,8 @@ import { DOC_NAVIGATION } from '@/lib/docs/docs-data';
 import { getArticleBySlug } from '@/lib/docs/articles';
 
 export async function GET() {
-  let fullOutput = `# glazekit — Full Reference Documentation (llms-full.txt)
-Package: glazekit
+  let fullOutput = `# toastory — Full Reference Documentation (llms-full.txt)
+Package: toastory
 Version: 0.1.0
 License: MIT
 Repository: https://github.com/glazekit/glazekit

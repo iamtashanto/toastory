@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { ui, toast } from 'glazekit';
+import { ui, toast } from 'toastory';
 import { CodeSnippet } from '@/components/CodeSnippet';
 
 interface FeatureItem {
@@ -111,7 +111,7 @@ export default function FeaturesPage() {
       docUrl: '/docs/recipes/delete-type-to-confirm',
       snippet: `await ui.prompt({
   title: 'Confirm Repository Wipe',
-  confirmText: 'glazekit',
+  confirmText: 'toastory',
   caseSensitive: true
 });`,
       actionLabel: 'Open Guard Dialog',
@@ -268,7 +268,7 @@ setTimeout(() => handle.close(), 2000);`,
           Complete Feedback Toolkit
         </h1>
         <p className="text-base sm:text-lg text-gray-400 leading-relaxed">
-          Every component and feature of glazekit with real runnable demos, TypeScript code snippets, and direct links to comprehensive documentation guides.
+          Every component and feature of toastory with real runnable demos, TypeScript code snippets, and direct links to comprehensive documentation guides.
         </p>
       </div>
 

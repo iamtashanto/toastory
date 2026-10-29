@@ -1,4 +1,4 @@
-# glazekit Design Inventory
+# toastory Design Inventory
 
 Inventory of all 96 design references imported from `design-refs/` and `design-refs/html/`.
 

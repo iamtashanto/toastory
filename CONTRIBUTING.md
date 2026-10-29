@@ -1,6 +1,6 @@
-# Contributing to glazekit
+# Contributing to toastory
 
-Thank you for your interest in contributing to glazekit!
+Thank you for your interest in contributing to toastory!
 
 ## Development Setup
 

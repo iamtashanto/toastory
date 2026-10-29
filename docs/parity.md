@@ -1,12 +1,12 @@
-# glazekit Parity & Capability Matrix
+# toastory Parity & Capability Matrix
 
-Comprehensive parity matrix comparing `glazekit` against existing market leaders: **Sonner**, **React-Toastify**, **react-hot-toast**, **Notyf**, and **SweetAlert2**.
+Comprehensive parity matrix comparing `toastory` against existing market leaders: **Sonner**, **React-Toastify**, **react-hot-toast**, **Notyf**, and **SweetAlert2**.
 
 ---
 
 ## 1. Feature Parity Matrix
 
-| Feature | `glazekit` | Sonner | React-Toastify | react-hot-toast | Notyf | SweetAlert2 |
+| Feature | `toastory` | Sonner | React-Toastify | react-hot-toast | Notyf | SweetAlert2 |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|
 | **Zero Runtime Dependencies** | **Yes (0 B)** | No | No | No | Yes | Yes |
 | **Gzip Core + Toast Size** | **6.00 KB** | ~4.5 KB | ~14 KB | ~5.2 KB | ~3.8 KB | ~15 KB |
@@ -31,7 +31,7 @@ Comprehensive parity matrix comparing `glazekit` against existing market leaders
 
 ## 2. Supported Themes & Visual Design Variants
 
-glazekit ships with **21 themes** and **48 component variants** across Light and Dark modes (96 total permutations):
+toastory ships with **21 themes** and **48 component variants** across Light and Dark modes (96 total permutations):
 
 1. **`essentials`** (12 variants): Minimal, Success, Error, Warning, Accent Bar, Badge Title, Progress Bar, Capsule Pill, Undo Bar, Inline Confirm, Loading Percent, Initials Avatar.
 2. **`showcase`** (12 variants): Glass Gradient, Emerald Glow, Neon Error, iOS App Banner, Developer Dark with Key-hint, Countdown Ring Timer, 3D Expanding Stack, File Upload Progress, Morphing Island, Gradient Border Promo, Soft Minimal Card, Social Message with Actions.

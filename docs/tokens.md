@@ -1,6 +1,6 @@
-# glazekit Theme Tokens Specification
+# toastory Theme Tokens Specification
 
-This document provides the formal design token reference for `glazekit`. All components (toasts, dialogs, action sheets, bottom sheets, and loading overlays) consume these CSS variables prefixed with `--gk-`.
+This document provides the formal design token reference for `toastory`. All components (toasts, dialogs, action sheets, bottom sheets, and loading overlays) consume these CSS variables prefixed with `--gk-`.
 
 Every theme sets these variables scoped to `[data-gk-theme="<name>"]` and responds automatically to user dark mode preferences or explicit application overrides.
 
@@ -39,7 +39,7 @@ Every theme sets these variables scoped to `[data-gk-theme="<name>"]` and respon
 
 ## Bundled Themes (21 Total)
 
-glazekit ships with 21 themes covering glass, modern minimalist, editorial, and retro designs:
+toastory ships with 21 themes covering glass, modern minimalist, editorial, and retro designs:
 
 - **`essentials`**: 14px radius, 0px blur
 - **`showcase`**: 16px radius, 18px blur
@@ -73,7 +73,7 @@ glazekit ships with 21 themes covering glass, modern minimalist, editorial, and 
 
 ## Dark Mode System
 
-`glazekit` supports dark mode through three complementary mechanisms:
+`toastory` supports dark mode through three complementary mechanisms:
 
 1. **Automatic system detection**: Responds to `@media (prefers-color-scheme: dark)` when configured with `mode: 'auto'`.
 2. **Framework / Tailwind class integration**: Automatically detects `.dark` or `[data-theme="dark"]` on the `<html>` or `<body>` elements.
@@ -83,7 +83,7 @@ glazekit ships with 21 themes covering glass, modern minimalist, editorial, and 
 
 ## Accessibility & Fallback Guarantees
 
-All glazekit themes comply with strict **WCAG 2.2 Level AA** contrast standards:
+All toastory themes comply with strict **WCAG 2.2 Level AA** contrast standards:
 - **Normal text contrast**: $\ge 4.5:1$ against the composite glass surface across both white (`#ffffff`) and pitch black (`#000000`) app backgrounds.
 - **UI icons and accents**: $\ge 3.0:1$ minimum contrast ratio.
 - **No-backdrop fallback**: When `backdrop-filter` is not supported, components gracefully fall back to opaque `--gk-bg-solid`.
@@ -98,7 +98,7 @@ All glazekit themes comply with strict **WCAG 2.2 Level AA** contrast standards:
 Define custom themes via the TypeScript API:
 
 ```typescript
-import { ui } from 'glazekit';
+import { ui } from 'toastory';
 
 ui.defineTheme('cyberpunk', {
   radius: '4px',

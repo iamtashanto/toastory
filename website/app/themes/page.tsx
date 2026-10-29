@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { ui, toast } from 'glazekit';
+import { ui, toast } from 'toastory';
 import { THEME_REGISTRY } from '@/lib/glazekit/theme-generator';
 
 export default function ThemesPage() {

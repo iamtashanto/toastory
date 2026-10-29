@@ -35,12 +35,12 @@ This guide provides the complete documentation, configuration options, and imple
 
 ### Overview
 
-glazekit provides a unified API contract across all supported platforms (plain JavaScript, React, Next.js, Vue, Nuxt, Angular, Svelte, and React Native). 
+toastory provides a unified API contract across all supported platforms (plain JavaScript, React, Next.js, Vue, Nuxt, Angular, Svelte, and React Native). 
 
 All feedback components share identical options, Apple-style frosted glass tokens, and WCAG 2.2 AA accessibility features.
 
 \`\`\`typescript
-import { ui, toast } from 'glazekit';
+import { ui, toast } from 'toastory';
 
 // Interactive demonstration
 toast.info('Exploring ${formattedTitle}', {
@@ -63,26 +63,26 @@ export const ARTICLES_MAP: Record<string, DocArticle> = {
   // 1. GETTING STARTED: INTRODUCTION
   'getting-started/introduction': {
     slug: 'getting-started/introduction',
-    title: 'Introduction to glazekit',
+    title: 'Introduction to toastory',
     description: 'The unified UI feedback toolkit with Apple-style glass design and zero dependencies.',
     category: 'Getting Started',
     lastUpdated: 'October 2026',
     headings: [
-      { id: 'why-glazekit', title: 'Why glazekit?' },
+      { id: 'why-glazekit', title: 'Why toastory?' },
       { id: 'core-pillars', title: 'Core Pillars' },
       { id: 'architecture', title: 'Architecture Overview' },
       { id: 'next-steps', title: 'Next Steps' },
     ],
     content: `
-# Introduction to glazekit
+# Introduction to toastory
 
-**glazekit** is a professional-grade UI feedback toolkit designed to eliminate the fragmentation of using multiple separate libraries for toasts, confirmation modals, prompts, bottom sheets, and loading indicators.
+**toastory** is a professional-grade UI feedback toolkit designed to eliminate the fragmentation of using multiple separate libraries for toasts, confirmation modals, prompts, bottom sheets, and loading indicators.
 
-Instead of installing Sonner for toasts, SweetAlert2 for modals, and a third-party library for bottom sheets, **glazekit** provides one unified, coherent API designed with an Apple-style frosted glass aesthetic.
+Instead of installing Sonner for toasts, SweetAlert2 for modals, and a third-party library for bottom sheets, **toastory** provides one unified, coherent API designed with an Apple-style frosted glass aesthetic.
 
 ---
 
-### Why glazekit?
+### Why toastory?
 
 Most UI feedback libraries in the JavaScript ecosystem suffer from three critical shortcomings:
 
@@ -90,7 +90,7 @@ Most UI feedback libraries in the JavaScript ecosystem suffer from three critica
 2. **Framework Lock-in**: Libraries are often tightly coupled to React. If your team builds across Vue, Svelte, Angular, Next.js, or React Native, you have to learn and maintain completely different packages.
 3. **Bloat and Runtime Dependencies**: Many libraries ship external styling engines, runtime animation suites, or icon dependencies that inflate client bundle sizes.
 
-**glazekit solves all three.** It ships with **zero runtime dependencies**, guarantees under **5.2 KB gzip** for core + toasts, and uses identical options whether you are coding in React, Svelte, or Vanilla JavaScript.
+**toastory solves all three.** It ships with **zero runtime dependencies**, guarantees under **5.2 KB gzip** for core + toasts, and uses identical options whether you are coding in React, Svelte, or Vanilla JavaScript.
 
 ---
 
@@ -108,7 +108,7 @@ Most UI feedback libraries in the JavaScript ecosystem suffer from three critica
   'getting-started/installation': {
     slug: 'getting-started/installation',
     title: 'Installation Guide',
-    description: 'How to install glazekit across package managers, CDNs, and optional peer frameworks.',
+    description: 'How to install toastory across package managers, CDNs, and optional peer frameworks.',
     category: 'Getting Started',
     lastUpdated: 'October 2026',
     headings: [
@@ -117,9 +117,9 @@ Most UI feedback libraries in the JavaScript ecosystem suffer from three critica
       { id: 'cdn-usage', title: 'CDN & Vanilla Script Tags' },
     ],
     content: `
-# Installing glazekit
+# Installing toastory
 
-glazekit is published as a single, self-contained package to npm under the name \`glazekit\`.
+toastory is published as a single, self-contained package to npm under the name \`toastory\`.
 
 ### Package Managers
 
@@ -127,36 +127,36 @@ Install the core package using your package manager of choice:
 
 \`\`\`bash
 # npm
-npm install glazekit
+npm install toastory
 
 # pnpm
-pnpm add glazekit
+pnpm add toastory
 
 # yarn
-yarn add glazekit
+yarn add toastory
 
 # bun
-bun add glazekit
+bun add toastory
 \`\`\`
 
 ---
 
 ### Optional Peer Dependencies
 
-glazekit published package contains **zero required runtime dependencies**. Framework adapters are exposed as optional peer dependencies. You only install what your project consumes:
+toastory published package contains **zero required runtime dependencies**. Framework adapters are exposed as optional peer dependencies. You only install what your project consumes:
 
 - **React & Next.js**: \`react >= 18\`, \`react-dom >= 18\`
 - **Vue & Nuxt**: \`vue >= 3.3\`
 - **Angular**: \`@angular/core >= 16\`
 - **Svelte**: \`svelte >= 4\`
 - **React Native**: \`react-native >= 0.72\`, \`react-native-reanimated >= 3\`, \`expo-blur\`, \`expo-haptics\`
-- **HTML Sanitization**: \`dompurify >= 3\` (glazekit bundles a built-in zero-dependency sanitizer by default)
+- **HTML Sanitization**: \`dompurify >= 3\` (toastory bundles a built-in zero-dependency sanitizer by default)
 
 ---
 
 ### CDN & Vanilla Script Tags
 
-You can use glazekit directly in the browser without a build step:
+You can use toastory directly in the browser without a build step:
 
 \`\`\`html
 <!-- Theme Stylesheet -->
@@ -176,7 +176,7 @@ You can use glazekit directly in the browser without a build step:
   'getting-started/quickstart': {
     slug: 'getting-started/quickstart',
     title: 'Quickstart Guide',
-    description: 'Get up and running with glazekit in under two minutes across any framework.',
+    description: 'Get up and running with toastory in under two minutes across any framework.',
     category: 'Getting Started',
     lastUpdated: 'October 2026',
     headings: [
@@ -196,8 +196,8 @@ Get up and running with working toasts and dialogs in under two minutes.
 
 \`\`\`tsx
 // app/layout.tsx
-import { Toaster } from 'glazekit/react';
-import 'glazekit/themes/ios-glass.css';
+import { Toaster } from 'toastory/react';
+import 'toastory/themes/ios-glass.css';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -215,7 +215,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 \`\`\`tsx
 'use client';
-import { toast, ui } from 'glazekit/react';
+import { toast, ui } from 'toastory/react';
 
 export function ActionButton() {
   const handleClick = async () => {
@@ -245,8 +245,8 @@ export function ActionButton() {
 In plain HTML/JS applications, import the theme CSS and the \`ui\` or \`toast\` helper:
 
 \`\`\`javascript
-import { ui, toast } from 'glazekit';
-import 'glazekit/themes/ios-glass.css';
+import { ui, toast } from 'toastory';
+import 'toastory/themes/ios-glass.css';
 
 // Toast
 toast.success('Asset uploaded successfully!');
@@ -269,7 +269,7 @@ if (res.isConfirmed) {
   'getting-started/setup-checklist': {
     slug: 'getting-started/setup-checklist',
     title: 'Production Setup Checklist',
-    description: 'Ensure your glazekit integration is optimized, secure, and SSR-safe.',
+    description: 'Ensure your toastory integration is optimized, secure, and SSR-safe.',
     category: 'Getting Started',
     lastUpdated: 'October 2026',
     headings: [
@@ -280,24 +280,24 @@ if (res.isConfirmed) {
     content: `
 # Production Setup Checklist
 
-Follow this checklist before shipping applications powered by glazekit to production.
+Follow this checklist before shipping applications powered by toastory to production.
 
 ### Checklist Items
 
-- [x] **Theme CSS Imported**: Ensure that \`glazekit/themes/<theme>.css\` is imported in your global layout or entrypoint.
+- [x] **Theme CSS Imported**: Ensure that \`toastory/themes/<theme>.css\` is imported in your global layout or entrypoint.
 - [x] **SSR Boundary**: Ensure that components calling \`ui.confirm()\` or \`toast()\` in Next.js App Router have the \`'use client'\` directive.
 - [x] **Z-Index Layering**: Default toast container uses \`--gk-z: 99999\`. If you have modals with higher z-indices, configure \`ui.configure({ zIndex: ... })\`.
-- [x] **Reduced Motion**: Verify that animations respect \`prefers-reduced-motion: reduce\` (glazekit automatically suppresses springs and transitions).
+- [x] **Reduced Motion**: Verify that animations respect \`prefers-reduced-motion: reduce\` (toastory automatically suppresses springs and transitions).
 - [x] **HTML Sanitization**: If using the \`html\` option in toasts or dialogs, verify that user-generated inputs are sanitized via the built-in sanitizer or DOMPurify.
 
 ---
 
 ### Content Security Policy (CSP)
 
-glazekit does not inject inline \`<style>\` tags by default when using pre-built theme CSS files. If you use \`defineTheme\` dynamically, add a CSP \`style-src\` nonce or configure Shadow DOM mode:
+toastory does not inject inline \`<style>\` tags by default when using pre-built theme CSS files. If you use \`defineTheme\` dynamically, add a CSP \`style-src\` nonce or configure Shadow DOM mode:
 
 \`\`\`javascript
-import { configure } from 'glazekit';
+import { configure } from 'toastory';
 
 configure({
   shadow: true // Isolates all toast markup inside a ShadowRoot
@@ -333,14 +333,14 @@ configure({
     content: `
 # Toast Notifications
 
-glazekit toasts deliver non-intrusive feedback designed with Apple-style frosted glass aesthetics and polite live regions.
+toastory toasts deliver non-intrusive feedback designed with Apple-style frosted glass aesthetics and polite live regions.
 
 ### Basic Usage & Shorthands
 
 Use semantic shorthands for immediate tone-colored notifications:
 
 \`\`\`typescript
-import { toast } from 'glazekit';
+import { toast } from 'toastory';
 
 // Success notification
 toast.success('Changes committed', {
@@ -413,7 +413,7 @@ Handling asynchronous workflows like API calls, file uploads, and background tas
 Pass a Promise (or a function returning a Promise) along with loading, success, and error configurations:
 
 \`\`\`typescript
-import { toast } from 'glazekit';
+import { toast } from 'toastory';
 
 toast.promise(
   saveUserSettings(payload),
@@ -477,14 +477,14 @@ const data = await unwrap();
     content: `
 # Confirmation & Alert Dialogs
 
-glazekit includes an accessible modal dialog toolkit designed to replace legacy libraries like SweetAlert2.
+toastory includes an accessible modal dialog toolkit designed to replace legacy libraries like SweetAlert2.
 
 ### Confirmation Dialogs (\`ui.confirm\`)
 
 \`ui.confirm()\` opens a modal card with confirm and cancel actions, returning a structured result:
 
 \`\`\`typescript
-import { ui, toast } from 'glazekit';
+import { ui, toast } from 'toastory';
 
 const result = await ui.confirm({
   title: 'Publish changes to production?',
@@ -504,7 +504,7 @@ if (result.isConfirmed) {
 
 ### Destructive Danger Confirmations
 
-Set \`tone: 'danger'\` for critical destructive actions. In danger mode, glazekit automatically sets initial keyboard focus on the **Cancel** button to prevent accidental Enter-key activations:
+Set \`tone: 'danger'\` for critical destructive actions. In danger mode, toastory automatically sets initial keyboard focus on the **Cancel** button to prevent accidental Enter-key activations:
 
 \`\`\`typescript
 const res = await ui.confirm({
@@ -542,11 +542,11 @@ Use \`ui.prompt()\` to gather validated input directly from users inside an acce
 
 ### 16 Supported Input Types
 
-glazekit natively supports the following input types:
+toastory natively supports the following input types:
 \`text\`, \`email\`, \`password\`, \`number\`, \`tel\`, \`url\`, \`search\`, \`textarea\`, \`select\`, \`radio\`, \`checkbox\`, \`range\`, \`date\`, \`time\`, \`datetime-local\`, and \`otp\`.
 
 \`\`\`typescript
-import { ui, toast } from 'glazekit';
+import { ui, toast } from 'toastory';
 
 // Range input prompt
 const { isConfirmed, value } = await ui.prompt({
@@ -592,7 +592,7 @@ if (res.isConfirmed) {
   'theming/overview': {
     slug: 'theming/overview',
     title: 'Theming Architecture',
-    description: 'Learn how glazekit powers Apple frosted glass with 21 themes and solid fallbacks.',
+    description: 'Learn how toastory powers Apple frosted glass with 21 themes and solid fallbacks.',
     category: 'Theming & Design System',
     lastUpdated: 'October 2026',
     headings: [
@@ -603,7 +603,7 @@ if (res.isConfirmed) {
     content: `
 # Theming Architecture
 
-glazekit is built from the ground up around CSS Custom Properties prefixed with \`--gk-\`. Every component consumes these tokens scoped to \`[data-gk-theme="<name>"]\`.
+toastory is built from the ground up around CSS Custom Properties prefixed with \`--gk-\`. Every component consumes these tokens scoped to \`[data-gk-theme="<name>"]\`.
 
 ### Apple Glass Aesthetic
 
@@ -623,7 +623,7 @@ Glass themes use layered box shadows and specular highlight borders:
 
 ### 21 Built-in Theme Presets
 
-glazekit ships with 21 distinct visual design presets:
+toastory ships with 21 distinct visual design presets:
 
 1. \`ios-glass\`: Apple iOS frosted glass with specular highlight borders and deep blur
 2. \`liquid-glass\`: Fluid iridescent refraction with glowing highlight halos
@@ -699,7 +699,7 @@ You can override any token globally or for specific containers in your CSS:
   'accessibility/principles': {
     slug: 'accessibility/principles',
     title: 'WCAG 2.2 AA Accessibility Principles',
-    description: 'How glazekit achieves zero axe-core errors and full keyboard and screen reader accessibility.',
+    description: 'How toastory achieves zero axe-core errors and full keyboard and screen reader accessibility.',
     category: 'Accessibility (A11y)',
     lastUpdated: 'October 2026',
     headings: [
@@ -761,7 +761,7 @@ Optimistic UI updates give users the perception of instant software by executing
 ### Complete Code Implementation
 
 \`\`\`typescript
-import { toast } from 'glazekit';
+import { toast } from 'toastory';
 
 export function deleteMessageOptimistic(messageId: string) {
   // 1. Instantly remove from local state
@@ -809,19 +809,19 @@ export function deleteMessageOptimistic(messageId: string) {
       { id: 'code-comparison', title: 'Side-by-Side Code Comparison' },
     ],
     content: `
-# Migrating from Sonner to glazekit
+# Migrating from Sonner to toastory
 
-glazekit provides drop-in API parity with Sonner's toast methods, while adding dialogs, multi-step wizards, bottom sheets, and multi-framework support.
+toastory provides drop-in API parity with Sonner's toast methods, while adding dialogs, multi-step wizards, bottom sheets, and multi-framework support.
 
 ### Option Mapping Table
 
-| Sonner Option | glazekit Equivalent | Notes |
+| Sonner Option | toastory Equivalent | Notes |
 | :--- | :--- | :--- |
 | \`toast(message)\` | \`toast(message)\` | Identical syntax. |
 | \`toast.success(msg)\` | \`toast.success(msg)\` | Identical syntax. |
 | \`toast.error(msg)\` | \`toast.error(msg)\` | Identical syntax. |
 | \`toast.promise(p, { loading, success, error })\` | \`toast.promise(p, { loading, success, error })\` | Identical syntax, plus \`.unwrap()\`. |
-| \`<Toaster />\` | \`<Toaster />\` | Available from \`glazekit/react\`. |
+| \`<Toaster />\` | \`<Toaster />\` | Available from \`toastory/react\`. |
 | \`theme="system"\` | \`mode="auto"\` | Supports 'light', 'dark', and 'auto'. |
 | \`richColors\` | \`richColors\` | Identical boolean flag. |
 | \`expand\` | \`stack="expanded"\` | Supports 'stacked' or 'expanded'. |
@@ -836,8 +836,8 @@ glazekit provides drop-in API parity with Sonner's toast methods, while adding d
 import { toast } from 'sonner';
 toast.success('Event created', { description: 'Monday at 9am' });
 
-// After (glazekit)
-import { toast } from 'glazekit';
+// After (toastory)
+import { toast } from 'toastory';
 toast.success('Event created', { description: 'Monday at 9am' });
 \`\`\`
 `,
@@ -846,7 +846,7 @@ toast.success('Event created', { description: 'Monday at 9am' });
   // 14. API REFERENCE: CORE
   'api/core': {
     slug: 'api/core',
-    title: 'API Reference: glazekit/core',
+    title: 'API Reference: toastory/core',
     description: 'Technical reference for framework-agnostic headless core exports.',
     category: 'API Reference',
     lastUpdated: 'October 2026',
@@ -856,9 +856,9 @@ toast.success('Event created', { description: 'Monday at 9am' });
       { id: 'dialog-manager', title: 'DialogManager' },
     ],
     content: `
-# API Reference: glazekit/core
+# API Reference: toastory/core
 
-The \`glazekit/core\` subpath contains the pure Node-safe, zero-DOM state machines and store controllers that power all platform adapters.
+The \`toastory/core\` subpath contains the pure Node-safe, zero-DOM state machines and store controllers that power all platform adapters.
 
 ### Core Exports
 
@@ -872,7 +872,7 @@ import {
   runPromiseToast,
   runSteps,
   DEFAULT_CONFIG
-} from 'glazekit/core';
+} from 'toastory/core';
 \`\`\`
 
 - **\`createToastManager(opts)\`**: Creates an isolated toast state machine with deduplication, auto-close timers, and priority queues.
@@ -889,31 +889,31 @@ import {
     category: 'Meta & Reference',
     lastUpdated: 'October 2026',
     headings: [
-      { id: 'zero-deps', title: 'Is glazekit truly zero runtime dependencies?' },
+      { id: 'zero-deps', title: 'Is toastory truly zero runtime dependencies?' },
       { id: 'browser-support', title: 'Which browsers are supported?' },
       { id: 'bundle-size', title: 'How is the 5.2 KB bundle size achieved?' },
     ],
     content: `
 # Frequently Asked Questions
 
-### Is glazekit truly zero runtime dependencies?
+### Is toastory truly zero runtime dependencies?
 **Yes.** The published package on npm has zero entries in \`dependencies\`. All framework bindings (React, Vue, Svelte, Angular, React Native) are marked as optional peer dependencies.
 
 ---
 
 ### Which browsers are supported?
-glazekit supports all modern browsers:
+toastory supports all modern browsers:
 - Chrome / Chromium >= 88
 - Safari / iOS Safari >= 14
 - Firefox >= 85
 - Edge >= 88
 
-For older browsers lacking \`backdrop-filter\`, glazekit automatically falls back to solid background colors via CSS \`@supports\`.
+For older browsers lacking \`backdrop-filter\`, toastory automatically falls back to solid background colors via CSS \`@supports\`.
 
 ---
 
 ### How is the 5.2 KB bundle size achieved?
-glazekit uses pure TypeScript compiled with tsup (esbuild) with strict tree-shaking flags. Toast logic is completely decoupled from modal and bottom sheet controllers.
+toastory uses pure TypeScript compiled with tsup (esbuild) with strict tree-shaking flags. Toast logic is completely decoupled from modal and bottom sheet controllers.
 `,
   },
 };

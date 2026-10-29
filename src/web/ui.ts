@@ -17,7 +17,7 @@ import { configure, getEngine } from './engine';
 import { openBottomSheet, openLoading, openSheet } from './sheets';
 import { defineTheme, type CustomThemeDefinition } from './theme-engine';
 
-/** The unified glazekit API. */
+/** The unified toastory API. */
 export interface Ui {
   /** Toast notifications. */
   toast: ToastApi;

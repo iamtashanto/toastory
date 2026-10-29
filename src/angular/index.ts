@@ -17,7 +17,7 @@ import { toast, ui } from '../web/ui';
 export { ui, toast };
 export type { Ui } from '../web/ui';
 
-/** Injectable Angular service for glazekit toast and feedback toolkit. */
+/** Injectable Angular service for toastory toast and feedback toolkit. */
 @Injectable({
   providedIn: 'root',
 })
@@ -50,7 +50,7 @@ export class GlazeService {
   }
 }
 
-/** Standalone component managing the glazekit Toaster inside Angular applications. */
+/** Standalone component managing the toastory Toaster inside Angular applications. */
 @Component({
   selector: 'glaze-toaster',
   standalone: true,

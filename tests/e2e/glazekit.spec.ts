@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('glazekit Browser E2E Test Suite', () => {
+test.describe('toastory Browser E2E Test Suite', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/tests/e2e/harness.html');
     await page.waitForFunction(

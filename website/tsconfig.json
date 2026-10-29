@@ -20,8 +20,8 @@
     ],
     "paths": {
       "@/*": ["./*"],
-      "glazekit": ["./lib/glazekit/index.ts"],
-      "glazekit/*": ["./lib/glazekit/*"]
+      "toastory": ["./lib/glazekit/index.ts"],
+      "toastory/*": ["./lib/glazekit/*"]
     }
   },
   "include": [

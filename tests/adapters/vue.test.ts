@@ -14,7 +14,7 @@ afterEach(() => {
   document.body.replaceChildren();
 });
 
-describe('glazekit/vue adapter', () => {
+describe('toastory/vue adapter', () => {
   it('installs Vue plugin and configures globals', () => {
     const app = createApp({});
     app.use(glazekitPlugin, { theme: 'pastel', position: 'bottom-center' });

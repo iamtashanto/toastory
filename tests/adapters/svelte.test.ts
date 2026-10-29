@@ -14,7 +14,7 @@ afterEach(() => {
   document.body.replaceChildren();
 });
 
-describe('glazekit/svelte adapter', () => {
+describe('toastory/svelte adapter', () => {
   it('toasts store adheres to Svelte store contract and updates reactively', () => {
     const values: (readonly ToastRecord[])[] = [];
     const unsubscribe = toasts.subscribe((list) => {

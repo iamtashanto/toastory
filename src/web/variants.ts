@@ -26,7 +26,7 @@ export function resolveVariant(themeName: string, variant: string | undefined): 
   const supported = THEME_VARIANTS[themeName];
   if (supported && !supported.includes(variant)) {
     if (typeof process !== 'undefined' && process.env?.NODE_ENV !== 'production') {
-      console.warn(`[glazekit] Unknown variant "${variant}" for "${themeName}".`);
+      console.warn(`[toastory] Unknown variant "${variant}" for "${themeName}".`);
     }
     return undefined;
   }

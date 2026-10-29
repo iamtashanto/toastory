@@ -14,7 +14,7 @@ afterEach(() => {
   document.body.replaceChildren();
 });
 
-describe('glazekit/angular adapter', () => {
+describe('toastory/angular adapter', () => {
   it('GlazeService exposes observables and ui toolkit', () => {
     const service = new GlazeService();
     expect(service.ui).toBe(ui);

@@ -2,7 +2,7 @@ import React from 'react';
 
 interface ComparisonRow {
   feature: string;
-  glazekit: string | boolean;
+  toastory: string | boolean;
   sonner: string | boolean;
   reactToastify: string | boolean;
   reactHotToast: string | boolean;
@@ -13,7 +13,7 @@ interface ComparisonRow {
 const COMPARISON_DATA: ComparisonRow[] = [
   {
     feature: 'Zero Runtime Dependencies',
-    glazekit: 'Yes (0 B)',
+    toastory: 'Yes (0 B)',
     sonner: 'No',
     reactToastify: 'No',
     reactHotToast: 'No',
@@ -22,7 +22,7 @@ const COMPARISON_DATA: ComparisonRow[] = [
   },
   {
     feature: 'Measured Gzip Size (Core + Toast)',
-    glazekit: '5.2 KB',
+    toastory: '5.2 KB',
     sonner: '~4.5 KB',
     reactToastify: '~14.0 KB',
     reactHotToast: '~5.2 KB',
@@ -31,7 +31,7 @@ const COMPARISON_DATA: ComparisonRow[] = [
   },
   {
     feature: 'Frameworks Supported',
-    glazekit: 'JS, React, Next, Vue, Nuxt, Angular, Svelte, RN',
+    toastory: 'JS, React, Next, Vue, Nuxt, Angular, Svelte, RN',
     sonner: 'React only',
     reactToastify: 'React only',
     reactHotToast: 'React only',
@@ -40,7 +40,7 @@ const COMPARISON_DATA: ComparisonRow[] = [
   },
   {
     feature: 'Dialog Toolkit (Confirm, Prompt, Alert)',
-    glazekit: true,
+    toastory: true,
     sonner: false,
     reactToastify: false,
     reactHotToast: false,
@@ -49,7 +49,7 @@ const COMPARISON_DATA: ComparisonRow[] = [
   },
   {
     feature: 'Mobile Bottom Sheet & Action Sheet',
-    glazekit: true,
+    toastory: true,
     sonner: false,
     reactToastify: false,
     reactHotToast: false,
@@ -58,7 +58,7 @@ const COMPARISON_DATA: ComparisonRow[] = [
   },
   {
     feature: 'Multi-Step Wizard Dialogs',
-    glazekit: true,
+    toastory: true,
     sonner: false,
     reactToastify: false,
     reactHotToast: false,
@@ -67,7 +67,7 @@ const COMPARISON_DATA: ComparisonRow[] = [
   },
   {
     feature: '6-Box Discrete Numeric OTP Input',
-    glazekit: true,
+    toastory: true,
     sonner: false,
     reactToastify: false,
     reactHotToast: false,
@@ -76,7 +76,7 @@ const COMPARISON_DATA: ComparisonRow[] = [
   },
   {
     feature: 'Type-to-Confirm Deletion Guard',
-    glazekit: true,
+    toastory: true,
     sonner: false,
     reactToastify: false,
     reactHotToast: false,
@@ -85,7 +85,7 @@ const COMPARISON_DATA: ComparisonRow[] = [
   },
   {
     feature: 'Real-time Session Countdown Timer',
-    glazekit: true,
+    toastory: true,
     sonner: false,
     reactToastify: false,
     reactHotToast: false,
@@ -94,7 +94,7 @@ const COMPARISON_DATA: ComparisonRow[] = [
   },
   {
     feature: 'Apple-Style Frosted Glass Tokens',
-    glazekit: '21 Themes',
+    toastory: '21 Themes',
     sonner: 'Flat minimal',
     reactToastify: 'Flat card',
     reactHotToast: 'Minimal card',
@@ -103,7 +103,7 @@ const COMPARISON_DATA: ComparisonRow[] = [
   },
   {
     feature: 'Gesture Swipe Physics (4-Direction)',
-    glazekit: true,
+    toastory: true,
     sonner: '1-Direction',
     reactToastify: '2-Direction',
     reactHotToast: 'Basic',
@@ -112,7 +112,7 @@ const COMPARISON_DATA: ComparisonRow[] = [
   },
   {
     feature: 'WCAG 2.2 AA Verified (0 axe-core errors)',
-    glazekit: 'Yes (96 runs)',
+    toastory: 'Yes (96 runs)',
     sonner: 'not verified',
     reactToastify: 'not verified',
     reactHotToast: 'not verified',
@@ -121,7 +121,7 @@ const COMPARISON_DATA: ComparisonRow[] = [
   },
   {
     feature: 'License',
-    glazekit: 'MIT',
+    toastory: 'MIT',
     sonner: 'MIT',
     reactToastify: 'MIT',
     reactHotToast: 'MIT',
@@ -167,7 +167,7 @@ export function ComparisonTable() {
           <thead>
             <tr className="border-b border-white/10 bg-white/[0.03]">
               <th className="py-4 px-4 font-semibold text-gray-300">Feature & Specification</th>
-              <th className="py-4 px-4 font-bold text-blue-400 bg-blue-500/10">glazekit</th>
+              <th className="py-4 px-4 font-bold text-blue-400 bg-blue-500/10">toastory</th>
               <th className="py-4 px-4 font-medium text-gray-400">Sonner</th>
               <th className="py-4 px-4 font-medium text-gray-400">React-Toastify</th>
               <th className="py-4 px-4 font-medium text-gray-400">react-hot-toast</th>
@@ -193,7 +193,7 @@ export function ComparisonTable() {
 
       <div className="mt-4 p-4 rounded-xl bg-white/[0.02] border border-white/5 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-400 gap-2">
         <span>Method: Measured with gzipSync over esbuild standalone bundles. Script: `scripts/size.mjs`.</span>
-        <span className="italic">Notice: glazekit is not affiliated with any referenced open-source projects.</span>
+        <span className="italic">Notice: toastory is not affiliated with any referenced open-source projects.</span>
       </div>
     </div>
   );

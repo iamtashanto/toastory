@@ -1,6 +1,6 @@
-# glazekit Production Release Checklist
+# toastory Production Release Checklist
 
-Pre-flight and publishing procedure for `glazekit` on the npm registry with cryptographic provenance.
+Pre-flight and publishing procedure for `toastory` on the npm registry with cryptographic provenance.
 
 ---
 
@@ -129,7 +129,7 @@ Zero test files, source maps, development scripts, or workspace folders are bund
 
 1. **Verify Registry Availability**:
    ```bash
-   npm view glazekit
+   npm view toastory
    ```
    If 404, publish a minimal 0.0.1 placeholder to secure the namespace:
    ```bash
@@ -147,7 +147,7 @@ Zero test files, source maps, development scripts, or workspace folders are bund
    - [x] Green **Built and signed on GitHub Actions** provenance badge
    - [x] **0 Dependencies** tab confirmed
    - [x] README formatting, absolute image links, and quick starts render without distortion
-   - [x] TypeScript declarations resolve across all subpath exports (`glazekit`, `glazekit/core`, `glazekit/react`, etc.)
+   - [x] TypeScript declarations resolve across all subpath exports (`toastory`, `toastory/core`, `toastory/react`, etc.)
 
 ---
 
@@ -172,9 +172,9 @@ Once beta testing and verification succeed:
 - **Unpublish Policy**: npm permits unpublishing within **72 hours** of release only if no other packages depend on it.
 - **Deprecation Rollback**: If a critical issue is discovered post-unpublish window, immediately deprecate the affected version:
   ```bash
-  npm deprecate glazekit@1.0.0 "Critical defect identified. Please upgrade to 1.0.1 or pin to 0.1.0."
+  npm deprecate toastory@1.0.0 "Critical defect identified. Please upgrade to 1.0.1 or pin to 0.1.0."
   ```
 - **Tag Rollback**: Point the `latest` tag back to the previous stable release:
   ```bash
-  npm dist-tag add glazekit@0.1.0 latest
+  npm dist-tag add toastory@0.1.0 latest
   ```

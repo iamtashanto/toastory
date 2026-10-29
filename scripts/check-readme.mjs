@@ -16,7 +16,7 @@ import { tmpdir } from 'node:os';
 const root = resolve(join(dirname(fileURLToPath(import.meta.url)), '..'));
 const readmePath = join(root, 'README.md');
 
-console.log('--- glazekit Comprehensive README & Snippet Verification Suite ---');
+console.log('--- toastory Comprehensive README & Snippet Verification Suite ---');
 
 const readme = await readFile(readmePath, 'utf8');
 const lines = readme.split('\n');
@@ -178,11 +178,11 @@ try {
   });
 
   // Step B: Unpack into test project
-  execSync(`tar -xzf "${join(tmpDir, 'glazekit-0.1.0.tgz')}" -C "${tmpDir}"`, { stdio: 'pipe' });
+  execSync(`tar -xzf "${join(tmpDir, 'toastory-0.1.0.tgz')}" -C "${tmpDir}"`, { stdio: 'pipe' });
 
   const testProjectDir = join(tmpDir, 'test-project');
-  mkdirSync(join(testProjectDir, 'node_modules/glazekit'), { recursive: true });
-  cpSync(join(tmpDir, 'package'), join(testProjectDir, 'node_modules/glazekit'), {
+  mkdirSync(join(testProjectDir, 'node_modules/toastory'), { recursive: true });
+  cpSync(join(tmpDir, 'package'), join(testProjectDir, 'node_modules/toastory'), {
     recursive: true,
   });
 
@@ -236,8 +236,8 @@ try {
   // Snippets to test
   const snippets = {
     'plain-js.ts': `
-import { ui, toast } from 'glazekit';
-import 'glazekit/themes/ios-glass.css';
+import { ui, toast } from 'toastory';
+import 'toastory/themes/ios-glass.css';
 
 toast.success('Deployment successful!');
 const res = await ui.confirm({ title: 'Delete repository?', tone: 'danger' });
@@ -245,8 +245,8 @@ if (res.isConfirmed) toast.info('Repository removed');
 `,
     'react.tsx': `
 import React from 'react';
-import { Toaster, toast } from 'glazekit/react';
-import 'glazekit/themes/ios-glass.css';
+import { Toaster, toast } from 'toastory/react';
+import 'toastory/themes/ios-glass.css';
 
 export function App() {
   return (
@@ -259,8 +259,8 @@ export function App() {
 `,
     'nextjs.tsx': `
 import React from 'react';
-import { Toaster } from 'glazekit/react';
-import 'glazekit/themes/ios-glass.css';
+import { Toaster } from 'toastory/react';
+import 'toastory/themes/ios-glass.css';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -274,14 +274,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 }
 `,
     'vue.ts': `
-import { GlazeToaster, toast } from 'glazekit/vue';
-import 'glazekit/themes/ios-glass.css';
+import { GlazeToaster, toast } from 'toastory/vue';
+import 'toastory/themes/ios-glass.css';
 
 console.log(GlazeToaster, toast);
 `,
     'nuxt.ts': `
-import { glazekitPlugin } from 'glazekit/vue';
-import 'glazekit/themes/ios-glass.css';
+import { glazekitPlugin } from 'toastory/vue';
+import 'toastory/themes/ios-glass.css';
 
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.use(glazekitPlugin);
@@ -289,8 +289,8 @@ export default defineNuxtPlugin((nuxtApp) => {
 `,
     'angular.ts': `
 import { Component } from '@angular/core';
-import { GlazeToasterComponent, GlazeService } from 'glazekit/angular';
-import 'glazekit/themes/ios-glass.css';
+import { GlazeToasterComponent, GlazeService } from 'toastory/angular';
+import 'toastory/themes/ios-glass.css';
 
 @Component({
   standalone: true,
@@ -302,20 +302,20 @@ export class AppComponent {
 }
 `,
     'svelte.ts': `
-import { toast } from 'glazekit/svelte';
-import 'glazekit/themes/ios-glass.css';
+import { toast } from 'toastory/svelte';
+import 'toastory/themes/ios-glass.css';
 
 toast.success('Saved to cloud!');
 `,
     'electron.ts': `
-import { ui, toast } from 'glazekit';
-import 'glazekit/themes/ios-glass.css';
+import { ui, toast } from 'toastory';
+import 'toastory/themes/ios-glass.css';
 
 toast.success('Application initialized in renderer');
 `,
     'react-native.tsx': `
 import React from 'react';
-import { GlazeProvider, Toaster, toast } from 'glazekit/native';
+import { GlazeProvider, Toaster, toast } from 'toastory/native';
 import { Button } from 'react-native';
 
 export default function App() {

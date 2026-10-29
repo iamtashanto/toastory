@@ -20,7 +20,7 @@ export default function PrivacyPage() {
             Zero Telemetry Policy
           </div>
           <p className="text-xs sm:text-sm text-gray-300">
-            The official glazekit website and published npm package collect <strong>no analytics, no telemetry, no cookies, and no personal data</strong>.
+            The official toastory website and published npm package collect <strong>no analytics, no telemetry, no cookies, and no personal data</strong>.
           </p>
         </div>
 
@@ -50,7 +50,7 @@ export default function PrivacyPage() {
         <section className="space-y-3">
           <h2 className="text-xl font-bold text-white">3. Package Security</h2>
           <p>
-            The published <code className="px-1.5 py-0.5 rounded bg-white/10 text-white font-mono text-xs">glazekit</code> npm package contains zero post-install scripts, telemetry beacons, or network requests. It runs 100% offline and sandbox-safe.
+            The published <code className="px-1.5 py-0.5 rounded bg-white/10 text-white font-mono text-xs">toastory</code> npm package contains zero post-install scripts, telemetry beacons, or network requests. It runs 100% offline and sandbox-safe.
           </p>
         </section>
       </div>

@@ -26,7 +26,7 @@ afterEach(() => {
   document.body.replaceChildren();
 });
 
-describe('glazekit/native adapter', () => {
+describe('toastory/native adapter', () => {
   it('toast creates and manages native toasts', () => {
     const id = toast.success('Native Success', { description: 'Running on mobile' });
     const list = toast.getToasts();

@@ -288,7 +288,7 @@ describe('dialogs theme: 12 variants x 2 modes axe-core compliance', () => {
             variant: 'rename-prompt',
             title: 'Rename Project',
             inputLabel: 'Project Name',
-            inputValue: 'glazekit',
+            inputValue: 'toastory',
           });
         } else if (variant === 'reauth-password') {
           ui.prompt({

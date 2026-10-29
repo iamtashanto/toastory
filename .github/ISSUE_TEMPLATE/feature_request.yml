@@ -1,12 +1,12 @@
 name: Feature Request
-description: Suggest an idea or enhancement for glazekit
+description: Suggest an idea or enhancement for toastory
 title: '[Feature]: '
 labels: ['enhancement']
 body:
   - type: markdown
     attributes:
       value: |
-        Thank you for proposing an enhancement to glazekit!
+        Thank you for proposing an enhancement to toastory!
   - type: textarea
     id: problem
     attributes:

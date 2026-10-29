@@ -1,4 +1,4 @@
-# glazekit Documentation Coverage & Parity Audit
+# toastory Documentation Coverage & Parity Audit
 
 Audit mapping every public export, option, theme, variant, input type, and platform to its corresponding documentation page, verifying **zero uncovered features**.
 
@@ -6,12 +6,12 @@ Audit mapping every public export, option, theme, variant, input type, and platf
 
 ## 1. Feature Parity Mapping
 
-| Feature from \`docs/parity.md\` | glazekit Implementation | Documentation Route | Coverage Status |
+| Feature from \`docs/parity.md\` | toastory Implementation | Documentation Route | Coverage Status |
 | :--- | :--- | :--- | :---: |
 | **Zero Runtime Dependencies** | 0 B required runtime dependencies | \`/docs/getting-started/introduction\` | Verified |
 | **Gzip Core + Toast Size (< 6 KB)** | 5.20 KB measured | \`/docs/meta/benchmarks\` | Verified |
 | **Full Web Bundle (< 22 KB)** | 14.10 KB measured | \`/docs/meta/benchmarks\` | Verified |
-| **Framework Agnostic Node-Safe Core** | \`src/core\` / \`glazekit/core\` | \`/docs/api/core\` | Verified |
+| **Framework Agnostic Node-Safe Core** | \`src/core\` / \`toastory/core\` | \`/docs/api/core\` | Verified |
 | **Multi-Framework Adapters** | React, Next.js, Vue, Nuxt, Angular, Svelte, RN | \`/docs/getting-started/quickstart\` | Verified |
 | **Apple-Style Glass Design (21 Themes)** | Scoped \`--gk-*\` design tokens | \`/docs/theming/overview\`, \`/themes\` | Verified |
 | **Dialog Toolkit (Confirm, Prompt, Alert)** | \`ui.confirm()\`, \`ui.prompt()\`, \`ui.alert()\` | \`/docs/guides/dialogs\` | Verified |

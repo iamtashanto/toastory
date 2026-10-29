@@ -35,7 +35,7 @@ export function createTypeRegistry(): TypeRegistry {
   return {
     add(name, definition = {}) {
       if (typeof name !== 'string' || name.trim() === '') {
-        throw new TypeError('glazekit: toast type name must be a non-empty string');
+        throw new TypeError('toastory: toast type name must be a non-empty string');
       }
       custom.set(name.trim(), definition);
     },

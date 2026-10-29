@@ -1,5 +1,5 @@
 /**
- * Shared type definitions for the glazekit framework-agnostic core.
+ * Shared type definitions for the toastory framework-agnostic core.
  * This module is 100% renderer-agnostic: no DOM, no framework imports.
  */
 
@@ -8,8 +8,8 @@ export type ToastId = string | number;
 
 /**
  * Anything a renderer can display. The concrete meaning depends on the adapter:
- * a string for the web renderer, a React element for `glazekit/react`,
- * a VNode for `glazekit/vue`, etc.
+ * a string for the web renderer, a React element for `toastory/react`,
+ * a VNode for `toastory/vue`, etc.
  */
 export type Renderable = unknown;
 

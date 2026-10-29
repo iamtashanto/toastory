@@ -33,7 +33,7 @@ export const config: Readable<Readonly<GlazeConfig>> = {
   },
 };
 
-/** Svelte action for mounting and managing the glazekit Toaster. */
+/** Svelte action for mounting and managing the toastory Toaster. */
 export function glazeToaster(
   node?: HTMLElement,
   options?: Partial<GlazeConfig>,

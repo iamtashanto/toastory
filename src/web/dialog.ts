@@ -37,7 +37,7 @@ function applyButton(
  */
 export function openDialog(initial: DialogOptions): DialogPromise {
   if (typeof document === 'undefined') {
-    throw new Error('glazekit: DOM required');
+    throw new Error('toastory: DOM required');
   }
   const config = getEngine().store.config.get();
   const controller: DialogController = createDialogController(initial);

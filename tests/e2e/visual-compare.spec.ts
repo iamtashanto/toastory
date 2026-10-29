@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('glazekit Visual Comparison & Diff Regression Suite', () => {
+test.describe('toastory Visual Comparison & Diff Regression Suite', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/examples/design-compare/index.html');
     await page.waitForSelector('.card');

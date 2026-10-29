@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ui, toast } from 'glazekit';
+import { ui, toast } from 'toastory';
 import { CodeSnippet } from './CodeSnippet';
 
 export function FeatureDemos() {

@@ -15,10 +15,10 @@ export const FRAMEWORKS: FrameworkData[] = [
   {
     id: 'javascript',
     name: 'JavaScript',
-    install: 'npm install glazekit',
+    install: 'npm install toastory',
     filename: 'main.js',
-    code: `import { ui, toast } from 'glazekit';
-import 'glazekit/themes/ios-glass.css';
+    code: `import { ui, toast } from 'toastory';
+import 'toastory/themes/ios-glass.css';
 
 // 1. Toast Notification
 toast.success('Project deployed!', { description: 'Live on production edge.' });
@@ -33,10 +33,10 @@ const result = await ui.confirm({
   {
     id: 'react',
     name: 'React',
-    install: 'npm install glazekit',
+    install: 'npm install toastory',
     filename: 'App.tsx',
-    code: `import { Toaster, toast, ui } from 'glazekit/react';
-import 'glazekit/themes/ios-glass.css';
+    code: `import { Toaster, toast, ui } from 'toastory/react';
+import 'toastory/themes/ios-glass.css';
 
 export default function App() {
   return (
@@ -51,10 +51,10 @@ export default function App() {
   {
     id: 'nextjs',
     name: 'Next.js',
-    install: 'npm install glazekit',
+    install: 'npm install toastory',
     filename: 'app/layout.tsx',
-    code: `import { Toaster } from 'glazekit/react';
-import 'glazekit/themes/ios-glass.css';
+    code: `import { Toaster } from 'toastory/react';
+import 'toastory/themes/ios-glass.css';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -70,11 +70,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   {
     id: 'vue',
     name: 'Vue',
-    install: 'npm install glazekit',
+    install: 'npm install toastory',
     filename: 'App.vue',
     code: `<script setup>
-import { ui, toast } from 'glazekit';
-import 'glazekit/themes/ios-glass.css';
+import { ui, toast } from 'toastory';
+import 'toastory/themes/ios-glass.css';
 
 const onSave = () => toast.success('Changes saved in Vue!');
 const onDelete = () => ui.confirm({ title: 'Delete resource?', tone: 'danger' });
@@ -88,14 +88,14 @@ const onDelete = () => ui.confirm({ title: 'Delete resource?', tone: 'danger' })
   {
     id: 'nuxt',
     name: 'Nuxt',
-    install: 'npm install glazekit',
+    install: 'npm install toastory',
     filename: 'app.vue',
     code: `<script setup>
-import { ui, toast } from 'glazekit';
-import 'glazekit/themes/ios-glass.css';
+import { ui, toast } from 'toastory';
+import 'toastory/themes/ios-glass.css';
 
 function showToast() {
-  toast.success('Welcome to Nuxt 3 with glazekit!');
+  toast.success('Welcome to Nuxt 3 with toastory!');
 }
 </script>
 
@@ -106,11 +106,11 @@ function showToast() {
   {
     id: 'angular',
     name: 'Angular',
-    install: 'npm install glazekit',
+    install: 'npm install toastory',
     filename: 'app.component.ts',
     code: `import { Component } from '@angular/core';
-import { ui, toast } from 'glazekit';
-import 'glazekit/themes/ios-glass.css';
+import { ui, toast } from 'toastory';
+import 'toastory/themes/ios-glass.css';
 
 @Component({
   selector: 'app-root',
@@ -125,11 +125,11 @@ export class AppComponent {
   {
     id: 'svelte',
     name: 'Svelte',
-    install: 'npm install glazekit',
+    install: 'npm install toastory',
     filename: 'App.svelte',
     code: `<script>
-  import { ui, toast } from 'glazekit';
-  import 'glazekit/themes/ios-glass.css';
+  import { ui, toast } from 'toastory';
+  import 'toastory/themes/ios-glass.css';
 
   const notify = () => toast.success('Svelte 5 runes & reactivity!');
   const confirm = () => ui.confirm({ title: 'Proceed?' });
@@ -141,10 +141,10 @@ export class AppComponent {
   {
     id: 'electron',
     name: 'Electron',
-    install: 'npm install glazekit',
+    install: 'npm install toastory',
     filename: 'renderer.js',
-    code: `import { ui, toast } from 'glazekit';
-import 'glazekit/themes/ios-glass.css';
+    code: `import { ui, toast } from 'toastory';
+import 'toastory/themes/ios-glass.css';
 
 // Native desktop window feedback with full keyboard access
 window.api.onDownloadComplete((file) => {
@@ -156,9 +156,9 @@ window.api.onDownloadComplete((file) => {
   {
     id: 'react-native',
     name: 'React Native',
-    install: 'npm install glazekit react-native-reanimated expo-blur expo-haptics',
+    install: 'npm install toastory react-native-reanimated expo-blur expo-haptics',
     filename: 'App.tsx',
-    code: `import { Toaster, toast, ui } from 'glazekit/native';
+    code: `import { Toaster, toast, ui } from 'toastory/native';
 
 export default function App() {
   return (

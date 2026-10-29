@@ -15,7 +15,7 @@ export interface ToasterProps extends Partial<GlazeConfig> {
 
 /**
  * React Toaster provider and container.
- * Safe for SSR and hydration. Configures glazekit and handles toast rendering.
+ * Safe for SSR and hydration. Configures toastory and handles toast rendering.
  */
 export function Toaster(props: ToasterProps): JSX.Element | null {
   const { className: _className, ...configPatch } = props;

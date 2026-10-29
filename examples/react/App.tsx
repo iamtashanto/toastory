@@ -1,8 +1,8 @@
 import React from 'react';
-import { Toaster, useToast } from 'glazekit/react';
-import { ui } from 'glazekit';
-import 'glazekit/themes/ios-glass.toast.css';
-import 'glazekit/themes/ios-glass.dialog.css';
+import { Toaster, useToast } from 'toastory/react';
+import { ui } from 'toastory';
+import 'toastory/themes/ios-glass.toast.css';
+import 'toastory/themes/ios-glass.dialog.css';
 
 export function App(): React.JSX.Element {
   const toast = useToast();
@@ -37,7 +37,7 @@ export function App(): React.JSX.Element {
 
   return (
     <div style={{ maxWidth: 640, margin: '40px auto', fontFamily: 'system-ui, sans-serif' }}>
-      <h1>glazekit React Example</h1>
+      <h1>toastory React Example</h1>
       <p>Seamless Apple glass feedback toolkit with reactive hooks.</p>
 
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 24 }}>

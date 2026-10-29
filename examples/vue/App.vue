@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { GlazeToaster, useToast } from 'glazekit/vue';
-import { ui } from 'glazekit';
-import 'glazekit/themes/ios-glass.toast.css';
-import 'glazekit/themes/ios-glass.dialog.css';
+import { GlazeToaster, useToast } from 'toastory/vue';
+import { ui } from 'toastory';
+import 'toastory/themes/ios-glass.toast.css';
+import 'toastory/themes/ios-glass.dialog.css';
 
 const toast = useToast();
 
@@ -28,7 +28,7 @@ const openPrompt = async () => {
 
 <template>
   <main style="max-width: 640px; margin: 40px auto; font-family: system-ui, sans-serif">
-    <h1>glazekit Vue 3 Example</h1>
+    <h1>toastory Vue 3 Example</h1>
     <p>Complete glass toolkit with Vue 3 composables.</p>
 
     <div style="display: flex; gap: 12px; margin-top: 24px">

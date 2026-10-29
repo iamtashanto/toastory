@@ -1,4 +1,4 @@
-# glazekit Official Website Architecture & Implementation Plan
+# toastory Official Website Architecture & Implementation Plan
 
 ## 1. Chosen Stack & Justification
 
@@ -6,7 +6,7 @@
 - **Why**: 
   - The website workspace is pre-initialized with Next.js 16.4 and React 19, aligned directly with the modern React ecosystem and SSR/SSG workflows.
   - Native static route prerendering (`next build --webpack`) outputs static HTML with minimal JS footprints for marketing and documentation pages, achieving high Lighthouse scores (target: ≥ 95 on mobile/desktop).
-  - First-class Client Components (`'use client'`) enable interactive glass islands (live hero demo, interactive playground, themes gallery, and token customizer) using the real built `glazekit` package.
+  - First-class Client Components (`'use client'`) enable interactive glass islands (live hero demo, interactive playground, themes gallery, and token customizer) using the real built `toastory` package.
   - Zero third-party CDN fonts or analytics; self-contained, offline-capable, and privacy-preserving.
   - Integrated fast client-side fuzzy search (dialog triggered via `Cmd+K` or `/`) indexing all guides, API references, recipes, and migration docs.
 
@@ -63,9 +63,9 @@
   - `/docs/migration/sweetalert2` — Migration guide and API option map from SweetAlert2.
   - `/docs/migration/notyf` — Migration guide and API option map from Notyf.
 - **API Reference**:
-  - `/docs/api/core` — `glazekit/core` store, managers, timers, clock, accessibility rules.
-  - `/docs/api/web` — `glazekit` (web) `ui`, `toast`, configuration, engine, and DOM toaster.
-  - `/docs/api/react` — `glazekit/react` `<Toaster />`, `useToast()`, hooks.
+  - `/docs/api/core` — `toastory/core` store, managers, timers, clock, accessibility rules.
+  - `/docs/api/web` — `toastory` (web) `ui`, `toast`, configuration, engine, and DOM toaster.
+  - `/docs/api/react` — `toastory/react` `<Toaster />`, `useToast()`, hooks.
   - `/docs/api/frameworks` — Vue, Angular, Svelte, and React Native adapters and support matrix.
 - **Governance & Meta**:
   - `/docs/meta/faq` — Frequently Asked Questions.
@@ -126,7 +126,7 @@
 
 ## 6. Implementation Steps
 
-1. **glazekit Package Setup**: Embed full self-contained `glazekit` package bundle and themes into `website/lib/glazekit` so all pages, playground, and demos dogfood the exact code.
+1. **toastory Package Setup**: Embed full self-contained `toastory` package bundle and themes into `website/lib/glazekit` so all pages, playground, and demos dogfood the exact code.
 2. **Global Layout & Navigation**: Glass header, accessible mobile drawer, footer, search modal, and styling foundations.
 3. **Marketing Home (`/`)**: Hero, live hero demo, multi-framework quick-starts, interactive feature showcases, comparison table, trust section.
 4. **Features Catalogue (`/features`)**: Exhaustive interactive catalog of every feature with code snippets and live triggers.

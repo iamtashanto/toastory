@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { ui, toast } from 'glazekit';
-import type { ToastPosition, ToastOptions } from 'glazekit';
+import { ui, toast } from 'toastory';
+import type { ToastPosition, ToastOptions } from 'toastory';
 import { THEME_REGISTRY } from '@/lib/glazekit/theme-generator';
 import { CodeSnippet } from '@/components/CodeSnippet';
 
@@ -160,8 +160,8 @@ export default function PlaygroundPage() {
   const getGeneratedSnippet = () => {
     if (activeCodeTab === 'react') {
       if (feedbackKind === 'toast') {
-        return `import { Toaster, toast } from 'glazekit/react';
-import 'glazekit/themes/${theme}.css';
+        return `import { Toaster, toast } from 'toastory/react';
+import 'toastory/themes/${theme}.css';
 
 export default function App() {
   const showFeedback = () => {
@@ -181,8 +181,8 @@ export default function App() {
   );
 }`;
       } else {
-        return `import { ui } from 'glazekit/react';
-import 'glazekit/themes/${theme}.css';
+        return `import { ui } from 'toastory/react';
+import 'toastory/themes/${theme}.css';
 
 const handleAction = async () => {
   const res = await ui.${feedbackKind === 'sheet' ? 'bottomSheet' : feedbackKind}({
@@ -195,8 +195,8 @@ const handleAction = async () => {
     }
 
     if (activeCodeTab === 'js') {
-      return `import { ui, toast } from 'glazekit';
-import 'glazekit/themes/${theme}.css';
+      return `import { ui, toast } from 'toastory';
+import 'toastory/themes/${theme}.css';
 
 // Configure once:
 ui.configure({ theme: '${theme}', mode: '${mode}', position: '${position}' });
@@ -210,8 +210,8 @@ toast.${toastType}('${title}', {
 
     if (activeCodeTab === 'nextjs') {
       return `// app/layout.tsx
-import { Toaster } from 'glazekit/react';
-import 'glazekit/themes/${theme}.css';
+import { Toaster } from 'toastory/react';
+import 'toastory/themes/${theme}.css';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -227,8 +227,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
     if (activeCodeTab === 'vue') {
       return `<script setup>
-import { ui, toast } from 'glazekit';
-import 'glazekit/themes/${theme}.css';
+import { ui, toast } from 'toastory';
+import 'toastory/themes/${theme}.css';
 
 const notify = () => {
   toast.${toastType}('${title}', {
@@ -244,8 +244,8 @@ const notify = () => {
 
     if (activeCodeTab === 'svelte') {
       return `<script>
-  import { ui, toast } from 'glazekit';
-  import 'glazekit/themes/${theme}.css';
+  import { ui, toast } from 'toastory';
+  import 'toastory/themes/${theme}.css';
 
   const trigger = () => toast.${toastType}('${title}', { description: '${description}' });
 </script>
@@ -253,7 +253,7 @@ const notify = () => {
 <button on:click={trigger}>Notify</button>`;
     }
 
-    return `import { Toaster, toast } from 'glazekit/native';
+    return `import { Toaster, toast } from 'toastory/native';
 
 export default function NativeScreen() {
   return (

@@ -16,7 +16,7 @@ export function Footer() {
                 </svg>
               </div>
             </div>
-            <span className="font-bold text-lg text-white">glazekit</span>
+            <span className="font-bold text-lg text-white">toastory</span>
           </Link>
           <p className="text-sm text-gray-400 max-w-sm leading-relaxed">
             Complete UI feedback toolkit for modern web and mobile. Toasts, dialogs, bottom sheets, and loading overlays with an Apple-style frosted glass aesthetic.
@@ -158,9 +158,9 @@ export function Footer() {
       </div>
 
       <div className="max-w-7xl mx-auto mt-12 pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-400 gap-4">
-        <p>© 2026 glazekit maintainers. Released under the MIT License.</p>
+        <p>© 2026 toastory maintainers. Released under the MIT License.</p>
         <p className="text-center sm:text-right">
-          glazekit is an independent open-source project and is not affiliated with Sonner, React-Toastify, or SweetAlert2.
+          toastory is an independent open-source project and is not affiliated with Sonner, React-Toastify, or SweetAlert2.
         </p>
       </div>
     </footer>

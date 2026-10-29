@@ -8,7 +8,7 @@
 
 ## Reporting a Vulnerability
 
-The glazekit team takes security seriously. If you discover a security vulnerability in glazekit, please report it responsibly:
+The toastory team takes security seriously. If you discover a security vulnerability in toastory, please report it responsibly:
 
 1. **Email**: Send details directly to `security@glazekit.dev` (or via GitHub Private Vulnerability Reporting on this repository).
 2. **Details**: Include a description of the vulnerability, steps to reproduce, and any proof-of-concept code.

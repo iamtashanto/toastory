@@ -1,8 +1,8 @@
-# glazekit — project constitution
+# toastory — project constitution
 
 ## What we are building
 
-glazekit is ONE npm package (name: `glazekit`) that ships a complete UI feedback toolkit: toast notifications, confirm / prompt / alert dialogs, action sheet, bottom sheet, loading overlay and multi-step dialogs. Same API on every platform: plain JS, React, Next.js, Vue, Nuxt, Angular, Svelte, Electron, React Native (Expo + bare).
+toastory is ONE npm package (name: `toastory`) that ships a complete UI feedback toolkit: toast notifications, confirm / prompt / alert dialogs, action sheet, bottom sheet, loading overlay and multi-step dialogs. Same API on every platform: plain JS, React, Next.js, Vue, Nuxt, Angular, Svelte, Electron, React Native (Expo + bare).
 It must contain every feature of the market leaders (Sonner, React-Toastify, react-hot-toast, Toastify-js, Notyf, SweetAlert2) AND a premium Apple-style glass design. This is a full professional release, not an MVP. Quality bar: a popular open-source library with docs, tests and accessibility that other maintainers would respect.
 
 ## Hard rules
@@ -20,14 +20,14 @@ It must contain every feature of the market leaders (Sonner, React-Toastify, rea
 
 ## Public API contract (do not rename without asking)
 
-import { ui } from 'glazekit'
+import { ui } from 'toastory'
 ui.toast(message, opts) and ui.toast.success|error|info|warning|loading|message(message, opts) -> id
 ui.toast.promise(promiseOrFn, { loading, success, error, description, finally }) -> id + unwrap()
 ui.toast.custom(renderer, opts), ui.toast.update(id, patch), ui.toast.dismiss(id?), ui.toast.dismissAll(), ui.toast.getToasts(), ui.toast.getHistory(), ui.toast.types.add(name, def)
 ui.confirm(opts) / ui.alert(opts) / ui.prompt(opts) / ui.steps(steps) / ui.sheet(opts) / ui.bottomSheet(opts) / ui.loading(opts)
 Dialog result: { isConfirmed, isDenied, isDismissed, value, dismiss } where dismiss is 'cancel' | 'backdrop' | 'close' | 'esc' | 'timer'
 ui.configure({ theme, mode: 'light'|'dark'|'auto', position, duration, maxVisible, gap, stack, dir, hotkey, pauseOn, container, shadow, ... })
-Subpaths: glazekit (web + core), glazekit/core, glazekit/react, glazekit/vue, glazekit/angular, glazekit/svelte, glazekit/native, glazekit/themes/<name>.css
+Subpaths: toastory (web + core), toastory/core, toastory/react, toastory/vue, toastory/angular, toastory/svelte, toastory/native, toastory/themes/<name>.css
 
 ## Toast options (must all exist)
 

@@ -17,7 +17,7 @@ export default function SecurityPage() {
         <section className="space-y-3">
           <h2 className="text-xl font-bold text-white">Supported Versions</h2>
           <p>
-            We actively support the latest minor release of glazekit with security patches and vulnerability remediation.
+            We actively support the latest minor release of toastory with security patches and vulnerability remediation.
           </p>
           <div className="overflow-x-auto rounded-xl border border-white/10 bg-[#0e1017]">
             <table className="w-full text-left text-xs sm:text-sm">
@@ -42,13 +42,13 @@ export default function SecurityPage() {
         <section className="space-y-3">
           <h2 className="text-xl font-bold text-white">HTML Sanitization Standards</h2>
           <p>
-            glazekit provides built-in, zero-dependency HTML sanitization for the <code className="px-1.5 py-0.5 rounded bg-white/10 text-white font-mono text-xs">html</code> option. By default, dangerous tags like <code className="px-1.5 py-0.5 rounded bg-white/10 text-white font-mono text-xs">&lt;script&gt;</code>, <code className="px-1.5 py-0.5 rounded bg-white/10 text-white font-mono text-xs">&lt;iframe&gt;</code>, <code className="px-1.5 py-0.5 rounded bg-white/10 text-white font-mono text-xs">&lt;style&gt;</code>, and unsafe URI protocols (such as <code className="px-1.5 py-0.5 rounded bg-white/10 text-white font-mono text-xs">javascript:</code>) are stripped from the DOM before mounting.
+            toastory provides built-in, zero-dependency HTML sanitization for the <code className="px-1.5 py-0.5 rounded bg-white/10 text-white font-mono text-xs">html</code> option. By default, dangerous tags like <code className="px-1.5 py-0.5 rounded bg-white/10 text-white font-mono text-xs">&lt;script&gt;</code>, <code className="px-1.5 py-0.5 rounded bg-white/10 text-white font-mono text-xs">&lt;iframe&gt;</code>, <code className="px-1.5 py-0.5 rounded bg-white/10 text-white font-mono text-xs">&lt;style&gt;</code>, and unsafe URI protocols (such as <code className="px-1.5 py-0.5 rounded bg-white/10 text-white font-mono text-xs">javascript:</code>) are stripped from the DOM before mounting.
           </p>
           <p>
             For applications with strict enterprise security mandates, you can plug in DOMPurify with one line:
           </p>
           <div className="p-4 rounded-xl bg-black/40 border border-white/10 font-mono text-xs text-blue-400">
-            import &#123; setSanitizer &#125; from &apos;glazekit&apos;;<br />
+            import &#123; setSanitizer &#125; from &apos;toastory&apos;;<br />
             import DOMPurify from &apos;dompurify&apos;;<br /><br />
             setSanitizer((dirty) =&gt; DOMPurify.sanitize(dirty));
           </div>
@@ -57,7 +57,7 @@ export default function SecurityPage() {
         <section className="space-y-3">
           <h2 className="text-xl font-bold text-white">Reporting a Vulnerability</h2>
           <p>
-            If you discover a security vulnerability in glazekit, please report it privately via GitHub Security Advisories or by emailing our security team directly at <code className="px-1.5 py-0.5 rounded bg-white/10 text-white font-mono text-xs">security@glazekit.dev</code>.
+            If you discover a security vulnerability in toastory, please report it privately via GitHub Security Advisories or by emailing our security team directly at <code className="px-1.5 py-0.5 rounded bg-white/10 text-white font-mono text-xs">security@glazekit.dev</code>.
           </p>
           <p>
             Please include steps to reproduce the issue and allow 48 hours for our maintainers to review and acknowledge the report before public disclosure.

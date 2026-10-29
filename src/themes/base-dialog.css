@@ -1,4 +1,4 @@
-/* glazekit dialog, sheet and loading structure. Shares the --gk-* tokens with the toast. */
+/* toastory dialog, sheet and loading structure. Shares the --gk-* tokens with the toast. */
 .gk-overlay {
   position: fixed;
   inset: 0;

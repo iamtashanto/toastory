@@ -9,7 +9,7 @@ export default function ChangelogPage() {
           Changelog
         </h1>
         <p className="text-base text-gray-400">
-          Strict semver releases for the published \`glazekit\` package, generated with Changesets and npm provenance.
+          Strict semver releases for the published \`toastory\` package, generated with Changesets and npm provenance.
         </p>
       </div>
 

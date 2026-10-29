@@ -42,7 +42,7 @@ export default function RoadmapPage() {
           Public Roadmap
         </h1>
         <p className="text-base text-gray-400">
-          Our planned milestones and open-source feature commitments for upcoming glazekit releases.
+          Our planned milestones and open-source feature commitments for upcoming toastory releases.
         </p>
       </div>
 
