@@ -34,7 +34,7 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
       >
         {DOC_NAVIGATION.map((section) => (
           <div key={section.title} className="space-y-2">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 px-3">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--site-muted)] px-3">
               {section.title}
             </h4>
             <ul className="space-y-0.5 text-sm">
@@ -48,8 +48,8 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
                       onClick={() => setMobileNavOpen(false)}
                       className={`block px-3 py-1.5 rounded-lg text-xs sm:text-sm transition-colors ${
                         isActive
-                          ? 'bg-blue-600/20 text-blue-400 font-semibold border-l-2 border-blue-400 pl-2.5'
-                          : 'text-gray-400 hover:text-white hover:bg-white/[0.04]'
+                          ? 'bg-blue-500/15 text-blue-500 font-semibold border-l-2 border-blue-500 pl-2.5'
+                          : 'text-[var(--site-muted)] hover:text-[var(--site-fg)] hover:bg-[var(--site-surface-raised)]'
                       }`}
                     >
                       {item.title}

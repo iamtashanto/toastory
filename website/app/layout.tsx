@@ -60,7 +60,28 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="h-full antialiased dark" suppressHydrationWarning>
-      <body className="min-h-full flex flex-col bg-[#0b0c12] text-[#f4f4f7] selection:bg-blue-500/30 font-sans">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){
+              try {
+                var saved = localStorage.getItem('toastory-theme');
+                var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                var mode = saved === 'light' || saved === 'dark' ? saved : (prefersDark ? 'dark' : 'light');
+                document.documentElement.setAttribute('data-theme', mode);
+                if (mode === 'light') {
+                  document.documentElement.classList.remove('dark');
+                  document.documentElement.classList.add('light');
+                } else {
+                  document.documentElement.classList.remove('light');
+                  document.documentElement.classList.add('dark');
+                }
+              } catch (e) {}
+            })()`,
+          }}
+        />
+      </head>
+      <body className="min-h-full flex flex-col bg-[var(--site-bg)] text-[var(--site-fg)] transition-colors duration-200 selection:bg-blue-500/30 font-sans">
         {/* Skip to Main Content Link for WCAG AA compliance */}
         <a href="#main-content" className="skip-link">
           Skip to main content

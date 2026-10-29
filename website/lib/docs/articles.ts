@@ -1,4 +1,4 @@
-import { DocArticle } from './docs-data';
+import type { DocArticle } from './docs-data';
 import { GETTING_STARTED_ARTICLES } from './articles-getting-started';
 import { GUIDES_ARTICLES } from './articles-guides';
 import { THEMING_ARTICLES } from './articles-theming';
@@ -19,14 +19,15 @@ export const ARTICLES_MAP: Record<string, DocArticle> = {
 
 // Helper to provide a comprehensive article for any registered slug
 export function getArticleBySlug(slug: string): DocArticle {
-  if (ARTICLES_MAP[slug]) {
-    return ARTICLES_MAP[slug];
+  const existing = ARTICLES_MAP[slug];
+  if (existing) {
+    return existing;
   }
 
   // Generate structured fallback matching category
   const parts = slug.split('/');
   const categoryName = parts[0] ? parts[0].replace(/-/g, ' ').toUpperCase() : 'DOCUMENTATION';
-  const rawTitle = parts[1] || parts[0];
+  const rawTitle = parts[1] || parts[0] || 'guide';
   const formattedTitle = rawTitle
     .split('-')
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))

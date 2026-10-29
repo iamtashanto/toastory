@@ -1,15 +1,42 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useSyncExternalStore } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { ui } from 'toastory';
 import { SearchModal } from './SearchModal';
+
+function subscribeToTheme(callback: () => void) {
+  if (typeof window === 'undefined') return () => {};
+  window.addEventListener('storage', callback);
+  const observer = new MutationObserver(callback);
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  return () => {
+    window.removeEventListener('storage', callback);
+    observer.disconnect();
+  };
+}
+
+function getThemeSnapshot(): 'dark' | 'light' {
+  if (typeof window === 'undefined') return 'dark';
+  const saved = localStorage.getItem('toastory-theme');
+  const docMode = document.documentElement.getAttribute('data-theme') as 'dark' | 'light' | null;
+  return (saved === 'light' || saved === 'dark' ? saved : docMode) || 'dark';
+}
+
+function getThemeServerSnapshot(): 'dark' | 'light' {
+  return 'dark';
+}
 
 export function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [themeMode, setThemeMode] = useState<'dark' | 'light'>('dark');
+  const themeMode = useSyncExternalStore(subscribeToTheme, getThemeSnapshot, getThemeServerSnapshot);
   const pathname = usePathname();
+
+  useEffect(() => {
+    ui.configure({ mode: themeMode });
+  }, [themeMode]);
 
   useEffect(() => {
     // Keyboard shortcut to open search modal
@@ -28,7 +55,7 @@ export function Header() {
 
   const toggleTheme = () => {
     const next = themeMode === 'dark' ? 'light' : 'dark';
-    setThemeMode(next);
+    localStorage.setItem('toastory-theme', next);
     document.documentElement.setAttribute('data-theme', next);
     if (next === 'light') {
       document.documentElement.classList.remove('dark');
@@ -37,6 +64,7 @@ export function Header() {
       document.documentElement.classList.remove('light');
       document.documentElement.classList.add('dark');
     }
+    ui.configure({ mode: next });
   };
 
   const navLinks = [
@@ -49,29 +77,29 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#0b0c12]/80 backdrop-blur-xl backdrop-saturate-150 transition-colors">
+      <header className="sticky top-0 z-50 w-full border-b border-[var(--site-border)] bg-[var(--site-surface)] backdrop-blur-xl backdrop-saturate-150 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           {/* Logo & Version */}
           <div className="flex items-center gap-3">
             <Link href="/" className="flex items-center gap-2.5 group">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-cyan-400 p-[1px] shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform">
-                <div className="w-full h-full bg-[#0b0c12] rounded-[11px] flex items-center justify-center backdrop-blur-sm">
+                <div className="w-full h-full bg-[var(--site-bg)] rounded-[11px] flex items-center justify-center backdrop-blur-sm">
                   <svg className="w-5 h-5 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <rect x="3" y="3" width="18" height="18" rx="5" />
                     <circle cx="12" cy="12" r="3" />
                   </svg>
                 </div>
               </div>
-              <span className="font-bold text-lg tracking-tight text-white flex items-center gap-1.5">
+              <span className="font-bold text-lg tracking-tight text-[var(--site-fg)] flex items-center gap-1.5">
                 toastory
               </span>
             </Link>
 
             <Link
               href="/changelog"
-              className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20 hover:bg-blue-500/20 transition-colors"
+              className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-blue-500/10 text-blue-500 border border-blue-500/20 hover:bg-blue-500/20 transition-colors"
             >
-              v0.1.0
+              v0.1.1
             </Link>
           </div>
 
@@ -83,8 +111,9 @@ export function Header() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`text-sm font-medium transition-colors ${isActive ? 'text-blue-400' : 'text-gray-300 hover:text-white'
-                    }`}
+                  className={`text-sm font-medium transition-colors ${
+                    isActive ? 'text-blue-500 font-semibold' : 'text-[var(--site-muted)] hover:text-[var(--site-fg)]'
+                  }`}
                 >
                   {link.label}
                 </Link>
@@ -98,14 +127,14 @@ export function Header() {
             <button
               type="button"
               onClick={() => setIsSearchOpen(true)}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:bg-white/10 transition-colors text-sm"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-[var(--site-muted)] hover:text-[var(--site-fg)] hover:bg-[var(--site-surface)] transition-colors text-sm"
               aria-label="Open documentation search"
             >
-              <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-4 h-4 text-[var(--site-muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
-              <span className="hidden sm:inline text-xs text-gray-400">Search</span>
-              <kbd className="hidden lg:inline-flex items-center px-1.5 py-0.5 text-[10px] text-gray-400 bg-white/10 border border-white/10 rounded">
+              <span className="hidden sm:inline text-xs text-[var(--site-muted)]">Search</span>
+              <kbd className="hidden lg:inline-flex items-center px-1.5 py-0.5 text-[10px] text-[var(--site-muted)] bg-[var(--site-surface)] border border-[var(--site-border)] rounded">
                 ⌘K
               </kbd>
             </button>
@@ -114,7 +143,7 @@ export function Header() {
             <button
               type="button"
               onClick={toggleTheme}
-              className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
+              className="p-2 rounded-lg text-[var(--site-muted)] hover:text-[var(--site-fg)] hover:bg-[var(--site-surface-raised)] transition-colors"
               aria-label={`Switch to ${themeMode === 'dark' ? 'light' : 'dark'} mode`}
               title="Toggle theme mode"
             >
@@ -123,7 +152,7 @@ export function Header() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
                 </svg>
               ) : (
-                <svg className="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
                 </svg>
               )}
@@ -134,7 +163,7 @@ export function Header() {
               href="https://github.com/iamtashanto/toastory"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
+              className="p-2 rounded-lg text-[var(--site-muted)] hover:text-[var(--site-fg)] hover:bg-[var(--site-surface-raised)] transition-colors"
               aria-label="toastory GitHub repository"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -146,7 +175,7 @@ export function Header() {
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10"
+              className="md:hidden p-2 rounded-lg text-[var(--site-muted)] hover:text-[var(--site-fg)] hover:bg-[var(--site-surface-raised)]"
               aria-label="Toggle mobile menu"
             >
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
