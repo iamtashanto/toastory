@@ -1,4 +1,5 @@
 // Generates dist/themes/<name>.css (toast + dialog) and dist/themes/<name>.toast.css (toast only).
+import { Buffer } from 'node:buffer';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
