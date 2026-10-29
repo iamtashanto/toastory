@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>glazekit Vanilla Example</title>
+    <!-- Import glazekit theme stylesheets -->
+    <link rel="stylesheet" href="../../dist/themes/ios-glass.toast.css" />
+    <link rel="stylesheet" href="../../dist/themes/ios-glass.dialog.css" />
+    <style>
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        max-width: 720px;
+        margin: 60px auto;
+        padding: 0 20px;
+        line-height: 1.6;
+        background: #fbfbfd;
+        color: #1d1d1f;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 12px;
+        margin-top: 24px;
+      }
+      button {
+        padding: 12px 18px;
+        border-radius: 9999px;
+        border: 1px solid rgba(0, 0, 0, 0.12);
+        background: #ffffff;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      button:hover {
+        background: #f5f5f7;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+    </style>
+  </head>
+  <body>
+    <h1>glazekit</h1>
+    <p>Complete UI feedback toolkit with Apple-grade glass design.</p>
+
+    <div class="grid">
+      <button id="toast-success" type="button">Success Toast</button>
+      <button id="toast-error" type="button">Error Toast</button>
+      <button id="toast-promise" type="button">Promise Toast</button>
+      <button id="dialog-confirm" type="button">Confirm Dialog</button>
+      <button id="dialog-prompt" type="button">Prompt Dialog</button>
+      <button id="sheet-actions" type="button">Action Sheet</button>
+      <button id="sheet-bottom" type="button">Bottom Sheet</button>
+      <button id="loading-overlay" type="button">Loading Overlay</button>
+    </div>
+
+    <script type="module">
+      import { ui } from '../../dist/index.js';
+
+      document.getElementById('toast-success').addEventListener('click', () => {
+        ui.toast.success('Changes successfully saved!', {
+          description: 'Your project settings are up to date.',
+        });
+      });
+
+      document.getElementById('toast-error').addEventListener('click', () => {
+        ui.toast.error('Network request failed', {
+          description: 'Please check your internet connection.',
+          action: {
+            label: 'Retry',
+            onClick: () => ui.toast.info('Retrying connection...'),
+          },
+        });
+      });
+
+      document.getElementById('toast-promise').addEventListener('click', () => {
+        const fakeWork = new Promise((resolve) => setTimeout(resolve, 1500));
+        ui.toast.promise(fakeWork, {
+          loading: 'Uploading report...',
+          success: 'Report uploaded successfully!',
+          error: 'Upload aborted',
+        });
+      });
+
+      document.getElementById('dialog-confirm').addEventListener('click', async () => {
+        const res = await ui.confirm({
+          title: 'Discard draft?',
+          text: 'Any unsaved changes in this document will be lost.',
+          tone: 'danger',
+          confirmButton: { label: 'Discard' },
+          cancelButton: { label: 'Keep Editing' },
+        });
+        if (res.isConfirmed) {
+          ui.toast.info('Draft discarded');
+        }
+      });
+
+      document.getElementById('dialog-prompt').addEventListener('click', async () => {
+        const res = await ui.prompt({
+          title: 'Create new folder',
+          input: 'text',
+          placeholder: 'Folder name',
+          validate: (val) => (!val ? 'Folder name cannot be empty' : null),
+        });
+        if (res.isConfirmed) {
+          ui.toast.success(`Created folder "${res.value}"`);
+        }
+      });
+
+      document.getElementById('sheet-actions').addEventListener('click', async () => {
+        const res = await ui.sheet({
+          title: 'Document Options',
+          actions: [
+            { label: 'Share Link', value: 'share' },
+            { label: 'Export PDF', value: 'pdf' },
+            { label: 'Delete', value: 'delete', tone: 'danger' },
+          ],
+        });
+        if (res.isConfirmed) {
+          ui.toast(`Selected: ${res.value}`);
+        }
+      });
+
+      document.getElementById('sheet-bottom').addEventListener('click', () => {
+        ui.bottomSheet({
+          title: 'Details Panel',
+          text: 'Swipe down to dismiss or drag up to expand.',
+          snapPoints: [0.35, 0.7, 0.95],
+        });
+      });
+
+      document.getElementById('loading-overlay').addEventListener('click', () => {
+        const handle = ui.loading({ text: 'Processing batch request...' });
+        setTimeout(() => handle.close(), 2000);
+      });
+    </script>
+  </body>
+</html>

@@ -259,6 +259,7 @@ export function openLoading(options: LoadingOptions = {}): LoadingHandle {
   overlay.root.dataset.row = 'center';
   overlay.root.dataset.col = 'center';
   const spinner = icon('loading');
+  spinner.classList.add('gk-loading-spinner');
   spinner.setAttribute('width', '32');
   spinner.setAttribute('height', '32');
   const label = el('div', 'gk-loading-text', { id: nextId('gk-text') });
@@ -287,7 +288,7 @@ export function openLoading(options: LoadingOptions = {}): LoadingHandle {
   overlay.root.append(panel);
 
   let current: Pick<LoadingOptions, 'text' | 'progress'> = {
-    text: options.text,
+    text: options.text ?? options.title,
     progress: options.progress,
   };
   const apply = (patch: Pick<LoadingOptions, 'text' | 'progress'>): void => {

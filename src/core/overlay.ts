@@ -94,6 +94,8 @@ export interface BottomSheetHandle {
 export interface LoadingOptions {
   /** Text shown beside the spinner and announced to screen readers. */
   text?: string;
+  /** Alias for `text`. */
+  title?: string;
   /** Progress from 0 to 1. When set the overlay shows a determinate bar. */
   progress?: number;
   /** Backdrop style. */

@@ -236,7 +236,10 @@ export function mountToaster(store: ToastStore): ToasterHandle {
       [unstyled ? '' : base, extra].filter(Boolean).join(' ');
     const node = item.el;
     node.replaceChildren();
-    node.className = k('gk-toast', [names.toast, record.className].filter(Boolean).join(' '));
+    node.className = k(
+      `gk-toast gk-toast--${record.type}`,
+      [names.toast, record.className].filter(Boolean).join(' '),
+    );
 
     const content = el('div', k('gk-content', names.content));
     if (record.custom) {
@@ -302,7 +305,7 @@ export function mountToaster(store: ToastStore): ToasterHandle {
       if (record.cancel) {
         actions.append(
           button(
-            k('gk-btn gk-cancel', names.cancelButton),
+            k('gk-btn gk-cancel gk-cancel-btn', names.cancelButton),
             record.cancel,
             record,
             'cancel',
@@ -313,7 +316,7 @@ export function mountToaster(store: ToastStore): ToasterHandle {
       if (record.action) {
         actions.append(
           button(
-            k('gk-btn gk-action', names.actionButton),
+            k('gk-btn gk-action gk-action-btn', names.actionButton),
             record.action,
             record,
             'action',

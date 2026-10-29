@@ -18,5 +18,5 @@
     "types": ["node"],
     "experimentalDecorators": true
   },
-  "include": ["src", "tests", "tsup.config.ts", "vitest.config.ts"]
+  "include": ["src", "tests", "tsup.config.ts", "vitest.config.ts", "playwright.config.ts"]
 }

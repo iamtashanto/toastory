@@ -93,7 +93,13 @@ export function createToastApi(store: ToastStore): ToastApi {
     (message, options = {}) => {
       const input: ToastOptions = { ...options };
       if (type !== undefined && options.type === undefined) input.type = type;
-      if (message !== undefined && options.title === undefined) input.title = message;
+      if (message !== undefined) {
+        if (options.title === undefined) {
+          input.title = message;
+        } else if (options.description === undefined) {
+          input.description = message;
+        }
+      }
       return store.add(input);
     };
 

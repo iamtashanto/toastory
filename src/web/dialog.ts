@@ -78,9 +78,9 @@ export function openDialog(initial: DialogOptions): DialogPromise {
   const text = el('div', 'gk-dialog-text', { id: textId });
   const inputBox = el('div', 'gk-input-box');
   const error = el('div', 'gk-error', { id: errorId, role: 'alert' });
-  const confirmBtn = el('button', 'gk-btn gk-confirm', { type: 'button' });
-  const denyBtn = el('button', 'gk-btn gk-deny', { type: 'button' });
-  const cancelBtn = el('button', 'gk-btn gk-cancel', { type: 'button' });
+  const confirmBtn = el('button', 'gk-btn gk-confirm gk-btn--confirm', { type: 'button' });
+  const denyBtn = el('button', 'gk-btn gk-deny gk-btn--deny', { type: 'button' });
+  const cancelBtn = el('button', 'gk-btn gk-cancel gk-btn--cancel', { type: 'button' });
   const buttons = el('div', 'gk-dialog-buttons', {}, cancelBtn, denyBtn, confirmBtn);
   const footer = el('div', 'gk-dialog-footer');
   const bar = el('i');
