@@ -63,3 +63,17 @@ export function createStore<T>(initialValue: T): Store<T> {
     },
   };
 }
+
+// Re-exports for backward-compatibility with tests and adapters
+export {
+  createToastManager,
+  createToastStore,
+  MANUAL_PAUSE,
+} from './toast-manager';
+export type {
+  AddToastInput,
+  ToastManager,
+  ToastManagerOptions,
+  ToastStore,
+  ToastStoreOptions,
+} from './toast-manager';

@@ -306,11 +306,9 @@ export function createDialogManager(clock: Clock = defaultClock): DialogManager 
     getActive: () => activeItem?.controller,
     getQueue: () => queue.map((q) => q.options),
     clear() {
-      if (activeItem) {
-        activeItem.controller.handle.close({ dismiss: 'close' });
-        activeItem = undefined;
-      }
-      for (const item of queue) {
+      const itemsToResolve = [...queue];
+      queue.length = 0;
+      for (const item of itemsToResolve) {
         item.resolve({
           isConfirmed: false,
           isDenied: false,
@@ -319,7 +317,11 @@ export function createDialogManager(clock: Clock = defaultClock): DialogManager 
           dismiss: 'close',
         });
       }
-      queue.length = 0;
+      if (activeItem) {
+        const current = activeItem;
+        activeItem = undefined;
+        current.controller.handle.close({ dismiss: 'close' });
+      }
       notifyChange();
     },
     subscribe: observable.subscribe,

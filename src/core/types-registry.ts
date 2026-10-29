@@ -12,7 +12,7 @@ export interface TypeRegistry {
   remove(name: string): boolean;
   /** Looks a type up. */
   get(name: string): ToastTypeDefinition | undefined;
-  /** Lists all registered type names. */
+  /** Lists registered custom type names. */
   list(): string[];
 }
 
@@ -44,30 +44,19 @@ const BUILT_IN_TYPES: Record<string, ToastTypeDefinition> = {
   },
 };
 
-/** Creates a type registry pre-populated with built-in toast types. */
+/** Creates a type registry. */
 export function createTypeRegistry(): TypeRegistry {
-  const map = new Map<string, ToastTypeDefinition>();
-
-  for (const [key, val] of Object.entries(BUILT_IN_TYPES)) {
-    map.set(key, { ...val });
-  }
+  const custom = new Map<string, ToastTypeDefinition>();
 
   return {
     add(name, definition = {}) {
       if (typeof name !== 'string' || name.trim() === '') {
         throw new TypeError('glazekit: toast type name must be a non-empty string');
       }
-      map.set(name.trim(), definition);
+      custom.set(name.trim(), definition);
     },
-    remove: (name) => {
-      // Don't remove core built-ins, reset to default definition
-      if (name in BUILT_IN_TYPES) {
-        map.set(name, { ...BUILT_IN_TYPES[name] });
-        return true;
-      }
-      return map.delete(name);
-    },
-    get: (name) => map.get(name),
-    list: () => Array.from(map.keys()),
+    remove: (name) => custom.delete(name),
+    get: (name) => custom.get(name) ?? BUILT_IN_TYPES[name],
+    list: () => Array.from(custom.keys()),
   };
 }

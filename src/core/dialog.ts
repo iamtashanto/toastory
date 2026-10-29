@@ -2,189 +2,29 @@ import { createTimer } from './timer';
 import type { PausableTimer } from './timer';
 import type { Listener, Renderable, Unsubscribe } from './types';
 
-/** Input kinds supported by prompts. */
-export type DialogInputType =
-  | 'text'
-  | 'email'
-  | 'password'
-  | 'number'
-  | 'tel'
-  | 'url'
-  | 'search'
-  | 'textarea'
-  | 'select'
-  | 'radio'
-  | 'checkbox'
-  | 'range'
-  | 'date'
-  | 'time'
-  | 'datetime-local'
-  | 'week'
-  | 'month'
-  | 'file';
-
-/** Icon preset shown at the top of a dialog. */
-export type DialogIcon = 'success' | 'error' | 'warning' | 'info' | 'question' | 'custom';
-
-/** Visual tone. Tints the confirm button and the icon. */
-export type DialogTone = 'info' | 'warning' | 'danger';
-
-/** Backdrop behaviour. A custom value is a CSS background string. */
-export type DialogBackdrop = 'blur' | 'dim' | 'none' | (string & {});
-
-/** The five rows of the placement grid. */
-export type DialogRow = 'top' | 'upper' | 'center' | 'lower' | 'bottom';
-/** The three columns of the placement grid. */
-export type DialogColumn = 'start' | 'center' | 'end';
-/** One of 15 placements, row first. `center-center` is the default. */
-export type DialogPosition = `${DialogRow}-${DialogColumn}`;
-
-/** Why a dialog closed without confirming or denying. */
-export type DismissReason = 'cancel' | 'backdrop' | 'close' | 'esc' | 'timer';
-
-/** Outcome of every dialog. */
-export interface DialogResult<V = unknown> {
-  /** The confirm button (or Enter on an input) was used and hooks accepted. */
-  isConfirmed: boolean;
-  /** The deny button was used. */
-  isDenied: boolean;
-  /** The dialog closed without a decision. */
-  isDismissed: boolean;
-  /** Input value or the value returned from `preConfirm` / `preDeny`. */
-  value: V | undefined;
-  /** Present when `isDismissed` is true. */
-  dismiss: DismissReason | undefined;
-}
-
-/** One choice of a select or radio input. */
-export interface DialogChoice {
-  /** Submitted value. */
-  value: string;
-  /** Visible label. */
-  label: string;
-  /** Disables the choice. */
-  disabled?: boolean;
-}
-
-/** Configuration of one dialog button. */
-export interface DialogButton {
-  /** Whether to render the button. */
-  show?: boolean;
-  /** Visible label. */
-  label?: string;
-  /** CSS color applied as `--gk-button`. */
-  color?: string;
-  /** Accessible name when the label alone is ambiguous. */
-  aria?: string;
-}
-
-/** Imperative control over an open dialog. */
-export interface DialogHandle {
-  /** Closes the dialog. Without an argument it resolves as dismissed with reason `close`. */
-  close(result?: Partial<DialogResult>): void;
-  /** Patches dialog options while it is open. */
-  update(patch: Partial<DialogOptions>): void;
-  /** Toggles the busy state of the confirm button (or the deny button when `'deny'`). */
-  setLoading(loading: boolean | 'confirm' | 'deny'): void;
-  /** Shows an inline error message, or clears it with `undefined`. */
-  showError(message: string | undefined): void;
-  /** Auto-close timer controls. */
-  timer: {
-    /** Pauses the countdown. */
-    pause(): void;
-    /** Resumes the countdown. */
-    resume(): void;
-    /** Adds milliseconds, or subtracts when negative. */
-    add(ms: number): void;
-    /** Milliseconds left, `0` when there is no timer. */
-    remaining(): number;
-    /** Whether a timer exists and is currently paused. */
-    paused(): boolean;
-  };
-  /** Promise of the final result. */
-  readonly result: Promise<DialogResult>;
-}
-
-/** Validation result: a non-empty string is the error message, anything else means valid. */
-export type ValidateResult = string | undefined | null;
-
-/** Options shared by `confirm`, `alert`, `prompt` and `steps`. */
-export interface DialogOptions {
-  /** Heading. Used as the accessible name of the dialog. */
-  title?: string;
-  /** Plain body text. */
-  text?: string;
-  /** Raw HTML body. Sanitized by the web renderer before insertion. */
-  html?: string;
-  /** Icon preset. */
-  icon?: DialogIcon;
-  /** Custom icon content when `icon` is `custom`. Meaning depends on the adapter. */
-  iconContent?: Renderable;
-  /** Tone of the dialog. */
-  tone?: DialogTone;
-  /** Confirm button settings. */
-  confirmButton?: DialogButton;
-  /** Deny button settings. Hidden unless `show` is true. */
-  denyButton?: DialogButton;
-  /** Cancel button settings. */
-  cancelButton?: DialogButton;
-  /** Swap the visual order of the buttons. */
-  reverseButtons?: boolean;
-  /** Which control receives focus on open. */
-  focusOn?: 'confirm' | 'deny' | 'cancel' | 'input' | 'close' | 'none';
-  /** Input kind. Omit for no input. */
-  input?: DialogInputType;
-  /** Initial input value. Checkbox accepts a boolean. */
-  inputValue?: string | number | boolean;
-  /** Input placeholder. */
-  placeholder?: string;
-  /** Choices for `select` and `radio`. A record maps value to label. */
-  options?: readonly DialogChoice[] | readonly string[] | Readonly<Record<string, string>>;
-  /** Visible label of the input. */
-  inputLabel?: string;
-  /** Extra attributes for the input element, for example `min`, `max`, `step`, `accept`, `maxlength`. */
-  inputAttributes?: Readonly<Record<string, string>>;
-  /** Validates the value before confirming. Sync or async. */
-  validate?: (value: unknown, handle: DialogHandle) => ValidateResult | Promise<ValidateResult>;
-  /** Runs after validation. Return `false` to keep the dialog open, or a value to replace the result value. */
-  preConfirm?: (value: unknown, handle: DialogHandle) => unknown | Promise<unknown>;
-  /** Same as `preConfirm`, for the deny button. */
-  preDeny?: (value: unknown, handle: DialogHandle) => unknown | Promise<unknown>;
-  /** Backdrop click dismisses. Defaults to `true`. */
-  allowOutsideClick?: boolean;
-  /** Escape dismisses. Defaults to `true`. */
-  allowEscape?: boolean;
-  /** Backdrop style. */
-  backdrop?: DialogBackdrop;
-  /** Placement on the 5 by 3 grid. */
-  position?: DialogPosition;
-  /** Stretch to full width (`row`), full height (`column`) or the whole viewport (`fullscreen`). */
-  grow?: 'row' | 'column' | 'fullscreen';
-  /** Allow dragging the dialog by its header. */
-  draggable?: boolean;
-  /** CSS width of the dialog. */
-  width?: string | number;
-  /** CSS padding of the dialog. */
-  padding?: string | number;
-  /** Footer HTML (sanitized) or text. */
-  footer?: string;
-  /** Image displayed above the title. */
-  image?: { src: string; alt: string; width?: number; height?: number };
-  /** Auto-close timeout in milliseconds. */
-  timer?: number;
-  /** Show the countdown progress bar. */
-  timerProgressBar?: boolean;
-  /** Label of the close (x) button. Omit to hide the button. */
-  closeButtonLabel?: string;
-  /** Extra class name on the dialog element. */
-  className?: string;
-  /** Theme name override. */
-  theme?: string;
-  /** Called after the dialog is mounted and focus has moved. */
-  didOpen?: (handle: DialogHandle) => void;
-  /** Called right before the dialog closes. */
-  willClose?: (handle: DialogHandle, result: DialogResult) => void;
-}
+export type {
+  DialogBackdrop,
+  DialogButton,
+  DialogChoice,
+  DialogColumn,
+  DialogHandle,
+  DialogIcon,
+  DialogInputType,
+  DialogOptions,
+  DialogPosition,
+  DialogResult,
+  DialogRow,
+  DialogTone,
+  DismissReason,
+  ValidateResult,
+} from './types';
+import type {
+  DialogHandle,
+  DialogOptions,
+  DialogResult,
+  DismissReason,
+  ValidateResult,
+} from './types';
 
 /** Observable view of a running dialog. */
 export interface DialogState {
@@ -291,7 +131,7 @@ export function createDialogController(initial: DialogOptions): DialogController
     },
     showError(message) {
       if (!open) return;
-      error = message;
+      error = message ?? undefined;
       emit();
     },
     timer: {
@@ -300,7 +140,7 @@ export function createDialogController(initial: DialogOptions): DialogController
         emit();
       },
       resume: () => {
-        timer?.start();
+        timer?.resume();
         emit();
       },
       add: (ms) => {

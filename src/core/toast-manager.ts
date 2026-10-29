@@ -2,297 +2,292 @@ import { decideAriaLive, decideToastRole } from './a11y-rules';
 import type { Clock } from './clock';
 import { defaultClock } from './clock';
 import type { ConfigStore } from './config';
-import { createConfigStore, resolvePrecedence } from './config';
+import { createConfigStore } from './config';
 import { nextId, normalizeId } from './ids';
-import { createStore } from './store';
 import { createTimer } from './timer';
 import type { PausableTimer } from './timer';
 import { createTypeRegistry } from './types-registry';
 import type { TypeRegistry } from './types-registry';
 import type {
   CloseReason,
-  GlazeConfig,
   Listener,
   ToastCustomRenderer,
   ToastId,
   ToastOptions,
   ToastPatch,
-  ToastPosition,
   ToastRecord,
   Unsubscribe,
 } from './types';
 
+/** Reasons that originate from a person and are blocked on non-dismissible toasts. */
 const USER_REASONS: ReadonlySet<CloseReason> = new Set<CloseReason>(['user', 'swipe', 'click']);
+
+/** Pause reason used by `startPaused`. */
 export const MANUAL_PAUSE = 'manual';
 
+/** Options for creating a toast manager / store. */
 export interface ToastManagerOptions {
   config?: ConfigStore;
-  types?: TypeRegistry;
   clock?: Clock;
+  now?: () => number;
+  types?: TypeRegistry;
 }
 
+export type ToastStoreOptions = ToastManagerOptions;
+
+/** Input for adding a toast. */
 export interface AddToastInput extends ToastOptions {
   custom?: ToastCustomRenderer;
 }
 
-interface ToastEntry {
+interface Entry {
+  opts: ToastOptions;
+  custom: ToastCustomRenderer | undefined;
   record: ToastRecord;
-  timer?: PausableTimer;
-  cleanups: (() => void)[];
+  timer: PausableTimer;
+  dedupeKey: string | undefined;
+  exitHandle: (() => void) | ReturnType<typeof setTimeout> | undefined;
+  reason: CloseReason | undefined;
   openedFired: boolean;
   closedFired: boolean;
   dismissFired: boolean;
   autoCloseFired: boolean;
 }
 
-export interface ToastManager {
-  readonly config: ConfigStore;
-  readonly types: TypeRegistry;
-  readonly clock: Clock;
+const BUILTIN_DEFAULTS: Readonly<Record<string, ToastOptions>> = {
+  loading: { duration: 0 },
+};
 
+/** State container for toasts. Pure logic: no DOM, no framework. */
+export interface ToastManager {
   add(input: AddToastInput): ToastId;
   update(id: ToastId, patch: ToastPatch): boolean;
   dismiss(id?: ToastId, reason?: CloseReason): void;
   dismissAll(reason?: CloseReason): void;
-  pause(id: ToastId | undefined, reason?: string): void;
-  resume(id: ToastId | undefined, reason?: string): void;
+  pause(id: ToastId | undefined, reason: string): void;
+  resume(id: ToastId | undefined, reason: string): void;
+  extend(id: ToastId, ms: number): void;
   getRemaining(id: ToastId): number;
-  getToasts(): ToastRecord[];
-  getHistory(): ToastRecord[];
-  clearHistory(): void;
-  extend(id: ToastId, ms: number): boolean;
+  getToasts(): readonly ToastRecord[];
+  getHistory(): readonly ToastRecord[];
   clear(): void;
+  clearHistory(): void;
   subscribe(listener: Listener): Unsubscribe;
-  getSnapshot(): ToastRecord[];
+  readonly config: ConfigStore;
+  readonly types: TypeRegistry;
 }
 
-/** Alias for ToastManager for seamless backward compatibility. */
 export type ToastStore = ToastManager;
 
 export function createToastManager(options: ToastManagerOptions = {}): ToastManager {
-  const clock = options.clock ?? defaultClock;
   const config = options.config ?? createConfigStore();
+  const clock = options.clock ?? defaultClock;
+  const now = options.now ?? (() => clock.now());
   const types = options.types ?? createTypeRegistry();
 
-  const entries = new Map<ToastId, ToastEntry>();
-  const history: ToastRecord[] = [];
-  const observable = createStore<ToastRecord[]>([]);
+  const entries = new Map<ToastId, Entry>();
+  let order: ToastId[] = [];
+  let snapshot: readonly ToastRecord[] = [];
+  let history: readonly ToastRecord[] = [];
+  const listeners = new Set<Listener>();
 
-  const cfg = (): Readonly<GlazeConfig> => config.get();
-
-  const syncState = (): void => {
-    const list = Array.from(entries.values()).map((e) => e.record);
-    observable.setState(list, true);
+  const emit = (): void => {
+    snapshot = order.flatMap((id) => {
+      const entry = entries.get(id);
+      return entry ? [entry.record] : [];
+    });
+    for (const listener of [...listeners]) listener();
   };
 
-  const getDedupeKey = (input: ToastOptions): string | null => {
-    if (input.dedupe === false) return null;
-    if (typeof input.dedupe === 'string') return input.dedupe;
-    const type = input.type ?? 'message';
-    const title = typeof input.title === 'string' ? input.title : '';
-    const desc = typeof input.description === 'string' ? input.description : '';
-    if (!title && !desc) return null;
-    return `${type}:${title}:${desc}`;
+  const regionOf = (record: ToastRecord): string => `${record.container ?? ''}|${record.position}`;
+
+  const build = (
+    id: ToastId,
+    opts: ToastOptions,
+    previous: ToastRecord | undefined,
+    custom: ToastCustomRenderer | undefined,
+  ): ToastRecord => {
+    const cfg = config.get();
+    const type = opts.type ?? 'default';
+    const merged: ToastOptions = {
+      ...BUILTIN_DEFAULTS[type],
+      ...types.get(type)?.defaults,
+      ...opts,
+    };
+    const rawDuration = merged.duration ?? cfg.duration;
+    const duration = Number.isFinite(rawDuration) && rawDuration > 0 ? rawDuration : 0;
+    const urgent = merged.important === true || type === 'error';
+    const stamp = now();
+
+    const record: ToastRecord = {
+      ...merged,
+      id,
+      type,
+      duration,
+      position: merged.position ?? cfg.position,
+      ariaLive: merged.ariaLive ?? (urgent ? 'assertive' : 'polite'),
+      role: merged.role ?? (urgent ? 'alert' : 'status'),
+      createdAt: previous ? previous.createdAt : stamp,
+      updatedAt: stamp,
+      revision: previous ? previous.revision + 1 : 0,
+      timerEpoch: previous ? previous.timerEpoch : 0,
+      count: previous ? previous.count : 1,
+      visible: previous ? previous.visible : false,
+      dismissed: false,
+      pausedBy: previous ? previous.pausedBy : cfg.startPaused ? [MANUAL_PAUSE] : [],
+      remaining: previous ? previous.remaining : duration === 0 ? Infinity : duration,
+      custom,
+    };
+    return record;
   };
 
-  const findDedupeMatch = (key: string): ToastEntry | undefined => {
-    const now = clock.now();
-    const windowMs = cfg().dedupeWindow;
-    for (const entry of entries.values()) {
-      if (entry.record.dismissed) continue;
-      const entryKey = getDedupeKey(entry.record);
-      if (entryKey === key && now - entry.record.createdAt <= windowMs) {
-        return entry;
-      }
-    }
-    return undefined;
+  const remainingOf = (entry: Entry): number => {
+    return entry.record.duration === 0 ? Infinity : entry.timer.remaining();
   };
 
-  const countVisible = (pos: ToastPosition): number => {
-    let count = 0;
-    for (const entry of entries.values()) {
-      if (entry.record.position === pos && entry.record.visible && !entry.record.dismissed) {
-        count += 1;
-      }
-    }
-    return count;
+  const dedupeKeyOf = (opts: ToastOptions): string | undefined => {
+    if (opts.dedupe === false) return undefined;
+    if (typeof opts.dedupe === 'string') return opts.dedupe;
+    const type = opts.type ?? 'default';
+    const title = typeof opts.title === 'string' ? opts.title : '';
+    const desc = typeof opts.description === 'string' ? opts.description : '';
+    if (!title && !desc) return undefined;
+    return `${type}|${title}|${desc}`;
   };
 
-  const promoteQueue = (pos: ToastPosition): void => {
-    const max = cfg().maxVisible;
-    for (const entry of entries.values()) {
-      if (entry.record.position === pos && !entry.record.visible && !entry.record.dismissed) {
-        if (countVisible(pos) >= max) break;
-        entry.record = { ...entry.record, visible: true };
-        if (!entry.openedFired) {
-          entry.openedFired = true;
-          try {
-            entry.record.onOpen?.(entry.record);
-          } catch (err) {
-            console.error(err);
+  const promote = (): void => {
+    const cfg = config.get();
+    const counts = new Map<string, number>();
+    for (const id of order) {
+      const entry = entries.get(id);
+      if (!entry || entry.record.dismissed) continue;
+      const key = regionOf(entry.record);
+      const used = counts.get(key) ?? 0;
+      const isImportant = entry.record.important === true;
+      if (used < cfg.maxVisible || isImportant) {
+        if (!entry.record.visible) {
+          entry.record = { ...entry.record, visible: true };
+          if (!entry.record.pausedBy.length && entry.record.duration > 0) {
+            entry.timer.start();
           }
         }
-        entry.timer?.start();
+        if (!isImportant) counts.set(key, used + 1);
+      } else if (entry.record.visible) {
+        entry.record = { ...entry.record, visible: false };
+        entry.timer.pause();
       }
     }
   };
 
-  const scheduleRemoval = (id: ToastId, reason: CloseReason): void => {
-    const entry = entries.get(id);
-    if (!entry) return;
+  const finalize = (entry: Entry): void => {
+    if (typeof entry.exitHandle === 'function') {
+      entry.exitHandle();
+    } else if (entry.exitHandle !== undefined) {
+      clearTimeout(entry.exitHandle);
+    }
+    entry.timer.cancel();
+    entries.delete(entry.record.id);
+    order = order.filter((id) => id !== entry.record.id);
+    history = [{ ...entry.record, dismissed: true }, ...history].slice(0, config.get().historyLimit);
+    promote();
+    flushOpened();
+    emit();
+    if (!entry.closedFired) {
+      entry.closedFired = true;
+      try {
+        entry.record.onClose?.(entry.record, entry.reason ?? 'api');
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  };
 
-    entry.timer?.cancel();
+  const dismissEntry = (entry: Entry, reason: CloseReason): void => {
+    if (entry.record.dismissed) return;
+    if (entry.record.dismissible === false && USER_REASONS.has(reason)) return;
+    entry.reason = reason;
     entry.record = {
       ...entry.record,
       dismissed: true,
       remaining: 0,
       revision: entry.record.revision + 1,
     };
-    syncState();
+    entry.timer.cancel();
 
-    promoteQueue(entry.record.position);
+    if (!entry.dismissFired && reason !== 'auto') {
+      entry.dismissFired = true;
+      try {
+        entry.record.onDismiss?.(entry.record, reason);
+      } catch (err) {
+        console.error(err);
+      }
+    }
 
-    const cleanup = clock.setTimeout(() => {
-      const finalEntry = entries.get(id);
-      if (finalEntry) {
-        for (const cl of finalEntry.cleanups) cl();
-        entries.delete(id);
-        if (!finalEntry.closedFired) {
-          finalEntry.closedFired = true;
+    promote();
+    flushOpened();
+    emit();
+
+    const exit = config.get().exitDuration;
+    if (exit <= 0 || !entry.record.visible) {
+      finalize(entry);
+    } else {
+      entry.exitHandle = clock.setTimeout(() => finalize(entry), exit);
+    }
+  };
+
+  const makeEntry = (id: ToastId, input: AddToastInput): Entry => {
+    const { custom, ...opts } = input;
+    const record = build(id, opts, undefined, custom);
+    let entry!: Entry;
+    const timer = createTimer(
+      record.duration,
+      () => {
+        if (!entry.autoCloseFired) {
+          entry.autoCloseFired = true;
           try {
-            finalEntry.record.onClose?.(finalEntry.record, reason);
+            entry.record.onAutoClose?.(entry.record);
           } catch (err) {
             console.error(err);
           }
         }
-        history.push({ ...finalEntry.record });
-        if (history.length > cfg().historyLimit) {
-          history.shift();
-        }
-        syncState();
-      }
-    }, cfg().exitDuration);
-
-    entry.cleanups.push(cleanup);
+        dismissEntry(entry, 'auto');
+      },
+      clock,
+    );
+    if (record.pausedBy.length) timer.pause();
+    entry = {
+      opts,
+      custom,
+      record,
+      timer,
+      dedupeKey: dedupeKeyOf(opts),
+      exitHandle: undefined,
+      reason: undefined,
+      openedFired: false,
+      closedFired: false,
+      dismissFired: false,
+      autoCloseFired: false,
+    };
+    return entry;
   };
 
-  const manager: ToastManager = {
-    config,
-    types,
-    clock,
+  const restartTimer = (entry: Entry): void => {
+    entry.timer.cancel();
+    if (entry.record.duration > 0) {
+      entry.timer.reset(entry.record.duration);
+      if (entry.record.visible && !entry.record.pausedBy.length) entry.timer.start();
+    }
+    entry.record = {
+      ...entry.record,
+      timerEpoch: entry.record.timerEpoch + 1,
+      remaining: remainingOf(entry),
+    };
+  };
 
-    add(input: AddToastInput): ToastId {
-      const c = cfg();
-      const rawId = input.id;
-      const typeDef = types.get(input.type ?? 'message');
-      const defOpts = typeDef?.defaults ?? {};
-
-      // In-place update if existing active toast has same id
-      if (rawId !== undefined && entries.has(rawId)) {
-        const existing = entries.get(rawId)!;
-        if (!existing.record.dismissed) {
-          manager.update(rawId, input);
-          return rawId;
-        }
-      }
-
-      // Deduplication by content key
-      const dedupeKey = getDedupeKey(input);
-      if (dedupeKey) {
-        const match = findDedupeMatch(dedupeKey);
-        if (match) {
-          const nextCount = match.record.count + 1;
-          match.record = {
-            ...match.record,
-            count: nextCount,
-            revision: match.record.revision + 1,
-            timerEpoch: match.record.timerEpoch + 1,
-            updatedAt: clock.now(),
-          };
-          match.timer?.reset();
-          syncState();
-          return match.record.id;
-        }
-      }
-
-      const id = normalizeId(rawId);
-      const position = resolvePrecedence(
-        input.position,
-        defOpts.position,
-        c.position,
-        'top-right' as ToastPosition,
-      );
-      const duration = resolvePrecedence(
-        input.duration,
-        typeDef?.duration ?? defOpts.duration,
-        c.duration,
-        4000,
-      );
-      const important = input.important === true;
-      const ariaLive = decideAriaLive(input.type, important, input.ariaLive ?? defOpts.ariaLive);
-      const role = decideToastRole(input.type, important, input.role ?? defOpts.role);
-
-      const isUnderMax = countVisible(position) < c.maxVisible;
-      const visible = important || isUnderMax;
-
-      const record: ToastRecord = {
-        ...defOpts,
-        ...input,
-        id,
-        type: input.type ?? 'message',
-        duration,
-        position,
-        ariaLive,
-        role,
-        createdAt: clock.now(),
-        updatedAt: clock.now(),
-        revision: 0,
-        timerEpoch: 0,
-        count: 1,
-        visible,
-        dismissed: false,
-        pausedBy: c.startPaused ? [MANUAL_PAUSE] : [],
-        remaining: duration,
-        custom: input.custom,
-      };
-
-      const entry: ToastEntry = {
-        record,
-        cleanups: [],
-        openedFired: false,
-        closedFired: false,
-        dismissFired: false,
-        autoCloseFired: false,
-      };
-
-      if (duration > 0 && duration !== Infinity) {
-        entry.timer = createTimer(
-          duration,
-          () => {
-            if (!entry.autoCloseFired) {
-              entry.autoCloseFired = true;
-              try {
-                entry.record.onAutoClose?.(entry.record);
-              } catch (err) {
-                console.error(err);
-              }
-            }
-            scheduleRemoval(id, 'auto');
-          },
-          clock,
-        );
-
-        if (c.startPaused) {
-          entry.timer.pause(MANUAL_PAUSE);
-        }
-        if (visible && !c.startPaused) {
-          entry.timer.start();
-        }
-      }
-
-      entries.set(id, entry);
-
-      if (visible && !entry.openedFired) {
+  const flushOpened = (): void => {
+    for (const id of order) {
+      const entry = entries.get(id);
+      if (entry && entry.record.visible && !entry.openedFired && !entry.record.dismissed) {
         entry.openedFired = true;
         try {
           entry.record.onOpen?.(entry.record);
@@ -300,160 +295,192 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
           console.error(err);
         }
       }
+    }
+  };
 
-      syncState();
+  const pick = (id: ToastId): Entry[] => {
+    const entry = entries.get(id);
+    return entry ? [entry] : [];
+  };
+
+  const store: ToastManager = {
+    config,
+    types,
+
+    add(input: AddToastInput): ToastId {
+      const id = normalizeId(input.id);
+      const existing = entries.get(id);
+      if (existing && !existing.record.dismissed) {
+        const { custom, ...patch } = input;
+        store.update(id, patch);
+        if (custom) {
+          existing.custom = custom;
+          existing.record = { ...existing.record, custom };
+          emit();
+        }
+        return id;
+      }
+      if (existing) finalize(existing);
+
+      const key = dedupeKeyOf(input);
+      if (key !== undefined) {
+        for (const other of entries.values()) {
+          if (other.dedupeKey === key && !other.record.dismissed) {
+            other.record = {
+              ...other.record,
+              count: other.record.count + 1,
+              revision: other.record.revision + 1,
+              updatedAt: now(),
+            };
+            restartTimer(other);
+            emit();
+            return other.record.id;
+          }
+        }
+      }
+
+      const entry = makeEntry(id, input);
+      entries.set(id, entry);
+      order = [...order, id];
+      promote();
+      emit();
+      flushOpened();
       return id;
     },
 
-    update(id: ToastId, patch: ToastPatch): boolean {
+    update(id, patch) {
       const entry = entries.get(id);
       if (!entry || entry.record.dismissed) return false;
-
-      const prev = entry.record;
-      const reset = patch.resetTimer !== false;
-      const nextDuration = patch.duration !== undefined ? patch.duration : prev.duration;
-
-      entry.record = {
-        ...prev,
-        ...patch,
-        id: prev.id, // ID must remain invariant
-        position: prev.position, // position invariant
-        duration: nextDuration,
-        updatedAt: clock.now(),
-        revision: prev.revision + 1,
-        timerEpoch: reset ? prev.timerEpoch + 1 : prev.timerEpoch,
-      };
-
-      if (entry.timer && reset && nextDuration > 0 && nextDuration !== Infinity) {
-        entry.timer.reset(nextDuration);
+      const { resetTimer = true, ...rest } = patch;
+      const next: ToastOptions = { ...entry.opts };
+      if (rest.type !== undefined && rest.type !== entry.record.type) {
+        delete next.duration;
+        delete next.ariaLive;
+        delete next.role;
+        delete next.icon;
       }
-
-      syncState();
+      let changed = false;
+      for (const [key, value] of Object.entries(rest)) {
+        if (value !== undefined) {
+          if ((entry.opts as Record<string, unknown>)[key] !== value) changed = true;
+          Object.assign(next, { [key]: value });
+        }
+      }
+      if (!changed && rest.type === undefined && rest.position === undefined) {
+        return true;
+      }
+      entry.opts = next;
+      entry.dedupeKey = dedupeKeyOf(next);
+      const rebuilt = build(id, next, entry.record, entry.custom);
+      const positionChanged = rebuilt.position !== entry.record.position;
+      entry.record = rebuilt;
+      if (positionChanged) {
+        entry.record = { ...entry.record, visible: false };
+        promote();
+      }
+      if (resetTimer || positionChanged) restartTimer(entry);
+      else {
+        entry.record = {
+          ...entry.record,
+          remaining: remainingOf(entry),
+        };
+      }
+      emit();
+      flushOpened();
       return true;
     },
 
-    dismiss(id?: ToastId, reason: CloseReason = 'api'): void {
+    dismiss(id, reason = 'api') {
       if (id === undefined) {
-        for (const entryId of Array.from(entries.keys())) {
-          manager.dismiss(entryId, reason);
-        }
+        store.dismissAll(reason);
         return;
       }
+      const entry = entries.get(id);
+      if (entry) dismissEntry(entry, reason);
+    },
 
+    dismissAll(reason = 'api') {
+      for (const entry of [...entries.values()]) dismissEntry(entry, reason);
+    },
+
+    pause(id, reason) {
+      const targets = id === undefined ? [...entries.values()] : pick(id);
+      for (const entry of targets) {
+        if (entry.record.pausedBy.includes(reason)) continue;
+        entry.timer.pause(reason);
+        entry.record = {
+          ...entry.record,
+          pausedBy: [...entry.record.pausedBy, reason],
+          remaining: remainingOf(entry),
+        };
+      }
+      emit();
+    },
+
+    resume(id, reason) {
+      const targets = id === undefined ? [...entries.values()] : pick(id);
+      for (const entry of targets) {
+        if (!entry.record.pausedBy.includes(reason)) continue;
+        entry.timer.resume(reason);
+        const nextPausedBy = entry.record.pausedBy.filter((value) => value !== reason);
+        entry.record = {
+          ...entry.record,
+          pausedBy: nextPausedBy,
+          remaining: remainingOf(entry),
+        };
+        if (!nextPausedBy.length && entry.record.visible && entry.record.duration > 0) {
+          entry.timer.start();
+        }
+      }
+      emit();
+    },
+
+    extend(id, ms) {
       const entry = entries.get(id);
       if (!entry || entry.record.dismissed) return;
-
-      if (entry.record.dismissible === false && USER_REASONS.has(reason)) {
-        return;
-      }
-
-      if (!entry.dismissFired && reason !== 'auto') {
-        entry.dismissFired = true;
-        try {
-          entry.record.onDismiss?.(entry.record, reason);
-        } catch (err) {
-          console.error(err);
-        }
-      }
-
-      scheduleRemoval(id, reason);
-    },
-
-    dismissAll(reason: CloseReason = 'api'): void {
-      manager.dismiss(undefined, reason);
-    },
-
-    pause(id: ToastId | undefined, reason = 'manual'): void {
-      if (id === undefined) {
-        for (const entry of entries.values()) {
-          manager.pause(entry.record.id, reason);
-        }
-        return;
-      }
-
-      const entry = entries.get(id);
-      if (!entry || entry.record.dismissed) return;
-
-      entry.timer?.pause(reason);
-      const pausedReasons = entry.timer?.pausedReasons() ?? [reason];
+      entry.timer.add(ms);
       entry.record = {
         ...entry.record,
-        pausedBy: pausedReasons,
-        remaining: manager.getRemaining(id),
-      };
-      syncState();
-    },
-
-    resume(id: ToastId | undefined, reason = 'manual'): void {
-      if (id === undefined) {
-        for (const entry of entries.values()) {
-          manager.resume(entry.record.id, reason);
-        }
-        return;
-      }
-
-      const entry = entries.get(id);
-      if (!entry || entry.record.dismissed) return;
-
-      entry.timer?.resume(reason);
-      const pausedReasons = entry.timer?.pausedReasons() ?? [];
-      entry.record = {
-        ...entry.record,
-        pausedBy: pausedReasons,
-        remaining: manager.getRemaining(id),
-      };
-      syncState();
-    },
-
-    getRemaining(id: ToastId): number {
-      const entry = entries.get(id);
-      if (!entry || entry.record.dismissed) return 0;
-      if (entry.record.duration === 0 || entry.record.duration === Infinity) return Infinity;
-      return entry.timer?.remaining() ?? entry.record.duration;
-    },
-
-    getToasts(): ToastRecord[] {
-      return Array.from(entries.values()).map((e) => e.record);
-    },
-
-    getHistory(): ToastRecord[] {
-      return [...history];
-    },
-
-    clearHistory(): void {
-      history.length = 0;
-    },
-
-    extend(id: ToastId, ms: number): boolean {
-      const entry = entries.get(id);
-      if (!entry || entry.record.dismissed) return false;
-      entry.timer?.add(ms);
-      entry.record = {
-        ...entry.record,
-        duration: entry.record.duration + ms,
-        remaining: manager.getRemaining(id),
+        remaining: remainingOf(entry),
+        timerEpoch: entry.record.timerEpoch + 1,
         revision: entry.record.revision + 1,
       };
-      syncState();
-      return true;
+      emit();
     },
 
-    clear(): void {
+    getRemaining(id) {
+      const entry = entries.get(id);
+      return entry ? remainingOf(entry) : 0;
+    },
+
+    getToasts: () => snapshot,
+    getHistory: () => history,
+
+    clear() {
       for (const entry of entries.values()) {
-        entry.timer?.cancel();
-        for (const cl of entry.cleanups) cl();
+        entry.exitHandle?.();
+        entry.timer.cancel();
       }
       entries.clear();
-      history.length = 0;
-      syncState();
+      order = [];
+      snapshot = [];
+      emit();
     },
 
-    subscribe: observable.subscribe,
-    getSnapshot: observable.getSnapshot,
+    clearHistory() {
+      history = [];
+      emit();
+    },
+
+    subscribe(listener) {
+      listeners.add(listener);
+      return () => {
+        listeners.delete(listener);
+      };
+    },
   };
 
-  return manager;
+  return store;
 }
 
-/** Factory for backward compatibility with tests and callers expecting createToastStore. */
 export const createToastStore = createToastManager;

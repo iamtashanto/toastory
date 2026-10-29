@@ -5,7 +5,7 @@ import type {
   ToastOptions,
   ToastPatch,
 } from './types';
-import type { ToastManager } from './toast-manager';
+import type { ToastStore } from './toast-manager';
 
 function toPatch(message: string | ToastPatch): ToastPatch {
   return typeof message === 'string' ? { title: message } : message;
@@ -21,7 +21,7 @@ function errorText(error: unknown): string {
  * calls lifecycle hooks, and provides `unwrap()` returning the raw promise result.
  */
 export function runPromiseToast<T>(
-  manager: ToastManager,
+  store: ToastStore,
   input: Promise<T> | (() => Promise<T>),
   messages: PromiseMessages<T>,
   options: ToastOptions = {},
@@ -36,7 +36,7 @@ export function runPromiseToast<T>(
   const { id: requestedId, ...base } = options;
   const loadingPatch = toPatch(messages.loading);
 
-  const id: ToastId = manager.add({
+  const id: ToastId = store.add({
     ...base,
     ...(requestedId === undefined ? {} : { id: requestedId }),
     ...loadingPatch,
@@ -47,7 +47,7 @@ export function runPromiseToast<T>(
   promise
     .then((value) => {
       if (messages.success === undefined) {
-        manager.dismiss(id);
+        store.dismiss(id);
         return;
       }
       const raw =
@@ -59,11 +59,11 @@ export function runPromiseToast<T>(
       } else if (messages.description !== undefined) {
         desc = messages.description;
       }
-      manager.update(id, {
+      store.update(id, {
+        duration: base.duration ?? store.config.get().duration,
         ...patch,
         type: 'success',
         ...(desc !== undefined ? { description: desc } : {}),
-        duration: base.duration ?? manager.config.get().duration,
         resetTimer: true,
       });
     })
@@ -81,11 +81,11 @@ export function runPromiseToast<T>(
       } else if (messages.description !== undefined) {
         desc = messages.description;
       }
-      manager.update(id, {
+      store.update(id, {
+        duration: base.duration ?? store.config.get().duration,
         ...patch,
         type: 'error',
         ...(desc !== undefined ? { description: desc } : {}),
-        duration: base.duration ?? manager.config.get().duration,
         resetTimer: true,
       });
     })

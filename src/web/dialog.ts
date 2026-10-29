@@ -273,6 +273,7 @@ export function openDialog(initial: DialogOptions): DialogPromise {
     deny: denyBtn,
     cancel: cancelBtn,
     input: input?.focusTarget,
+    close: closeBtn,
     none: undefined,
   } as const;
   const target = targets[focusOn];

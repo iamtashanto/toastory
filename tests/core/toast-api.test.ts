@@ -37,6 +37,25 @@ describe('toast variants', () => {
     expect(store.getToasts()).toHaveLength(1);
   });
 
+  it('sets description from message when title is provided in options', () => {
+    const { toast, store } = createToastEngine();
+    toast('Description text', { title: 'Header' });
+    const toasts = store.getToasts();
+    expect(toasts[0]?.title).toBe('Header');
+    expect(toasts[0]?.description).toBe('Description text');
+  });
+
+  it('updates custom renderer when adding with existing id', () => {
+    const { toast, store } = createToastEngine();
+    const render1 = () => null;
+    const render2 = () => null;
+    toast.custom(render1, { id: 'cust-id' });
+    expect(store.getToasts()[0]?.custom).toBe(render1);
+
+    toast.custom(render2, { id: 'cust-id' });
+    expect(store.getToasts()[0]?.custom).toBe(render2);
+  });
+
   it('exposes the type registry on the API', () => {
     const { toast, store } = createToastEngine();
     expect(toast.types).toBe(store.types);

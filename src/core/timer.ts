@@ -148,9 +148,9 @@ export function createTimer(
     start() {
       if (done || !isLive()) return;
       started = true;
-      if (pauseReasons.size === 0) {
-        arm();
-      }
+      pauseReasons.clear();
+      arm();
+      notifyTick();
     },
     pause: pauseTimer,
     resume: resumeTimer,
@@ -196,7 +196,7 @@ export function createTimer(
       return Math.max(0, totalDuration - getRemaining());
     },
     isRunning() {
-      return started && !done && pauseReasons.size === 0;
+      return started && !done && pauseReasons.size === 0 && isLive();
     },
     isPaused() {
       return pauseReasons.size > 0;

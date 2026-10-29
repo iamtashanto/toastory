@@ -77,6 +77,38 @@ describe('dialog controller', () => {
     });
     await c.submit('confirm');
     expect(c.getState().error).toBe('exploded');
+
+    const c2 = createDialogController({
+      validate: () => {
+        // eslint-disable-next-line @typescript-eslint/only-throw-error
+        throw 'raw string error';
+      },
+    });
+    await c2.submit('confirm');
+    expect(c2.getState().error).toBe('raw string error');
+
+    const c3 = createDialogController({
+      validate: () => {
+        // eslint-disable-next-line @typescript-eslint/only-throw-error
+        throw { code: 400 };
+      },
+    });
+    await c3.submit('confirm');
+    expect(c3.getState().error).toBe('[object Object]');
+  });
+
+  it('subscribes to controller state and unsubscribes cleanly', () => {
+    const c = createDialogController({ title: 'Init' });
+    const listener = vi.fn();
+    const unsub = c.subscribe(listener);
+
+    c.handle.update({ title: 'Next' });
+    expect(listener).toHaveBeenCalled();
+
+    unsub();
+    listener.mockClear();
+    c.handle.update({ title: 'After unsub' });
+    expect(listener).not.toHaveBeenCalled();
   });
 
   it('validate is skipped when denying', async () => {

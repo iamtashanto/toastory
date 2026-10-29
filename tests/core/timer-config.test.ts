@@ -114,4 +114,24 @@ describe('type registry', () => {
     expect(record?.duration).toBe(0);
     expect(record?.closeButton).toBe(true);
   });
+
+  it('handles errors thrown in onOpen and onAutoClose safely', () => {
+    const errSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const { toast } = createToastEngine();
+
+    toast('Auto close error test', {
+      duration: 100,
+      onOpen: () => {
+        throw new Error('onOpen crash');
+      },
+      onAutoClose: () => {
+        throw new Error('onAutoClose crash');
+      },
+    });
+
+    expect(errSpy).toHaveBeenCalled();
+    vi.advanceTimersByTime(100);
+    expect(errSpy).toHaveBeenCalledTimes(2);
+    errSpy.mockRestore();
+  });
 });
