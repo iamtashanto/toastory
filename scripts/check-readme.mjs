@@ -7,6 +7,7 @@ import {
   mkdirSync,
   cpSync,
   rmSync,
+  readdirSync,
 } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -168,7 +169,8 @@ try {
   });
 
   // Step B: Unpack into test project
-  execSync(`tar -xzf "${join(tmpDir, 'toastory-0.1.0.tgz')}" -C "${tmpDir}"`, { stdio: 'pipe' });
+  const tarballName = readdirSync(tmpDir).find((f) => f.endsWith('.tgz'));
+  execSync(`tar -xzf "${join(tmpDir, tarballName)}" -C "${tmpDir}"`, { stdio: 'pipe' });
 
   const testProjectDir = join(tmpDir, 'test-project');
   mkdirSync(join(testProjectDir, 'node_modules/toastory'), { recursive: true });
