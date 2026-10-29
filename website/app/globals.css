@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "../lib/glazekit/glazekit.css";
+@import "../lib/toastory/toastory.css";
 
 :root {
   --site-bg: #0b0c12;

@@ -206,7 +206,7 @@ export const SEARCH_INDEX: SearchEntry[] = [
     title: 'Migrating from Sonner',
     category: 'Migration',
     url: '/docs/migration/sonner',
-    snippet: 'Side-by-side code comparison, option mapping table, and advantages of upgrading to glazekit.',
+    snippet: 'Side-by-side code comparison, option mapping table, and advantages of upgrading to toastory.',
   },
   {
     title: 'Migrating from SweetAlert2',
@@ -218,7 +218,7 @@ export const SEARCH_INDEX: SearchEntry[] = [
     title: 'Migrating from React-Toastify',
     category: 'Migration',
     url: '/docs/migration/react-toastify',
-    snippet: 'Zero dependency transition guide from React-Toastify to glazekit.',
+    snippet: 'Zero dependency transition guide from React-Toastify to toastory.',
   },
   {
     title: 'Migrating from react-hot-toast',

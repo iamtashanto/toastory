@@ -67,16 +67,6 @@ for (const match of readme.matchAll(imgRegex)) {
       console.error(`ERROR: Local asset not found for URL: ${url}`);
       process.exit(1);
     }
-  } else if (url.includes('raw.githubusercontent.com/glazekit/glazekit/main/')) {
-    const localRelPath = url.split('raw.githubusercontent.com/glazekit/glazekit/main/')[1];
-    const localPath = join(root, localRelPath);
-    try {
-      await access(localPath, constants.R_OK);
-      console.log(`✓ Image verified against local repository asset: ${localRelPath}`);
-    } catch {
-      console.error(`ERROR: Local asset not found for URL: ${url}`);
-      process.exit(1);
-    }
   }
 }
 
@@ -96,10 +86,10 @@ for (const match of readme.matchAll(linkRegex)) {
 
 // Explicit allow-list for sites that are pre-release or not yet live on production DNS
 const ALLOW_LIST = [
-  'https://glazekit.dev',
-  'https://glazekit.dev/playground',
-  'https://glazekit.dev/themes',
-  'https://glazekit.dev/docs/migration',
+  'https://toastory.tashanto.com',
+  'https://toastory.tashanto.com/playground',
+  'https://toastory.tashanto.com/themes',
+  'https://toastory.tashanto.com/docs/migration',
 ];
 
 // Check if network is accessible
@@ -142,13 +132,13 @@ if (!networkAvailable) {
     try {
       let res = await fetch(url, {
         method: 'HEAD',
-        headers: { 'User-Agent': 'glazekit-readme-checker/1.0' },
+        headers: { 'User-Agent': 'toastory-readme-checker/1.0' },
         signal: AbortSignal.timeout(6000),
       });
       if (res.status === 405) {
         res = await fetch(url, {
           method: 'GET',
-          headers: { 'User-Agent': 'glazekit-readme-checker/1.0' },
+          headers: { 'User-Agent': 'toastory-readme-checker/1.0' },
           signal: AbortSignal.timeout(6000),
         });
       }
@@ -280,11 +270,11 @@ import 'toastory/themes/ios-glass.css';
 console.log(GlazeToaster, toast);
 `,
     'nuxt.ts': `
-import { glazekitPlugin } from 'toastory/vue';
+import { toastoryPlugin } from 'toastory/vue';
 import 'toastory/themes/ios-glass.css';
 
 export default defineNuxtPlugin((nuxtApp) => {
-  nuxtApp.vueApp.use(glazekitPlugin);
+  nuxtApp.vueApp.use(toastoryPlugin);
 });
 `,
     'angular.ts': `

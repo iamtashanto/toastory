@@ -8,7 +8,7 @@ Thank you for your interest in contributing to toastory!
 
    ```bash
    git clone https://github.com/iamtashanto/toastory.git
-   cd glazekit
+   cd toastory
    ```
 
 2. **Install dependencies**:

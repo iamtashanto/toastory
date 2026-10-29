@@ -315,7 +315,7 @@ describe('dialogs theme: 12 variants x 2 modes axe-core compliance', () => {
             variant: 'type-to-confirm',
             title: 'Delete Repository',
             text: 'Please type the repository name to confirm.',
-            confirmText: 'glazekit-repo',
+            confirmText: 'toastory-repo',
           });
         } else if (variant === 'session-countdown') {
           ui.confirm({

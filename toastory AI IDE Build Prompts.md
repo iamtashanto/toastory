@@ -1,10 +1,10 @@
-# glazekit AI IDE Build Prompts
+# toastory AI IDE Build Prompts
 
 Oct 29, 2026 · @TA Shanto
 
 ## How to use this pack
 
-Ei doc e 12 ta prompt ache (Prompt 0 theke 11) + ekta master context + final audit. AI IDE (Cursor, Claude Code, Windsurf, Copilot Agent, Cline, jai hok) e ekটা ekটা kore dite hobe. Prompt gulo English e, karon AI IDE English e best kaj kore. Assumption: language TypeScript, package naam `glazekit`. Alada kichu hole Master context e change koro.
+Ei doc e 12 ta prompt ache (Prompt 0 theke 11) + ekta master context + final audit. AI IDE (Cursor, Claude Code, Windsurf, Copilot Agent, Cline, jai hok) e ekটা ekটা kore dite hobe. Prompt gulo English e, karon AI IDE English e best kaj kore. Assumption: language TypeScript, package naam `toastory`. Alada kichu hole Master context e change koro.
 
 Niyom (eta na manle quality noshto hobe):
 
@@ -23,10 +23,10 @@ Prompt er structure sob jaygay ekই: **Goal, Read first, Tasks, Constraints, Ac
 Ei puro text ta repo root e `AGENTS.md` e rakho. Eta project er constitution.
 
 ```text
-# glazekit — project constitution
+# toastory — project constitution
 
 ## What we are building
-glazekit is ONE npm package (name: `glazekit`) that ships a complete UI feedback toolkit: toast notifications, confirm / prompt / alert dialogs, action sheet, bottom sheet, loading overlay and multi-step dialogs. Same API on every platform: plain JS, React, Next.js, Vue, Nuxt, Angular, Svelte, Electron, React Native (Expo + bare).
+toastory is ONE npm package (name: `toastory`) that ships a complete UI feedback toolkit: toast notifications, confirm / prompt / alert dialogs, action sheet, bottom sheet, loading overlay and multi-step dialogs. Same API on every platform: plain JS, React, Next.js, Vue, Nuxt, Angular, Svelte, Electron, React Native (Expo + bare).
 It must contain every feature of the market leaders (Sonner, React-Toastify, react-hot-toast, Toastify-js, Notyf, SweetAlert2) AND a premium Apple-style glass design. This is a full professional release, not an MVP. Quality bar: a popular open-source library with docs, tests and accessibility that other maintainers would respect.
 
 ## Hard rules
@@ -42,14 +42,14 @@ It must contain every feature of the market leaders (Sonner, React-Toastify, rea
 10. No emoji in code or comments. No placeholder / TODO / fake implementations. If something cannot be done, say so and stop.
 
 ## Public API contract (do not rename without asking)
-import { ui } from 'glazekit'
+import { ui } from 'toastory'
 ui.toast(message, opts) and ui.toast.success|error|info|warning|loading|message(message, opts) -> id
 ui.toast.promise(promiseOrFn, { loading, success, error, description, finally }) -> id + unwrap()
 ui.toast.custom(renderer, opts), ui.toast.update(id, patch), ui.toast.dismiss(id?), ui.toast.dismissAll(), ui.toast.getToasts(), ui.toast.getHistory(), ui.toast.types.add(name, def)
 ui.confirm(opts) / ui.alert(opts) / ui.prompt(opts) / ui.steps(steps) / ui.sheet(opts) / ui.bottomSheet(opts) / ui.loading(opts)
 Dialog result: { isConfirmed, isDenied, isDismissed, value, dismiss }  where dismiss is 'cancel' | 'backdrop' | 'close' | 'esc' | 'timer'
 ui.configure({ theme, mode: 'light'|'dark'|'auto', position, duration, maxVisible, gap, stack, dir, hotkey, pauseOn, container, shadow, ... })
-Subpaths: glazekit (web + core), glazekit/core, glazekit/react, glazekit/vue, glazekit/angular, glazekit/svelte, glazekit/native, glazekit/themes/<name>.css
+Subpaths: toastory (web + core), toastory/core, toastory/react, toastory/vue, toastory/angular, toastory/svelte, toastory/native, toastory/themes/<name>.css
 
 ## Toast options (must all exist)
 id, type, title, description, icon, avatar, duration (0 = persistent), position, action {label,onClick}, cancel {label,onClick}, closeButton, dismissible, closeOnClick, progress (show/hide), pauseOn ['hover','focus','hidden'], swipe + swipeDirections, dragThreshold, richColors, invert, theme, className, classNames{}, style, unstyled, html (sanitised), href + target, ariaLive, role, dedupe, important, onOpen, onClose, onDismiss, onAutoClose, container id, dir.
@@ -81,14 +81,14 @@ Ei file e kono option bad dewa jabe na. Jodi tumi aro feature chao, ekhane add k
 
 ```text
 GOAL
-Create the empty but fully working repository for the `glazekit` npm package: tooling, build, test, lint, CI, release config. No product code yet except a trivial exported constant so the pipeline can be verified.
+Create the empty but fully working repository for the `toastory` npm package: tooling, build, test, lint, CI, release config. No product code yet except a trivial exported constant so the pipeline can be verified.
 
 READ FIRST
 AGENTS.md (the whole file).
 
 TASKS
 1. Initialise a git repo with a single package at the root (no monorepo tooling). Node 20+ engines. Use npm.
-2. package.json: name `glazekit`, version 0.0.0, license MIT, type module, sideEffects set so only CSS files count as side-effectful, files [dist, README.md, LICENSE], publishConfig {access: public, provenance: true}. Define the `exports` map for these subpaths with types/import/require conditions: `.`, `./core`, `./react`, `./vue`, `./angular`, `./svelte`, `./native`, and `./themes/*.css`. Each entry should map to dist output we will create later; create tiny placeholder source files in src/{core,web,react,vue,angular,svelte,native}/index.ts so the build succeeds.
+2. package.json: name `toastory`, version 0.0.0, license MIT, type module, sideEffects set so only CSS files count as side-effectful, files [dist, README.md, LICENSE], publishConfig {access: public, provenance: true}. Define the `exports` map for these subpaths with types/import/require conditions: `.`, `./core`, `./react`, `./vue`, `./angular`, `./svelte`, `./native`, and `./themes/*.css`. Each entry should map to dist output we will create later; create tiny placeholder source files in src/{core,web,react,vue,angular,svelte,native}/index.ts so the build succeeds.
 3. peerDependencies for react, react-dom, vue, @angular/core, svelte, react-native, react-native-reanimated, expo-blur, expo-haptics, dompurify; ALL marked optional in peerDependenciesMeta. devDependencies for each of them (latest stable) so wrappers can be type-checked.
 4. tsconfig.json: strict, noUncheckedIndexedAccess, exactOptionalPropertyTypes, verbatimModuleSyntax, target ES2020, moduleResolution bundler. Separate tsconfig for tests.
 5. tsup config: one build per entry (core, web, react, vue, angular, svelte, native), formats esm + cjs, dts true, treeshake true, splitting for shared chunks, external for every peer, `use client` banner on the react entry via esbuild banner. CSS themes copied/processed to dist/themes/*.css (use a small build script, no heavy deps).
@@ -112,7 +112,7 @@ ACCEPTANCE CRITERIA
 - Lint fails if someone imports `react` inside src/core (prove it with a temporary test, then remove it).
 
 WHEN DONE
-Show the final tree, the output of `npm run check`, and a suggested commit message `chore: scaffold glazekit repository`.
+Show the final tree, the output of `npm run check`, and a suggested commit message `chore: scaffold toastory repository`.
 ```
 
 ## Prompt 1: Core engine
@@ -226,7 +226,7 @@ HTML/CSS ar screenshot e mile na gele **HTML/CSS ke truth dhore** AI ke kaj kort
 
 ```text
 GOAL
-Import the approved design references in /design-refs and rebuild every design as a first-class glazekit theme, variant or component. The screenshots and the original HTML/CSS are the design source of truth. The result must look the same as the references, be fully tokenised, accessible, framework-agnostic and tree-shakable.
+Import the approved design references in /design-refs and rebuild every design as a first-class toastory theme, variant or component. The screenshots and the original HTML/CSS are the design source of truth. The result must look the same as the references, be fully tokenised, accessible, framework-agnostic and tree-shakable.
 
 READ FIRST
 1. AGENTS.md (all of it).
@@ -266,14 +266,14 @@ TASKS
    - Icon chips per tone (warning, danger, success, info, lock, upload, pencil, clock, shield) as our own SVG icons, tone-aware backgrounds in light and dark.
 5. Implement every item in the inventory so that, at the reference viewport size, spacing, radius, font size/weight, colours, blur and shadows match within 2 px / visually indistinguishable. Use system-ui font stacks only; do not embed or fetch fonts.
 6. Visual verification, mandatory:
-   a. Build examples/design-compare: a page that shows each reference image (from design-refs) next to the live glazekit render of the same item, at the same scale, with a diff overlay slider.
-   b. Where an original HTML file exists, add Playwright tests that render the original HTML and the glazekit component in the same viewport and background and compare with pixelmatch; threshold 3 percent of differing pixels (document the exceptions and why).
+   a. Build examples/design-compare: a page that shows each reference image (from design-refs) next to the live toastory render of the same item, at the same scale, with a diff overlay slider.
+   b. Where an original HTML file exists, add Playwright tests that render the original HTML and the toastory component in the same viewport and background and compare with pixelmatch; threshold 3 percent of differing pixels (document the exceptions and why).
    c. Run it, show me the results table (item, diff percent, pass/fail) and fix failures until all pass or are justified.
 7. Galleries. Recreate the layout of the reference sheets as examples/themes-gallery: numbered cards, a Replay button per card, a Toggle page theme button, a busy gradient background selector. Stacked and grouped demos must really expand on hover/focus.
 8. Accessibility pass on the designs (do not copy a11y weaknesses from the references): ensure text and icon contrast meets AA in light and dark for every variant, adjusting tokens if necessary and recording each deviation from the reference in docs/design-inventory.md; keyboard access for every button, switch, OTP box and sheet; sensible roles (status/alert/dialog/alertdialog/switch/progressbar with aria-valuenow); reduced-motion alternatives for shake, spring, island morph, countdown ring and gradient animations; forced-colors and reduced-transparency fallbacks to solid surfaces.
 9. Brand and asset hygiene: no third-party logos, app icons, copyrighted avatars, proprietary fonts or screenshots in the shipped package. Demo apps in examples use generic SVG icons and invented names.
 10. Budgets: each theme CSS < 4 KB gzip (dialog styles in a separate file); island, ring, OTP, countdown, grouping and sheet logic must be lazy chunks so a plain toast import stays within the size budget in AGENTS.md. Add size-limit entries.
-11. Update AGENTS.md (new options, variants, theme names, budgets), docs/parity.md and the TypeScript types, TSDoc and tests for every new option. Mirror the new options in React, Vue, Angular, Svelte wrappers (they must only forward options, no logic) and implement the closest equivalents in glazekit/native; list in docs what is web-only (backdrop-filter nuances, island morph) and what fallback native uses.
+11. Update AGENTS.md (new options, variants, theme names, budgets), docs/parity.md and the TypeScript types, TSDoc and tests for every new option. Mirror the new options in React, Vue, Angular, Svelte wrappers (they must only forward options, no logic) and implement the closest equivalents in toastory/native; list in docs what is web-only (backdrop-filter nuances, island morph) and what fallback native uses.
 
 CONSTRAINTS
 - No copying of code from any third-party library or website; we recreate the look from the provided HTML/CSS (which is ours) and screenshots.
@@ -297,7 +297,7 @@ Keno eta Prompt 3 er age: oi prompt e theme engine ar token system banano hoy, a
 
 ```markdown
 GOAL
-Build the theme system and the signature `ios-glass` and `liquid-glass` themes with premium quality. This is the visual identity of glazekit.
+Build the theme system and the signature `ios-glass` and `liquid-glass` themes with premium quality. This is the visual identity of toastory.
 
 READ FIRST
 AGENTS.md (theme tokens), src/web, themes/_base.css.
@@ -458,7 +458,7 @@ Paste the parity table summary and commit `feat(themes): complete theme catalog 
 
 ```text
 GOAL
-Build `glazekit/react`: a thin, idiomatic React 18/19 binding that works in Vite, Create React App-style setups, Next.js App Router, Next.js Pages Router and Remix.
+Build `toastory/react`: a thin, idiomatic React 18/19 binding that works in Vite, Create React App-style setups, Next.js App Router, Next.js Pages Router and Remix.
 
 READ FIRST
 AGENTS.md, src/core, src/web.
@@ -470,9 +470,9 @@ TASKS
    - `useToasts()` built on `useSyncExternalStore` returning the live list (headless use) and `useToast()` returning stable bound methods.
    - Render-prop / JSX support: `ui.toast.custom((t) => <MyToast {...t} />)`, JSX in title/description/icon/action label. JSX is rendered into the toast DOM via createRoot/portals without leaking roots (unmount on dismiss).
    - `useConfirm()`, `usePrompt()` helpers returning promise functions; `<ConfirmDialog>` declarative variant controlled by `open` for people who prefer state-driven UI.
-2. Entry file begins with the `'use client'` directive (via build banner) and each component file that needs it is client-only. Provide `glazekit/react/server` safe exports (types and `ui` stub) so Server Components can import types without errors.
+2. Entry file begins with the `'use client'` directive (via build banner) and each component file that needs it is client-only. Provide `toastory/react/server` safe exports (types and `ui` stub) so Server Components can import types without errors.
 3. Next.js specifics: SSR renders nothing for toasts; no hydration mismatch (verify by running Next with strict mode); toasts triggered in Server Actions: provide a documented pattern (return a serialisable `{ toast: {...} }` object or use a small `<ToastFromServer>` component / `useActionState` helper that fires on the client). Works with Turbopack and webpack, with React Compiler on, and with StrictMode double mounting.
-4. Theme CSS import strategy documented: `import 'glazekit/themes/ios-glass.css'` in layout.tsx; also support auto-injected CSS option (`injectStyles: true`) for users who cannot import CSS.
+4. Theme CSS import strategy documented: `import 'toastory/themes/ios-glass.css'` in layout.tsx; also support auto-injected CSS option (`injectStyles: true`) for users who cannot import CSS.
 5. Types: ensure generics flow (prompt input types), `ui.toast.promise` infers result type, JSX content typed as ReactNode.
 6. Examples: examples/vite-react, examples/next-app-router, examples/next-pages with a page demonstrating every feature (toast types, promise, confirm, prompt, steps, sheets, theme switcher, RTL).
 
@@ -503,19 +503,19 @@ AGENTS.md, src/core, src/web, src/react (for naming parity).
 
 Do these four as four separate sub-tasks in order, running `npm run check:all` and committing after each.
 
-A. VUE 3 + NUXT (`glazekit/vue`)
+A. VUE 3 + NUXT (`toastory/vue`)
 1. `GlazePlugin` (app.use) installing the instance via provide/inject, optional global `$glaze`. Component `<GlazeToaster>` with the same props as the React Toaster. Composables: `useUI()`, `useToasts()` (shallowRef bound to the store, unsubscribed on scope dispose), `useConfirm()`, `usePrompt()`.
 2. Custom content via slots and render functions (`h()`), rendered into toast DOM with `render()`/Teleport without leaking app instances.
-3. Nuxt: a small module `glazekit/nuxt` (entry in package exports) that registers the plugin client-only, auto-imports composables, injects chosen theme CSS from module options. SSR safe.
+3. Nuxt: a small module `toastory/nuxt` (entry in package exports) that registers the plugin client-only, auto-imports composables, injects chosen theme CSS from module options. SSR safe.
 4. Example: examples/vite-vue and examples/nuxt.
 
-B. ANGULAR (`glazekit/angular`) for Angular 16+ (standalone first)
-1. `provideGlazekit(config)` environment providers, `GlazeService` (injectable) wrapping the `ui` API with NgZone-aware callbacks (run user callbacks inside the zone, run renderer animation work outside it for performance), `GlazeToasterComponent` (standalone, OnPush) for scoped containers, signals API (`toasts = signal<...>`) plus RxJS Observable `toasts$`.
+B. ANGULAR (`toastory/angular`) for Angular 16+ (standalone first)
+1. `provideToastory(config)` environment providers, `GlazeService` (injectable) wrapping the `ui` API with NgZone-aware callbacks (run user callbacks inside the zone, run renderer animation work outside it for performance), `GlazeToasterComponent` (standalone, OnPush) for scoped containers, signals API (`toasts = signal<...>`) plus RxJS Observable `toasts$`.
 2. Support custom content via `TemplateRef` and component classes (create components dynamically with `createComponent` and attach to the toast DOM; destroy on dismiss).
 3. Packaging: must be consumable without ng-packagr partial-Ivy issues; verify by building an Angular 16, 17, 18, 19 and 20 example app (use a script that matrix-installs) in both SSR (Angular Universal/SSR) and CSR mode. No `window` access on server.
-4. Example: examples/angular (standalone) and note NgModule compatibility with `GlazekitModule.forRoot()`.
+4. Example: examples/angular (standalone) and note NgModule compatibility with `ToastoryModule.forRoot()`.
 
-C. SVELTE (`glazekit/svelte`) for Svelte 4 and 5
+C. SVELTE (`toastory/svelte`) for Svelte 4 and 5
 1. `<Toaster />` component, a `toasts` readable store (Svelte 4 store contract works in Svelte 5), `getUI()`, helpers for confirm/prompt. For Svelte 5 also export rune-friendly `useToasts()` returning reactive state.
 2. Custom content via snippets (Svelte 5) and component constructors (Svelte 4/5) mounted/unmounted correctly.
 3. SvelteKit SSR safe. Example: examples/sveltekit.
@@ -538,7 +538,7 @@ Give a table: framework, entry, bytes gzip, supported versions tested, plus four
 
 ```text
 GOAL
-Build `glazekit/native`: a React Native (Expo and bare, New Architecture compatible, iOS + Android) renderer that shares src/core with the web build but has its own native UI, including an iOS glass look.
+Build `toastory/native`: a React Native (Expo and bare, New Architecture compatible, iOS + Android) renderer that shares src/core with the web build but has its own native UI, including an iOS glass look.
 
 READ FIRST
 AGENTS.md, src/core, src/react (hooks naming), and the API contract. The native entry may only import from src/core and React Native, never from src/web.
@@ -567,7 +567,7 @@ Jest + React Native Testing Library: provider mounting, toast lifecycle, dialog 
 
 ACCEPTANCE CRITERIA
 - Expo example runs on iOS simulator and Android emulator showing all components; screenshots attached to docs.
-- `npm run check` green including native unit tests; bundle size for glazekit/native reported.
+- `npm run check` green including native unit tests; bundle size for toastory/native reported.
 
 WHEN DONE
 List each optional peer, what degrades without it, and commit `feat(native): React Native renderer`.
@@ -583,11 +583,11 @@ READ FIRST
 AGENTS.md and docs/parity.md.
 
 TASKS
-1. ELECTRON: create examples/electron (main + preload + renderer, contextIsolation on, sandbox on, no nodeIntegration). Show toasts and dialogs in the renderer. Verify `backdrop-filter` glass works, Esc/focus behaviour matches the browser, hotkey does not collide with Electron menu accelerators, and notifications stay inside the renderer window. Add an optional helper `glazekit/electron` exposing a typed `bridge` that lets the main process request a toast/dialog via IPC (`ipcMain` side helper + preload exposure), with strict channel allowlists and input validation. Document native vibrancy/mica as an optional window-level enhancement in docs (we do not ship native code).
+1. ELECTRON: create examples/electron (main + preload + renderer, contextIsolation on, sandbox on, no nodeIntegration). Show toasts and dialogs in the renderer. Verify `backdrop-filter` glass works, Esc/focus behaviour matches the browser, hotkey does not collide with Electron menu accelerators, and notifications stay inside the renderer window. Add an optional helper `toastory/electron` exposing a typed `bridge` that lets the main process request a toast/dialog via IPC (`ipcMain` side helper + preload exposure), with strict channel allowlists and input validation. Document native vibrancy/mica as an optional window-level enhancement in docs (we do not ship native code).
 2. CROSS-BROWSER: Playwright projects chromium, firefox, webkit, plus mobile emulation (iPhone, Pixel). Fix browser-specific issues (Safari backdrop-filter prefix, Firefox scroll lock, iOS viewport units, `<dialog>` quirks).
 3. ACCESSIBILITY AUDIT: automated axe on every theme x mode x component state. Then write a manual test script `docs/a11y-checklist.md` (NVDA + Firefox/Chrome, JAWS note, VoiceOver macOS Safari, VoiceOver iOS, TalkBack) with expected announcements for toast types, dialogs, validation errors, steps, sheets. Implement any fixes revealed by automated tests: names, roles, focus order, live-region timing (insert container before content), contrast, target size >= 24x24 CSS px (44 on touch), zoom to 400% without loss, text spacing override, forced-colors support, reduced-motion and reduced-transparency.
 4. PERFORMANCE: benchmark suite (tests/perf) that creates 1, 10, 50 and 200 toasts and opens/closes dialogs 100 times, measuring scripting time, long tasks, layout count and heap growth with Playwright tracing. Fix leaks (listeners, timers, ResizeObserver, detached nodes). Budgets: no long task > 50 ms for 50 toasts, zero detached DOM nodes after dismissAll, heap stable after 1000 create/dismiss cycles. Publish results into docs/benchmarks.md.
-5. BUNDLE: run size-limit for every entry; verify tree-shaking with a test that bundles `import { ui } from 'glazekit'; ui.toast('x')` using esbuild/rollup and asserts dialog and sheet code absent. Check ESM/CJS dual-package hazards (single store instance across formats), verify `publint` and `@arethetypeswrong/cli` pass for every subpath.
+5. BUNDLE: run size-limit for every entry; verify tree-shaking with a test that bundles `import { ui } from 'toastory'; ui.toast('x')` using esbuild/rollup and asserts dialog and sheet code absent. Check ESM/CJS dual-package hazards (single store instance across formats), verify `publint` and `@arethetypeswrong/cli` pass for every subpath.
 6. SECURITY: review all places that touch HTML (sanitiser defaults, `html` option, attribute allowlist for `inputAttributes`, `href` protocol allowlist: http, https, mailto, tel; block javascript:), Shadow DOM CSS injection with CSP nonce support (`cspNonce` option), no eval, no inline scripts, Trusted Types compatible. Add tests with XSS payload corpus.
 7. COMPAT MATRIX: document and test supported browsers (last 2 versions of evergreen browsers, Safari 15.4+), React 18/19, Vue 3.3+, Angular 16-20, Svelte 4/5, Node LTS, Expo SDK latest.
 
@@ -631,11 +631,11 @@ Give the docs URL structure, Lighthouse scores, release checklist status, commit
 
 ## Prompt R: npm page and README quality (Prompt 11 er sathe)
 
-Tomar `nagad-client` npm page reference: TypeScript badge, 0 dependencies, badges (CI passing, npm version, license), provenance ("Built and signed on GitHub Actions"), repository + homepage (docs site) link, ekta "Why" section, install section. Glazekit er page o ei standard e, ar tar theke ektu beshi hobe.
+Tomar `nagad-client` npm page reference: TypeScript badge, 0 dependencies, badges (CI passing, npm version, license), provenance ("Built and signed on GitHub Actions"), repository + homepage (docs site) link, ekta "Why" section, install section. Toastory er page o ei standard e, ar tar theke ektu beshi hobe.
 
 ```text
 GOAL
-Make the glazekit npm page and GitHub repository look and verify like a trusted professional package, matching the quality shown in design-refs/npm-page-reference.png (view it first).
+Make the toastory npm page and GitHub repository look and verify like a trusted professional package, matching the quality shown in design-refs/npm-page-reference.png (view it first).
 
 READ FIRST
 AGENTS.md, README.md, package.json, .github/workflows/*, design-refs/npm-page-reference.png.
@@ -656,7 +656,7 @@ TASKS
    - Keep the README under about 350 lines; deep content goes to the docs site.
 4. README verification script `npm run readme:check`: validates that all links are absolute and reachable (except localhost), all code blocks compile or are marked `text`, images exist, and badge URLs resolve.
 5. Repo polish: description and topics (npm package topics, frameworks), social preview image (1280x640 generated from the theme gallery), `FUNDING.yml` only if applicable, issue forms (bug, feature, question), PR template, SECURITY.md with a contact, CODEOWNERS, release notes template, `docs/` deployed and set as `homepage`.
-6. First publish procedure `docs/release-checklist.md`: reserve the name with a 0.0.1 placeholder only if the name is free (`npm view glazekit` returns 404), then `1.0.0-beta.0` on the `next` tag, verify the npm page (badges, README render, provenance, files list, types), then promote to `latest` for 1.0.0. Include rollback (`npm deprecate`), unpublish window rules and how to verify `npm pack` contents.
+6. First publish procedure `docs/release-checklist.md`: reserve the name with a 0.0.1 placeholder only if the name is free (`npm view toastory` returns 404), then `1.0.0-beta.0` on the `next` tag, verify the npm page (badges, README render, provenance, files list, types), then promote to `latest` for 1.0.0. Include rollback (`npm deprecate`), unpublish window rules and how to verify `npm pack` contents.
 7. Adoption signals the page can show honestly: provenance, 0 dependencies, types, size badge, CI, license, docs link, changelog link. Do not fake downloads, stars, testimonials or statistics.
 
 ACCEPTANCE CRITERIA
@@ -670,22 +670,22 @@ Show the final package.json metadata block, the README outline, and commit `docs
 
 ## Prompt W: Professional website and full docs
 
-Ei prompt ta Prompt 11 er docs site ongsho (item 1 theke 4) ke **replace** kore, karon eta beshi detail e. Prompt 11 er baki ongsho (README, release prep) ar Prompt R agey moto thakbe. Chalanor shomoy: Prompt 10 er por (jokhon package, theme, dialog, framework wrapper shob ready), Prompt D ar Prompt R er por. Karon website nijei glazekit use kore baniye dekhabe, tai package ready na hole website banano jabe na.
+Ei prompt ta Prompt 11 er docs site ongsho (item 1 theke 4) ke **replace** kore, karon eta beshi detail e. Prompt 11 er baki ongsho (README, release prep) ar Prompt R agey moto thakbe. Chalanor shomoy: Prompt 10 er por (jokhon package, theme, dialog, framework wrapper shob ready), Prompt D ar Prompt R er por. Karon website nijei toastory use kore baniye dekhabe, tai package ready na hole website banano jabe na.
 
 **Age tomar kache theke ja lagbe (prompt er shurute AI ke bole dao ba prompt e boshiye dao):**
 
-| Jinish                   | Example                                                                       |
-| ------------------------ | ----------------------------------------------------------------------------- |
-| Domain / site URL        | `glazekit.dev` (na thakle placeholder, AI `SITE_URL` env variable rakhbe)     |
-| GitHub repo URL          | `github.com/<username>/glazekit`                                              |
-| Logo                     | SVG file (na thakle AI ekta simple wordmark baniye dibe, `design-refs/logo/`) |
-| Author / maintainer naam | tomar naam                                                                    |
-| Brand colour             | ekta accent colour (na thakle AI glass-friendly blue-violet nibe)             |
-| Language                 | English (recommended); Bangla pore add korte paro                             |
+| Jinish                   | Example                                                                            |
+| ------------------------ | ---------------------------------------------------------------------------------- |
+| Domain / site URL        | `toastory.tashanto.com` (na thakle placeholder, AI `SITE_URL` env variable rakhbe) |
+| GitHub repo URL          | `github.com/<username>/toastory`                                                   |
+| Logo                     | SVG file (na thakle AI ekta simple wordmark baniye dibe, `design-refs/logo/`)      |
+| Author / maintainer naam | tomar naam                                                                         |
+| Brand colour             | ekta accent colour (na thakle AI glass-friendly blue-violet nibe)                  |
+| Language                 | English (recommended); Bangla pore add korte paro                                  |
 
 ```text
 GOAL
-Build the official glazekit website: a premium marketing site plus complete documentation, plus a live playground, all in one deployable project. The site must show every feature of the package properly, with real working demos powered by the built glazekit package itself (dogfooding). It must feel like the website of a serious, popular open-source library: fast, beautiful, accessible, searchable, and trustworthy.
+Build the official toastory website: a premium marketing site plus complete documentation, plus a live playground, all in one deployable project. The site must show every feature of the package properly, with real working demos powered by the built toastory package itself (dogfooding). It must feel like the website of a serious, popular open-source library: fast, beautiful, accessible, searchable, and trustworthy.
 
 READ FIRST
 1. AGENTS.md (all of it), docs/parity.md, docs/design-inventory.md, docs/a11y-checklist.md, docs/benchmarks.md, docs/security.md.
@@ -698,7 +698,7 @@ Before code, write website/PLAN.md with: chosen stack and why, sitemap, page-by-
 STACK (decide and justify, default below)
 - Astro + Starlight for docs (static output, fast, built-in search via Pagefind, i18n-ready, dark/light, MDX). Custom Astro pages and islands for the marketing home, playground and gallery. Framework islands (React for the playground UI) are allowed only where interactivity needs them and must be lazy (client:visible / client:idle).
 - API reference generated by TypeDoc (typedoc-plugin-markdown) from TSDoc into the docs on every build, so the reference cannot drift.
-- The site installs glazekit from the packed tarball (`npm pack`) or workspace link, never from source paths, so we test what users get.
+- The site installs toastory from the packed tarball (`npm pack`) or workspace link, never from source paths, so we test what users get.
 - Node 20+, TypeScript strict, ESLint, Prettier, the same `npm run` conventions as the package. Website lives in /website with its own package.json; root scripts: `website:dev`, `website:build`, `website:check`.
 
 DESIGN DIRECTION
@@ -712,7 +712,7 @@ DESIGN DIRECTION
 SITEMAP AND PAGE CONTENT
 1. Home `/`
    - Hero: headline stating the promise (all feedback UI in one package, premium glass, every framework), short subline, primary CTA (Get started), secondary CTA (Open playground), copyable install command with package-manager tabs (npm, pnpm, yarn, bun), small badge row (npm version, bundle size, types, zero dependencies, license, CI, provenance).
-   - Live hero demo: a real glazekit toast and dialog stack running on an animated mesh background; buttons that fire different toast types, a dialog and a promise toast; theme switcher chips that restyle everything instantly (ios-glass, liquid-glass, essentials, showcase, neon, sweet...). Works with keyboard and touch.
+   - Live hero demo: a real toastory toast and dialog stack running on an animated mesh background; buttons that fire different toast types, a dialog and a promise toast; theme switcher chips that restyle everything instantly (ios-glass, liquid-glass, essentials, showcase, neon, sweet...). Works with keyboard and touch.
    - "Every platform" section: framework tabs (JavaScript, React, Next.js, Vue, Nuxt, Angular, Svelte, Electron, React Native) showing the same 8-line quick start for each, with copy buttons, and a statement that API and options are identical everywhere.
    - Feature sections with live, interactive mini demos (not screenshots): toasts (types, promise, update, actions, progress, stacking and hover expand, swipe), dialogs (confirm, danger, type-to-confirm, prompt with all input types, OTP, countdown, bottom sheet, action sheet, steps), themes gallery strip with live theme switching, accessibility (keyboard-only demo, screen reader live-region explanation, reduced motion toggle), performance and size (measured numbers imported from docs/benchmarks.md and size-limit output at build time, with the date), TypeScript (typed prompt results with an editor-style snippet), customisation (token editor that changes a toast live and outputs the CSS).
    - Comparison section: an honest table versus Sonner, React-Toastify, react-hot-toast, Toastify-js, Notyf and SweetAlert2: frameworks, dialogs included, accessibility test results we ran, bundle size we measured (script, method and date shown), licence. Facts must be verified and sourced; unknown cells say `not verified` rather than guessing. Add a not-affiliated notice.
@@ -723,7 +723,7 @@ SITEMAP AND PAGE CONTENT
 3. Themes `/themes` : gallery of every theme x variant x light/dark generated from the theme registry, numbered cards with Replay, filters (toast, dialog, glass, minimal, fancy), per-item `Copy config` and `Open in playground`, background selector, a11y contrast badge from the contrast report.
 4. Playground `/playground` : controls panel (theme, variant, mode, position, stack mode, duration, rich colours, RTL, toast type, title, description, actions, progress, promise simulation, dialog type, input type, OTP length, countdown, etc.), live preview over selectable backgrounds, live code panel with tabs JS, React, Vue, Angular, Svelte, React Native generating the exact snippet, copy button, share URL (state in the URL hash, versioned), reset, export JSON config. Keyboard accessible and mobile friendly. Includes an `Open in StackBlitz` link per framework using ready example projects if feasible.
 5. Docs `/docs/*` (Starlight):
-   - Getting started: Introduction, Why glazekit, Installation per platform (CDN, JavaScript, React, Next.js App Router and Pages, Vue, Nuxt, Angular, Svelte and SvelteKit, Electron, React Native Expo and bare), Quick start, Project setup checklist, Playground link.
+   - Getting started: Introduction, Why toastory, Installation per platform (CDN, JavaScript, React, Next.js App Router and Pages, Vue, Nuxt, Angular, Svelte and SvelteKit, Electron, React Native Expo and bare), Quick start, Project setup checklist, Playground link.
    - Guides: Toasts (all options with live examples), Promise toasts, Updating and dismissing, Custom content (HTML, DOM, JSX, Vue, Angular templates, Svelte), Stacking and positioning, Swipe and gestures, Progress and countdown, Grouping, Dialogs (confirm, alert), Prompt and all input types, Validation and async confirm, Steps, Action sheet and bottom sheet, Loading overlay, Island and HUD, Timers, Queueing and multiple containers, Server Actions and SSR, Shadow DOM and CSP, Haptics and React Native specifics, Electron integration.
    - Theming: Theme overview, Token reference (generated), Creating a theme with `defineTheme`, Dark mode and `mode`, Variants, Overriding with CSS, Unstyled and headless usage, Fonts and icons, Glass effect and fallbacks.
    - Accessibility: Principles, Live regions and roles, Keyboard map (table), Focus management, Reduced motion and transparency, Forced colors, Screen reader testing notes, Known limitations (honest).
@@ -735,7 +735,7 @@ SITEMAP AND PAGE CONTENT
 6. Changelog `/changelog`, Roadmap `/roadmap`, Security `/security`, Privacy `/privacy` (state exactly what the site collects; default none), 404 page, `/llms.txt` and `/llms-full.txt` generated from docs for AI assistants, `/sitemap.xml`, `/robots.txt`, `/humans.txt` optional.
 
 CODE SAMPLES ARE TRUTH
-- Every code sample in docs is extracted at build time and type-checked against the packed glazekit types (per framework where applicable); build fails on error. Runnable demos import the real package.
+- Every code sample in docs is extracted at build time and type-checked against the packed toastory types (per framework where applicable); build fails on error. Runnable demos import the real package.
 - Single source for option tables: generated from TypeScript types/TSDoc, never copied by hand.
 - Version switcher scaffold: docs are versioned by major (`/docs/v1`), current default, banner on old versions.
 
@@ -745,7 +745,7 @@ SEARCH, SEO, SOCIAL
 - Clean URLs, no duplicate content, proper heading hierarchy, descriptive link text.
 
 PERFORMANCE AND PRIVACY
-- Lighthouse >= 95 (performance, accessibility, best practices, SEO) on Home, Playground, one doc page, Themes, on mobile throttling. LCP < 2.0 s, CLS < 0.05, INP < 200 ms. Ship minimal JS: static HTML by default, islands lazy, demos load glazekit chunks on interaction or visibility, background gradients in CSS (no heavy images), images AVIF/WebP with dimensions, fonts preloaded and subset.
+- Lighthouse >= 95 (performance, accessibility, best practices, SEO) on Home, Playground, one doc page, Themes, on mobile throttling. LCP < 2.0 s, CLS < 0.05, INP < 200 ms. Ship minimal JS: static HTML by default, islands lazy, demos load toastory chunks on interaction or visibility, background gradients in CSS (no heavy images), images AVIF/WebP with dimensions, fonts preloaded and subset.
 - No third-party scripts by default. If analytics is wanted, add an opt-in, privacy-friendly option (Plausible or Umami) behind an env variable, no cookies, no consent banner needed; document it.
 - Content Security Policy headers file, security headers (Cloudflare `_headers`): CSP, X-Content-Type-Options, Referrer-Policy, Permissions-Policy.
 
@@ -801,7 +801,7 @@ Protita prompt er por ekta review session chalao, ar sob shesh hole final audit.
 **Per-phase review (protita prompt er por)**
 
 ```text
-You are a strict senior reviewer, not the author. Review the last commit of glazekit against AGENTS.md.
+You are a strict senior reviewer, not the author. Review the last commit of toastory against AGENTS.md.
 List, with file and line: (1) violations of hard rules, (2) missing or weak tests, (3) accessibility defects, (4) public API deviations, (5) bundle-size or SSR risks, (6) code that looks copied or suspicious, (7) TODOs, stubs, dead code.
 Rank findings blocker / major / minor. Do not fix anything yet. Do not praise. If you find no blockers, explain which checks you actually ran to be confident.
 ```
@@ -821,7 +821,7 @@ Stop. Do not write more code. State what the failing check or error is, what you
 **Final pre-release audit (Prompt 11 er por, notun session)**
 
 ```text
-Audit the entire glazekit repository as if you were deciding whether to adopt it in a production app of a large company.
+Audit the entire toastory repository as if you were deciding whether to adopt it in a production app of a large company.
 1. Re-run `npm ci && npm run check:all` from a clean clone; report results.
 2. Verify docs/parity.md against the code: spot check 15 random features by reading the implementation and its test.
 3. Install the packed tarball (`npm pack`) into fresh projects: plain HTML via CDN, Vite React, Next.js App Router, Next.js Pages, Vue, Nuxt, Angular, SvelteKit, Electron, Expo. Run the quick start for each from README exactly as written; report any step that fails or is unclear.

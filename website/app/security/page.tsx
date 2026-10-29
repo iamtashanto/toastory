@@ -57,7 +57,7 @@ export default function SecurityPage() {
         <section className="space-y-3">
           <h2 className="text-xl font-bold text-white">Reporting a Vulnerability</h2>
           <p>
-            If you discover a security vulnerability in toastory, please report it privately via GitHub Security Advisories or by emailing our security team directly at <code className="px-1.5 py-0.5 rounded bg-white/10 text-white font-mono text-xs">security@glazekit.dev</code>.
+            If you discover a security vulnerability in toastory, please report it privately via GitHub Security Advisories or by emailing our security team directly at <code className="px-1.5 py-0.5 rounded bg-white/10 text-white font-mono text-xs">security@toastory.dev</code>.
           </p>
           <p>
             Please include steps to reproduce the issue and allow 48 hours for our maintainers to review and acknowledge the report before public disclosure.

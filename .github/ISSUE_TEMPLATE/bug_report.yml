@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to report an issue! Please verify that you are on the latest release of glazekit.
+        Thanks for taking the time to report an issue! Please verify that you are on the latest release of toastory.
   - type: input
     id: version
     attributes:

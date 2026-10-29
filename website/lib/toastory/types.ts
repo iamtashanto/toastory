@@ -1,5 +1,5 @@
 /**
- * glazekit - Complete UI feedback toolkit for modern web and mobile.
+ * toastory - Complete UI feedback toolkit for modern web and mobile.
  */
 
 export type ToastType = 'default' | 'success' | 'error' | 'warning' | 'info' | 'loading' | 'message';
@@ -349,14 +349,3 @@ export interface Ui {
   defineTheme: (name: string, def: any) => string;
   toastStore: any;
 }
-
-export const ui: Ui;
-export const toast: ToastFn;
-export const configure: (config: Partial<GlazeConfig>) => GlazeConfig;
-export const defineTheme: (name: string, def: any) => string;
-export const clearCustomThemes: () => void;
-export const resetEngine: () => void;
-export const DEFAULT_CONFIG: GlazeConfig;
-
-export default ui;
-

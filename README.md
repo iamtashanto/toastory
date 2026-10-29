@@ -12,7 +12,7 @@ Complete UI feedback toolkit: toast notifications, confirm / prompt / alert dial
 
 > **Unofficial.** Not affiliated with, endorsed by, or sponsored by Sonner, React-Toastify, react-hot-toast, Notyf, SweetAlert2, or their maintainers.
 
-[Documentation](https://glazekit.dev) · [Playground](https://glazekit.dev/playground) · [Issues](https://github.com/iamtashanto/toastory/issues)
+[Documentation](https://toastory.tashanto.com) · [Playground](https://toastory.tashanto.com/playground) · [Issues](https://github.com/iamtashanto/toastory/issues)
 
 ---
 
@@ -114,12 +114,12 @@ import 'toastory/themes/ios-glass.css';
 ### Nuxt
 
 ```ts
-// plugins/glazekit.client.ts
-import { glazekitPlugin } from 'toastory/vue';
+// plugins/toastory.client.ts
+import { toastoryPlugin } from 'toastory/vue';
 import 'toastory/themes/ios-glass.css';
 
 export default defineNuxtPlugin((nuxtApp) => {
-  nuxtApp.vueApp.use(glazekitPlugin);
+  nuxtApp.vueApp.use(toastoryPlugin);
 });
 ```
 
@@ -184,7 +184,7 @@ export default function App() {
 
 Ships with 21 handcrafted themes supporting light, dark, and auto modes: `ios-glass`, `liquid-glass`, `aurora`, `classic-stack`, `classic-bar`, `pill`, `ripple`, `gradient-strip`, `sweet`, `material`, `basic`, `minimal`, `flat`, `outline`, `neon`, `gradient`, `brutal`, `pastel`, `essentials`, `showcase`, `dialogs`.
 
-[Explore all themes in the Interactive Gallery](https://glazekit.dev/themes)
+[Explore all themes in the Interactive Gallery](https://toastory.tashanto.com/themes)
 
 ---
 
@@ -233,13 +233,13 @@ Ships with 21 handcrafted themes supporting light, dark, and auto modes: `ios-gl
 
 ## Migrating
 
-Glazekit supports familiar API signatures for quick migrations:
+Toastory supports familiar API signatures for quick migrations:
 
 - **From Sonner**: Replace `sonner` with `toastory/react`. `toast(msg)`, `toast.success()`, `toast.promise()` work identically.
 - **From React-Toastify**: Import `<Toaster />` from `toastory/react` and call `toast(...)`.
 - **From SweetAlert2**: Replace `Swal.fire({ ... })` with `await ui.confirm({ ... })` or `await ui.prompt({ ... })`.
 
-[Read the comprehensive Migration Guide](https://glazekit.dev/docs/migration)
+[Read the comprehensive Migration Guide](https://toastory.tashanto.com/docs/migration)
 
 ---
 

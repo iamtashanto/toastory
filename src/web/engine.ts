@@ -17,7 +17,7 @@ export interface WebEngine {
   toaster: ToasterHandle | undefined;
 }
 
-const KEY = Symbol.for('glazekit.engine.v1');
+const KEY = Symbol.for('toastory.engine.v1');
 
 /** Options for registering the web renderer. */
 export type WebRendererOptions = ToasterOptions;

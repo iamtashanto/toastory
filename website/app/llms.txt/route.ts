@@ -21,7 +21,7 @@ export async function GET() {
   DOC_NAVIGATION.forEach((sec) => {
     output += `\n### ${sec.title}\n`;
     sec.items.forEach((it) => {
-      output += `- [${it.title}](https://glazekit.dev/docs/${it.slug}): ${it.summary}\n`;
+      output += `- [${it.title}](https://toastory.dev/docs/${it.slug}): ${it.summary}\n`;
     });
   });
 

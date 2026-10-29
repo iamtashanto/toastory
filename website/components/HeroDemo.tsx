@@ -104,7 +104,7 @@ export function HeroDemo() {
     const res = await ui.prompt({
       title: 'Rename Project Workspace',
       text: 'Enter a unique URL slug for your project repository:',
-      placeholder: 'my-glazekit-app',
+      placeholder: 'my-toastory-app',
       theme: activeTheme,
       validate: (val: unknown) => {
         if (!val || typeof val !== 'string' || val.trim().length < 3) return 'Project slug must be at least 3 characters.';

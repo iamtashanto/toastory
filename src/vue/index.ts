@@ -70,7 +70,7 @@ export function useToast(): {
 }
 
 /** Composable returning complete ui feedback toolkit and state. */
-export function useGlazekit(): {
+export function useToastory(): {
   ui: typeof ui;
   toast: ToastApi;
   toasts: Readonly<ReturnType<typeof shallowRef<readonly ToastRecord[]>>>;
@@ -95,16 +95,24 @@ export function useGlazekit(): {
   return { ui, toast: engine.toast, toasts, config };
 }
 
-/** Vue plugin installing toastory and registering GlazeToaster globally. */
-export const glazekitPlugin = {
+export const useGlazekit = useToastory;
+
+/** Vue plugin installing toastory and registering Toaster globally. */
+export const toastoryPlugin = {
   install(app: App, options?: Partial<GlazeConfig>): void {
     if (options) {
       ui.configure(options);
     }
+    app.config.globalProperties.$toastory = ui;
     app.config.globalProperties.$glaze = ui;
     app.config.globalProperties.$toast = toast;
+    app.provide('toastory', ui);
     app.provide('glaze', ui);
     app.provide('toast', toast);
+    app.component('ToastoryToaster', GlazeToaster);
     app.component('GlazeToaster', GlazeToaster);
   },
 };
+
+export const glazekitPlugin = toastoryPlugin;
+export const ToastoryToaster = GlazeToaster;

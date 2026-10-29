@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "description": "Complete UI feedback toolkit: toast notifications, confirm / prompt / alert dialogs, sheets and loading overlays with frosted glass design.",
   "license": "MIT",
-  "author": "TA Shanto <shanto@glazekit.dev>",
-  "homepage": "https://glazekit.dev",
+  "author": "TA Shanto <shanto@toastory.tashanto.com>",
+  "homepage": "https://toastory.tashanto.com",
   "bugs": {
     "url": "https://github.com/iamtashanto/toastory/issues"
   },

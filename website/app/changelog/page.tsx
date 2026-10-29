@@ -27,7 +27,7 @@ export default function ChangelogPage() {
           </div>
 
           <p className="text-sm text-gray-300 leading-relaxed">
-            The initial production release of glazekit. Full feature parity with market leaders plus a premium Apple frosted glass design system.
+            The initial production release of toastory. Full feature parity with market leaders plus a premium frosted glass design system.
           </p>
 
           <div className="space-y-4 pt-2 text-sm text-gray-300">

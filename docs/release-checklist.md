@@ -11,9 +11,9 @@ The package metadata in `package.json` is configured to match the canonical GitH
 | Field | Configured Value | Verification Status |
 |---|---|:---:|
 | **Repository URL** | `REPO_URL=https://github.com/iamtashanto/toastory.git` | Verified |
-| **Documentation Site** | `SITE_URL=https://glazekit.dev` | Verified |
+| **Documentation Site** | `SITE_URL=https://toastory.tashanto.com` | Verified |
 | **Issue Tracker** | `BUGS_URL=https://github.com/iamtashanto/toastory/issues` | Verified |
-| **Author** | `AUTHOR=TA Shanto <shanto@glazekit.dev>` | Verified |
+| **Author** | `AUTHOR=TA Shanto <shanto@toastory.tashanto.com>` | Verified |
 | **License** | `MIT` | Verified |
 | **Dependencies** | `0 runtime dependencies` (`dependencies: {}`) | Verified |
 

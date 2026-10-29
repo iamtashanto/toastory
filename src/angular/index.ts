@@ -120,3 +120,11 @@ export class GlazeToasterComponent implements OnInit, OnChanges, OnDestroy {
   exports: [GlazeToasterComponent],
 })
 export class GlazeModule {}
+
+/** Rebranded aliases for toastory Angular integration. */
+export const ToastoryService = GlazeService;
+export type ToastoryService = GlazeService;
+export const ToastoryToasterComponent = GlazeToasterComponent;
+export type ToastoryToasterComponent = GlazeToasterComponent;
+export const ToastoryModule = GlazeModule;
+export type ToastoryModule = GlazeModule;

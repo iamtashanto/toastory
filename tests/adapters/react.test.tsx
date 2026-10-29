@@ -3,7 +3,7 @@ import React, { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { resetEngine } from '../../src/web';
-import { Toaster, ui, useGlazekit, useToast } from '../../src/react';
+import { Toaster, ui, useGlazekit, useToast, useToastory } from '../../src/react';
 
 // Enable React act environment for jsdom
 // @ts-expect-error React 18/19 act flag
@@ -75,12 +75,14 @@ describe('toastory/react adapter', () => {
     });
   });
 
-  it('useGlazekit hook provides ui toolkit, config and toast state', async () => {
+  it('useToastory hook provides ui toolkit, config and toast state (and useGlazekit is an alias)', async () => {
+    expect(useGlazekit).toBe(useToastory);
+
     let currentConfig: unknown;
     let toastCount = 0;
 
-    function GlazeComponent() {
-      const { ui: u, config, toasts } = useGlazekit();
+    function ToastoryComponent() {
+      const { ui: u, config, toasts } = useToastory();
       currentConfig = config;
       toastCount = toasts.length;
       return (
@@ -99,7 +101,7 @@ describe('toastory/react adapter', () => {
     const root = createRoot(container);
 
     await act(async () => {
-      root.render(<GlazeComponent />);
+      root.render(<ToastoryComponent />);
     });
 
     expect(currentConfig).toBeDefined();

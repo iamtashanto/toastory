@@ -1,5 +1,5 @@
 /**
- * glazekit 21 Themes Registry & CSS Generator
+ * toastory 21 Themes Registry & CSS Generator
  */
 
 export interface ThemeTokens {

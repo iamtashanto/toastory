@@ -131,10 +131,10 @@ const COMPARISON_DATA: ComparisonRow[] = [
 ];
 
 export function ComparisonTable() {
-  const renderCell = (val: string | boolean, isGlazekit = false) => {
+  const renderCell = (val: string | boolean, isToastory = false) => {
     if (typeof val === 'boolean') {
       return val ? (
-        <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full ${isGlazekit ? 'bg-blue-500/20 text-blue-400 font-bold' : 'text-emerald-400'}`}>
+        <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full ${isToastory ? 'bg-blue-500/20 text-blue-400 font-bold' : 'text-emerald-400'}`}>
           ✓
         </span>
       ) : (
@@ -145,7 +145,7 @@ export function ComparisonTable() {
       return <span className="text-xs text-gray-400 italic">not verified</span>;
     }
     return (
-      <span className={isGlazekit ? 'font-semibold text-white' : 'text-gray-300'}>
+      <span className={isToastory ? 'font-semibold text-white' : 'text-gray-300'}>
         {val}
       </span>
     );
@@ -179,7 +179,7 @@ export function ComparisonTable() {
             {COMPARISON_DATA.map((row, idx) => (
               <tr key={idx} className="hover:bg-white/[0.02] transition-colors">
                 <td className="py-3 px-4 font-medium text-gray-200">{row.feature}</td>
-                <td className="py-3 px-4 bg-blue-500/[0.04]">{renderCell(row.glazekit, true)}</td>
+                <td className="py-3 px-4 bg-blue-500/[0.04]">{renderCell(row.toastory, true)}</td>
                 <td className="py-3 px-4">{renderCell(row.sonner)}</td>
                 <td className="py-3 px-4">{renderCell(row.reactToastify)}</td>
                 <td className="py-3 px-4">{renderCell(row.reactHotToast)}</td>

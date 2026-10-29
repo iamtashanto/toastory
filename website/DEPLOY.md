@@ -20,7 +20,7 @@ Configure the following environment variables in your deployment dashboard:
 
 | Variable | Required | Default | Description |
 | :--- | :--- | :--- | :--- |
-| \`SITE_URL\` | Yes | \`https://glazekit.dev\` | Canonical origin used for OpenGraph URLs, sitemap generation, and robots feeds. |
+| \`SITE_URL\` | Yes | \`https://toastory.tashanto.com\` | Canonical origin used for OpenGraph URLs, sitemap generation, and robots feeds. |
 | \`NEXT_PUBLIC_ANALYTICS_ID\` | Optional | \`undefined\` | Optional privacy-friendly analytics endpoint (e.g. Plausible or Umami). No cookies used. |
 
 ---
@@ -53,6 +53,6 @@ Place a \`_headers\` file in your publish directory to enforce strict security h
 ## 5. Custom Domain Configuration
 
 1. In Cloudflare Pages, navigate to **Custom Domains**.
-2. Add \`glazekit.dev\` and \`www.glazekit.dev\`.
+2. Add \`toastory.tashanto.com\` and \`www.toastory.tashanto.com\`.
 3. Cloudflare will automatically provision a Universal SSL certificate and configure DNS CNAME records.
 

@@ -2,7 +2,17 @@
 import { createApp, defineComponent, h, nextTick } from 'vue';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { resetEngine } from '../../src/web';
-import { GlazeToaster, glazekitPlugin, toast, ui, useGlazekit, useToast } from '../../src/vue';
+import {
+  GlazeToaster,
+  glazekitPlugin,
+  toast,
+  toastoryPlugin,
+  ToastoryToaster,
+  ui,
+  useGlazekit,
+  useToast,
+  useToastory,
+} from '../../src/vue';
 
 beforeEach(() => {
   resetEngine();
@@ -16,9 +26,14 @@ afterEach(() => {
 
 describe('toastory/vue adapter', () => {
   it('installs Vue plugin and configures globals', () => {
-    const app = createApp({});
-    app.use(glazekitPlugin, { theme: 'pastel', position: 'bottom-center' });
+    expect(glazekitPlugin).toBe(toastoryPlugin);
+    expect(ToastoryToaster).toBe(GlazeToaster);
+    expect(useGlazekit).toBe(useToastory);
 
+    const app = createApp({});
+    app.use(toastoryPlugin, { theme: 'pastel', position: 'bottom-center' });
+
+    expect(app.config.globalProperties.$toastory).toBe(ui);
     expect(app.config.globalProperties.$glaze).toBe(ui);
     expect(app.config.globalProperties.$toast).toBe(toast);
 
@@ -27,11 +42,11 @@ describe('toastory/vue adapter', () => {
     expect(cfg.position).toBe('bottom-center');
   });
 
-  it('GlazeToaster mounts and configures props', async () => {
+  it('ToastoryToaster mounts and configures props', async () => {
     const app = createApp(
       defineComponent({
         setup() {
-          return () => h(GlazeToaster, { theme: 'neon', richColors: true });
+          return () => h(ToastoryToaster, { theme: 'neon', richColors: true });
         },
       }),
     );
@@ -76,11 +91,11 @@ describe('toastory/vue adapter', () => {
     app.unmount();
   });
 
-  it('useGlazekit composable exposes ui toolkit and reactive config', async () => {
+  it('useToastory composable exposes ui toolkit and reactive config', async () => {
     const app = createApp(
       defineComponent({
         setup() {
-          const { ui: u, config, toasts } = useGlazekit();
+          const { ui: u, config, toasts } = useToastory();
           return { u, config, toasts };
         },
         template: '<button @click="u.toast(\'Added\')">Add</button>',

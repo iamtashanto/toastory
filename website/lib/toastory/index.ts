@@ -1,9 +1,9 @@
-import rawGlazekit from './index.js';
+import rawToastory from './index.js';
 import type { Ui, ToastFn, GlazeConfig } from './types';
 
 export * from './types';
 
-const g = rawGlazekit as unknown as Record<string, unknown>;
+const g = rawToastory as unknown as Record<string, unknown>;
 export const ui = g.ui as Ui;
 export const toast = g.toast as ToastFn;
 export const configure = g.configure as (config: Partial<GlazeConfig>) => GlazeConfig;

@@ -18,7 +18,7 @@ export function getArticleBySlug(slug: string): DocArticle {
   return {
     slug,
     title: `${formattedTitle} Guide`,
-    description: `Complete guide and reference for ${formattedTitle} in glazekit.`,
+    description: `Complete guide and reference for ${formattedTitle} in toastory.`,
     category: categoryName,
     lastUpdated: 'October 2026',
     headings: [
@@ -29,7 +29,7 @@ export function getArticleBySlug(slug: string): DocArticle {
     content: `
 # ${formattedTitle}
 
-This guide provides the complete documentation, configuration options, and implementation patterns for **${formattedTitle}** in glazekit.
+This guide provides the complete documentation, configuration options, and implementation patterns for **${formattedTitle}** in toastory.
 
 ---
 
@@ -68,7 +68,7 @@ export const ARTICLES_MAP: Record<string, DocArticle> = {
     category: 'Getting Started',
     lastUpdated: 'October 2026',
     headings: [
-      { id: 'why-glazekit', title: 'Why toastory?' },
+      { id: 'why-toastory', title: 'Why toastory?' },
       { id: 'core-pillars', title: 'Core Pillars' },
       { id: 'architecture', title: 'Architecture Overview' },
       { id: 'next-steps', title: 'Next Steps' },
@@ -160,11 +160,11 @@ You can use toastory directly in the browser without a build step:
 
 \`\`\`html
 <!-- Theme Stylesheet -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glazekit/dist/themes/ios-glass.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastory/dist/themes/ios-glass.css" />
 
 <!-- ES Module Import -->
 <script type="module">
-  import { ui, toast } from 'https://cdn.jsdelivr.net/npm/glazekit/+esm';
+  import { ui, toast } from 'https://cdn.jsdelivr.net/npm/toastory/+esm';
 
   toast.success('Loaded from CDN!');
 </script>
@@ -711,7 +711,7 @@ You can override any token globally or for specific containers in your CSS:
     content: `
 # WCAG 2.2 AA Accessibility Principles
 
-Accessibility is a headline feature of glazekit. Every component has been evaluated with axe-core across 96 permutations with **0 automated accessibility violations**.
+Accessibility is a headline feature of toastory. Every component has been evaluated with axe-core across 96 permutations with **0 automated accessibility violations**.
 
 ---
 
@@ -800,7 +800,7 @@ export function deleteMessageOptimistic(messageId: string) {
   'migration/sonner': {
     slug: 'migration/sonner',
     title: 'Migrating from Sonner',
-    description: 'Side-by-side code comparisons and option mapping from Sonner to glazekit.',
+    description: 'Side-by-side code comparisons and option mapping from Sonner to toastory.',
     category: 'Migration',
     lastUpdated: 'October 2026',
     headings: [

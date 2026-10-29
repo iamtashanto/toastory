@@ -357,7 +357,7 @@ body {
           </div>
           <div class="card-title">Project Renamed</div>
         </div>
-        <div class="card-desc">Async result resolved: "glazekit-production" validated with 0 errors.</div>
+        <div class="card-desc">Async result resolved: "toastory-production" validated with 0 errors.</div>
       </div>
       <div class="action-row">
         <button class="btn btn-secondary">Dismiss</button>

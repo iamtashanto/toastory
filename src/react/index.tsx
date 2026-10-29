@@ -62,7 +62,7 @@ export function useToast(): {
 }
 
 /** Hook returning the full `ui` toolkit and reactive toast state. */
-export function useGlazekit(): {
+export function useToastory(): {
   ui: typeof ui;
   toast: ToastApi;
   toasts: readonly ToastRecord[];
@@ -90,3 +90,6 @@ export function useGlazekit(): {
     [engine, toasts, config],
   );
 }
+
+/** Backward compatibility alias for useToastory. */
+export const useGlazekit = useToastory;

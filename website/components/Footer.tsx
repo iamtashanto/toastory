@@ -145,7 +145,7 @@ export function Footer() {
             </li>
             <li>
               <a
-                href="https://www.npmjs.com/package/glazekit"
+                href="https://www.npmjs.com/package/toastory"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-white transition-colors"

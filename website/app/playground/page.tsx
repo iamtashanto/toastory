@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { ui, toast } from 'toastory';
 import type { ToastPosition, ToastOptions } from 'toastory';
-import { THEME_REGISTRY } from '@/lib/glazekit/theme-generator';
+import { THEME_REGISTRY } from '@/lib/toastory/theme-generator';
 import { CodeSnippet } from '@/components/CodeSnippet';
 
 export default function PlaygroundPage() {

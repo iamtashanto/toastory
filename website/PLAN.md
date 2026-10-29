@@ -126,7 +126,7 @@
 
 ## 6. Implementation Steps
 
-1. **toastory Package Setup**: Embed full self-contained `toastory` package bundle and themes into `website/lib/glazekit` so all pages, playground, and demos dogfood the exact code.
+1. **toastory Package Setup**: Embed full self-contained `toastory` package bundle and themes into `website/lib/toastory` so all pages, playground, and demos dogfood the exact code.
 2. **Global Layout & Navigation**: Glass header, accessible mobile drawer, footer, search modal, and styling foundations.
 3. **Marketing Home (`/`)**: Hero, live hero demo, multi-framework quick-starts, interactive feature showcases, comparison table, trust section.
 4. **Features Catalogue (`/features`)**: Exhaustive interactive catalog of every feature with code snippets and live triggers.

@@ -29,14 +29,14 @@ export const metadata: Metadata = {
     title: 'toastory — Complete UI Feedback Toolkit',
     description:
       'Toast notifications, dialogs, bottom sheets, and loading overlays with Apple glass design and zero dependencies.',
-    url: 'https://glazekit.dev',
+    url: 'https://toastory.dev',
     siteName: 'toastory',
     images: [
       {
-        url: 'https://glazekit.dev/og-image.png',
+        url: 'https://toastory.dev/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'toastory — Apple-style glass UI feedback toolkit',
+        alt: 'toastory — Frosted glass UI feedback toolkit',
       },
     ],
     locale: 'en_US',
