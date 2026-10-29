@@ -1,26 +1,7 @@
 import type { ThemeDefinition, ThemeTokens } from './themes.ts';
 
 const tokens = (t: ThemeTokens): string =>
-  (
-    [
-      ['bg', t.bg],
-      ['bg-solid', t.solid],
-      ['fg', t.fg],
-      ['muted', t.muted],
-      ['border', t.border],
-      ['shadow', t.shadow],
-      ['accent', t.accent],
-      ['accent-fg', t.accentFg],
-      ['danger', t.danger],
-      ['danger-fg', t.dangerFg],
-      ['success', t.success],
-      ['error', t.error],
-      ['warning', t.warning],
-      ['info', t.info],
-    ] as const
-  )
-    .map(([name, value]) => `--gk-${name}:${value};`)
-    .join('');
+  `--gk-bg:${t.bg};--gk-bg-solid:${t.solid};--gk-fg:${t.fg};--gk-muted:${t.muted};--gk-border:${t.border};--gk-shadow:${t.shadow};--gk-accent:${t.accent};--gk-accent-fg:${t.accentFg};--gk-danger:${t.danger};--gk-danger-fg:${t.dangerFg};--gk-success:${t.success};--gk-error:${t.error};--gk-warning:${t.warning};--gk-info:${t.info};`;
 
 /**
  * Renders the token blocks (light, explicit dark, class-based dark, and automatic dark) plus
@@ -37,11 +18,12 @@ export function themeCss(def: ThemeDefinition): string {
 
   const darkSel = `${sel}[data-gk-mode="dark"],:is(.dark,[data-theme="dark"]) ${sel}`;
   const extra = (def.css ?? '').split('&').join(sel);
+  const darkTokens = tokens(def.dark);
 
   return (
     `${sel}{color-scheme:light;${shape}${tokens(def.light)}}` +
-    `${darkSel}{color-scheme:dark;${tokens(def.dark)}}` +
-    `@media (prefers-color-scheme:dark){${sel}[data-gk-mode="auto"]{color-scheme:dark;${tokens(def.dark)}}}` +
+    `${darkSel}{color-scheme:dark;${darkTokens}}` +
+    `@media (prefers-color-scheme:dark){${sel}[data-gk-mode="auto"]{color-scheme:dark;${darkTokens}}}` +
     extra
   );
 }

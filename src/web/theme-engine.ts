@@ -1,68 +1,39 @@
 import { themeCss } from '../themes/css.ts';
 import type { ThemeDefinition, ThemeTokens } from '../themes/themes.ts';
 
-const mkTokens = (
-  bg: string,
-  fg: string,
-  muted: string,
-  border: string,
-  shadow: string,
-  accent: string,
-  accentFg: string,
-  danger: string,
-  dangerFg: string,
-  success: string,
-  error: string,
-  warning: string,
-  info: string,
-): ThemeTokens => ({
-  bg,
-  solid: bg,
-  fg,
-  muted,
-  border,
-  shadow,
-  accent,
-  accentFg,
-  danger,
-  dangerFg,
-  success,
-  error,
-  warning,
-  info,
-});
+const DEFAULT_LIGHT: ThemeTokens = {
+  bg: '#ffffff',
+  solid: '#ffffff',
+  fg: '#1d1d1f',
+  muted: '#515156',
+  border: 'rgba(60,60,67,0.22)',
+  shadow: '0 8px 28px rgba(0,0,0,0.14)',
+  accent: '#0057c2',
+  accentFg: '#ffffff',
+  danger: '#b71c1c',
+  dangerFg: '#ffffff',
+  success: '#1a7f37',
+  error: '#b71c1c',
+  warning: '#8a5a00',
+  info: '#0b5cc7',
+};
 
-const DEFAULT_LIGHT: ThemeTokens = mkTokens(
-  '#ffffff',
-  '#1d1d1f',
-  '#515156',
-  'rgba(60,60,67,0.22)',
-  '0 8px 28px rgba(0,0,0,0.14)',
-  '#0057c2',
-  '#ffffff',
-  '#b71c1c',
-  '#ffffff',
-  '#1a7f37',
-  '#b71c1c',
-  '#8a5a00',
-  '#0b5cc7',
-);
-
-const DEFAULT_DARK: ThemeTokens = mkTokens(
-  '#1c1c1e',
-  '#f5f5f7',
-  '#b4b4bb',
-  'rgba(255,255,255,0.16)',
-  '0 8px 28px rgba(0,0,0,0.5)',
-  '#4da3ff',
-  '#00152e',
-  '#ff8a8a',
-  '#2b0000',
-  '#4ade80',
-  '#ff7b7b',
-  '#ffc857',
-  '#6cb6ff',
-);
+const DEFAULT_DARK: ThemeTokens = {
+  bg: '#1c1c1e',
+  solid: '#1c1c1e',
+  fg: '#f5f5f7',
+  muted: '#b4b4bb',
+  border: 'rgba(255,255,255,0.16)',
+  shadow: '0 8px 28px rgba(0,0,0,0.5)',
+  accent: '#4da3ff',
+  accentFg: '#00152e',
+  danger: '#ff8a8a',
+  dangerFg: '#2b0000',
+  success: '#4ade80',
+  error: '#ff7b7b',
+  warning: '#ffc857',
+  info: '#6cb6ff',
+};
 
 /** Options for registering a custom theme via `ui.defineTheme()`. */
 export interface CustomThemeDefinition {

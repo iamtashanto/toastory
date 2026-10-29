@@ -45,17 +45,12 @@ export interface ConfigStore {
  * Resolves an option according to precedence:
  * Call option > Theme default > Global config > Library default.
  */
-export function resolvePrecedence<T>(
+export const resolvePrecedence = <T>(
   callVal: T | undefined,
   themeVal: T | undefined,
   globalVal: T | undefined,
   defaultVal: T,
-): T {
-  if (callVal !== undefined) return callVal;
-  if (themeVal !== undefined) return themeVal;
-  if (globalVal !== undefined) return globalVal;
-  return defaultVal;
-}
+): T => callVal ?? themeVal ?? globalVal ?? defaultVal;
 
 /** Creates an isolated, immutable configuration store. */
 export function createConfigStore(initial: Partial<GlazeConfig> = {}): ConfigStore {

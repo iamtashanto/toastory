@@ -107,6 +107,11 @@ export function createDialogManager(clock: Clock = defaultClock): DialogManager 
     let readValue: () => unknown = () => state.options.inputValue;
     let settled = false;
 
+    const patchState = (patch: Partial<DialogState>): void => {
+      state = { ...state, ...patch, revision: state.revision + 1 };
+      emitState();
+    };
+
     const cleanup = (): void => {
       timer?.cancel();
       state = { ...state, open: false, revision: state.revision + 1 };
@@ -118,45 +123,39 @@ export function createDialogManager(clock: Clock = defaultClock): DialogManager 
       }
     };
 
+    const complete = (res: DialogResult<T>): void => {
+      if (settled) return;
+      settled = true;
+      try {
+        state.options.willClose?.(handle as unknown as DialogHandle, res as DialogResult);
+      } catch (err) {
+        console.error(err);
+      }
+      cleanup();
+      resolveResult(res);
+    };
+
     const handle: DialogHandle<T> = {
       close(override) {
-        if (settled) return;
-        settled = true;
-        const res: DialogResult<T> = {
+        complete({
           isConfirmed: override?.isConfirmed ?? false,
           isDenied: override?.isDenied ?? false,
           isDismissed: override?.isDismissed ?? true,
           value: override?.value,
           dismiss: override?.dismiss ?? 'close',
-        };
-        try {
-          state.options.willClose?.(handle as unknown as DialogHandle, res as DialogResult);
-        } catch (err) {
-          console.error(err);
-        }
-        cleanup();
-        resolveResult(res);
+        });
       },
 
       update(patch) {
-        if (settled) return;
-        state = {
-          ...state,
-          options: { ...state.options, ...patch },
-          revision: state.revision + 1,
-        };
-        emitState();
+        if (!settled) patchState({ options: { ...state.options, ...patch } });
       },
 
       setLoading(loading) {
-        const next = loading === true ? 'confirm' : loading === false ? null : loading;
-        state = { ...state, loading: next, revision: state.revision + 1 };
-        emitState();
+        patchState({ loading: loading === true ? 'confirm' : loading === false ? null : loading });
       },
 
       showError(msg) {
-        state = { ...state, error: msg ?? undefined, revision: state.revision + 1 };
-        emitState();
+        patchState({ error: msg ?? undefined });
       },
 
       timer: {
@@ -241,43 +240,22 @@ export function createDialogManager(clock: Clock = defaultClock): DialogManager 
           handle.setLoading(false);
         }
 
-        settled = true;
-        const res: DialogResult<T> = {
+        complete({
           isConfirmed: isConfirm,
           isDenied: !isConfirm,
           isDismissed: false,
           value: val as T,
           dismiss: undefined,
-        };
-
-        try {
-          state.options.willClose?.(handle as unknown as DialogHandle, res as DialogResult);
-        } catch (err) {
-          console.error(err);
-        }
-
-        cleanup();
-        resolveResult(res);
+        });
       },
       async dismiss(reason) {
-        if (settled) return;
-        settled = true;
-        const res: DialogResult<T> = {
+        complete({
           isConfirmed: false,
           isDenied: false,
           isDismissed: true,
           value: undefined,
           dismiss: reason,
-        };
-
-        try {
-          state.options.willClose?.(handle as unknown as DialogHandle, res as DialogResult);
-        } catch (err) {
-          console.error(err);
-        }
-
-        cleanup();
-        resolveResult(res);
+        });
       },
     };
 
@@ -339,37 +317,14 @@ export async function runSteps(
   for (let i = 0; i < steps.length; i++) {
     const step = steps[i];
     if (!step) continue;
-    const handle = manager.open({
+    const res = await manager.open({
       ...step,
       reverseButtons: step.reverseButtons ?? i > 0,
-      confirmButton: {
-        label: i === steps.length - 1 ? 'Finish' : 'Next',
-        ...step.confirmButton,
-      },
-      cancelButton: {
-        label: 'Cancel',
-        ...step.cancelButton,
-      },
-    });
-
-    const result = await handle.result;
-    if (!result.isConfirmed) {
-      return {
-        isConfirmed: false,
-        isDenied: result.isDenied,
-        isDismissed: result.isDismissed,
-        value: values,
-        dismiss: result.dismiss,
-      };
-    }
-    values.push(result.value);
+      confirmButton: { label: i === steps.length - 1 ? 'Finish' : 'Next', ...step.confirmButton },
+      cancelButton: { label: 'Cancel', ...step.cancelButton },
+    }).result;
+    if (!res.isConfirmed) return { ...res, isConfirmed: false, value: values };
+    values.push(res.value);
   }
-
-  return {
-    isConfirmed: true,
-    isDenied: false,
-    isDismissed: false,
-    value: values,
-    dismiss: undefined,
-  };
+  return { isConfirmed: true, isDenied: false, isDismissed: false, value: values, dismiss: undefined };
 }

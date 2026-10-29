@@ -54,9 +54,9 @@ export function createUi(): Ui {
     alert: (options = {}) => wb(options, false),
     prompt: (options = {}) => wb(options, true, { input: options.input ?? 'text' }),
     steps: (steps, backLabel) => runSteps(steps, (options) => wb(options, true), backLabel),
-    sheet: (options) => openSheet(options),
-    bottomSheet: (options = {}) => openBottomSheet(options),
-    loading: (options = {}) => openLoading(options),
+    sheet: openSheet,
+    bottomSheet: openBottomSheet,
+    loading: openLoading,
     configure,
     defineTheme,
     get toastStore() {

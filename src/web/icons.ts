@@ -65,32 +65,19 @@ export const PATHS: Record<IconName, string[]> = {
   ],
 };
 
+const SVG_HEAD =
+  'viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"';
+
 /**
  * Builds an inline SVG for a built-in icon. The SVG is decorative (`aria-hidden`) because
  * every toast and dialog states its meaning in text as well.
  */
 export function icon(name: IconName): SVGElement {
-  const svg = document.createElementNS(NS, 'svg');
-  const attrs: Record<string, string> = {
-    viewBox: '0 0 24 24',
-    width: '20',
-    height: '20',
-    fill: 'none',
-    stroke: 'currentColor',
-    'stroke-width': '2',
-    'stroke-linecap': 'round',
-    'stroke-linejoin': 'round',
-    'aria-hidden': 'true',
-    focusable: 'false',
-  };
-  if (name === 'loading') attrs.class = 'gk-spin';
-  for (const k in attrs) svg.setAttribute(k, attrs[k]);
-  for (const d of PATHS[name] ?? PATHS.info) {
-    const path = document.createElementNS(NS, 'path');
-    path.setAttribute('d', d);
-    svg.append(path);
-  }
-  return svg;
+  const paths = (PATHS[name] ?? PATHS.info).map((d) => `<path d="${d}"/>`).join('');
+  const cls = name === 'loading' ? ' class="gk-spin"' : '';
+  const div = document.createElement('div');
+  div.innerHTML = `<svg xmlns="${NS}" ${SVG_HEAD}${cls}>${paths}</svg>`;
+  return div.firstElementChild as SVGElement;
 }
 
 /** Maps a toast type to its built-in icon name, if any. */

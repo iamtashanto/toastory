@@ -17,6 +17,9 @@ export default defineConfig({
   sourcemap: true,
   treeshake: true,
   splitting: false,
+  esbuildOptions(options) {
+    options.legalComments = 'none';
+  },
   external: [
     'react',
     'react-dom',

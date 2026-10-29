@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>glazekit — Theme Playground</title>
+    <link rel="stylesheet" href="/dist/themes/_base.css" />
+    <link rel="stylesheet" href="/dist/themes/ios-glass.css" />
+    <link rel="stylesheet" href="/dist/themes/liquid-glass.css" />
+    <link rel="stylesheet" href="/dist/themes/aurora.css" />
+    <link rel="stylesheet" href="/dist/themes/essentials.css" />
+    <link rel="stylesheet" href="/dist/themes/showcase.css" />
+    <link rel="stylesheet" href="/dist/themes/dialogs.css" />
+    <link rel="stylesheet" href="/dist/themes/basic.css" />
+    <link rel="stylesheet" href="/dist/themes/material.css" />
+    <link rel="stylesheet" href="/dist/themes/sweet.css" />
+    <link rel="stylesheet" href="/dist/themes/neon.css" />
+    <link rel="stylesheet" href="/dist/themes/minimal.css" />
+    <link rel="stylesheet" href="/dist/themes/flat.css" />
+    <link rel="stylesheet" href="/dist/themes/outline.css" />
+    <link rel="stylesheet" href="/dist/themes/pill.css" />
+    <link rel="stylesheet" href="/dist/themes/ripple.css" />
+    <link rel="stylesheet" href="/dist/themes/classic-stack.css" />
+    <link rel="stylesheet" href="/dist/themes/classic-bar.css" />
+    <link rel="stylesheet" href="/dist/themes/gradient-strip.css" />
+    <link rel="stylesheet" href="/dist/themes/gradient.css" />
+    <link rel="stylesheet" href="/dist/themes/brutal.css" />
+    <link rel="stylesheet" href="/dist/themes/pastel.css" />
+    <style>
+      :root {
+        --system-font: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', Inter, system-ui, sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: var(--system-font);
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        transition: background 0.4s ease;
+      }
+      /* Wallpapers */
+      body[data-wp="monterey"] {
+        background: radial-gradient(circle at 20% 20%, #bf360c 0%, transparent 40%),
+                    radial-gradient(circle at 80% 30%, #4a148c 0%, transparent 45%),
+                    radial-gradient(circle at 40% 80%, #0d47a1 0%, transparent 50%),
+                    linear-gradient(135deg, #1a0826 0%, #050b1a 100%);
+      }
+      body[data-wp="aurora"] {
+        background: radial-gradient(circle at 10% 40%, rgba(34, 197, 94, 0.4) 0%, transparent 50%),
+                    radial-gradient(circle at 85% 20%, rgba(56, 189, 248, 0.5) 0%, transparent 45%),
+                    radial-gradient(circle at 50% 90%, rgba(168, 85, 247, 0.4) 0%, transparent 50%),
+                    linear-gradient(180deg, #020617 0%, #090d16 100%);
+      }
+      body[data-wp="sonoma"] {
+        background: radial-gradient(circle at 75% 25%, #ff8a00 0%, transparent 40%),
+                    radial-gradient(circle at 20% 70%, #e52e71 0%, transparent 45%),
+                    radial-gradient(circle at 60% 80%, #9c27b0 0%, transparent 50%),
+                    linear-gradient(135deg, #310d20 0%, #0f071e 100%);
+      }
+      body[data-wp="darkmesh"] {
+        background: radial-gradient(circle at 30% 30%, #1e293b 0%, #020617 100%);
+      }
+      body[data-wp="lightmesh"] {
+        background: radial-gradient(circle at 30% 20%, #e0f2fe 0%, #f0fdf4 40%, #fef3c7 70%, #ffffff 100%);
+        color: #0f172a;
+      }
+
+      .top-nav {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 16px 24px;
+        background: rgba(15, 23, 42, 0.65);
+        backdrop-filter: blur(24px) saturate(180%);
+        -webkit-backdrop-filter: blur(24px) saturate(180%);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      body[data-wp="lightmesh"] .top-nav {
+        background: rgba(255, 255, 255, 0.7);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        color: #0f172a;
+      }
+      .brand {
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .brand span {
+        font-size: 13px;
+        font-weight: 500;
+        padding: 3px 8px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.15);
+      }
+      body[data-wp="lightmesh"] .brand span {
+        background: rgba(0, 0, 0, 0.08);
+      }
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px;
+      }
+      .ctrl-group {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+      }
+      select, button, input {
+        font-family: inherit;
+        font-size: 13px;
+        border-radius: 8px;
+        padding: 6px 10px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.1);
+        color: inherit;
+        cursor: pointer;
+        outline: none;
+        transition: all 0.2s ease;
+      }
+      body[data-wp="lightmesh"] select,
+      body[data-wp="lightmesh"] button,
+      body[data-wp="lightmesh"] input {
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        background: rgba(0, 0, 0, 0.04);
+      }
+      select option {
+        background: #0f172a;
+        color: #fff;
+      }
+      button:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+      body[data-wp="lightmesh"] button:hover {
+        background: rgba(0, 0, 0, 0.08);
+      }
+      button:active {
+        transform: scale(0.98);
+      }
+
+      main {
+        max-width: 1200px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 32px 20px 80px;
+        flex: 1;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 24px;
+        margin-top: 24px;
+      }
+      .card {
+        padding: 24px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+      }
+      body[data-wp="lightmesh"] .card {
+        background: rgba(255, 255, 255, 0.5);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+      }
+      .card h2 {
+        margin: 0 0 8px;
+        font-size: 18px;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+      }
+      .card p {
+        margin: 0 0 16px;
+        font-size: 13px;
+        opacity: 0.8;
+      }
+      .btn-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .btn-primary {
+        background: #0071e3;
+        color: #fff;
+        border: none;
+        font-weight: 500;
+      }
+      .btn-primary:hover {
+        background: #0077ed;
+      }
+
+      .custom-theme-form {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 12px;
+      }
+      .custom-theme-form label {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body data-wp="monterey">
+    <header class="top-nav">
+      <div class="brand">
+        glazekit <span>Theme Playground</span>
+      </div>
+      <div class="controls">
+        <div class="ctrl-group">
+          <label for="theme-sel">Theme:</label>
+          <select id="theme-sel">
+            <option value="ios-glass" selected>ios-glass (Apple Glass)</option>
+            <option value="liquid-glass">liquid-glass (iOS 26 Specular)</option>
+            <option value="aurora">aurora (Animated Glow)</option>
+            <option value="essentials">essentials</option>
+            <option value="showcase">showcase</option>
+            <option value="dialogs">dialogs</option>
+            <option value="material">material</option>
+            <option value="sweet">sweet</option>
+            <option value="neon">neon</option>
+            <option value="pill">pill</option>
+            <option value="ripple">ripple</option>
+            <option value="classic-stack">classic-stack</option>
+            <option value="classic-bar">classic-bar</option>
+            <option value="gradient-strip">gradient-strip</option>
+            <option value="gradient">gradient</option>
+            <option value="brutal">brutal</option>
+            <option value="pastel">pastel</option>
+            <option value="minimal">minimal</option>
+            <option value="flat">flat</option>
+            <option value="outline">outline</option>
+            <option value="basic">basic</option>
+          </select>
+        </div>
+
+        <div class="ctrl-group">
+          <label for="mode-sel">Mode:</label>
+          <select id="mode-sel">
+            <option value="auto">auto (system)</option>
+            <option value="dark" selected>dark</option>
+            <option value="light">light</option>
+          </select>
+        </div>
+
+        <div class="ctrl-group">
+          <label for="stack-sel">Stack:</label>
+          <select id="stack-sel">
+            <option value="stacked" selected>stacked</option>
+            <option value="expanded">expanded</option>
+            <option value="list">list</option>
+          </select>
+        </div>
+
+        <div class="ctrl-group">
+          <label for="wp-sel">Wallpaper:</label>
+          <select id="wp-sel">
+            <option value="monterey" selected>macOS Monterey</option>
+            <option value="aurora">Cosmic Aurora</option>
+            <option value="sonoma">macOS Sonoma</option>
+            <option value="darkmesh">Dark Mesh</option>
+            <option value="lightmesh">Light Clean</option>
+          </select>
+        </div>
+
+        <button id="btn-clear-all" type="button">Dismiss All</button>
+      </div>
+    </header>
+
+    <main>
+      <div class="grid">
+        <!-- Toast Triggers -->
+        <div class="card">
+          <h2>Toast Notifications</h2>
+          <p>Translucent glass toasts with spring entrance, interactive drag-to-dismiss, and stacking.</p>
+          <div class="btn-row">
+            <button id="btn-toast-success" class="btn-primary" type="button">Success</button>
+            <button id="btn-toast-error" type="button">Error</button>
+            <button id="btn-toast-warning" type="button">Warning</button>
+            <button id="btn-toast-info" type="button">Info</button>
+            <button id="btn-toast-action" type="button">Action Bar</button>
+            <button id="btn-toast-ring" type="button">Progress Ring</button>
+            <button id="btn-toast-countdown" type="button">Countdown Ring</button>
+            <button id="btn-toast-toggle" type="button">Interactive Toggle</button>
+            <button id="btn-toast-promise" type="button">Promise</button>
+          </div>
+        </div>
+
+        <!-- Dialog Triggers -->
+        <div class="card">
+          <h2>Dialogs & Confirmations</h2>
+          <p>Full glass modal shells with accessible focus trap, backdrop blur, and custom actions.</p>
+          <div class="btn-row">
+            <button id="btn-dialog-confirm" class="btn-primary" type="button">Confirm Dialog</button>
+            <button id="btn-dialog-alert" type="button">Alert Dialog</button>
+            <button id="btn-dialog-prompt" type="button">Prompt Input</button>
+            <button id="btn-dialog-danger" type="button">Destructive Action</button>
+            <button id="btn-dialog-steps" type="button">Multi-Step Wizard</button>
+          </div>
+        </div>
+
+        <!-- Sheets & Overlays -->
+        <div class="card">
+          <h2>Sheets & Overlays</h2>
+          <p>Action sheets, draggable bottom sheets with snap points, and non-blocking loading overlays.</p>
+          <div class="btn-row">
+            <button id="btn-sheet" class="btn-primary" type="button">Action Sheet</button>
+            <button id="btn-bottom-sheet" type="button">Bottom Sheet (Snap)</button>
+            <button id="btn-loading" type="button">Loading Overlay</button>
+          </div>
+        </div>
+
+        <!-- Custom Theme Creator -->
+        <div class="card">
+          <h2>Custom Theme Engine</h2>
+          <p>Register runtime themes via <code>ui.defineTheme(name, options)</code>.</p>
+          <div class="custom-theme-form">
+            <label>
+              Theme Name:
+              <input id="custom-name" type="text" value="custom-glass" />
+            </label>
+            <label>
+              Accent Color:
+              <input id="custom-accent" type="color" value="#a855f7" />
+            </label>
+            <label>
+              Corner Radius:
+              <input id="custom-radius" type="text" value="24px" />
+            </label>
+            <label>
+              Blur Amount:
+              <input id="custom-blur" type="text" value="28px" />
+            </label>
+          </div>
+          <div style="margin-top: 14px;">
+            <button id="btn-define-theme" class="btn-primary" type="button">Register & Apply Theme</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script type="module">
+      import { ui } from '/dist/index.js';
+
+      // Elements
+      const themeSel = document.getElementById('theme-sel');
+      const modeSel = document.getElementById('mode-sel');
+      const stackSel = document.getElementById('stack-sel');
+      const wpSel = document.getElementById('wp-sel');
+
+      const applyConfig = () => {
+        ui.configure({
+          theme: themeSel.value,
+          mode: modeSel.value,
+          stack: stackSel.value,
+        });
+      };
+
+      themeSel.addEventListener('change', applyConfig);
+      modeSel.addEventListener('change', (e) => {
+        document.documentElement.setAttribute('data-gk-mode', e.target.value);
+        applyConfig();
+      });
+      stackSel.addEventListener('change', applyConfig);
+      wpSel.addEventListener('change', (e) => {
+        document.body.setAttribute('data-wp', e.target.value);
+      });
+
+      // Initial config
+      applyConfig();
+
+      // Toast triggers
+      document.getElementById('btn-toast-success').addEventListener('click', () => {
+        ui.toast.success('Payment successfully processed', {
+          description: 'Transaction #49102 confirmed with Apple Pay.',
+        });
+      });
+
+      document.getElementById('btn-toast-error').addEventListener('click', () => {
+        ui.toast.error('Network Connection Lost', {
+          description: 'Unable to reach the server. Please check your WiFi connection.',
+        });
+      });
+
+      document.getElementById('btn-toast-warning').addEventListener('click', () => {
+        ui.toast.warning('Storage Almost Full', {
+          description: 'Your iCloud storage has less than 500 MB remaining.',
+        });
+      });
+
+      document.getElementById('btn-toast-info').addEventListener('click', () => {
+        ui.toast.info('Software Update Available', {
+          description: 'macOS Sequoia 15.1 is ready to install.',
+        });
+      });
+
+      document.getElementById('btn-toast-action').addEventListener('click', () => {
+        ui.toast('File uploaded to iCloud Drive', {
+          description: 'Archive_2026_Q4.zip (42 MB)',
+          action: {
+            label: 'View',
+            onClick: () => ui.toast('Opened file preview'),
+          },
+          cancel: {
+            label: 'Undo',
+            onClick: () => ui.toast('Upload cancelled'),
+          },
+        });
+      });
+
+      document.getElementById('btn-toast-ring').addEventListener('click', () => {
+        ui.toast('Compressing Video...', {
+          variant: 'progress-ring',
+          progress: 'ring',
+          progressValue: 0.72,
+          description: '72% completed · 12 seconds remaining',
+          duration: 0,
+          closeButton: true,
+        });
+      });
+
+      document.getElementById('btn-toast-countdown').addEventListener('click', () => {
+        ui.toast('Auto-saving document in 5s', {
+          variant: 'countdown-ring',
+          progress: 'ring',
+          duration: 5000,
+        });
+      });
+
+      document.getElementById('btn-toast-toggle').addEventListener('click', () => {
+        ui.toast('Focus Mode Activated', {
+          variant: 'focus-toggle',
+          description: 'Silences all notifications until 9:00 AM.',
+          toggle: {
+            checked: true,
+            label: 'Focus toggle',
+            onChange: (active) => {
+              ui.toast(`Focus mode turned ${active ? 'ON' : 'OFF'}`);
+            },
+          },
+          duration: 0,
+          closeButton: true,
+        });
+      });
+
+      document.getElementById('btn-toast-promise').addEventListener('click', () => {
+        const fakeTask = new Promise((resolve, reject) => {
+          setTimeout(() => {
+            Math.random() > 0.3 ? resolve({ items: 4 }) : reject(new Error('Rate limit exceeded'));
+          }, 2000);
+        });
+
+        ui.toast.promise(fakeTask, {
+          loading: 'Syncing project repository...',
+          success: (res) => `Successfully synced ${res.items} branches!`,
+          error: (err) => `Sync failed: ${err.message}`,
+        });
+      });
+
+      document.getElementById('btn-clear-all').addEventListener('click', () => {
+        ui.toast.dismiss();
+      });
+
+      // Dialog triggers
+      document.getElementById('btn-dialog-confirm').addEventListener('click', async () => {
+        const res = await ui.confirm({
+          title: 'Confirm Transfer',
+          text: 'Are you sure you want to transfer $500.00 to savings account ending in *8821?',
+          icon: 'question',
+          confirmButton: { label: 'Transfer Funds' },
+          cancelButton: { label: 'Cancel' },
+        });
+        if (res.isConfirmed) ui.toast.success('Transfer initiated!');
+      });
+
+      document.getElementById('btn-dialog-alert').addEventListener('click', () => {
+        ui.alert({
+          title: 'System Notice',
+          text: 'Maintenance scheduled for 02:00 AM UTC. Estimated downtime is 15 minutes.',
+          icon: 'info',
+        });
+      });
+
+      document.getElementById('btn-dialog-prompt').addEventListener('click', async () => {
+        const res = await ui.prompt({
+          title: 'Rename Project',
+          text: 'Enter a new name for this workspace:',
+          input: 'text',
+          inputValue: 'Glazekit NextGen',
+          placeholder: 'Workspace name...',
+          validate: (val) => (!val || String(val).trim().length < 3 ? 'Name must be at least 3 characters' : true),
+        });
+        if (res.isConfirmed) ui.toast.success(`Renamed to "${res.value}"`);
+      });
+
+      document.getElementById('btn-dialog-danger').addEventListener('click', async () => {
+        const res = await ui.confirm({
+          title: 'Delete Repository?',
+          text: 'This action is irreversible. All issues, pull requests, and git commits will be wiped.',
+          tone: 'danger',
+          icon: 'trash',
+          confirmButton: { label: 'Yes, Delete Repository' },
+          cancelButton: { label: 'Cancel' },
+        });
+        if (res.isConfirmed) ui.toast.error('Repository deleted');
+      });
+
+      document.getElementById('btn-dialog-steps').addEventListener('click', async () => {
+        const res = await ui.steps([
+          {
+            title: 'Step 1 of 3: Organization',
+            text: 'Choose your workspace domain name:',
+            input: 'text',
+            inputValue: 'apple-corp',
+          },
+          {
+            title: 'Step 2 of 3: Plan',
+            text: 'Select subscription tier:',
+            input: 'select',
+            options: ['Starter Free', 'Pro Team ($29/mo)', 'Enterprise Custom'],
+          },
+          {
+            title: 'Step 3 of 3: Confirmation',
+            text: 'Ready to provision cloud environment. Proceed with deployment?',
+          },
+        ]);
+        if (res.isConfirmed) {
+          ui.toast.success('Workspace created with values: ' + JSON.stringify(res.values));
+        }
+      });
+
+      // Sheet triggers
+      document.getElementById('btn-sheet').addEventListener('click', async () => {
+        const res = await ui.sheet({
+          title: 'Share Document',
+          message: 'Choose how to send "Design_Specs_2026.pdf"',
+          actions: [
+            { label: 'Copy Link', value: 'copy' },
+            { label: 'AirDrop Nearby Devices', value: 'airdrop' },
+            { label: 'Send via Mail', value: 'mail' },
+            { label: 'Cancel', style: 'cancel' },
+          ],
+        });
+        if (res.isConfirmed) ui.toast.info(`Selected share action: ${res.value}`);
+      });
+
+      document.getElementById('btn-bottom-sheet').addEventListener('click', () => {
+        const sheet = ui.bottomSheet({
+          title: 'Sheet with Snap Points',
+          snapPoints: [0.35, 0.7, 0.95],
+          initialSnap: 0,
+          closeButtonLabel: 'Close sheet',
+        });
+        if (sheet.body) {
+          sheet.body.innerHTML = `
+            <div style="padding: 16px 20px;">
+              <p style="margin-top:0;">Drag handle or content up and down to snap between 35%, 70%, and 95% viewport heights.</p>
+              <div style="display:flex;gap:8px;margin-top:12px;">
+                <button id="snap-low" type="button">Snap 35%</button>
+                <button id="snap-mid" type="button">Snap 70%</button>
+                <button id="snap-high" type="button">Snap 95%</button>
+              </div>
+            </div>
+          `;
+          document.getElementById('snap-low')?.addEventListener('click', () => sheet.snapTo(0));
+          document.getElementById('snap-mid')?.addEventListener('click', () => sheet.snapTo(1));
+          document.getElementById('snap-high')?.addEventListener('click', () => sheet.snapTo(2));
+        }
+      });
+
+      document.getElementById('btn-loading').addEventListener('click', () => {
+        const overlay = ui.loading({
+          text: 'Synthesizing Audio...',
+          progress: 0.1,
+          allowEscape: true,
+        });
+
+        let prog = 0.1;
+        const timer = setInterval(() => {
+          prog += 0.25;
+          if (prog >= 1) {
+            clearInterval(timer);
+            overlay.close();
+            ui.toast.success('Audio synthesis completed!');
+          } else {
+            overlay.update({ progress: prog, text: `Synthesizing Audio (${Math.round(prog * 100)}%)...` });
+          }
+        }, 500);
+      });
+
+      // Custom theme creator
+      document.getElementById('btn-define-theme').addEventListener('click', () => {
+        const name = document.getElementById('custom-name').value.trim() || 'custom-glass';
+        const accent = document.getElementById('custom-accent').value;
+        const radius = document.getElementById('custom-radius').value;
+        const blur = document.getElementById('custom-blur').value;
+
+        ui.defineTheme(name, {
+          radius,
+          blur,
+          tokens: {
+            light: { accent, solid: '#ffffff' },
+            dark: { accent, solid: '#1c1c1e' },
+          },
+        });
+
+        // Add to dropdown if not present
+        if (![...themeSel.options].some((opt) => opt.value === name)) {
+          const opt = document.createElement('option');
+          opt.value = name;
+          opt.textContent = `${name} (custom)`;
+          themeSel.append(opt);
+        }
+        themeSel.value = name;
+        applyConfig();
+        ui.toast.success(`Custom theme "${name}" active!`, {
+          description: `Radius: ${radius}, Blur: ${blur}, Accent: ${accent}`,
+        });
+      });
+    </script>
+  </body>
+</html>

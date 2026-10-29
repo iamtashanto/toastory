@@ -59,42 +59,43 @@ export function buildInput(options: DialogOptions, labelId: string): InputContro
     applyAttributes(node, options.inputAttributes);
   };
 
+  const makeCtrl = (
+    child: HTMLElement,
+    target: HTMLElement,
+    fields: HTMLElement[],
+    read: () => unknown,
+  ): InputControl => ({
+    node: wrap(labelNode, child),
+    focusTarget: target,
+    fields,
+    read,
+  });
+
   if (type === 'textarea') {
     const area = el('textarea', '', { placeholder: options.placeholder, rows: '3' });
     area.value = initial === undefined ? '' : String(initial);
     common(area);
-    return {
-      node: wrap(labelNode, area),
-      focusTarget: area,
-      fields: [area],
-      read: () => area.value,
-    };
+    return makeCtrl(area, area, [area], () => area.value);
   }
 
   if (type === 'select') {
     const select = el('select');
-    const choices = normalizeChoices(options.options);
     if (options.placeholder) {
-      const placeholder = el('option', '', { value: '', disabled: '' }, options.placeholder);
-      select.append(placeholder);
+      select.append(el('option', '', { value: '', disabled: '' }, options.placeholder));
     }
-    for (const choice of choices) {
-      const option = el(
-        'option',
-        '',
-        { value: choice.value, disabled: choice.disabled ? '' : undefined },
-        choice.label,
+    for (const choice of normalizeChoices(options.options)) {
+      select.append(
+        el(
+          'option',
+          '',
+          { value: choice.value, disabled: choice.disabled ? '' : undefined },
+          choice.label,
+        ),
       );
-      select.append(option);
     }
     select.value = initial === undefined ? '' : String(initial);
     common(select);
-    return {
-      node: wrap(labelNode, select),
-      focusTarget: select,
-      fields: [select],
-      read: () => select.value,
-    };
+    return makeCtrl(select, select, [select], () => select.value);
   }
 
   if (type === 'radio') {
@@ -163,7 +164,7 @@ export function buildInput(options: DialogOptions, labelId: string): InputContro
         type: 'text',
         maxLength: '1',
         inputmode: isAlpha ? 'text' : 'numeric',
-        autocomplete: i === 0 ? 'one-time-code' : 'off',
+        autocomplete: i ? 'off' : 'one-time-code',
         'aria-label': `Digit ${i + 1} of ${len}`,
       }) as HTMLInputElement;
       inputs.push(inp);
@@ -177,62 +178,38 @@ export function buildInput(options: DialogOptions, labelId: string): InputContro
       });
 
       inp.addEventListener('keydown', (e) => {
-        if (e.key === 'Backspace' && !inp.value && inputs[i - 1]) {
-          inputs[i - 1]?.focus();
-        } else if (e.key === 'ArrowLeft' && inputs[i - 1]) {
-          inputs[i - 1]?.focus();
-        } else if (e.key === 'ArrowRight' && inputs[i + 1]) {
-          inputs[i + 1]?.focus();
-        }
+        const prev = inputs[i - 1], next = inputs[i + 1];
+        if ((e.key === 'Backspace' && !inp.value && prev) || (e.key === 'ArrowLeft' && prev)) prev.focus();
+        else if (e.key === 'ArrowRight' && next) next.focus();
       });
 
       inp.addEventListener('paste', (e) => {
         const raw = e.clipboardData?.getData('text') || '';
-        const cleaned = (isAlpha ? raw.replace(/[^a-zA-Z0-9]/g, '') : raw.replace(/\D/g, '')).slice(
-          0,
-          len,
-        );
+        const cleaned = (isAlpha ? raw.replace(/[^a-zA-Z0-9]/g, '') : raw.replace(/\D/g, '')).slice(0, len);
         if (!cleaned) return;
         e.preventDefault();
-        inputs.forEach((x, j) => {
-          x.value = cleaned[j] || '';
-        });
-        const nextIdx = Math.min(cleaned.length, len - 1);
-        inputs[nextIdx]?.focus();
+        inputs.forEach((x, j) => { x.value = cleaned[j] || ''; });
+        inputs[Math.min(cleaned.length, len - 1)]?.focus();
         if (cleaned.length === len) options.onOtpComplete?.(cleaned);
       });
     }
 
-    if (options.inputValue && typeof options.inputValue === 'string') {
+    if (typeof options.inputValue === 'string') {
       const chars = options.inputValue.slice(0, len);
-      inputs.forEach((inp, idx) => {
-        inp.value = chars[idx] || '';
-      });
+      inputs.forEach((inp, idx) => { inp.value = chars[idx] || ''; });
     }
 
     let footerNote: HTMLElement | null = null;
     if (options.resendCooldown !== undefined) {
       let cooldown = options.resendCooldown;
-      const resendWrap = el('p', 'gk-otp-resend', {
-        style: 'margin-top:12px;font-size:13px;text-align:center;',
-      });
-      const resendBtn = el(
-        'button',
-        'gk-btn-resend',
-        {
-          type: 'button',
-          style:
-            'color:var(--gk-accent);font-weight:600;cursor:pointer;background:none;border:none;padding:0;font:inherit;',
-        },
-        'Resend code',
-      );
+      const resendWrap = el('p', 'gk-otp-resend');
+      const resendBtn = el('button', 'gk-btn-resend', { type: 'button' }, 'Resend code');
       const timerSpan = el('span', '', {}, cooldown > 0 ? ` (${cooldown}s)` : '');
       resendBtn.disabled = cooldown > 0;
       resendWrap.append("Didn't get it? ", resendBtn, timerSpan);
       if (cooldown > 0) {
         const interval = setInterval(() => {
-          cooldown--;
-          if (cooldown <= 0) {
+          if (--cooldown <= 0) {
             clearInterval(interval);
             timerSpan.textContent = '';
             resendBtn.disabled = false;
@@ -242,8 +219,7 @@ export function buildInput(options: DialogOptions, labelId: string): InputContro
         }, 1000);
       }
       resendBtn.addEventListener('click', () => {
-        if (resendBtn.disabled) return;
-        options.onResend?.();
+        if (!resendBtn.disabled) options.onResend?.();
       });
       footerNote = resendWrap;
     }
@@ -256,29 +232,15 @@ export function buildInput(options: DialogOptions, labelId: string): InputContro
     };
   }
 
-  if (type === 'file') {
-    return {
-      node: wrap(labelNode, input),
-      focusTarget: input,
-      fields: [input],
-      read: () => {
-        const files = Array.from(input.files ?? []);
-        return input.multiple ? files : files[0];
-      },
-    };
-  }
-  if (type === 'number') {
-    return {
-      node: wrap(labelNode, input),
-      focusTarget: input,
-      fields: [input],
-      read: () => (input.value === '' ? undefined : Number(input.value)),
-    };
-  }
-  return {
-    node: wrap(labelNode, input),
-    focusTarget: input,
-    fields: [input],
-    read: () => input.value,
-  };
+  return makeCtrl(input, input, [input], () =>
+    type === 'file'
+      ? input.multiple
+        ? [...(input.files ?? [])]
+        : input.files?.[0]
+      : type === 'number'
+        ? input.value === ''
+          ? undefined
+          : Number(input.value)
+        : input.value,
+  );
 }

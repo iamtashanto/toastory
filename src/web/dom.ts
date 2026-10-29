@@ -38,11 +38,6 @@ export function fill(target: HTMLElement, value: Renderable): void {
   else target.append(String(value));
 }
 
-/** Removes every child of a node. */
-export function clear(node: Node): void {
-  while (node.firstChild) node.removeChild(node.firstChild);
-}
-
 let uid = 0;
 /** Returns a document-unique id with the given prefix. */
 export function nextId(prefix: string): string {

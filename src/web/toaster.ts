@@ -17,32 +17,26 @@ import type { IconName } from './icons';
 import { safeUrl, sanitizeToFragment } from './sanitize';
 import { resolveVariant } from './variants';
 
+const COLORS = ['#38bdf8', '#818cf8', '#ec4899', '#f97316', '#10b981', '#6366f1', '#eab308'];
+
 function deterministicColor(str: string): string {
-  const colors = ['#38bdf8', '#818cf8', '#ec4899', '#f97316', '#10b981', '#6366f1', '#eab308'];
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) hash = (hash * 31 + str.charCodeAt(i)) >>> 0;
-  return colors[hash % colors.length] ?? '#38bdf8';
+  let h = 0;
+  for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) >>> 0;
+  return COLORS[h % 7]!;
 }
 
 function formatRelativeTime(ts: number | Date | string | boolean, locale = 'en'): string {
   if (typeof ts === 'string') return ts;
   if (ts === true) return 'now';
-  const date = ts instanceof Date ? ts.getTime() : typeof ts === 'number' ? ts : Date.now();
-  const diffSec = Math.round((Date.now() - date) / 1000);
-  if (Math.abs(diffSec) < 60) return 'now';
-  const diffMin = Math.round(diffSec / 60);
-  const diffHr = Math.round(diffMin / 60);
-  const diffDay = Math.round(diffHr / 24);
-  const [val, unit, fallback] =
-    Math.abs(diffMin) < 60
-      ? [diffMin, 'minute' as const, `${diffMin}m ago`]
-      : Math.abs(diffHr) < 24
-        ? [diffHr, 'hour' as const, `${diffHr}h ago`]
-        : [diffDay, 'day' as const, `${diffDay}d ago`];
+  const d = ts instanceof Date ? ts.getTime() : Number(ts) || Date.now();
+  const min = Math.round((Date.now() - d) / 60000);
+  if (!min) return 'now';
+  const hr = Math.round(min / 60), day = Math.round(hr / 24);
+  const [val, unit] = hr < 1 ? [min, 'minute'] : day < 1 ? [hr, 'hour'] : [day, 'day'];
   try {
-    return new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(-val, unit);
+    return new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(-val, unit as Intl.RelativeTimeFormatUnit);
   } catch {
-    return fallback;
+    return `${val}${unit[0]} ago`;
   }
 }
 
@@ -100,23 +94,20 @@ export function parseHotkey(
   const parts = hotkey
     .toLowerCase()
     .split('+')
-    .map((part) => part.trim())
+    .map((p) => p.trim())
     .filter(Boolean);
-  const key = parts.find(
-    (part) => !['alt', 'ctrl', 'control', 'shift', 'meta', 'cmd'].includes(part),
-  );
+  const key = parts.find((p) => !/^(alt|ctrl|control|shift|meta|cmd)$/.test(p));
   if (!key) return undefined;
-  const code = /^[a-z]$/.test(key)
-    ? `Key${key.toUpperCase()}`
-    : /^\d$/.test(key)
-      ? `Digit${key}`
-      : key;
   return {
     alt: parts.includes('alt'),
-    ctrl: parts.includes('ctrl') || parts.includes('control'),
+    ctrl: parts.some((p) => p === 'ctrl' || p === 'control'),
     shift: parts.includes('shift'),
-    meta: parts.includes('meta') || parts.includes('cmd'),
-    code,
+    meta: parts.some((p) => p === 'meta' || p === 'cmd'),
+    code: /^[a-z]$/.test(key)
+      ? `Key${key.toUpperCase()}`
+      : /^\d$/.test(key)
+        ? `Digit${key}`
+        : key,
   };
 }
 
@@ -137,8 +128,9 @@ export function isDocumentDark(): boolean {
 /** Resolves the mode attribute value, flipping it for inverted toasts. */
 export function resolveMode(mode: GlazeConfig['mode'], invert: boolean): string {
   if (!invert) return mode;
-  const dark = mode === 'dark' || (mode === 'auto' && (isDocumentDark() || prefersDark()));
-  return dark ? 'light' : 'dark';
+  return mode === 'dark' || (mode === 'auto' && (isDocumentDark() || prefersDark()))
+    ? 'light'
+    : 'dark';
 }
 
 /**
@@ -260,8 +252,7 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
         for (const r of regions.values()) {
           for (const item of r.items.values()) {
             if (item.el === target) {
-              const borderBox = entry.borderBoxSize?.[0];
-              const h = borderBox ? borderBox.blockSize : entry.contentRect.height;
+              const h = entry.borderBoxSize?.[0]?.blockSize ?? entry.contentRect.height;
               if (Math.abs(item.height - h) > 1) {
                 item.height = h;
                 item.measured = true;
@@ -271,9 +262,7 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
           }
         }
       }
-      if (changed) {
-        for (const r of regions.values()) layout(r);
-      }
+      if (changed) regions.forEach(layout);
     });
   }
 
@@ -295,26 +284,17 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
     if (host !== document.body) root.dataset.contained = '';
     const refresh = (): void => layout(region);
 
-    root.addEventListener('pointerenter', () => {
-      region.hover = true;
-      setPause(region, true, 'hover');
+    const onEv = (prop: 'hover' | 'focus', on: boolean): void => {
+      region[prop] = on;
+      setPause(region, on, prop);
       refresh();
-    });
-    root.addEventListener('pointerleave', () => {
-      region.hover = false;
-      setPause(region, false, 'hover');
-      refresh();
-    });
-    root.addEventListener('focusin', () => {
-      region.focus = true;
-      setPause(region, true, 'focus');
-      refresh();
-    });
-    root.addEventListener('focusout', (event) => {
-      if (event.relatedTarget instanceof Node && root.contains(event.relatedTarget)) return;
-      region.focus = false;
-      setPause(region, false, 'focus');
-      refresh();
+    };
+    root.addEventListener('pointerenter', () => onEv('hover', true));
+    root.addEventListener('pointerleave', () => onEv('hover', false));
+    root.addEventListener('focusin', () => onEv('focus', true));
+    root.addEventListener('focusout', (e) => {
+      if (e.relatedTarget instanceof Node && root.contains(e.relatedTarget)) return;
+      onEv('focus', false);
     });
     root.addEventListener('keydown', (event) => {
       const target = (event.target as Element).closest<HTMLElement>('.gk-toast');
@@ -360,17 +340,9 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
     const node = el('button', cls, { type: 'button', 'aria-label': spec.ariaLabel }, spec.label);
     node.addEventListener('click', (event) => {
       event.stopPropagation();
-      let prevented = false;
-      const api = {
-        preventDefault: () => {
-          prevented = true;
-        },
-        get defaultPrevented() {
-          return prevented;
-        },
-      };
-      onClick?.(api);
-      if (!prevented) close(record.id, reason);
+      let p = false;
+      onClick?.({ preventDefault: () => { p = true; }, get defaultPrevented() { return p; } });
+      if (!p) close(record.id, reason);
     });
     return node;
   };
@@ -392,35 +364,28 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
 
     const content = el('div', k('gk-toast__content gk-content', names.content));
     if (record.custom) {
-      const out = record.custom({
-        id: record.id,
-        dismiss: () => close(record.id, 'api'),
-        update: (patch) => void store.update(record.id, patch),
-      });
-      if (typeof Node !== 'undefined' && out instanceof Node) content.append(out);
-      else if (typeof out === 'string') content.append(out);
+      fill(
+        content,
+        record.custom({
+          id: record.id,
+          dismiss: () => close(record.id, 'api'),
+          update: (patch) => void store.update(record.id, patch),
+        }) as Renderable,
+      );
     } else {
       if (record.badge !== undefined) {
-        const badgeObj =
+        const bObj =
           typeof record.badge === 'object' && record.badge !== null ? record.badge : undefined;
-        const tone: string = badgeObj ? (badgeObj.tone ?? 'info') : (record.badge as string);
+        const tone: string = bObj ? (bObj.tone ?? 'info') : (record.badge as string);
         const badgeEl = el('div', k('gk-toast__badge gk-badge', names.badge), {
           'aria-hidden': 'true',
           'data-tone': tone,
         });
-        if (badgeObj && badgeObj.icon) {
-          fill(badgeEl, badgeObj.icon);
-        } else if (badgeObj && badgeObj.label) {
-          badgeEl.textContent = badgeObj.label;
-        } else if (typeof record.badge === 'string' && PATHS[tone as IconName]) {
-          const ic = icon(tone as IconName);
-          if (ic) badgeEl.append(ic);
-        } else if (typeof record.badge === 'string') {
+        if (bObj && bObj.icon) fill(badgeEl, bObj.icon);
+        else if (bObj && bObj.label) badgeEl.textContent = bObj.label;
+        else if (typeof record.badge === 'string' && !PATHS[tone as IconName])
           badgeEl.textContent = record.badge;
-        } else {
-          const ic = icon((PATHS[tone as IconName] ? tone : 'info') as IconName);
-          if (ic) badgeEl.append(ic);
-        }
+        else badgeEl.append(icon((PATHS[tone as IconName] ? tone : 'info') as IconName));
         node.append(badgeEl);
       } else {
         const customIcon = record.icon;
@@ -439,50 +404,36 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
 
       if (record.avatar !== undefined) {
         const holder = el('div', k('gk-toast__avatar gk-avatar', names.avatar));
-        if (
-          typeof record.avatar === 'object' &&
-          record.avatar !== null &&
-          !('nodeType' in record.avatar)
-        ) {
-          const av = record.avatar as ToastAvatarOption;
-          if (av.src) {
+        const av = record.avatar;
+        if (typeof av === 'object' && av !== null && !('nodeType' in av)) {
+          const opt = av as ToastAvatarOption;
+          if (opt.src) {
             holder.append(
-              el('img', '', { src: safeUrl(av.src) ? av.src : '', alt: av.alt ?? av.name ?? '' }),
+              el('img', '', { src: safeUrl(opt.src) ? opt.src : '', alt: opt.alt ?? opt.name ?? '' }),
             );
           } else {
             const initials =
-              av.initials ??
-              (av.name
-                ? av.name
-                    .split(' ')
-                    .map((w) => w[0])
-                    .join('')
-                    .slice(0, 2)
-                    .toUpperCase()
-                : '?');
+              opt.initials ??
+              (opt.name ? opt.name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase() : '?');
             holder.textContent = initials;
-            holder.style.background = av.color ?? deterministicColor(av.name ?? initials);
-            holder.style.color = '#ffffff';
+            holder.style.background = opt.color ?? deterministicColor(opt.name ?? initials);
+            holder.style.color = '#fff';
           }
-        } else if (typeof record.avatar === 'string') {
-          holder.append(
-            el('img', '', { src: safeUrl(record.avatar) ? record.avatar : '', alt: '' }),
-          );
-        } else {
-          fill(holder, record.avatar as Renderable);
-        }
+        } else if (typeof av === 'string') {
+          holder.append(el('img', '', { src: safeUrl(av) ? av : '', alt: '' }));
+        } else fill(holder, av as Renderable);
         node.append(holder);
       }
 
-      if (record.title !== undefined && record.title !== '') {
+      if (record.title) {
         const title = el('div', k('gk-toast__title gk-title', names.title));
         fill(title, record.title);
         content.append(title);
       }
-      if (record.description !== undefined || record.html !== undefined) {
+      if (record.description || record.html) {
         const desc = el('div', k('gk-toast__description gk-desc', names.description));
         fill(desc, record.description);
-        if (record.html !== undefined) {
+        if (record.html) {
           const fragment = sanitizeToFragment(record.html);
           if (fragment) desc.append(fragment);
         }
@@ -523,39 +474,47 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
     let body: HTMLElement = content;
     if (record.href && safeUrl(record.href)) {
       const target = record.target ?? '_self';
-      body = el('a', k('gk-toast__link gk-link', names.link), {
-        href: record.href,
-        target,
-        rel: target === '_blank' ? 'noopener noreferrer' : undefined,
-      });
-      body.append(content);
+      body = el(
+        'a',
+        k('gk-toast__link gk-link', names.link),
+        {
+          href: record.href,
+          target,
+          rel: target === '_blank' ? 'noopener noreferrer' : undefined,
+        },
+        content,
+      );
     }
     node.append(body);
 
     if (record.timestamp !== undefined) {
-      const timeEl = el('time', k('gk-toast__time gk-time', names.time));
-      timeEl.textContent = formatRelativeTime(record.timestamp, record.timestampLocale);
-      node.append(timeEl);
+      node.append(
+        el(
+          'time',
+          k('gk-toast__time gk-time', names.time),
+          {},
+          formatRelativeTime(record.timestamp, record.timestampLocale),
+        ),
+      );
     }
 
     if (record.kbd) {
-      const kbdEl = el('kbd', k('gk-toast__kbd gk-kbd', names.kbd));
-      kbdEl.textContent = record.kbd;
-      node.append(kbdEl);
+      node.append(el('kbd', k('gk-toast__kbd gk-kbd', names.kbd), {}, record.kbd));
     }
 
     if (record.toggle) {
+      const tg = record.toggle;
       const sw = el('button', 'gk-toast__switch gk-sw', {
         type: 'button',
         role: 'switch',
-        'aria-checked': String(Boolean(record.toggle.checked)),
-        'aria-label': record.toggle.label ?? 'Toggle option',
+        'aria-checked': String(Boolean(tg.checked)),
+        'aria-label': tg.label ?? 'Toggle option',
       });
       sw.addEventListener('click', (e) => {
         e.stopPropagation();
         const next = sw.getAttribute('aria-checked') !== 'true';
         sw.setAttribute('aria-checked', String(next));
-        record.toggle?.onChange?.(next);
+        tg.onChange?.(next);
       });
       node.append(sw);
     }
@@ -565,50 +524,23 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       record.variant === 'countdown-ring' ||
       record.variant === 'progress-ring'
     ) {
-      const ringSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-      ringSvg.setAttribute('viewBox', '0 0 36 36');
-      ringSvg.setAttribute('class', 'gk-ring-svg');
-      const bgCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-      bgCircle.setAttribute('cx', '18');
-      bgCircle.setAttribute('cy', '18');
-      bgCircle.setAttribute('r', '16');
-      bgCircle.setAttribute('fill', 'none');
-      bgCircle.setAttribute('stroke', 'currentColor');
-      bgCircle.setAttribute('stroke-width', '3');
-      bgCircle.setAttribute('opacity', '0.2');
-      const fillCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-      fillCircle.setAttribute('cx', '18');
-      fillCircle.setAttribute('cy', '18');
-      fillCircle.setAttribute('r', '16');
-      fillCircle.setAttribute('fill', 'none');
-      fillCircle.setAttribute('stroke', 'currentColor');
-      fillCircle.setAttribute('stroke-width', '3');
-      fillCircle.setAttribute('stroke-dasharray', '100.5');
-      fillCircle.setAttribute('stroke-linecap', 'round');
       const val =
         record.progressValue ??
         (record.duration > 0 ? store.getRemaining(record.id) / record.duration : 1);
-      fillCircle.setAttribute('stroke-dashoffset', `${100.5 * (1 - val)}`);
-      ringSvg.append(bgCircle, fillCircle);
-      node.append(ringSvg);
+      const dash = 100.5 * (1 - val);
+      const div = document.createElement('div');
+      div.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" class="gk-ring-svg"><circle cx="18" cy="18" r="16" fill="none" stroke="currentColor" stroke-width="3" opacity="0.2"/><circle cx="18" cy="18" r="16" fill="none" stroke="currentColor" stroke-width="3" stroke-dasharray="100.5" stroke-linecap="round" stroke-dashoffset="${dash}"/></svg>`;
+      node.append(div.firstElementChild!);
     }
 
-    if (record.actions && record.actions.length > 0) {
+    if (record.actions?.length) {
       const actionsDiv = el('div', k('gk-toast__actions gk-actions', names.actions));
       for (const act of record.actions) {
-        const actBtn = el(
-          'button',
-          `gk-toast__action gk-btn gk-action gk-btn--${act.kind ?? 'secondary'}`,
-          {
-            type: 'button',
-          },
-        );
         const label = act.label ?? act.text ?? 'Action';
-        actBtn.textContent = label;
-        actBtn.setAttribute('aria-label', label);
+        const actBtn = el('button', `gk-toast__action gk-btn gk-action gk-btn--${act.kind ?? 'secondary'}`, { type: 'button', 'aria-label': label }, label);
         actBtn.addEventListener('click', (e) => {
           e.stopPropagation();
-          if (act.onClick) act.onClick(e);
+          act.onClick?.(e);
           if (act.autoDismiss !== false && !e.defaultPrevented) close(record.id, 'action');
         });
         actionsDiv.append(actBtn);
@@ -641,11 +573,15 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       node.append(actions);
     }
     if (flag(record.closeButton, c.closeButton) && record.dismissible !== false) {
-      const closeBtn = el('button', k('gk-toast__close gk-close', names.closeButton), {
-        type: 'button',
-        'aria-label': record.closeButtonLabel ?? c.closeLabel ?? 'Close notification',
-      });
-      closeBtn.append(icon('close'));
+      const closeBtn = el(
+        'button',
+        k('gk-toast__close gk-close', names.closeButton),
+        {
+          type: 'button',
+          'aria-label': record.closeButtonLabel ?? c.closeLabel ?? 'Close notification',
+        },
+        icon('close'),
+      );
       closeBtn.addEventListener('click', (event) => {
         event.stopPropagation();
         close(record.id, 'user');
@@ -660,9 +596,8 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
           flag(record.progress as boolean | undefined, c.progress)));
     if (showBar) {
       const bar = el('i');
-      const elapsed = Math.max(0, record.duration - store.getRemaining(record.id));
       bar.style.setProperty('--gk-d', `${record.duration}ms`);
-      bar.style.setProperty('--gk-delay', `-${elapsed}ms`);
+      bar.style.setProperty('--gk-delay', `-${Math.max(0, record.duration - store.getRemaining(record.id))}ms`);
       node.append(
         el(
           'div',
@@ -713,10 +648,6 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       set('data-gradient-border', '');
     if (record.group) set('data-group', record.group);
     if (record.island || activeVariant === 'island') set('data-island', '');
-    set('data-gk-mode', resolveMode(c.mode, flag(record.invert, c.invert)));
-    set('data-dir', record.dir ?? c.dir);
-    set('dir', (record.dir ?? c.dir) === 'auto' ? undefined : (record.dir ?? c.dir));
-    set('data-animation', record.animation ?? c.animation ?? 'slide');
     const typeColor = store.types.get(record.type)?.color;
     if (typeColor) node.style.setProperty('--gk-type', typeColor);
     set('data-rich', flag(record.richColors, c.richColors) ? '' : undefined);
@@ -787,9 +718,9 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       const allowed = (
         axis === 'x' ? (dx > 0 ? 'right' : 'left') : dy > 0 ? 'down' : 'up'
       ) as SwipeDirection;
-      const value = dirs.includes(allowed) ? (axis === 'x' ? dx : dy) : 0;
-      node.style.setProperty('--gk-sx', axis === 'x' ? `${value}px` : '0px');
-      node.style.setProperty('--gk-sy', axis === 'y' ? `${value}px` : '0px');
+      const val = dirs.includes(allowed) ? (axis === 'x' ? dx : dy) : 0;
+      node.style.setProperty('--gk-sx', axis === 'x' ? `${val}px` : '0px');
+      node.style.setProperty('--gk-sy', axis === 'y' ? `${val}px` : '0px');
     });
     const finish = (event: PointerEvent): void => {
       if (!start) return;
@@ -805,19 +736,12 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       delete node.dataset.swiping;
       store.resume(item.record.id, 'swipe');
 
-      const dimension = axis === 'x' ? node.offsetWidth || 350 : node.offsetHeight || 60;
-      const effectiveThreshold =
-        typeof threshold === 'number' && threshold <= 1 && threshold > 0
-          ? threshold * dimension
-          : threshold;
-
-      const isBeyondDistance = travelled >= effectiveThreshold;
-      const isHighVelocity = duration >= 40 && velocity > 0.6 && travelled > 20;
-
+      const dim = axis === 'x' ? node.offsetWidth || 350 : node.offsetHeight || 60;
+      const limit = threshold <= 1 && threshold > 0 ? threshold * dim : threshold;
       if (
         wasSwiping &&
         dirs.includes(out as SwipeDirection) &&
-        (isBeyondDistance || isHighVelocity)
+        (travelled >= limit || (duration >= 40 && velocity > 0.6 && travelled > 20))
       ) {
         node.dataset.swipeOut = out;
         close(item.record.id, 'swipe');
@@ -916,16 +840,12 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       else region.el.setAttribute('dir', dir);
 
       // Offsets
-      const setPx = (prop: string, val: string | number | undefined) => {
-        if (val !== undefined) region.el.style.setProperty(prop, typeof val === 'number' ? `${val}px` : val);
+      const setPx = (p: string, v: string | number | undefined) => {
+        if (v !== undefined) region.el.style.setProperty(p, typeof v === 'number' ? `${v}px` : v);
       };
-      if (typeof c.offset === 'object' && c.offset !== null) {
-        setPx('--gk-offset-top', c.offset.top);
-        setPx('--gk-offset-bottom', c.offset.bottom);
-        setPx('--gk-offset-left', c.offset.left);
-        setPx('--gk-offset-right', c.offset.right);
-      } else if (c.offset !== undefined) {
-        for (const side of ['top', 'bottom', 'left', 'right']) setPx(`--gk-offset-${side}`, c.offset);
+      const off = c.offset, isOff = typeof off === 'object' && off !== null;
+      for (const s of ['top', 'bottom', 'left', 'right'] as const) {
+        setPx(`--gk-offset-${s}`, isOff ? (off as Record<string, string | number>)[s] : off);
       }
       setPx('--gk-mobile-offset', c.mobileOffset);
 
@@ -936,39 +856,16 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
     }
   };
 
-  const unsubscribe = store.subscribe(render);
-  const unsubscribeConfig = store.config.subscribe(render);
-  cleanups.push(unsubscribe, unsubscribeConfig);
+  cleanups.push(store.subscribe(render), store.config.subscribe(render));
 
-  const onVisibility = (): void => {
-    const hidden = document.visibilityState === 'hidden';
+  const toggleHidden = (pause: boolean): void => {
     for (const t of store.getToasts()) {
-      if (!pauseSet(t).includes('hidden')) continue;
-      if (hidden) store.pause(t.id, 'hidden');
-      else store.resume(t.id, 'hidden');
+      if (pauseSet(t).includes('hidden')) {
+        if (pause) store.pause(t.id, 'hidden');
+        else store.resume(t.id, 'hidden');
+      }
     }
   };
-  document.addEventListener('visibilitychange', onVisibility);
-  cleanups.push(() => document.removeEventListener('visibilitychange', onVisibility));
-
-  const onWindowBlur = (): void => {
-    for (const t of store.getToasts()) {
-      if (!pauseSet(t).includes('hidden')) continue;
-      store.pause(t.id, 'hidden');
-    }
-  };
-  const onWindowFocus = (): void => {
-    for (const t of store.getToasts()) {
-      if (!pauseSet(t).includes('hidden')) continue;
-      store.resume(t.id, 'hidden');
-    }
-  };
-  window.addEventListener('blur', onWindowBlur);
-  window.addEventListener('focus', onWindowFocus);
-  cleanups.push(() => {
-    window.removeEventListener('blur', onWindowBlur);
-    window.removeEventListener('focus', onWindowFocus);
-  });
 
   const focusNewest = (): boolean => {
     for (const region of regions.values()) {
@@ -982,24 +879,30 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
     return false;
   };
 
-  const onKey = (event: KeyboardEvent): void => {
-    const spec = parseHotkey(cfg().hotkey);
-    if (!spec || event.code !== spec.code) return;
-    if (
-      event.altKey !== spec.alt ||
-      event.ctrlKey !== spec.ctrl ||
-      event.shiftKey !== spec.shift ||
-      event.metaKey !== spec.meta
-    )
-      return;
-    if (focusNewest()) event.preventDefault();
+  const addEvt = (tgt: EventTarget, ev: string, fn: EventListener) => {
+    tgt.addEventListener(ev, fn);
+    cleanups.push(() => tgt.removeEventListener(ev, fn));
   };
-  document.addEventListener('keydown', onKey);
-  cleanups.push(() => document.removeEventListener('keydown', onKey));
-
-  const onResize = (): void => regions.forEach(layout);
-  window.addEventListener('resize', onResize);
-  cleanups.push(() => window.removeEventListener('resize', onResize));
+  addEvt(document, 'visibilitychange', () =>
+    toggleHidden(document.visibilityState === 'hidden'),
+  );
+  addEvt(window, 'blur', () => toggleHidden(true));
+  addEvt(window, 'focus', () => toggleHidden(false));
+  addEvt(window, 'resize', () => regions.forEach(layout));
+  addEvt(document, 'keydown', ((event: KeyboardEvent) => {
+    const spec = parseHotkey(cfg().hotkey);
+    if (
+      spec &&
+      event.code === spec.code &&
+      event.altKey === spec.alt &&
+      event.ctrlKey === spec.ctrl &&
+      event.shiftKey === spec.shift &&
+      event.metaKey === spec.meta &&
+      focusNewest()
+    ) {
+      event.preventDefault();
+    }
+  }) as EventListener);
 
   render();
 

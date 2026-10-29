@@ -144,148 +144,95 @@ export function createUI(options: CreateUIOptions = {}): CoreUI {
   const toDialogOptions = (opts: DialogOptions | string): DialogOptions =>
     typeof opts === 'string' ? { title: opts } : { ...opts };
 
+  const runDlg = (merged: DialogOptions): Promise<DialogResult> => {
+    const handle = dialogManager.open(merged);
+    if (activeRenderer?.openDialog) void activeRenderer.openDialog(merged, handle);
+    else replayQueue.push(() => void activeRenderer?.openDialog?.(merged, handle));
+    return handle.result;
+  };
+
+  const DISMISSED: DialogResult = {
+    isConfirmed: false,
+    isDenied: false,
+    isDismissed: true,
+    value: undefined,
+    dismiss: 'close',
+  };
+
   const ui: CoreUI = {
     toast,
     config,
     toastStore,
     dialogManager,
 
-    confirm(opts) {
-      const merged: DialogOptions = {
+    confirm: (opts) =>
+      runDlg({
         confirmButton: { show: true },
         cancelButton: { show: true },
         ...toDialogOptions(opts),
-      };
-      const handle = dialogManager.open(merged);
-      if (activeRenderer?.openDialog) {
-        void activeRenderer.openDialog(merged, handle);
-      } else {
-        replayQueue.push(() => {
-          void activeRenderer?.openDialog?.(merged, handle);
-        });
-      }
-      return handle.result;
-    },
+      }),
 
-    alert(opts) {
-      const merged: DialogOptions = {
+    alert: (opts) =>
+      runDlg({
         confirmButton: { show: true },
         cancelButton: { show: false },
         denyButton: { show: false },
         ...toDialogOptions(opts),
-      };
-      const handle = dialogManager.open(merged);
-      if (activeRenderer?.openDialog) {
-        void activeRenderer.openDialog(merged, handle);
-      } else {
-        replayQueue.push(() => {
-          void activeRenderer?.openDialog?.(merged, handle);
-        });
-      }
-      return handle.result;
-    },
+      }),
 
-    prompt(opts) {
-      const merged: DialogOptions = {
+    prompt: (opts) =>
+      runDlg({
         input: 'text',
         confirmButton: { show: true },
         cancelButton: { show: true },
         ...toDialogOptions(opts),
-      };
-      const handle = dialogManager.open(merged);
-      if (activeRenderer?.openDialog) {
-        void activeRenderer.openDialog(merged, handle);
-      } else {
-        replayQueue.push(() => {
-          void activeRenderer?.openDialog?.(merged, handle);
-        });
-      }
-      return handle.result;
-    },
+      }),
 
     steps(stepList, backLabel = 'Back') {
       return runSteps(stepList, (s) => ui.confirm(s), backLabel);
     },
 
-    sheet(sheetOpts) {
-      if (activeRenderer?.openSheet) {
-        return activeRenderer.openSheet(sheetOpts);
-      }
-      return new Promise<DialogResult>((resolve) => {
-        replayQueue.push(() => {
-          if (activeRenderer?.openSheet) {
-            void activeRenderer.openSheet(sheetOpts).then(resolve);
-          } else {
-            resolve({
-              isConfirmed: false,
-              isDenied: false,
-              isDismissed: true,
-              value: undefined,
-              dismiss: 'close',
-            });
-          }
-        });
-      });
-    },
+    sheet: (opts) =>
+      activeRenderer?.openSheet
+        ? activeRenderer.openSheet(opts)
+        : new Promise((res) => {
+            replayQueue.push(() =>
+              activeRenderer?.openSheet ? void activeRenderer.openSheet(opts).then(res) : res(DISMISSED),
+            );
+          }),
 
-    bottomSheet(bottomOpts) {
-      if (activeRenderer?.openBottomSheet) {
-        return activeRenderer.openBottomSheet(bottomOpts);
-      }
-      const resultPromise = new Promise<DialogResult>((resolve) => {
-        replayQueue.push(() => {
-          if (activeRenderer?.openBottomSheet) {
-            const live = activeRenderer.openBottomSheet(bottomOpts);
-            void live.result.then(resolve);
-          } else {
-            resolve({
-              isConfirmed: false,
-              isDenied: false,
-              isDismissed: true,
-              value: undefined,
-              dismiss: 'close',
-            });
-          }
-        });
-      });
-
-      const handleStub: BottomSheetHandle = {
+    bottomSheet(opts) {
+      if (activeRenderer?.openBottomSheet) return activeRenderer.openBottomSheet(opts);
+      let live: BottomSheetHandle | undefined;
+      return {
         body: undefined,
-        close: () => undefined,
-        snapTo: () => undefined,
-        update: () => undefined,
-        result: resultPromise,
+        close: (r) => live?.close(r),
+        snapTo: (i) => live?.snapTo(i),
+        update: (p) => live?.update(p),
+        result: new Promise((res) => {
+          replayQueue.push(() =>
+            activeRenderer?.openBottomSheet
+              ? void (live = activeRenderer.openBottomSheet(opts)).result.then(res)
+              : res(DISMISSED),
+          );
+        }),
       };
-      return handleStub;
     },
 
     loading(loadingOpts = {}) {
       const opts = typeof loadingOpts === 'string' ? { text: loadingOpts } : loadingOpts;
-      if (activeRenderer?.openLoading) {
-        return activeRenderer.openLoading(opts);
-      }
-      let closedResolve: () => void = () => undefined;
-      const closedPromise = new Promise<void>((resolve) => {
-        closedResolve = resolve;
-      });
-
-      let liveHandle: LoadingHandle | undefined;
-      replayQueue.push(() => {
-        if (activeRenderer?.openLoading) {
-          liveHandle = activeRenderer.openLoading(opts);
-          void liveHandle.closed.then(closedResolve);
-        } else {
-          closedResolve();
-        }
-      });
-
+      if (activeRenderer?.openLoading) return activeRenderer.openLoading(opts);
+      let live: LoadingHandle | undefined, done: () => void;
+      const closed = new Promise<void>((res) => { done = res; });
+      replayQueue.push(() =>
+        activeRenderer?.openLoading
+          ? void (live = activeRenderer.openLoading(opts)).closed.then(done)
+          : done(),
+      );
       return {
-        update: (patch) => liveHandle?.update(patch),
-        close: () => {
-          liveHandle?.close();
-          closedResolve();
-        },
-        closed: closedPromise,
+        update: (p) => live?.update(p),
+        close: () => { live?.close(); done(); },
+        closed,
       };
     },
 
@@ -313,37 +260,34 @@ export function createUI(options: CreateUIOptions = {}): CoreUI {
 }
 
 let defaultUI: CoreUI | undefined;
-function getDefaultUI(): CoreUI {
-  if (!defaultUI) defaultUI = createUI();
-  return defaultUI;
-}
+const def = (): CoreUI => (defaultUI ??= createUI());
 
 /** Default singleton instance of the CoreUI toolkit. */
 export const ui: CoreUI = {
   get toast() {
-    return getDefaultUI().toast;
+    return def().toast;
   },
   get config() {
-    return getDefaultUI().config;
+    return def().config;
   },
   get toastStore() {
-    return getDefaultUI().toastStore;
+    return def().toastStore;
   },
   get dialogManager() {
-    return getDefaultUI().dialogManager;
+    return def().dialogManager;
   },
-  confirm: (options) => getDefaultUI().confirm(options),
-  alert: (options) => getDefaultUI().alert(options),
-  prompt: (options) => getDefaultUI().prompt(options),
-  steps: (stepList, backLabel) => getDefaultUI().steps(stepList, backLabel),
-  sheet: (options) => getDefaultUI().sheet(options),
-  bottomSheet: (options) => getDefaultUI().bottomSheet(options),
-  loading: (options) => getDefaultUI().loading(options),
-  configure: (patch) => getDefaultUI().configure(patch),
-  getConfig: () => getDefaultUI().getConfig(),
-  clear: () => getDefaultUI().clear(),
-  registerRenderer: (renderer) => getDefaultUI().registerRenderer(renderer),
-  getRenderer: () => getDefaultUI().getRenderer(),
+  confirm: (o) => def().confirm(o),
+  alert: (o) => def().alert(o),
+  prompt: (o) => def().prompt(o),
+  steps: (s, b) => def().steps(s, b),
+  sheet: (o) => def().sheet(o),
+  bottomSheet: (o) => def().bottomSheet(o),
+  loading: (o) => def().loading(o),
+  configure: (p) => def().configure(p),
+  getConfig: () => def().getConfig(),
+  clear: () => def().clear(),
+  registerRenderer: (r) => def().registerRenderer(r),
+  getRenderer: () => def().getRenderer(),
 };
 
 /** Registers the renderer with the default UI instance. */

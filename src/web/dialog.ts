@@ -17,8 +17,6 @@ import { openOverlay } from './overlay';
 import { sanitizeToFragment } from './sanitize';
 import { resolveVariant } from './variants';
 
-const DEFAULT_LABELS = { confirm: 'OK', deny: 'No', cancel: 'Cancel' } as const;
-
 function applyButton(
   node: HTMLButtonElement,
   spec: DialogButton | undefined,
@@ -40,9 +38,7 @@ function applyButton(
  */
 export function openDialog(initial: DialogOptions): DialogPromise {
   if (typeof document === 'undefined') {
-    throw new Error(
-      'glazekit: dialogs need a DOM. Call them from the browser, not during server rendering.',
-    );
+    throw new Error('glazekit: DOM required');
   }
   const config = getEngine().store.config.get();
   const controller: DialogController = createDialogController(initial);
@@ -61,26 +57,28 @@ export function openDialog(initial: DialogOptions): DialogPromise {
     onBackdrop: () => void controller.dismiss('backdrop'),
   });
 
-  const panel = el('div', 'gk-dialog', { tabindex: '-1', 'aria-modal': 'true' });
-  panel.setAttribute('data-gk-theme', initial.theme ?? config.theme);
-  panel.setAttribute('data-gk-mode', config.mode);
-  const closeBtn = el('button', 'gk-dialog-close', { type: 'button' });
-  closeBtn.append(icon('close'));
+  const panel = el('div', 'gk-dialog', {
+    tabindex: '-1',
+    'aria-modal': 'true',
+    'data-gk-theme': initial.theme ?? config.theme,
+    'data-gk-mode': config.mode,
+  });
+  const closeBtn = el('button', 'gk-dialog-close', { type: 'button' }, icon('close'));
   const image = el('img', 'gk-image');
   const iconBox = el('div', 'gk-dialog-icon');
   const title = el('h2', 'gk-dialog-title', { id: titleId });
   const text = el('div', 'gk-dialog-text', { id: textId });
   const noticeBox = el('div', 'gk-dialog-notice', { role: 'note' });
   noticeBox.hidden = true;
-  const countdownBox = el('div', 'gk-countdown-big', { 'aria-atomic': 'true' });
   const countdownNum = el('span', 'gk-countdown-num');
-  countdownBox.append(countdownNum, 's');
+  const countdownBox = el('div', 'gk-countdown-big', { 'aria-atomic': 'true' }, countdownNum, 's');
   countdownBox.hidden = true;
   const inputBox = el('div', 'gk-input-box');
   const error = el('div', 'gk-error', { id: errorId, role: 'alert' });
-  const confirmBtn = el('button', 'gk-btn gk-confirm gk-btn--confirm', { type: 'button' });
-  const denyBtn = el('button', 'gk-btn gk-deny gk-btn--deny', { type: 'button' });
-  const cancelBtn = el('button', 'gk-btn gk-cancel gk-btn--cancel', { type: 'button' });
+  const btn = (n: string) => el('button', `gk-btn gk-${n} gk-btn--${n}`, { type: 'button' });
+  const confirmBtn = btn('confirm');
+  const denyBtn = btn('deny');
+  const cancelBtn = btn('cancel');
   const buttons = el(
     'div',
     'gk-dialog-buttons gk-dialog-actions',
@@ -121,14 +119,15 @@ export function openDialog(initial: DialogOptions): DialogPromise {
     panel.className = ['gk-dialog', o.className].filter(Boolean).join(' ');
     panel.dataset.tone = o.tone ?? 'info';
     panel.dataset.grow = o.grow ?? '';
-    const position: DialogPosition = o.position ?? 'center-center';
-    const [row, col] = position.split('-') as [string, string];
+    const [row, col] = (o.position ?? 'center-center').split('-') as [string, string];
     overlay.root.dataset.row = row;
     overlay.root.dataset.col = col;
     panel.style.width = o.width === undefined ? '' : cssLength(o.width);
     panel.style.padding = o.padding === undefined ? '' : cssLength(o.padding);
-    const urgent = !o.input && (o.tone === 'danger' || o.tone === 'warning');
-    panel.setAttribute('role', urgent ? 'alertdialog' : 'dialog');
+    panel.setAttribute(
+      'role',
+      !o.input && (o.tone === 'danger' || o.tone === 'warning') ? 'alertdialog' : 'dialog',
+    );
     title.textContent = o.title ?? '';
     title.hidden = !o.title;
     if (o.title) panel.setAttribute('aria-labelledby', titleId);
@@ -145,7 +144,7 @@ export function openDialog(initial: DialogOptions): DialogPromise {
     else panel.setAttribute('aria-describedby', textId);
 
     iconBox.replaceChildren();
-    const toneVal =
+    iconBox.dataset.tone =
       o.tone ??
       (o.icon === 'warning'
         ? 'warning'
@@ -154,19 +153,17 @@ export function openDialog(initial: DialogOptions): DialogPromise {
           : o.icon === 'success'
             ? 'success'
             : 'info');
-    iconBox.dataset.tone = toneVal;
     if (o.icon === 'custom') fill(iconBox, o.iconContent);
     else if (o.icon) {
-      const iconKey = o.icon as IconName;
-      const iconNode = icon(iconKey);
+      const iconNode = icon(o.icon as IconName);
       if (iconNode) iconBox.append(iconNode);
     }
     iconBox.hidden = !o.icon;
     iconBox.dataset.icon = o.icon ?? '';
 
+    noticeBox.hidden = !o.notice;
     if (o.notice) {
       noticeBox.replaceChildren();
-      noticeBox.hidden = false;
       noticeBox.dataset.tone = o.notice.tone ?? 'warning';
       if (o.notice.icon) fill(noticeBox, o.notice.icon);
       else {
@@ -175,25 +172,17 @@ export function openDialog(initial: DialogOptions): DialogPromise {
         );
         if (ic) noticeBox.append(ic);
       }
-      const noteText = el('span');
-      noteText.textContent = o.notice.text;
-      noticeBox.append(noteText);
-    } else {
-      noticeBox.hidden = true;
+      noticeBox.append(el('span', '', {}, o.notice.text));
     }
 
+    countdownBox.hidden = o.countdown === undefined;
     if (o.countdown !== undefined) {
-      countdownBox.hidden = false;
-      const ms = controller.handle.timer.remaining();
-      const sec = Math.max(0, Math.ceil(ms / 1000));
+      const sec = Math.max(0, Math.ceil(controller.handle.timer.remaining() / 1000));
       countdownNum.textContent = String(sec);
-      if (sec === 30 || sec === 10 || sec === 5) {
-        countdownBox.setAttribute('aria-live', 'assertive');
-      } else {
-        countdownBox.setAttribute('aria-live', 'off');
-      }
-    } else {
-      countdownBox.hidden = true;
+      countdownBox.setAttribute(
+        'aria-live',
+        sec === 30 || sec === 10 || sec === 5 ? 'assertive' : 'off',
+      );
     }
 
     if (o.image) {
@@ -255,25 +244,25 @@ export function openDialog(initial: DialogOptions): DialogPromise {
     error.textContent = state.error ?? '';
     error.hidden = !state.error;
 
-    applyButton(confirmBtn, o.confirmButton, DEFAULT_LABELS.confirm, true);
-    applyButton(denyBtn, o.denyButton, DEFAULT_LABELS.deny, false);
-    applyButton(cancelBtn, o.cancelButton, DEFAULT_LABELS.cancel, false);
+    applyButton(confirmBtn, o.confirmButton, 'OK', true);
+    applyButton(denyBtn, o.denyButton, 'No', false);
+    applyButton(cancelBtn, o.cancelButton, 'Cancel', false);
     buttons.dataset.reverse = o.reverseButtons ? 'true' : 'false';
-    const layout =
+    buttons.dataset.layout =
       o.buttonLayout ??
       (activeVariant === 'update-info'
         ? 'stack'
         : activeVariant === 'ios-glass-alert'
           ? 'divided'
           : 'row');
-    buttons.dataset.layout = layout;
     buttons.hidden = confirmBtn.hidden && denyBtn.hidden && cancelBtn.hidden;
-    confirmBtn.disabled = denyBtn.disabled = state.loading !== null;
-    confirmBtn.setAttribute('aria-busy', String(state.loading === 'confirm'));
-    denyBtn.setAttribute('aria-busy', String(state.loading === 'deny'));
-    confirmBtn.dataset.loading = String(state.loading === 'confirm');
-    denyBtn.dataset.loading = String(state.loading === 'deny');
-    panel.setAttribute('aria-busy', String(state.loading !== null));
+    const ld = state.loading, isC = ld === 'confirm', isD = ld === 'deny';
+    confirmBtn.disabled = denyBtn.disabled = ld !== null;
+    confirmBtn.setAttribute('aria-busy', String(isC));
+    denyBtn.setAttribute('aria-busy', String(isD));
+    confirmBtn.dataset.loading = String(isC);
+    denyBtn.dataset.loading = String(isD);
+    panel.setAttribute('aria-busy', String(ld !== null));
 
     if (o.confirmText) {
       const checkMatch = (): void => {

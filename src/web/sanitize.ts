@@ -19,18 +19,7 @@ const TAGS = new Set(
     ',',
   ),
 );
-const ATTRS = new Set([
-  'href',
-  'src',
-  'alt',
-  'title',
-  'target',
-  'rel',
-  'width',
-  'height',
-  'lang',
-  'dir',
-]);
+const ATTRS = new Set('href,src,alt,title,target,rel,width,height,lang,dir'.split(','));
 const URL_ATTRS = new Set(['href', 'src']);
 const SAFE_URL = /^(?:https?:|mailto:|tel:|\/|#|\.\/|\.\.\/|[^:]*$)/i;
 
@@ -50,13 +39,7 @@ function walk(parent: Node): void {
     const element = node as Element;
     const tag = element.tagName.toLowerCase();
     if (!TAGS.has(tag)) {
-      if (
-        tag === 'script' ||
-        tag === 'style' ||
-        tag === 'iframe' ||
-        tag === 'object' ||
-        tag === 'template'
-      ) {
+      if (/^(script|style|iframe|object|template)$/.test(tag)) {
         parent.removeChild(node);
       } else {
         walk(element);
@@ -83,9 +66,8 @@ function walk(parent: Node): void {
  */
 export function sanitizeToFragment(html: string): DocumentFragment | null {
   if (!hasDom()) return null;
-  const global = globalThis as { DOMPurify?: { sanitize(html: string): string } };
-  const external =
-    custom ?? (global.DOMPurify ? (v: string) => global.DOMPurify?.sanitize(v) ?? '' : undefined);
+  const pur = (globalThis as { DOMPurify?: { sanitize(h: string): string } }).DOMPurify;
+  const external = custom ?? (pur ? (v: string) => pur.sanitize(v) : undefined);
   const template = document.createElement('template');
   template.innerHTML = external ? external(html) : html;
   if (!external) walk(template.content);

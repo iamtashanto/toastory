@@ -16,9 +16,7 @@ import { sanitizeToFragment } from './sanitize';
 
 function requireDom(): void {
   if (typeof document === 'undefined') {
-    throw new Error(
-      'glazekit: this component needs a DOM. Call it from the browser, not during server rendering.',
-    );
+    throw new Error('glazekit: DOM required');
   }
 }
 
@@ -72,10 +70,8 @@ export function openSheet(options: SheetOptions): DialogPromise {
     });
     if (action.disabled) button.disabled = true;
     if (action.icon) {
-      const holder = el('span', 'gk-sheet-icon', { 'aria-hidden': 'true' });
-      const fragment = sanitizeToFragment(action.icon);
-      if (fragment) holder.append(fragment);
-      button.append(holder);
+      const frag = sanitizeToFragment(action.icon);
+      if (frag) button.append(el('span', 'gk-sheet-icon', { 'aria-hidden': 'true' }, frag));
     }
     button.append(el('span', 'gk-sheet-label', {}, action.label));
     button.addEventListener('click', () => {
@@ -94,17 +90,11 @@ export function openSheet(options: SheetOptions): DialogPromise {
   }
   panel.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-      const buttons = Array.from(
-        panel.querySelectorAll<HTMLButtonElement>('button:not([disabled])'),
-      );
-      const currentIndex = buttons.indexOf(document.activeElement as HTMLButtonElement);
-      if (currentIndex !== -1) {
+      const btns = [...panel.querySelectorAll<HTMLButtonElement>('button:not([disabled])')];
+      const i = btns.indexOf(document.activeElement as HTMLButtonElement);
+      if (i !== -1) {
         e.preventDefault();
-        const nextIndex =
-          e.key === 'ArrowDown'
-            ? (currentIndex + 1) % buttons.length
-            : (currentIndex - 1 + buttons.length) % buttons.length;
-        buttons[nextIndex]?.focus();
+        btns[(i + (e.key === 'ArrowDown' ? 1 : btns.length - 1)) % btns.length]?.focus();
       }
     }
   });
@@ -176,13 +166,19 @@ export function openBottomSheet(options: BottomSheetOptions): BottomSheetHandle 
   buttons.hidden = true;
   if (options.confirmButton || options.cancelButton || options.variant === 'bottom-sheet-confirm') {
     buttons.hidden = false;
-    const confirmBtn = el('button', 'gk-btn gk-confirm gk-btn--confirm', { type: 'button' });
-    confirmBtn.textContent = options.confirmButton?.label ?? 'Confirm';
-    confirmBtn.addEventListener('click', () => void controller.submit('confirm'));
-    const cancelBtn = el('button', 'gk-btn gk-cancel gk-btn--cancel', { type: 'button' });
-    cancelBtn.textContent = options.cancelButton?.label ?? 'Cancel';
-    cancelBtn.addEventListener('click', () => void controller.dismiss('cancel'));
-    buttons.append(confirmBtn, cancelBtn);
+    const mkBtn = (cls: string, label: string, fn: () => void) => {
+      const b = el('button', `gk-btn ${cls}`, { type: 'button' }, label);
+      b.addEventListener('click', fn);
+      return b;
+    };
+    buttons.append(
+      mkBtn('gk-confirm gk-btn--confirm', options.confirmButton?.label ?? 'Confirm', () =>
+        controller.submit('confirm'),
+      ),
+      mkBtn('gk-cancel gk-btn--cancel', options.cancelButton?.label ?? 'Cancel', () =>
+        controller.dismiss('cancel'),
+      ),
+    );
   }
   const closeBtn = el('button', 'gk-dialog-close', { type: 'button' });
   closeBtn.append(icon('close'));
@@ -217,42 +213,38 @@ export function openBottomSheet(options: BottomSheetOptions): BottomSheetHandle 
     setHeight(snaps[index] ?? 0.5, true);
   };
 
-  grab.addEventListener('keydown', (event) => {
-    if (event.key === 'ArrowUp') {
-      event.preventDefault();
-      snapTo(index + 1);
-    } else if (event.key === 'ArrowDown') {
-      event.preventDefault();
-      if (index === 0 && options.dismissible !== false) controller.dismiss('close');
+  grab.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowUp') { e.preventDefault(); snapTo(index + 1); }
+    else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (!index && options.dismissible !== false) controller.dismiss('close');
       else snapTo(index - 1);
     }
   });
 
   let drag: { y: number; base: number } | undefined;
   const view = (): number => window.innerHeight || 1;
-  panel.addEventListener('pointerdown', (event) => {
-    const target = event.target as Element;
-    if (!target.closest('.gk-grab,.gk-bsheet-title')) return;
-    drag = { y: event.clientY, base: snaps[index] ?? 0.5 };
-    panel.setPointerCapture?.(event.pointerId);
+  panel.addEventListener('pointerdown', (e) => {
+    if (!(e.target as Element).closest('.gk-grab,.gk-bsheet-title')) return;
+    drag = { y: e.clientY, base: snaps[index] ?? 0.5 };
+    panel.setPointerCapture?.(e.pointerId);
   });
-  panel.addEventListener('pointermove', (event) => {
+  panel.addEventListener('pointermove', (e) => {
     if (!drag) return;
-    const fraction = drag.base + (drag.y - event.clientY) / view();
-    setHeight(Math.min(snaps[snaps.length - 1] ?? 1, Math.max(0, fraction)), false);
+    const f = drag.base + (drag.y - e.clientY) / view();
+    setHeight(Math.min(snaps[snaps.length - 1] ?? 1, Math.max(0, f)), false);
   });
-  const end = (event: PointerEvent): void => {
+  const end = (e: PointerEvent): void => {
     if (!drag) return;
-    const fraction = drag.base + (drag.y - event.clientY) / view();
+    const f = drag.base + (drag.y - e.clientY) / view();
     drag = undefined;
-    const lowest = snaps[0] ?? 0.5;
-    if (options.dismissible !== false && fraction < lowest / 2) {
+    if (options.dismissible !== false && f < (snaps[0] ?? 0.5) / 2) {
       controller.dismiss('close');
       return;
     }
     let best = 0;
-    snaps.forEach((snap, i) => {
-      if (Math.abs(snap - fraction) < Math.abs((snaps[best] ?? 0) - fraction)) best = i;
+    snaps.forEach((s, i) => {
+      if (Math.abs(s - f) < Math.abs((snaps[best] ?? 0) - f)) best = i;
     });
     snapTo(best);
   };

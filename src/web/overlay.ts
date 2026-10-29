@@ -84,14 +84,11 @@ function onKeydown(event: KeyboardEvent): void {
 
 /** Creates and mounts a modal shell on `document.body`. */
 export function openOverlay(options: OverlayOptions): Overlay {
-  const backdropKind = options.backdrop ?? 'blur';
+  const bKind = options.backdrop ?? 'blur';
   const backdrop = el('div', 'gk-backdrop');
-  if (backdropKind === 'blur' || backdropKind === 'dim' || backdropKind === 'none') {
-    backdrop.dataset.kind = backdropKind;
-  } else {
-    backdrop.dataset.kind = 'custom';
-    backdrop.style.background = backdropKind;
-  }
+  const isStd = bKind === 'blur' || bKind === 'dim' || bKind === 'none';
+  backdrop.dataset.kind = isStd ? bKind : 'custom';
+  if (!isStd) backdrop.style.background = bKind;
   const root = el(
     'div',
     `gk-overlay gk-root${options.className ? ` ${options.className}` : ''}`,
@@ -106,8 +103,8 @@ export function openOverlay(options: OverlayOptions): Overlay {
 
   const previous = document.activeElement;
   const hidden: { node: Element; inert: boolean; aria: string | null }[] = [];
-  for (const node of Array.from(document.body.children)) {
-    if (node.classList.contains('gk-region') || node.classList.contains('gk-overlay')) continue;
+  for (const node of [...document.body.children]) {
+    if (/gk-(region|overlay)/.test(node.className)) continue;
     hidden.push({
       node,
       inert: node.hasAttribute('inert'),

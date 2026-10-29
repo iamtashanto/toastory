@@ -58,10 +58,7 @@ export interface DialogController {
   dismiss(reason: DismissReason): boolean;
 }
 
-function messageOf(error: unknown): string {
-  if (error instanceof Error) return error.message;
-  return typeof error === 'string' ? error : String(error);
-}
+const messageOf = (err: unknown): string => (err instanceof Error ? err.message : String(err));
 
 /** Creates the controller for a dialog. */
 export function createDialogController(initial: DialogOptions): DialogController {
@@ -181,16 +178,16 @@ export function createDialogController(initial: DialogOptions): DialogController
       if (kind === 'confirm' && options.validate) {
         loading = 'confirm';
         emit();
-        let message: ValidateResult;
+        let msg: ValidateResult;
         try {
-          message = await options.validate(value, handle);
-        } catch (thrown) {
-          message = messageOf(thrown);
+          msg = await options.validate(value, handle);
+        } catch (t) {
+          msg = messageOf(t);
         }
         loading = null;
         if (!open) return;
-        if (typeof message === 'string' && message !== '') {
-          error = message;
+        if (typeof msg === 'string' && msg) {
+          error = msg;
           emit();
           return;
         }
@@ -200,29 +197,29 @@ export function createDialogController(initial: DialogOptions): DialogController
       if (hook) {
         loading = kind;
         emit();
-        let output: unknown;
+        let out: unknown;
         try {
-          output = await hook(value, handle);
-        } catch (thrown) {
+          out = await hook(value, handle);
+        } catch (t) {
           loading = null;
-          if (!open) return;
-          error = messageOf(thrown);
-          emit();
+          if (open) {
+            error = messageOf(t);
+            emit();
+          }
           return;
         }
         loading = null;
         if (!open) return;
-        if (output === false) {
+        if (out === false) {
           emit();
           return;
         }
-        if (output !== undefined) value = output;
+        if (out !== undefined) value = out;
       }
       finish({ isConfirmed: kind === 'confirm', isDenied: kind === 'deny', value });
     },
     dismiss(reason) {
-      if (!open) return false;
-      if (loading && reason !== 'timer') return false;
+      if (!open || (loading && reason !== 'timer')) return false;
       if (reason === 'backdrop' && options.allowOutsideClick === false) return false;
       if (reason === 'esc' && options.allowEscape === false) return false;
       finish({ isDismissed: true, dismiss: reason });
@@ -248,7 +245,7 @@ export interface StepsResult extends DialogResult {
  * Runs dialogs one after another. From the second step on, the deny button becomes a "back"
  * button using `backLabel`, and activating it returns to the previous step.
  * @param steps Options of each step.
- * @param open Opens one dialog.
+ * @param openOrManager Opens one dialog, or a DialogManager instance.
  * @param backLabel Label for the back button.
  */
 export async function runSteps(
@@ -267,7 +264,10 @@ export async function runSteps(
   };
   while (index < steps.length) {
     const base = steps[index];
-    if (!base) break;
+    if (!base) {
+      index += 1;
+      continue;
+    }
     const options: DialogOptions =
       index > 0
         ? { ...base, denyButton: { show: true, label: backLabel, ...base.denyButton } }
