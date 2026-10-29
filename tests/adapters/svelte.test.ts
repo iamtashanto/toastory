@@ -62,3 +62,4 @@ describe('glazekit/svelte adapter', () => {
     action.destroy?.();
   });
 });
+

@@ -39,3 +39,4 @@ const openPrompt = async () => {
     <GlazeToaster position="bottom-right" :rich-colors="true" />
   </main>
 </template>
+
