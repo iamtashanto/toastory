@@ -14,4 +14,3 @@ The glazekit team takes security seriously. If you discover a security vulnerabi
 2. **Details**: Include a description of the vulnerability, steps to reproduce, and any proof-of-concept code.
 3. **Response**: We acknowledge receipt of reports within 48 hours and provide a remediation plan within 5 business days.
 4. **Public Disclosure**: Please do not file public GitHub issues for security vulnerabilities until a patch has been released.
-

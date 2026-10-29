@@ -53,4 +53,3 @@ body:
       description: What actually happened? Include error messages or console output.
     validations:
       required: true
-

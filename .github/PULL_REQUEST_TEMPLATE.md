@@ -20,4 +20,3 @@ Fixes #(issue)
 - [ ] Size budgets are strictly met (`npm run size`)
 - [ ] I have added tests that prove my fix is effective or that my feature works
 - [ ] Full validation passes (`npm run check:all`)
-
