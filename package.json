@@ -39,8 +39,7 @@
     "url": "git+https://github.com/iamtashanto/glazekit.git"
   },
   "publishConfig": {
-    "access": "public",
-    "provenance": true
+    "access": "public"
   },
   "files": [
     "dist",
