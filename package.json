@@ -36,7 +36,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/glazekit/glazekit.git"
+    "url": "git+https://github.com/iamtashanto/glazekit.git"
   },
   "publishConfig": {
     "access": "public",

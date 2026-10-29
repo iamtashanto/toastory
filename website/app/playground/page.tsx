@@ -442,7 +442,7 @@ export default function NativeScreen() {
                   <label className="block text-xs font-semibold text-gray-400 mb-1.5">Progress Track</label>
                   <select
                     value={progress}
-                    onChange={(e) => setProgress(e.target.value as any)}
+                    onChange={(e) => setProgress(e.target.value as 'none' | 'bar' | 'ring')}
                     className="w-full bg-[#181a26] border border-white/10 rounded-xl px-3 py-2 text-xs text-white"
                   >
                     <option value="none">none</option>

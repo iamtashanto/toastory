@@ -7,7 +7,7 @@ Thank you for your interest in contributing to glazekit!
 1. **Clone the repository**:
 
    ```bash
-   git clone https://github.com/glazekit/glazekit.git
+   git clone https://github.com/iamtashanto/glazekit.git
    cd glazekit
    ```
 
