@@ -106,7 +106,7 @@ export interface DialogHandle {
 }
 
 /** Validation result: a non-empty string is the error message, anything else means valid. */
-export type ValidateResult = string | undefined;
+export type ValidateResult = string | undefined | null;
 
 /** Options shared by `confirm`, `alert`, `prompt` and `steps`. */
 export interface DialogOptions {
@@ -131,7 +131,7 @@ export interface DialogOptions {
   /** Swap the visual order of the buttons. */
   reverseButtons?: boolean;
   /** Which control receives focus on open. */
-  focusOn?: 'confirm' | 'deny' | 'cancel' | 'input' | 'none';
+  focusOn?: 'confirm' | 'deny' | 'cancel' | 'input' | 'close' | 'none';
   /** Input kind. Omit for no input. */
   input?: DialogInputType;
   /** Initial input value. Checkbox accepts a boolean. */

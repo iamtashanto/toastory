@@ -1,6 +1,6 @@
 import type { GlazeConfig, Listener, Unsubscribe } from './types';
 
-/** Default configuration used until `configure` is called. */
+/** Library default configuration. */
 export const DEFAULT_CONFIG: Readonly<GlazeConfig> = Object.freeze({
   theme: 'ios-glass',
   mode: 'auto',
@@ -26,30 +26,50 @@ export const DEFAULT_CONFIG: Readonly<GlazeConfig> = Object.freeze({
   regionLabel: 'Notifications',
   closeLabel: 'Close notification',
   startPaused: false,
+  newestOnTop: true,
+  dedupeWindow: 500,
 } satisfies GlazeConfig);
 
-/** Observable configuration holder. */
+/** Observable configuration container holding immutable snapshots. */
 export interface ConfigStore {
-  /** Returns the current configuration. */
+  /** Returns the current immutable configuration snapshot. */
   get(): Readonly<GlazeConfig>;
-  /** Merges a partial configuration and notifies subscribers. Returns the new configuration. */
+  /** Merges a partial configuration and notifies subscribers. Returns the updated snapshot. */
   set(patch: Partial<GlazeConfig>): Readonly<GlazeConfig>;
-  /** Restores defaults. */
+  /** Restores library defaults. */
   reset(): void;
-  /** Subscribes to changes. */
+  /** Subscribes to configuration changes. */
   subscribe(listener: Listener): Unsubscribe;
 }
 
-/** Creates an isolated configuration store. */
+/**
+ * Resolves an option according to precedence:
+ * Call option > Theme default > Global config > Library default.
+ */
+export function resolvePrecedence<T>(
+  callVal: T | undefined,
+  themeVal: T | undefined,
+  globalVal: T | undefined,
+  defaultVal: T,
+): T {
+  if (callVal !== undefined) return callVal;
+  if (themeVal !== undefined) return themeVal;
+  if (globalVal !== undefined) return globalVal;
+  return defaultVal;
+}
+
+/** Creates an isolated, immutable configuration store. */
 export function createConfigStore(initial: Partial<GlazeConfig> = {}): ConfigStore {
   let current: Readonly<GlazeConfig> = Object.freeze({
     ...DEFAULT_CONFIG,
     ...stripUndefined(initial),
   });
   const listeners = new Set<Listener>();
+
   const emit = (): void => {
     for (const listener of [...listeners]) listener();
   };
+
   return {
     get: () => current,
     set(patch) {
