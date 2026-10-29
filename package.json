@@ -1,8 +1,13 @@
 {
   "name": "glazekit",
   "version": "0.1.0",
-  "description": "Complete UI feedback toolkit: toasts, dialogs, sheets and loading overlays with an Apple-style glass design. One API for web, React, Vue, Angular, Svelte, Electron and React Native.",
+  "description": "Complete UI feedback toolkit: toast notifications, confirm / prompt / alert dialogs, sheets and loading overlays with Apple glass design.",
   "license": "MIT",
+  "author": "glazekit contributors",
+  "homepage": "https://glazekit.dev",
+  "bugs": {
+    "url": "https://github.com/glazekit/glazekit/issues"
+  },
   "type": "module",
   "sideEffects": [
     "*.css"
@@ -10,17 +15,24 @@
   "keywords": [
     "toast",
     "notification",
+    "snackbar",
     "dialog",
     "modal",
     "confirm",
     "prompt",
-    "bottom-sheet",
-    "glass",
+    "alert",
+    "sweetalert",
+    "glassmorphism",
+    "ios",
+    "liquid-glass",
     "react",
+    "nextjs",
     "vue",
+    "nuxt",
     "angular",
     "svelte",
-    "react-native"
+    "react-native",
+    "electron"
   ],
   "repository": {
     "type": "git",
@@ -40,74 +52,39 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
-      }
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     },
     "./core": {
-      "import": {
-        "types": "./dist/core.d.ts",
-        "default": "./dist/core.js"
-      },
-      "require": {
-        "types": "./dist/core.d.cts",
-        "default": "./dist/core.cjs"
-      }
+      "types": "./dist/core.d.ts",
+      "import": "./dist/core.js",
+      "require": "./dist/core.cjs"
     },
     "./react": {
-      "import": {
-        "types": "./dist/react.d.ts",
-        "default": "./dist/react.js"
-      },
-      "require": {
-        "types": "./dist/react.d.cts",
-        "default": "./dist/react.cjs"
-      }
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.js",
+      "require": "./dist/react.cjs"
     },
     "./vue": {
-      "import": {
-        "types": "./dist/vue.d.ts",
-        "default": "./dist/vue.js"
-      },
-      "require": {
-        "types": "./dist/vue.d.cts",
-        "default": "./dist/vue.cjs"
-      }
+      "types": "./dist/vue.d.ts",
+      "import": "./dist/vue.js",
+      "require": "./dist/vue.cjs"
     },
     "./angular": {
-      "import": {
-        "types": "./dist/angular.d.ts",
-        "default": "./dist/angular.js"
-      },
-      "require": {
-        "types": "./dist/angular.d.cts",
-        "default": "./dist/angular.cjs"
-      }
+      "types": "./dist/angular.d.ts",
+      "import": "./dist/angular.js",
+      "require": "./dist/angular.cjs"
     },
     "./svelte": {
-      "import": {
-        "types": "./dist/svelte.d.ts",
-        "default": "./dist/svelte.js"
-      },
-      "require": {
-        "types": "./dist/svelte.d.cts",
-        "default": "./dist/svelte.cjs"
-      }
+      "types": "./dist/svelte.d.ts",
+      "import": "./dist/svelte.js",
+      "require": "./dist/svelte.cjs"
     },
     "./native": {
-      "import": {
-        "types": "./dist/native.d.ts",
-        "default": "./dist/native.js"
-      },
-      "require": {
-        "types": "./dist/native.d.cts",
-        "default": "./dist/native.cjs"
-      }
+      "types": "./dist/native.d.ts",
+      "import": "./dist/native.js",
+      "require": "./dist/native.cjs"
     },
     "./themes/*.css": "./dist/themes/*.css",
     "./package.json": "./package.json"
@@ -122,7 +99,8 @@
     "docs:tokens": "node scripts/generate-tokens-doc.ts",
     "build": "tsup && node scripts/build-themes.mjs",
     "size": "node scripts/size.mjs",
-    "check": "npm run typecheck && npm run lint && npm run test && npm run contrast && npm run build && npm run size",
+    "readme:check": "node scripts/check-readme.mjs",
+    "check": "npm run typecheck && npm run lint && npm run test && npm run contrast && npm run build && npm run size && npm run readme:check",
     "check:all": "npm run check && npm run test:e2e",
     "changeset": "changeset",
     "release": "npm run check && changeset publish"

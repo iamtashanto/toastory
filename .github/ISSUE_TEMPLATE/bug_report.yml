@@ -1,0 +1,56 @@
+name: Bug Report
+description: Create a report to help us fix a defect in glazekit
+title: '[Bug]: '
+labels: ['bug', 'triage']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report an issue! Please verify that you are on the latest release of glazekit.
+  - type: input
+    id: version
+    attributes:
+      label: glazekit version
+      placeholder: e.g. 0.1.0
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform / Framework
+      options:
+        - Plain JavaScript / DOM
+        - React
+        - Next.js (App Router)
+        - Next.js (Pages Router)
+        - Vue 3
+        - Nuxt
+        - Angular
+        - Svelte
+        - Electron
+        - React Native (Expo)
+        - React Native (Bare)
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal Reproduction
+      description: Please provide a minimal code snippet or link to a StackBlitz / CodeSandbox reproduction.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened? Include error messages or console output.
+    validations:
+      required: true
+
