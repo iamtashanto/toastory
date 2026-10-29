@@ -57,6 +57,8 @@ export interface ToastStore {
   getToasts(): readonly ToastRecord[];
   /** Closed toasts, newest first, capped by `historyLimit`. */
   getHistory(): readonly ToastRecord[];
+  /** Empties active toasts and queue immediately. */
+  clear(): void;
   /** Empties the history. */
   clearHistory(): void;
   /** Subscribes to any change. */
@@ -318,8 +320,15 @@ export function createToastStore(options: ToastStoreOptions = {}): ToastStore {
         delete next.role;
         delete next.icon;
       }
+      let changed = false;
       for (const [key, value] of Object.entries(rest)) {
-        if (value !== undefined) Object.assign(next, { [key]: value });
+        if (value !== undefined) {
+          if ((entry.opts as Record<string, unknown>)[key] !== value) changed = true;
+          Object.assign(next, { [key]: value });
+        }
+      }
+      if (!changed && rest.type === undefined && rest.position === undefined) {
+        return true;
       }
       entry.opts = next;
       entry.dedupeKey = dedupeKeyOf(next);
@@ -392,6 +401,17 @@ export function createToastStore(options: ToastStoreOptions = {}): ToastStore {
     },
     getToasts: () => snapshot,
     getHistory: () => history,
+    clear() {
+      for (const entry of entries.values()) {
+        if (entry.exitHandle !== undefined) clearTimeout(entry.exitHandle);
+        entry.timer.cancel();
+      }
+      entries.clear();
+      order = [];
+      snapshot = [];
+      counter = 0;
+      emit();
+    },
     clearHistory() {
       history = [];
       emit();

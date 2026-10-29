@@ -328,6 +328,7 @@ export function createDialogController(initial: DialogOptions): DialogController
     opened() {
       if (!open) return;
       if (options.timer !== undefined) startTimer(options.timer);
+      emit();
       options.didOpen?.(handle);
     },
     async submit(kind) {

@@ -6,7 +6,7 @@ export const DEFAULT_CONFIG: Readonly<GlazeConfig> = Object.freeze({
   mode: 'auto',
   position: 'top-right',
   duration: 4000,
-  maxVisible: 4,
+  maxVisible: 8,
   gap: 12,
   stack: true,
   dir: 'auto',

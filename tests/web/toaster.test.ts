@@ -4,7 +4,8 @@ import { resetEngine, setAutoMount, ui } from '../../src/web';
 import { defaultSwipe, parseHotkey, resolveMode } from '../../src/web/toaster';
 
 const region = (): HTMLElement | null => document.querySelector('.gk-region');
-const toastEls = (): HTMLElement[] => Array.from(document.querySelectorAll<HTMLElement>('.gk-toast'));
+const toastEls = (): HTMLElement[] =>
+  Array.from(document.querySelectorAll<HTMLElement>('.gk-list > *'));
 const last = (): HTMLElement => {
   const list = toastEls();
   const node = list[list.length - 1];

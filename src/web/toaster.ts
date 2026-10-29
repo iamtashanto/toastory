@@ -23,7 +23,7 @@ export interface ToasterHandle {
 }
 
 interface Item {
-  el: HTMLLIElement;
+  el: HTMLElement;
   record: ToastRecord;
   stamp: string;
   hover: boolean;
@@ -33,7 +33,7 @@ interface Item {
 interface Region {
   key: string;
   el: HTMLElement;
-  list: HTMLOListElement;
+  list: HTMLElement;
   items: Map<ToastId, Item>;
   hover: boolean;
   focus: boolean;
@@ -152,7 +152,7 @@ export function mountToaster(store: ToastStore): ToasterHandle {
     if (existing) return existing;
     const host = hostFor(record.container);
     if (!host) return undefined;
-    const list = el('ol', 'gk-list');
+    const list = el('div', 'gk-list');
     const root = el(
       'section',
       'gk-region gk-root',
@@ -229,6 +229,7 @@ export function mountToaster(store: ToastStore): ToasterHandle {
 
   const build = (item: Item): void => {
     const record = item.record;
+    item.stamp = stampOf(record);
     const c = cfg();
     const names = record.classNames ?? {};
     const unstyled = record.unstyled === true;
@@ -455,7 +456,26 @@ export function mountToaster(store: ToastStore): ToasterHandle {
     node.addEventListener('pointercancel', finish);
   };
 
+  let rendering = false;
+  let rerenderRequested = false;
+
   const render = (): void => {
+    if (rendering) {
+      rerenderRequested = true;
+      return;
+    }
+    rendering = true;
+    try {
+      do {
+        rerenderRequested = false;
+        doRender();
+      } while (rerenderRequested);
+    } finally {
+      rendering = false;
+    }
+  };
+
+  const doRender = (): void => {
     if (!document.body && !pendingHost) {
       pendingHost = true;
       document.addEventListener(
@@ -477,7 +497,7 @@ export function mountToaster(store: ToastStore): ToasterHandle {
       seen.add(`${region.key}#${String(record.id)}`);
       let item = region.items.get(record.id);
       if (!item) {
-        item = { el: el('li'), record, stamp: '', hover: false, swiping: false };
+        item = { el: el('div'), record, stamp: '', hover: false, swiping: false };
         item.el.dataset.mounted = 'false';
         item.el.tabIndex = -1;
         region.items.set(record.id, item);

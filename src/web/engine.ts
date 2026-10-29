@@ -64,8 +64,7 @@ export function configure(patch: Partial<GlazeConfig>): Readonly<GlazeConfig> {
  */
 export function resetEngine(): void {
   const engine = getEngine();
-  engine.store.config.set({ exitDuration: 0 });
-  engine.store.dismissAll();
+  engine.store.clear();
   engine.store.clearHistory();
   engine.store.config.reset();
   for (const name of engine.store.types.list()) engine.store.types.remove(name);
