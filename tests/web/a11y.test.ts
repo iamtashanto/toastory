@@ -236,7 +236,8 @@ describe('ios-glass theme: 12 variants x 2 modes axe-core compliance', () => {
           variant,
           description: 'Testing iOS glass variant accessibility',
           badge: { label: 'Call', tone: 'info' },
-          toggle: variant === 'focus-toggle' ? { label: 'Silent Mode', defaultChecked: true } : undefined,
+          toggle:
+            variant === 'focus-toggle' ? { label: 'Silent Mode', defaultChecked: true } : undefined,
           progress: variant === 'progress-ring' ? 'ring' : undefined,
           progressValue: 0.5,
           actions: [{ label: 'Accept' }, { label: 'Decline' }],
@@ -430,25 +431,33 @@ describe('keyboard navigation & interactions', () => {
     const otpInputs = document.querySelectorAll<HTMLInputElement>('.gk-otp-input');
     expect(otpInputs.length).toBe(4);
 
-    otpInputs[0]?.focus();
-    expect(document.activeElement).toBe(otpInputs[0]);
+    const inp0 = otpInputs[0];
+    const inp1 = otpInputs[1];
+    const inp2 = otpInputs[2];
+    expect(inp0).toBeDefined();
+    expect(inp1).toBeDefined();
+    expect(inp2).toBeDefined();
+    if (!inp0 || !inp1 || !inp2) return;
+
+    inp0.focus();
+    expect(document.activeElement).toBe(inp0);
 
     // Typing in first input advances to second input
-    otpInputs[0].value = '9';
-    otpInputs[0].dispatchEvent(new Event('input', { bubbles: true }));
-    expect(document.activeElement).toBe(otpInputs[1]);
+    inp0.value = '9';
+    inp0.dispatchEvent(new Event('input', { bubbles: true }));
+    expect(document.activeElement).toBe(inp1);
 
     // ArrowRight advances to third
-    otpInputs[1]?.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
-    expect(document.activeElement).toBe(otpInputs[2]);
+    inp1.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+    expect(document.activeElement).toBe(inp2);
 
     // ArrowLeft goes back to second
-    otpInputs[2]?.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true }));
-    expect(document.activeElement).toBe(otpInputs[1]);
+    inp2.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true }));
+    expect(document.activeElement).toBe(inp1);
 
     // Backspace when empty goes back to first
-    otpInputs[1].value = '';
-    otpInputs[1]?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Backspace', bubbles: true }));
-    expect(document.activeElement).toBe(otpInputs[0]);
+    inp1.value = '';
+    inp1.dispatchEvent(new KeyboardEvent('keydown', { key: 'Backspace', bubbles: true }));
+    expect(document.activeElement).toBe(inp0);
   });
 });

@@ -405,16 +405,17 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       else if (typeof out === 'string') content.append(out);
     } else {
       if (record.badge !== undefined) {
-        const isObj = typeof record.badge === 'object' && record.badge !== null;
-        const tone = isObj ? (record.badge.tone ?? 'info') : record.badge;
+        const badgeObj =
+          typeof record.badge === 'object' && record.badge !== null ? record.badge : undefined;
+        const tone: string = badgeObj ? (badgeObj.tone ?? 'info') : (record.badge as string);
         const badgeEl = el('div', k('gk-toast__badge gk-badge', names.badge), {
           'aria-hidden': 'true',
           'data-tone': tone,
         });
-        if (isObj && record.badge.icon) {
-          fill(badgeEl, record.badge.icon);
-        } else if (isObj && record.badge.label) {
-          badgeEl.textContent = record.badge.label;
+        if (badgeObj && badgeObj.icon) {
+          fill(badgeEl, badgeObj.icon);
+        } else if (badgeObj && badgeObj.label) {
+          badgeEl.textContent = badgeObj.label;
         } else if (typeof record.badge === 'string' && (ICONS[tone] || PATHS[tone as IconName])) {
           const ic = icon((ICONS[tone] ?? tone) as IconName);
           if (ic) badgeEl.append(ic);
@@ -558,7 +559,7 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
         e.stopPropagation();
         const next = sw.getAttribute('aria-checked') !== 'true';
         sw.setAttribute('aria-checked', String(next));
-        record.toggle?.onChange(next);
+        record.toggle?.onChange?.(next);
       });
       node.append(sw);
     }

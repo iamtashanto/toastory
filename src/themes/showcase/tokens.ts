@@ -96,3 +96,4 @@ export const showcaseTheme: ThemeDefinition = {
   css,
   supportedVariants: variants,
 };
+

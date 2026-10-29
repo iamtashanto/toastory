@@ -39,7 +39,7 @@ title, text, html, icon (success|error|warning|info|question|custom), tone (info
 
 ## Theme tokens (CSS variables, prefix --gk-)
 
---gk-bg --gk-fg --gk-muted --gk-border --gk-radius --gk-blur --gk-saturate --gk-shadow --gk-font --gk-success --gk-error --gk-warning --gk-info --gk-accent --gk-z --gk-gap --gk-width --gk-ease --gk-duration. Themes: ios-glass, liquid-glass, aurora, classic-stack, classic-bar, pill, ripple, gradient-strip, sweet, material, basic, minimal, flat, outline, neon, gradient, brutal, pastel. Each supports light, dark and auto. backdrop-filter fallback to solid colour via @supports.
+--gk-bg --gk-fg --gk-muted --gk-border --gk-radius --gk-blur --gk-saturate --gk-shadow --gk-font --gk-success --gk-error --gk-warning --gk-info --gk-accent --gk-z --gk-gap --gk-width --gk-ease --gk-duration. Themes: essentials, showcase, dialogs, ios-glass, liquid-glass, aurora, classic-stack, classic-bar, pill, ripple, gradient-strip, sweet, material, basic, minimal, flat, outline, neon, gradient, brutal, pastel. Each supports light, dark and auto. backdrop-filter fallback to solid colour via @supports.
 
 ## Repo layout
 

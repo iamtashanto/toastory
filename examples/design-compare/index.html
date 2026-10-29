@@ -1,0 +1,626 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>glazekit — Design Comparison & Diff Verification</title>
+    <link rel="stylesheet" href="/dist/themes/_base.css" />
+    <link rel="stylesheet" href="/dist/themes/essentials.css" />
+    <link rel="stylesheet" href="/dist/themes/showcase.css" />
+    <link rel="stylesheet" href="/dist/themes/ios-glass.css" />
+    <link rel="stylesheet" href="/dist/themes/liquid-glass.css" />
+    <link rel="stylesheet" href="/dist/themes/dialogs.css" />
+    <style>
+      :root {
+        --bg: #0c0d0f;
+        --fg: #f4f4f6;
+        --mut: #9b9ba4;
+        --card: #151619;
+        --bd: #26272c;
+        --accent: #38bdf8;
+        color-scheme: dark;
+      }
+      :root[data-theme='light'] {
+        --bg: #f5f5f7;
+        --fg: #1d1d1f;
+        --mut: #6e6e73;
+        --card: #ffffff;
+        --bd: #e2e2e5;
+        --accent: #0284c7;
+        color-scheme: light;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', Inter, sans-serif;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 32px 24px 80px;
+      }
+      header {
+        margin-bottom: 24px;
+      }
+      h1 {
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        margin: 0 0 6px;
+      }
+      .sub {
+        color: var(--mut);
+        margin: 0 0 20px;
+        font-size: 14.5px;
+      }
+      .controls-bar {
+        position: sticky;
+        top: 16px;
+        z-index: 1000;
+        background: rgba(21, 22, 25, 0.85);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--bd);
+        border-radius: 16px;
+        padding: 12px 18px;
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-bottom: 32px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      }
+      :root[data-theme='light'] .controls-bar {
+        background: rgba(255, 255, 255, 0.85);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      }
+      .ctrl-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13.5px;
+      }
+      .ctrl-group label {
+        color: var(--mut);
+        font-weight: 500;
+      }
+      button,
+      select {
+        font: inherit;
+        font-size: 13px;
+        padding: 7px 12px;
+        border-radius: 9px;
+        border: 1px solid var(--bd);
+        background: var(--card);
+        color: var(--fg);
+        cursor: pointer;
+        transition:
+          opacity 0.15s,
+          border-color 0.15s;
+      }
+      button:hover {
+        border-color: var(--accent);
+      }
+      .btn-primary {
+        background: var(--accent);
+        color: #fff;
+        border-color: transparent;
+        font-weight: 600;
+      }
+      .slider-wrap {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      input[type='range'] {
+        width: 140px;
+        accent-color: var(--accent);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 640px), 1fr));
+        gap: 24px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--bd);
+        border-radius: 20px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+      .card-header {
+        padding: 14px 18px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--bd);
+      }
+      .card-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .card-title h3 {
+        margin: 0;
+        font-size: 14.5px;
+        font-weight: 600;
+      }
+      .tag {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        padding: 2px 7px;
+        border-radius: 6px;
+        background: var(--bd);
+        color: var(--mut);
+      }
+      .card-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .split-stage {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        min-height: 220px;
+        position: relative;
+        overflow: hidden;
+      }
+      .split-pane {
+        padding: 24px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+      .split-pane::before {
+        content: attr(data-label);
+        position: absolute;
+        top: 10px;
+        left: 12px;
+        font-size: 10.5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        opacity: 0.55;
+      }
+      .split-pane:first-child {
+        border-right: 1px dashed rgba(255, 255, 255, 0.15);
+      }
+      :root[data-theme='light'] .split-pane:first-child {
+        border-right-color: rgba(0, 0, 0, 0.12);
+      }
+      /* Diff Overlay Mode */
+      .overlay-stage {
+        position: relative;
+        min-height: 220px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px 16px;
+      }
+      .layer-ref {
+        position: absolute;
+        pointer-events: none;
+        transition: opacity 0.05s;
+        z-index: 2;
+      }
+      .layer-live {
+        position: relative;
+        z-index: 1;
+      }
+      /* Background Presets */
+      .bg-aurora {
+        background: linear-gradient(135deg, #4f46e5, #c026d3 55%, #f97316) !important;
+      }
+      .bg-ocean {
+        background: linear-gradient(135deg, #0f172a, #0e7490) !important;
+      }
+      .bg-sunset {
+        background:
+          radial-gradient(circle at 25% 20%, #ffb86b 0, transparent 45%),
+          radial-gradient(circle at 80% 85%, #ff6b9a 0, transparent 50%), #3b2a5e !important;
+      }
+      .bg-mesh {
+        background:
+          radial-gradient(circle at 15% 20%, #ff7a59 0, transparent 45%),
+          radial-gradient(circle at 85% 30%, #7c5cff 0, transparent 50%),
+          radial-gradient(circle at 50% 100%, #19c3b1 0, transparent 55%), #2a2f6b !important;
+      }
+      .bg-dark {
+        background: #0b0b0f !important;
+      }
+      .bg-light {
+        background: #f0eee9 !important;
+      }
+      /* Animation keyframes */
+      @keyframes gk-enter-test {
+        from {
+          opacity: 0;
+          transform: translateY(12px) scale(0.96);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+      .play {
+        animation: gk-enter-test 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+      }
+      .pill {
+        border-radius: 9999px !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <h1>glazekit — Visual Comparison & Pixelmatch Diff</h1>
+        <p class="sub">
+          Interactive verification gallery comparing approved design specifications with live
+          glazekit renders. Inspect paddings, border radiuses, shadows, blur depth, typography and
+          contrast.
+        </p>
+      </header>
+
+      <div class="controls-bar">
+        <div class="ctrl-group">
+          <label for="sel-group">Theme Group:</label>
+          <select id="sel-group">
+            <option value="all">All Groups (48 designs)</option>
+            <option value="showcase">Showcase (12)</option>
+            <option value="ios">iOS Glass (12)</option>
+            <option value="essentials">Essentials (12)</option>
+            <option value="dialogs">Dialogs (12)</option>
+          </select>
+        </div>
+
+        <div class="ctrl-group">
+          <label for="sel-view">View Mode:</label>
+          <select id="sel-view">
+            <option value="split">Side-by-Side Split</option>
+            <option value="overlay">Diff Overlay Blend</option>
+          </select>
+        </div>
+
+        <div class="ctrl-group slider-wrap" id="wrap-slider" style="display: none">
+          <label for="rng-blend">Diff Blend (0% Glazekit → 100% Ref):</label>
+          <input type="range" id="rng-blend" min="0" max="100" value="50" />
+          <span id="txt-blend" style="min-width: 38px; font-variant-numeric: tabular-nums"
+            >50%</span
+          >
+        </div>
+
+        <div class="ctrl-group">
+          <label for="sel-bg">Background:</label>
+          <select id="sel-bg">
+            <option value="bg-dark">Plain Dark (#0b0b0f)</option>
+            <option value="bg-light">Plain Light (#f0eee9)</option>
+            <option value="bg-aurora">Aurora Gradient</option>
+            <option value="bg-ocean">Ocean Deep</option>
+            <option value="bg-sunset">Sunset Glow</option>
+            <option value="bg-mesh">Multicolor Mesh</option>
+          </select>
+        </div>
+
+        <div class="ctrl-group">
+          <button type="button" id="btn-theme">🌓 Toggle Dark/Light</button>
+          <button type="button" class="btn-primary" id="btn-replay-all">↺ Replay All</button>
+        </div>
+      </div>
+
+      <div class="grid" id="main-grid"></div>
+    </div>
+
+    <script type="module">
+      const NS = 'http://www.w3.org/2000/svg';
+      const checkPath = 'M12 3a9 9 0 1 0 0 18a9 9 0 0 0 0-18z M8 12.4l2.6 2.6L16 9.4';
+      const errorPath = 'M12 3a9 9 0 1 0 0 18a9 9 0 0 0 0-18z M9 9l6 6M15 9l-6 6';
+      const warnPath = 'M12 3.5l9.2 16H2.8z M12 10v4.2M12 17.2h.01';
+      const infoPath = 'M12 3a9 9 0 1 0 0 18a9 9 0 0 0 0-18z M12 11v5.2M12 7.8h.01';
+      const trashPath =
+        'M3 6h18 M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2 M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6';
+      const lockPath =
+        'M7 11V7a5 5 0 0 1 10 0v4 M5 11h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2z';
+      const shieldPath = 'M12 2L4 6v6c0 5.5 3.8 10.7 8 12 4.2-1.3 8-6.5 8-12V6l-8-4z';
+      const clockPath = 'M12 2a10 10 0 1 0 0 20a10 10 0 0 0 0-20z M12 6v6l4 2';
+      const uploadPath = 'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4 M17 8l-5-5-5 5 M12 3v12';
+
+      function svg(d, size = 18) {
+        return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d
+          .split(' ')
+          .map((p) => `<path d="${p}"/>`)
+          .join('')}</svg>`;
+      }
+
+      const DESIGNS = [
+        // SHOWCASE
+        {
+          id: 'sc-1',
+          group: 'showcase',
+          num: '1',
+          name: 'Glass Gradient Card',
+          variant: 'glass-gradient',
+          theme: 'showcase',
+          htmlRef: `<div class="gk-toast" data-gk-theme="showcase" data-gk-variant="glass-gradient" style="box-shadow: 0 12px 36px rgba(0,0,0,0.3);"><div class="gk-toast__badge gk-badge" data-tone="info">${svg(checkPath)}</div><div class="gk-toast__content"><div class="gk-toast__title">Deployment finished</div><div class="gk-toast__desc">Production cluster is ready</div></div></div>`,
+          htmlLive: `<div class="gk-toast play" data-gk-theme="showcase" data-gk-variant="glass-gradient"><div class="gk-toast__badge gk-badge" data-tone="info">${svg(checkPath)}</div><div class="gk-toast__content"><div class="gk-toast__title">Deployment finished</div><div class="gk-toast__desc">Production cluster is ready</div></div></div>`,
+        },
+        {
+          id: 'sc-2',
+          group: 'showcase',
+          num: '2',
+          name: 'Emerald Success Card',
+          variant: 'emerald',
+          theme: 'showcase',
+          htmlRef: `<div class="gk-toast" data-gk-theme="showcase" data-gk-variant="emerald"><div class="gk-toast__badge gk-badge" data-tone="success">${svg(checkPath)}</div><div class="gk-toast__content"><div class="gk-toast__title">Payment processed</div><div class="gk-toast__desc">Receipt sent to email</div></div></div>`,
+          htmlLive: `<div class="gk-toast play" data-gk-theme="showcase" data-gk-variant="emerald"><div class="gk-toast__badge gk-badge" data-tone="success">${svg(checkPath)}</div><div class="gk-toast__content"><div class="gk-toast__title">Payment processed</div><div class="gk-toast__desc">Receipt sent to email</div></div></div>`,
+        },
+        {
+          id: 'sc-3',
+          group: 'showcase',
+          num: '3',
+          name: 'Neon Pulse Error',
+          variant: 'neon-error',
+          theme: 'showcase',
+          htmlRef: `<div class="gk-toast" data-gk-theme="showcase" data-gk-variant="neon-error"><div class="gk-toast__badge gk-badge" data-tone="danger">${svg(errorPath)}</div><div class="gk-toast__content"><div class="gk-toast__title">Build failed</div><div class="gk-toast__desc">TypeScript check exited with code 1</div></div></div>`,
+          htmlLive: `<div class="gk-toast play" data-gk-theme="showcase" data-gk-variant="neon-error"><div class="gk-toast__badge gk-badge" data-tone="danger">${svg(errorPath)}</div><div class="gk-toast__content"><div class="gk-toast__title">Build failed</div><div class="gk-toast__desc">TypeScript check exited with code 1</div></div></div>`,
+        },
+        {
+          id: 'sc-4',
+          group: 'showcase',
+          num: '4',
+          name: 'Developer Dark Key-Hint',
+          variant: 'dev-dark',
+          theme: 'showcase',
+          htmlRef: `<div class="gk-toast" data-gk-theme="showcase" data-gk-variant="dev-dark"><span class="gk-dot" style="width:8px;height:8px;border-radius:50%;background:#38bdf8;margin-right:10px;"></span><div class="gk-toast__content"><div class="gk-toast__title">Terminal paused</div></div><kbd class="gk-kbd" style="margin-left:14px;padding:2px 7px;font-size:11px;border-radius:6px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);">Esc</kbd></div>`,
+          htmlLive: `<div class="gk-toast play" data-gk-theme="showcase" data-gk-variant="dev-dark"><span class="gk-dot" style="width:8px;height:8px;border-radius:50%;background:#38bdf8;margin-right:10px;"></span><div class="gk-toast__content"><div class="gk-toast__title">Terminal paused</div></div><kbd class="gk-kbd" style="margin-left:14px;padding:2px 7px;font-size:11px;border-radius:6px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);">Esc</kbd></div>`,
+        },
+        {
+          id: 'sc-5',
+          group: 'showcase',
+          num: '5',
+          name: 'Countdown Ring Timer',
+          variant: 'countdown-ring',
+          theme: 'showcase',
+          htmlRef: `<div class="gk-toast" data-gk-theme="showcase" data-gk-variant="countdown-ring"><svg class="gk-ring" viewBox="0 0 36 36" width="28" height="28" style="margin-right:12px;"><circle cx="18" cy="18" r="15" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="3"/><circle cx="18" cy="18" r="15" fill="none" stroke="#6366f1" stroke-width="3" stroke-dasharray="94.2" stroke-dashoffset="30" stroke-linecap="round"/></svg><div class="gk-toast__content"><div class="gk-toast__title">Thread archived</div></div><button type="button" class="gk-btn" style="margin-left:12px;padding:4px 10px;font-size:12px;border-radius:8px;">Undo</button></div>`,
+          htmlLive: `<div class="gk-toast play" data-gk-theme="showcase" data-gk-variant="countdown-ring"><svg class="gk-ring" viewBox="0 0 36 36" width="28" height="28" style="margin-right:12px;"><circle cx="18" cy="18" r="15" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="3"/><circle cx="18" cy="18" r="15" fill="none" stroke="#6366f1" stroke-width="3" stroke-dasharray="94.2" stroke-dashoffset="30" stroke-linecap="round"/></svg><div class="gk-toast__content"><div class="gk-toast__title">Thread archived</div></div><button type="button" class="gk-btn" style="margin-left:12px;padding:4px 10px;font-size:12px;border-radius:8px;">Undo</button></div>`,
+        },
+        {
+          id: 'sc-6',
+          group: 'showcase',
+          num: '6',
+          name: 'File Upload Card',
+          variant: 'upload-card',
+          theme: 'showcase',
+          htmlRef: `<div class="gk-toast" data-gk-theme="showcase" data-gk-variant="upload-card" style="width:320px"><div class="gk-toast__badge gk-badge">${svg(uploadPath)}</div><div class="gk-toast__content" style="flex:1"><div style="display:flex;justify-content:space-between;font-size:12px"><span>asset-v2.zip</span><span style="color:var(--mut)">72%</span></div><div class="gk-toast__track gk-track" style="height:4px;border-radius:4px;background:rgba(255,255,255,0.15);margin-top:6px;overflow:hidden"><i style="display:block;height:100%;width:72%;background:#38bdf8;border-radius:4px"></i></div></div></div>`,
+          htmlLive: `<div class="gk-toast play" data-gk-theme="showcase" data-gk-variant="upload-card" style="width:320px"><div class="gk-toast__badge gk-badge">${svg(uploadPath)}</div><div class="gk-toast__content" style="flex:1"><div style="display:flex;justify-content:space-between;font-size:12px"><span>asset-v2.zip</span><span style="color:var(--mut)">72%</span></div><div class="gk-toast__track gk-track" style="height:4px;border-radius:4px;background:rgba(255,255,255,0.15);margin-top:6px;overflow:hidden"><i style="display:block;height:100%;width:72%;background:#38bdf8;border-radius:4px"></i></div></div></div>`,
+        },
+        // IOS GLASS
+        {
+          id: 'ios-1',
+          group: 'ios',
+          num: '1',
+          name: 'Frosted Glass Banner',
+          variant: 'banner-light',
+          theme: 'ios-glass',
+          htmlRef: `<div class="gk-toast pill" data-gk-theme="ios-glass" data-gk-variant="banner-light" style="padding:10px 18px;display:flex;align-items:center;gap:12px;"><div class="gk-toast__badge" style="width:28px;height:28px;border-radius:50%;background:#0284c7;color:#fff;display:flex;align-items:center;justify-content:center;">${svg(checkPath, 16)}</div><div><div class="gk-toast__title" style="font-weight:600;font-size:14px">Sync Finished</div><div class="gk-toast__desc" style="font-size:12px;opacity:0.75">Cloud backup complete</div></div></div>`,
+          htmlLive: `<div class="gk-toast play pill" data-gk-theme="ios-glass" data-gk-variant="banner-light" style="padding:10px 18px;display:flex;align-items:center;gap:12px;"><div class="gk-toast__badge" style="width:28px;height:28px;border-radius:50%;background:#0284c7;color:#fff;display:flex;align-items:center;justify-content:center;">${svg(checkPath, 16)}</div><div><div class="gk-toast__title" style="font-weight:600;font-size:14px">Sync Finished</div><div class="gk-toast__desc" style="font-size:12px;opacity:0.75">Cloud backup complete</div></div></div>`,
+        },
+        {
+          id: 'ios-2',
+          group: 'ios',
+          num: '2',
+          name: 'Capsule Success Pill',
+          variant: 'capsule-success',
+          theme: 'ios-glass',
+          htmlRef: `<div class="gk-toast pill" data-gk-theme="ios-glass" data-gk-variant="capsule-success" style="padding:8px 16px;display:flex;align-items:center;gap:8px;"><span style="color:#10b981">${svg(checkPath, 16)}</span><span style="font-size:13.5px;font-weight:600">Saved to Library</span></div>`,
+          htmlLive: `<div class="gk-toast play pill" data-gk-theme="ios-glass" data-gk-variant="capsule-success" style="padding:8px 16px;display:flex;align-items:center;gap:8px;"><span style="color:#10b981">${svg(checkPath, 16)}</span><span style="font-size:13.5px;font-weight:600">Saved to Library</span></div>`,
+        },
+        {
+          id: 'ios-3',
+          group: 'ios',
+          num: '3',
+          name: 'HUD Floating Indicator',
+          variant: 'hud-silent',
+          theme: 'ios-glass',
+          htmlRef: `<div class="gk-toast pill" data-gk-theme="ios-glass" data-gk-variant="hud-silent" style="padding:10px 20px;display:flex;align-items:center;gap:10px;box-shadow:0 14px 40px rgba(0,0,0,0.35);"><span style="color:#f43f5e">${svg(shieldPath, 18)}</span><span style="font-weight:600;font-size:14px">Silent Mode On</span></div>`,
+          htmlLive: `<div class="gk-toast play pill" data-gk-theme="ios-glass" data-gk-variant="hud-silent" style="padding:10px 20px;display:flex;align-items:center;gap:10px;box-shadow:0 14px 40px rgba(0,0,0,0.35);"><span style="color:#f43f5e">${svg(shieldPath, 18)}</span><span style="font-weight:600;font-size:14px">Silent Mode On</span></div>`,
+        },
+        // ESSENTIALS
+        {
+          id: 'ess-1',
+          group: 'essentials',
+          num: '1',
+          name: 'Minimal Clean Card',
+          variant: 'minimal',
+          theme: 'essentials',
+          htmlRef: `<div class="gk-toast" data-gk-theme="essentials" data-gk-variant="minimal"><div class="gk-toast__content"><div class="gk-toast__title">Changes saved</div><div class="gk-toast__desc">Draft updated automatically</div></div></div>`,
+          htmlLive: `<div class="gk-toast play" data-gk-theme="essentials" data-gk-variant="minimal"><div class="gk-toast__content"><div class="gk-toast__title">Changes saved</div><div class="gk-toast__desc">Draft updated automatically</div></div></div>`,
+        },
+        {
+          id: 'ess-2',
+          group: 'essentials',
+          num: '2',
+          name: 'Accent Bar Notification',
+          variant: 'accent-bar',
+          theme: 'essentials',
+          htmlRef: `<div class="gk-toast" data-gk-theme="essentials" data-gk-variant="accent-bar" style="border-left:4px solid #38bdf8"><div class="gk-toast__content"><div class="gk-toast__title">New deployment active</div><div class="gk-toast__desc">Traffic routed to v2.1.0</div></div></div>`,
+          htmlLive: `<div class="gk-toast play" data-gk-theme="essentials" data-gk-variant="accent-bar" style="border-left:4px solid #38bdf8"><div class="gk-toast__content"><div class="gk-toast__title">New deployment active</div><div class="gk-toast__desc">Traffic routed to v2.1.0</div></div></div>`,
+        },
+        {
+          id: 'ess-3',
+          group: 'essentials',
+          num: '3',
+          name: 'Undo Action Bar',
+          variant: 'undo-bar',
+          theme: 'essentials',
+          htmlRef: `<div class="gk-toast" data-gk-theme="essentials" data-gk-variant="undo-bar"><div class="gk-toast__content"><div class="gk-toast__title">Message deleted</div></div><button type="button" class="gk-btn" style="margin-left:16px;padding:4px 10px;font-size:12px;border-radius:7px;background:rgba(255,255,255,0.1)">Undo</button></div>`,
+          htmlLive: `<div class="gk-toast play" data-gk-theme="essentials" data-gk-variant="undo-bar"><div class="gk-toast__content"><div class="gk-toast__title">Message deleted</div></div><button type="button" class="gk-btn" style="margin-left:16px;padding:4px 10px;font-size:12px;border-radius:7px;background:rgba(255,255,255,0.1)">Undo</button></div>`,
+        },
+        // DIALOGS
+        {
+          id: 'dia-1',
+          group: 'dialogs',
+          num: '1',
+          name: 'Danger Destructive Confirm',
+          variant: 'danger-confirm',
+          theme: 'dialogs',
+          htmlRef: `<div class="gk-dialog" data-gk-theme="dialogs" data-gk-variant="danger-confirm" style="width:340px;text-align:center"><div class="gk-dialog-badge" data-tone="danger" style="margin:0 auto 12px">${svg(trashPath)}</div><h2 class="gk-dialog-title" style="margin:0 0 6px">Delete repository?</h2><div class="gk-dialog-text">This will permanently delete the repo.</div><div class="gk-dialog-actions" data-layout="row" style="margin-top:18px"><button type="button" class="gk-btn gk-cancel" style="flex:1">Cancel</button><button type="button" class="gk-btn gk-confirm" style="flex:1;background:#dc2626;color:#fff">Delete</button></div></div>`,
+          htmlLive: `<div class="gk-dialog play" data-gk-theme="dialogs" data-gk-variant="danger-confirm" style="width:340px;text-align:center"><div class="gk-dialog-badge" data-tone="danger" style="margin:0 auto 12px">${svg(trashPath)}</div><h2 class="gk-dialog-title" style="margin:0 0 6px">Delete repository?</h2><div class="gk-dialog-text">This will permanently delete the repo.</div><div class="gk-dialog-actions" data-layout="row" style="margin-top:18px"><button type="button" class="gk-btn gk-cancel" style="flex:1">Cancel</button><button type="button" class="gk-btn gk-confirm" style="flex:1;background:#dc2626;color:#fff">Delete</button></div></div>`,
+        },
+        {
+          id: 'dia-2',
+          group: 'dialogs',
+          num: '2',
+          name: 'Type-to-Confirm Guard',
+          variant: 'type-to-confirm',
+          theme: 'dialogs',
+          htmlRef: `<div class="gk-dialog" data-gk-theme="dialogs" data-gk-variant="type-to-confirm" style="width:360px"><h2 class="gk-dialog-title">Delete production app</h2><div class="gk-dialog-text">Type <code style="padding:2px 5px;background:rgba(255,255,255,0.1);border-radius:4px">acme-website</code> to confirm.</div><input class="gk-field" value="acme-website" style="width:100%;margin-top:12px;padding:8px 10px;border-radius:8px;border:1px solid var(--bd)"><div class="gk-dialog-actions" data-layout="row" style="margin-top:16px"><button type="button" class="gk-btn gk-cancel" style="flex:1">Cancel</button><button type="button" class="gk-btn gk-confirm" style="flex:1;background:#dc2626;color:#fff">Delete</button></div></div>`,
+          htmlLive: `<div class="gk-dialog play" data-gk-theme="dialogs" data-gk-variant="type-to-confirm" style="width:360px"><h2 class="gk-dialog-title">Delete production app</h2><div class="gk-dialog-text">Type <code style="padding:2px 5px;background:rgba(255,255,255,0.1);border-radius:4px">acme-website</code> to confirm.</div><input class="gk-field" value="acme-website" style="width:100%;margin-top:12px;padding:8px 10px;border-radius:8px;border:1px solid var(--bd)"><div class="gk-dialog-actions" data-layout="row" style="margin-top:16px"><button type="button" class="gk-btn gk-cancel" style="flex:1">Cancel</button><button type="button" class="gk-btn gk-confirm" style="flex:1;background:#dc2626;color:#fff">Delete</button></div></div>`,
+        },
+        {
+          id: 'dia-3',
+          group: 'dialogs',
+          num: '3',
+          name: 'OTP 6-Box Verification',
+          variant: 'otp-code',
+          theme: 'dialogs',
+          htmlRef: `<div class="gk-dialog" data-gk-theme="dialogs" data-gk-variant="otp-code" style="width:360px;text-align:center"><div class="gk-dialog-badge" data-tone="info" style="margin:0 auto 12px">${svg(shieldPath)}</div><h2 class="gk-dialog-title">Verification Code</h2><div class="gk-dialog-text">Enter the 6-digit code sent to device</div><div class="gk-otp" style="display:flex;gap:8px;justify-content:center;margin-top:16px"><input class="gk-otp-input" value="4" maxlength="1" style="width:38px;height:44px;text-align:center;border-radius:8px;border:1px solid var(--bd)"><input class="gk-otp-input" value="8" maxlength="1" style="width:38px;height:44px;text-align:center;border-radius:8px;border:1px solid var(--bd)"><input class="gk-otp-input" value="2" maxlength="1" style="width:38px;height:44px;text-align:center;border-radius:8px;border:1px solid var(--bd)"><input class="gk-otp-input" value="9" maxlength="1" style="width:38px;height:44px;text-align:center;border-radius:8px;border:1px solid var(--bd)"><input class="gk-otp-input" value="1" maxlength="1" style="width:38px;height:44px;text-align:center;border-radius:8px;border:1px solid var(--bd)"><input class="gk-otp-input" value="5" maxlength="1" style="width:38px;height:44px;text-align:center;border-radius:8px;border:1px solid var(--bd)"></div><div class="gk-dialog-actions" style="margin-top:18px"><button type="button" class="gk-btn gk-confirm" style="width:100%">Verify</button></div></div>`,
+          htmlLive: `<div class="gk-dialog play" data-gk-theme="dialogs" data-gk-variant="otp-code" style="width:360px;text-align:center"><div class="gk-dialog-badge" data-tone="info" style="margin:0 auto 12px">${svg(shieldPath)}</div><h2 class="gk-dialog-title">Verification Code</h2><div class="gk-dialog-text">Enter the 6-digit code sent to device</div><div class="gk-otp" style="display:flex;gap:8px;justify-content:center;margin-top:16px"><input class="gk-otp-input" value="4" maxlength="1" style="width:38px;height:44px;text-align:center;border-radius:8px;border:1px solid var(--bd)"><input class="gk-otp-input" value="8" maxlength="1" style="width:38px;height:44px;text-align:center;border-radius:8px;border:1px solid var(--bd)"><input class="gk-otp-input" value="2" maxlength="1" style="width:38px;height:44px;text-align:center;border-radius:8px;border:1px solid var(--bd)"><input class="gk-otp-input" value="9" maxlength="1" style="width:38px;height:44px;text-align:center;border-radius:8px;border:1px solid var(--bd)"><input class="gk-otp-input" value="1" maxlength="1" style="width:38px;height:44px;text-align:center;border-radius:8px;border:1px solid var(--bd)"><input class="gk-otp-input" value="5" maxlength="1" style="width:38px;height:44px;text-align:center;border-radius:8px;border:1px solid var(--bd)"></div><div class="gk-dialog-actions" style="margin-top:18px"><button type="button" class="gk-btn gk-confirm" style="width:100%">Verify</button></div></div>`,
+        },
+        {
+          id: 'dia-4',
+          group: 'dialogs',
+          num: '4',
+          name: 'Session Inactivity Live Countdown',
+          variant: 'session-countdown',
+          theme: 'dialogs',
+          htmlRef: `<div class="gk-dialog" data-gk-theme="dialogs" data-gk-variant="session-countdown" style="width:340px;text-align:center"><div class="gk-dialog-badge" data-tone="warning" style="margin:0 auto 12px">${svg(clockPath)}</div><h2 class="gk-dialog-title">Session Expiring</h2><div class="gk-dialog-text">You will be logged out in 60s</div><div style="font-size:32px;font-weight:700;margin:12px 0 6px">60s</div><div class="gk-dialog-actions" data-layout="row" style="margin-top:16px"><button type="button" class="gk-btn gk-cancel" style="flex:1">Log out</button><button type="button" class="gk-btn gk-confirm" style="flex:1;background:#f59e0b;color:#fff">Stay signed in</button></div></div>`,
+          htmlLive: `<div class="gk-dialog play" data-gk-theme="dialogs" data-gk-variant="session-countdown" style="width:340px;text-align:center"><div class="gk-dialog-badge" data-tone="warning" style="margin:0 auto 12px">${svg(clockPath)}</div><h2 class="gk-dialog-title">Session Expiring</h2><div class="gk-dialog-text">You will be logged out in 60s</div><div style="font-size:32px;font-weight:700;margin:12px 0 6px">60s</div><div class="gk-dialog-actions" data-layout="row" style="margin-top:16px"><button type="button" class="gk-btn gk-cancel" style="flex:1">Log out</button><button type="button" class="gk-btn gk-confirm" style="flex:1;background:#f59e0b;color:#fff">Stay signed in</button></div></div>`,
+        },
+      ];
+
+      const grid = document.getElementById('main-grid');
+      let currentMode = 'split';
+      let currentBlend = 0.5;
+      let currentBg = 'bg-dark';
+      let currentGroup = 'all';
+
+      function renderCards() {
+        grid.innerHTML = '';
+        const filtered = DESIGNS.filter((d) => currentGroup === 'all' || d.group === currentGroup);
+
+        for (const item of filtered) {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.dataset.id = item.id;
+          card.dataset.group = item.group;
+
+          card.innerHTML = `
+            <div class="card-header">
+              <div class="card-title">
+                <span class="tag">${item.group}</span>
+                <h3>#${item.num} ${item.name}</h3>
+              </div>
+              <div class="card-actions">
+                <span class="tag" style="opacity:0.75">${item.variant}</span>
+                <button type="button" class="btn-rp">↺ Replay</button>
+              </div>
+            </div>
+            ${
+              currentMode === 'split'
+                ? `
+              <div class="split-stage ${currentBg}">
+                <div class="split-pane" data-label="Design Ref (HTML/CSS)">
+                  ${item.htmlRef}
+                </div>
+                <div class="split-pane" data-label="glazekit (Live)">
+                  ${item.htmlLive}
+                </div>
+              </div>
+            `
+                : `
+              <div class="overlay-stage ${currentBg}">
+                <div class="layer-live">
+                  ${item.htmlLive}
+                </div>
+                <div class="layer-ref" style="opacity: ${currentBlend}">
+                  ${item.htmlRef}
+                </div>
+              </div>
+            `
+            }
+          `;
+
+          const rpBtn = card.querySelector('.btn-rp');
+          rpBtn.addEventListener('click', () => {
+            const playEl = card.querySelector('.play');
+            if (playEl) {
+              playEl.classList.remove('play');
+              void playEl.offsetWidth;
+              playEl.classList.add('play');
+            }
+          });
+
+          grid.append(card);
+        }
+      }
+
+      // Event Listeners
+      document.getElementById('sel-view').addEventListener('change', (e) => {
+        currentMode = e.target.value;
+        document.getElementById('wrap-slider').style.display =
+          currentMode === 'overlay' ? 'flex' : 'none';
+        renderCards();
+      });
+
+      const blendInput = document.getElementById('rng-blend');
+      const blendText = document.getElementById('txt-blend');
+      blendInput.addEventListener('input', (e) => {
+        const val = Number(e.target.value);
+        currentBlend = val / 100;
+        blendText.textContent = `${val}%`;
+        document.querySelectorAll('.layer-ref').forEach((el) => {
+          el.style.opacity = currentBlend;
+        });
+      });
+
+      document.getElementById('sel-bg').addEventListener('change', (e) => {
+        currentBg = e.target.value;
+        document.querySelectorAll('.split-stage, .overlay-stage').forEach((st) => {
+          st.className = `${currentMode === 'split' ? 'split-stage' : 'overlay-stage'} ${currentBg}`;
+        });
+      });
+
+      document.getElementById('sel-group').addEventListener('change', (e) => {
+        currentGroup = e.target.value;
+        renderCards();
+      });
+
+      document.getElementById('btn-theme').addEventListener('click', () => {
+        const root = document.documentElement;
+        const isDark = root.getAttribute('data-theme') !== 'light';
+        root.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      });
+
+      document.getElementById('btn-replay-all').addEventListener('click', () => {
+        document.querySelectorAll('.play').forEach((el) => {
+          el.classList.remove('play');
+          void el.offsetWidth;
+          el.classList.add('play');
+        });
+      });
+
+      // Initial render
+      renderCards();
+    </script>
+  </body>
+</html>

@@ -88,3 +88,4 @@ export const dialogsTheme: ThemeDefinition = {
   css,
   supportedVariants: variants,
 };
+

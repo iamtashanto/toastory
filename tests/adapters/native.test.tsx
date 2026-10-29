@@ -57,6 +57,17 @@ describe('glazekit/native adapter', () => {
     expect(container.textContent).toContain('Rendered toast');
 
     await act(async () => {
+      toast('Action item', {
+        badge: 'Status',
+        progressValue: 0.5,
+        actions: [{ label: 'Action 1' }],
+      });
+    });
+
+    expect(container.textContent).toContain('Status');
+    expect(container.textContent).toContain('Action 1');
+
+    await act(async () => {
       root.unmount();
     });
   });

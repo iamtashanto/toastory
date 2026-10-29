@@ -148,23 +148,100 @@ export function Toaster(props: NativeToasterProps): React.JSX.Element | null {
           key={String(item.id)}
           style={
             {
-              backgroundColor: 'rgba(28, 28, 30, 0.85)',
+              backgroundColor: 'rgba(28, 28, 30, 0.88)',
               padding: 14,
               borderRadius: 16,
               minWidth: 200,
               maxWidth: '100%',
               boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 4,
             } as React.CSSProperties
           }
         >
+          {item.badge ? (
+            <div
+              style={
+                {
+                  fontSize: 11,
+                  fontWeight: '600',
+                  color: '#38bdf8',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                } as React.CSSProperties
+              }
+            >
+              {typeof item.badge === 'string'
+                ? item.badge
+                : ((item.badge as { label?: string }).label ?? '')}
+            </div>
+          ) : null}
           {item.title ? (
             <div style={{ color: '#fff', fontWeight: '600', fontSize: 15 }}>
               {String(item.title)}
             </div>
           ) : null}
           {item.description ? (
-            <div style={{ color: '#aaa', fontSize: 13, marginTop: 4 }}>
+            <div style={{ color: '#aaa', fontSize: 13, marginTop: 2 }}>
               {String(item.description)}
+            </div>
+          ) : null}
+          {item.progressValue !== undefined ? (
+            <div
+              style={
+                {
+                  height: 3,
+                  backgroundColor: 'rgba(255,255,255,0.15)',
+                  borderRadius: 3,
+                  marginTop: 6,
+                  overflow: 'hidden',
+                } as React.CSSProperties
+              }
+            >
+              <div
+                style={
+                  {
+                    height: '100%',
+                    width: `${Math.round(item.progressValue * 100)}%`,
+                    backgroundColor: '#38bdf8',
+                  } as React.CSSProperties
+                }
+              />
+            </div>
+          ) : null}
+          {item.actions && item.actions.length > 0 ? (
+            <div
+              style={
+                {
+                  display: 'flex',
+                  gap: 8,
+                  marginTop: 8,
+                  justifyContent: 'flex-end',
+                } as React.CSSProperties
+              }
+            >
+              {item.actions.map((act, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={act.onClick ? (e) => act.onClick?.(e.nativeEvent) : undefined}
+                  style={
+                    {
+                      fontSize: 12,
+                      fontWeight: '600',
+                      padding: '4px 10px',
+                      borderRadius: 8,
+                      border: 'none',
+                      backgroundColor: 'rgba(255, 255, 255, 0.12)',
+                      color: '#fff',
+                      cursor: 'pointer',
+                    } as React.CSSProperties
+                  }
+                >
+                  {act.label ?? act.text ?? 'Action'}
+                </button>
+              ))}
             </div>
           ) : null}
         </div>

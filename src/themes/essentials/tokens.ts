@@ -71,3 +71,4 @@ export const essentialsTheme: ThemeDefinition = {
   css,
   supportedVariants: variants,
 };
+

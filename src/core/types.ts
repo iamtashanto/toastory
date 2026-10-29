@@ -162,8 +162,9 @@ export interface ToastAvatarOption {
 
 /** Switch toggle in a toast. */
 export interface ToastToggleOption {
-  checked: boolean;
-  onChange: (checked: boolean) => void;
+  checked?: boolean;
+  defaultChecked?: boolean;
+  onChange?: (checked: boolean) => void;
   label?: string;
 }
 
@@ -261,7 +262,7 @@ export interface ToastOptions {
   /** Theme-declared variant preset. */
   variant?: ToastVariant;
   /** Tone icon chip badge or custom badge description. */
-  badge?: string | { icon?: Renderable; tone?: string };
+  badge?: string | { icon?: Renderable; tone?: string; label?: string };
   /** Keyboard shortcut hint chip, e.g. 'Esc'. */
   kbd?: string;
   /** Timestamp: number, Date, formatted string or boolean for 'now'. */
