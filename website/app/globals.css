@@ -1,26 +1,141 @@
-@import 'tailwindcss';
+@import "tailwindcss";
+@import "../lib/glazekit/glazekit.css";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --site-bg: #0b0c12;
+  --site-surface: rgba(20, 22, 34, 0.72);
+  --site-surface-raised: rgba(28, 30, 46, 0.82);
+  --site-border: rgba(255, 255, 255, 0.12);
+  --site-border-subtle: rgba(255, 255, 255, 0.06);
+  --site-fg: #f4f4f7;
+  --site-muted: #9496a8;
+  --site-accent: #3b82f6;
+  --site-accent-glow: rgba(59, 130, 246, 0.35);
+  --site-success: #10b981;
+  --site-error: #ef4444;
+  --site-warning: #f59e0b;
+  --site-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, system-ui, sans-serif;
+  --site-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  color-scheme: dark;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root[data-theme="light"],
+.light {
+  --site-bg: #f8fafc;
+  --site-surface: rgba(255, 255, 255, 0.85);
+  --site-surface-raised: rgba(255, 255, 255, 0.95);
+  --site-border: rgba(15, 23, 42, 0.12);
+  --site-border-subtle: rgba(15, 23, 42, 0.06);
+  --site-fg: #0f172a;
+  --site-muted: #64748b;
+  --site-accent: #2563eb;
+  --site-accent-glow: rgba(37, 99, 235, 0.25);
+  color-scheme: light;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  background-color: var(--site-bg);
+  color: var(--site-fg);
+  font-family: var(--site-font);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Glass card styling */
+.glass-panel {
+  background: var(--site-surface);
+  border: 1px solid var(--site-border);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.36), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+}
+
+.glass-pill {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+
+.glass-pill:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Glowing text and borders */
+.text-gradient {
+  background: linear-gradient(135deg, #ffffff 30%, #94a3b8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-accent {
+  background: linear-gradient(135deg, #60a5fa 0%, #a855f7 50%, #ec4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Mesh gradient backdrop */
+.mesh-bg {
+  background-image: 
+    radial-gradient(at 10% 20%, rgba(59, 130, 246, 0.18) 0px, transparent 50%),
+    radial-gradient(at 90% 15%, rgba(168, 85, 247, 0.18) 0px, transparent 50%),
+    radial-gradient(at 50% 80%, rgba(16, 185, 129, 0.12) 0px, transparent 50%);
+}
+
+.hero-mesh-anim {
+  background: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.2) 0%, rgba(139, 92, 246, 0.15) 30%, transparent 70%);
+  animation: pulse-glow 8s ease-in-out infinite alternate;
+}
+
+@keyframes pulse-glow {
+  0% { transform: scale(0.9) translate(-5%, -5%); opacity: 0.6; }
+  100% { transform: scale(1.1) translate(5%, 5%); opacity: 0.9; }
+}
+
+/* Focus visibility for WCAG 2.2 AA */
+:focus-visible {
+  outline: 2px solid var(--site-accent) !important;
+  outline-offset: 3px !important;
+}
+
+/* Code block styles */
+code, pre, kbd {
+  font-family: var(--site-mono);
+}
+
+pre {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+/* Skip to main content link for a11y */
+.skip-link {
+  position: absolute;
+  top: -60px;
+  left: 16px;
+  z-index: 999999;
+  padding: 10px 18px;
+  background: #3b82f6;
+  color: #ffffff;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: top 0.2s ease;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  top: 16px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
