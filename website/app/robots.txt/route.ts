@@ -2,7 +2,7 @@ export async function GET() {
   const content = `User-agent: *
 Allow: /
 
-Sitemap: https://toastory.dev/sitemap.xml
+Sitemap: https://toastory.tashanto.com/sitemap.xml
 `;
 
   return new Response(content, {

@@ -1,7 +1,7 @@
 import { DOC_NAVIGATION } from '@/lib/docs/docs-data';
 
 export async function GET() {
-  const baseUrl = 'https://toastory.dev';
+  const baseUrl = 'https://toastory.tashanto.com';
 
   const staticRoutes = [
     '',

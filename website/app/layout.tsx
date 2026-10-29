@@ -29,11 +29,11 @@ export const metadata: Metadata = {
     title: 'toastory — Complete UI Feedback Toolkit',
     description:
       'Toast notifications, dialogs, bottom sheets, and loading overlays with Apple glass design and zero dependencies.',
-    url: 'https://toastory.dev',
+    url: 'https://toastory.tashanto.com',
     siteName: 'toastory',
     images: [
       {
-        url: 'https://toastory.dev/og-image.png',
+        url: 'https://toastory.tashanto.com/og-image.png',
         width: 1200,
         height: 630,
         alt: 'toastory — Frosted glass UI feedback toolkit',
