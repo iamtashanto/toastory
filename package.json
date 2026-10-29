@@ -1,0 +1,188 @@
+{
+  "name": "glazekit",
+  "version": "0.1.0",
+  "description": "Complete UI feedback toolkit: toasts, dialogs, sheets and loading overlays with an Apple-style glass design. One API for web, React, Vue, Angular, Svelte, Electron and React Native.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
+  "keywords": [
+    "toast",
+    "notification",
+    "dialog",
+    "modal",
+    "confirm",
+    "prompt",
+    "bottom-sheet",
+    "glass",
+    "react",
+    "vue",
+    "angular",
+    "svelte",
+    "react-native"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/glazekit/glazekit.git"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./core": {
+      "import": {
+        "types": "./dist/core.d.ts",
+        "default": "./dist/core.js"
+      },
+      "require": {
+        "types": "./dist/core.d.cts",
+        "default": "./dist/core.cjs"
+      }
+    },
+    "./react": {
+      "import": {
+        "types": "./dist/react.d.ts",
+        "default": "./dist/react.js"
+      },
+      "require": {
+        "types": "./dist/react.d.cts",
+        "default": "./dist/react.cjs"
+      }
+    },
+    "./vue": {
+      "import": {
+        "types": "./dist/vue.d.ts",
+        "default": "./dist/vue.js"
+      },
+      "require": {
+        "types": "./dist/vue.d.cts",
+        "default": "./dist/vue.cjs"
+      }
+    },
+    "./angular": {
+      "import": {
+        "types": "./dist/angular.d.ts",
+        "default": "./dist/angular.js"
+      },
+      "require": {
+        "types": "./dist/angular.d.cts",
+        "default": "./dist/angular.cjs"
+      }
+    },
+    "./svelte": {
+      "import": {
+        "types": "./dist/svelte.d.ts",
+        "default": "./dist/svelte.js"
+      },
+      "require": {
+        "types": "./dist/svelte.d.cts",
+        "default": "./dist/svelte.cjs"
+      }
+    },
+    "./native": {
+      "import": {
+        "types": "./dist/native.d.ts",
+        "default": "./dist/native.js"
+      },
+      "require": {
+        "types": "./dist/native.d.cts",
+        "default": "./dist/native.cjs"
+      }
+    },
+    "./themes/*.css": "./dist/themes/*.css",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit && tsc --noEmit -p src/core",
+    "lint": "eslint . && prettier --check .",
+    "format": "prettier --write .",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "build": "tsup && node scripts/build-themes.mjs",
+    "size": "node scripts/size.mjs",
+    "check": "npm run typecheck && npm run lint && npm run test && npm run build && npm run size",
+    "check:all": "npm run check && npm run test:e2e",
+    "changeset": "changeset",
+    "release": "npm run check && changeset publish"
+  },
+  "peerDependencies": {
+    "@angular/core": ">=16",
+    "dompurify": ">=3",
+    "expo-blur": ">=12",
+    "expo-haptics": ">=12",
+    "react": ">=18",
+    "react-native": ">=0.72",
+    "react-native-reanimated": ">=3",
+    "svelte": ">=4",
+    "vue": ">=3.3"
+  },
+  "peerDependenciesMeta": {
+    "@angular/core": {
+      "optional": true
+    },
+    "dompurify": {
+      "optional": true
+    },
+    "expo-blur": {
+      "optional": true
+    },
+    "expo-haptics": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    },
+    "react-native-reanimated": {
+      "optional": true
+    },
+    "svelte": {
+      "optional": true
+    },
+    "vue": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^3.0.3",
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "axe-core": "^4.14.0",
+    "eslint": "^10.13.0",
+    "jsdom": "^29.1.1",
+    "prettier": "^3.9.10",
+    "react": "^19.3.1",
+    "tsup": "^9.0.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.1",
+    "vitest": "^5.0.5",
+    "vue": "^3.5.44"
+  }
+}
