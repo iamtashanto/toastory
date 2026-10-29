@@ -46,6 +46,8 @@ export interface ThemeDefinition {
   dark: ThemeTokens;
   /** Extra CSS. `&` stands for the attribute selector of the theme. */
   css?: string;
+  /** Variants supported by this theme. */
+  supportedVariants?: readonly string[];
 }
 
 const SYSTEM =
@@ -106,49 +108,19 @@ const make = (
 const GLASS_SHEEN =
   '.gk-toast&::before,.gk-dialog&::before,.gk-sheet&::before,.gk-bsheet&::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;background:linear-gradient(135deg,rgba(255,255,255,.14),rgba(255,255,255,0) 45%)}.gk-dialog&,.gk-sheet&,.gk-bsheet&{isolation:isolate}';
 
+import { essentialsTheme } from './essentials/tokens.ts';
+import { showcaseTheme } from './showcase/tokens.ts';
+import { iosGlassTheme } from './ios-glass/tokens.ts';
+import { liquidGlassTheme } from './liquid-glass/tokens.ts';
+import { dialogsTheme } from './dialogs/tokens.ts';
+
 /** All built-in themes. */
 export const THEMES: readonly ThemeDefinition[] = [
-  make(
-    'ios-glass',
-    { radius: '18px', blur: '24px', saturate: '180%', font: SYSTEM },
-    {
-      bg: 'rgba(255, 255, 255, 0.9)',
-      solid: '#f5f5f7',
-      fg: '#111114',
-      muted: '#44444a',
-      border: 'rgba(60, 60, 67, 0.2)',
-      shadow: '0 10px 36px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
-    },
-    {
-      bg: 'rgba(30, 30, 32, 0.9)',
-      muted: '#c4c4cc',
-      solid: '#1c1c1e',
-      border: 'rgba(255, 255, 255, 0.14)',
-      shadow: '0 10px 36px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.08)',
-    },
-  ),
-  make(
-    'liquid-glass',
-    { radius: '28px', blur: '36px', saturate: '220%', font: SYSTEM },
-    {
-      bg: 'rgba(255, 255, 255, 0.88)',
-      solid: '#f2f2f7',
-      fg: '#0a0a0d',
-      muted: '#33333a',
-      border: 'rgba(255, 255, 255, 0.55)',
-      shadow:
-        '0 14px 44px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.8), inset 0 -1px 0 rgba(255, 255, 255, 0.25)',
-    },
-    {
-      bg: 'rgba(24, 24, 28, 0.88)',
-      muted: '#d0d0d8',
-      solid: '#1c1c20',
-      border: 'rgba(255, 255, 255, 0.2)',
-      shadow:
-        '0 14px 44px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.18), inset 0 -1px 0 rgba(255, 255, 255, 0.05)',
-    },
-    GLASS_SHEEN,
-  ),
+  essentialsTheme,
+  showcaseTheme,
+  iosGlassTheme,
+  liquidGlassTheme,
+  dialogsTheme,
   make(
     'aurora',
     { radius: '20px', blur: '28px', saturate: '170%', font: SYSTEM, tint: 0.28 },

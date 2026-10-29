@@ -3,7 +3,9 @@ import type {
   Direction,
   GlazeConfig,
   PauseOn,
+  Renderable,
   SwipeDirection,
+  ToastAvatarOption,
   ToastId,
   ToastPosition,
   ToastRecord,
@@ -12,6 +14,54 @@ import type {
 import { el, fill, hasDom, prefersDark, prefersReducedMotion } from './dom';
 import { icon, iconForType } from './icons';
 import { safeUrl, sanitizeToFragment } from './sanitize';
+import { resolveVariant } from './variants';
+
+const ICONS: Record<string, string> = {
+  success: 'success',
+  error: 'error',
+  warning: 'warning',
+  info: 'info',
+};
+
+function deterministicColor(str: string): string {
+  const colors = ['#38bdf8', '#818cf8', '#ec4899', '#f97316', '#10b981', '#6366f1', '#eab308'];
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) hash = (hash * 31 + str.charCodeAt(i)) >>> 0;
+  return colors[hash % colors.length]!;
+}
+
+function formatRelativeTime(ts: number | Date | string | boolean, locale = 'en'): string {
+  if (typeof ts === 'string') return ts;
+  if (ts === true) return 'now';
+  const date = ts instanceof Date ? ts.getTime() : typeof ts === 'number' ? ts : Date.now();
+  const diffSec = Math.round((Date.now() - date) / 1000);
+  if (Math.abs(diffSec) < 60) return 'now';
+  const diffMin = Math.round(diffSec / 60);
+  if (Math.abs(diffMin) < 60) {
+    try {
+      const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
+      return rtf.format(-diffMin, 'minute');
+    } catch {
+      return `${diffMin}m ago`;
+    }
+  }
+  const diffHr = Math.round(diffMin / 60);
+  if (Math.abs(diffHr) < 24) {
+    try {
+      const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
+      return rtf.format(-diffHr, 'hour');
+    } catch {
+      return `${diffHr}h ago`;
+    }
+  }
+  const diffDay = Math.round(diffHr / 24);
+  try {
+    const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
+    return rtf.format(-diffDay, 'day');
+  } catch {
+    return `${diffDay}d ago`;
+  }
+}
 
 /** Options passed when mounting the DOM toaster. */
 export interface ToasterOptions {
@@ -353,27 +403,71 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       if (typeof Node !== 'undefined' && out instanceof Node) content.append(out);
       else if (typeof out === 'string') content.append(out);
     } else {
-      const customIcon = record.icon;
-      const builtIn = customIcon === undefined ? iconForType(record.type) : undefined;
-      const typeDef = store.types.get(record.type);
-      const iconValue = customIcon === undefined ? typeDef?.icon : customIcon;
-      if (customIcon !== false && (builtIn || iconValue !== undefined)) {
-        const holder = el('div', k('gk-toast__icon gk-icon', names.icon), {
+      if (record.badge !== undefined) {
+        const tone = typeof record.badge === 'string' ? record.badge : record.badge.tone ?? 'info';
+        const badgeEl = el('div', k('gk-toast__badge gk-badge', names.badge), {
           'aria-hidden': 'true',
+          'data-tone': tone,
         });
-        if (builtIn) holder.append(icon(builtIn));
-        else fill(holder, iconValue);
-        node.append(holder);
+        if (typeof record.badge === 'object' && record.badge.icon) {
+          fill(badgeEl, record.badge.icon);
+        } else {
+          const ic = icon((ICONS[tone] ?? tone) as any);
+          if (ic) badgeEl.append(ic);
+        }
+        node.append(badgeEl);
+      } else {
+        const customIcon = record.icon;
+        const builtIn = customIcon === undefined ? iconForType(record.type) : undefined;
+        const typeDef = store.types.get(record.type);
+        const iconValue = customIcon === undefined ? typeDef?.icon : customIcon;
+        if (customIcon !== false && (builtIn || iconValue !== undefined)) {
+          const holder = el('div', k('gk-toast__icon gk-icon', names.icon), {
+            'aria-hidden': 'true',
+          });
+          if (builtIn) holder.append(icon(builtIn));
+          else fill(holder, iconValue);
+          node.append(holder);
+        }
       }
+
       if (record.avatar !== undefined) {
         const holder = el('div', k('gk-toast__avatar gk-avatar', names.avatar));
-        if (typeof record.avatar === 'string') {
+        if (
+          typeof record.avatar === 'object' &&
+          record.avatar !== null &&
+          !('nodeType' in record.avatar)
+        ) {
+          const av = record.avatar as ToastAvatarOption;
+          if (av.src) {
+            holder.append(
+              el('img', '', { src: safeUrl(av.src) ? av.src : '', alt: av.alt ?? av.name ?? '' }),
+            );
+          } else {
+            const initials =
+              av.initials ??
+              (av.name
+                ? av.name
+                    .split(' ')
+                    .map((w) => w[0])
+                    .join('')
+                    .slice(0, 2)
+                    .toUpperCase()
+                : '?');
+            holder.textContent = initials;
+            holder.style.background = av.color ?? deterministicColor(av.name ?? initials);
+            holder.style.color = '#ffffff';
+          }
+        } else if (typeof record.avatar === 'string') {
           holder.append(
             el('img', '', { src: safeUrl(record.avatar) ? record.avatar : '', alt: '' }),
           );
-        } else fill(holder, record.avatar);
+        } else {
+          fill(holder, record.avatar as Renderable);
+        }
         node.append(holder);
       }
+
       if (record.title !== undefined && record.title !== '') {
         const title = el('div', k('gk-toast__title gk-title', names.title));
         fill(title, record.title);
@@ -388,6 +482,26 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
         }
         content.append(desc);
       }
+
+      if (record.progressValue !== undefined) {
+        const pct = Math.max(0, Math.min(100, Math.round(record.progressValue * 100)));
+        const fillEl = el('i', 'gk-progress-fill');
+        fillEl.style.width = `${pct}%`;
+        const track = el(
+          'div',
+          'gk-toast__track gk-track',
+          {
+            role: 'progressbar',
+            'aria-valuenow': String(pct),
+            'aria-valuemin': '0',
+            'aria-valuemax': '100',
+            ...(record.progressLabel ? { 'aria-valuetext': record.progressLabel } : {}),
+          },
+          fillEl,
+        );
+        content.append(track);
+      }
+
       if (record.count > 1) {
         content.append(
           el(
@@ -411,7 +525,87 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
     }
     node.append(body);
 
-    if (record.action || record.cancel) {
+    if (record.timestamp !== undefined) {
+      const timeEl = el('time', k('gk-toast__time gk-time', names.time));
+      timeEl.textContent = formatRelativeTime(record.timestamp, record.timestampLocale);
+      node.append(timeEl);
+    }
+
+    if (record.kbd) {
+      const kbdEl = el('kbd', k('gk-toast__kbd gk-kbd', names.kbd));
+      kbdEl.textContent = record.kbd;
+      node.append(kbdEl);
+    }
+
+    if (record.toggle) {
+      const sw = el('button', 'gk-toast__switch gk-sw', {
+        type: 'button',
+        role: 'switch',
+        'aria-checked': String(Boolean(record.toggle.checked)),
+        'aria-label': record.toggle.label ?? 'Toggle option',
+      });
+      sw.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const next = sw.getAttribute('aria-checked') !== 'true';
+        sw.setAttribute('aria-checked', String(next));
+        record.toggle?.onChange(next);
+      });
+      node.append(sw);
+    }
+
+    if (
+      record.progress === 'ring' ||
+      record.variant === 'countdown-ring' ||
+      record.variant === 'progress-ring'
+    ) {
+      const ringSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      ringSvg.setAttribute('viewBox', '0 0 36 36');
+      ringSvg.setAttribute('class', 'gk-ring-svg');
+      const bgCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      bgCircle.setAttribute('cx', '18');
+      bgCircle.setAttribute('cy', '18');
+      bgCircle.setAttribute('r', '16');
+      bgCircle.setAttribute('fill', 'none');
+      bgCircle.setAttribute('stroke', 'currentColor');
+      bgCircle.setAttribute('stroke-width', '3');
+      bgCircle.setAttribute('opacity', '0.2');
+      const fillCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      fillCircle.setAttribute('cx', '18');
+      fillCircle.setAttribute('cy', '18');
+      fillCircle.setAttribute('r', '16');
+      fillCircle.setAttribute('fill', 'none');
+      fillCircle.setAttribute('stroke', 'currentColor');
+      fillCircle.setAttribute('stroke-width', '3');
+      fillCircle.setAttribute('stroke-dasharray', '100.5');
+      fillCircle.setAttribute('stroke-linecap', 'round');
+      const val =
+        record.progressValue ??
+        (record.duration > 0 ? store.getRemaining(record.id) / record.duration : 1);
+      fillCircle.setAttribute('stroke-dashoffset', `${100.5 * (1 - val)}`);
+      ringSvg.append(bgCircle, fillCircle);
+      node.append(ringSvg);
+    }
+
+    if (record.actions && record.actions.length > 0) {
+      const actionsDiv = el('div', k('gk-toast__actions gk-actions', names.actions));
+      for (const act of record.actions) {
+        const actBtn = el(
+          'button',
+          `gk-toast__action gk-btn gk-action gk-btn--${act.kind ?? 'secondary'}`,
+          {
+            type: 'button',
+          },
+        );
+        actBtn.textContent = act.text;
+        actBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (act.onClick) act.onClick(e);
+          if (act.autoDismiss !== false && !e.defaultPrevented) close(record.id, 'action');
+        });
+        actionsDiv.append(actBtn);
+      }
+      node.append(actionsDiv);
+    } else if (record.action || record.cancel) {
       const actions = el('div', k('gk-toast__actions gk-actions', names.actions));
       if (record.cancel) {
         actions.append(
@@ -449,7 +643,13 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       });
       node.append(closeBtn);
     }
-    if (record.duration > 0 && flag(record.progress, c.progress)) {
+    const showBar =
+      record.duration > 0 &&
+      (record.progress === 'bar' ||
+        (record.progress !== 'none' &&
+          record.progress !== 'ring' &&
+          flag(record.progress as boolean | undefined, c.progress)));
+    if (showBar) {
       const bar = el('i');
       const elapsed = Math.max(0, record.duration - store.getRemaining(record.id));
       bar.style.setProperty('--gk-d', `${record.duration}ms`);
@@ -474,11 +674,44 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       if (value === undefined) node.removeAttribute(name);
       else node.setAttribute(name, value);
     };
-    set('role', record.role);
-    set('aria-live', record.ariaLive);
+
+    const themeName = record.theme ?? c.theme;
+    const themeDef = THEMES.find((t) => t.name === themeName);
+    let activeVariant = record.variant;
+    if (
+      activeVariant &&
+      themeDef?.supportedVariants &&
+      !themeDef.supportedVariants.includes(activeVariant)
+    ) {
+      if (typeof process !== 'undefined' && process.env?.NODE_ENV !== 'production') {
+        console.warn(
+          `[glazekit] Theme "${themeName}" does not support variant "${activeVariant}". Falling back to default.`,
+        );
+      }
+      activeVariant = undefined;
+    }
+    set('data-gk-variant', activeVariant);
+
+    if (record.hud || activeVariant === 'hud-silent') {
+      set('role', 'status');
+      set('aria-live', 'polite');
+      set('data-hud', '');
+    } else {
+      set('role', record.role);
+      set('aria-live', record.ariaLive);
+    }
     set('aria-atomic', 'true');
     set('data-type', record.type);
-    set('data-gk-theme', record.theme ?? c.theme);
+    set('data-gk-theme', themeName);
+    set('data-gk-mode', resolveMode(c.mode, flag(record.invert, c.invert)));
+    set('data-dir', record.dir ?? c.dir);
+    set('dir', (record.dir ?? c.dir) === 'auto' ? undefined : (record.dir ?? c.dir));
+    set('data-animation', record.animation ?? c.animation ?? 'slide');
+    if (record.shake || activeVariant === 'shake-error') set('data-shake', '');
+    if (record.glow) set('data-glow', '');
+    if (record.gradientBorder || activeVariant === 'gradient-border') set('data-gradient-border', '');
+    if (record.group) set('data-group', record.group);
+    if (record.island || activeVariant === 'island') set('data-island', '');
     set('data-gk-mode', resolveMode(c.mode, flag(record.invert, c.invert)));
     set('data-dir', record.dir ?? c.dir);
     set('dir', (record.dir ?? c.dir) === 'auto' ? undefined : (record.dir ?? c.dir));

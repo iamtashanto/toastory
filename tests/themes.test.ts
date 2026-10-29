@@ -5,8 +5,11 @@ import { THEMES } from '../src/themes/themes';
 import type { ThemeTokens } from '../src/themes/themes';
 
 const EXPECTED = [
+  'essentials',
+  'showcase',
   'ios-glass',
   'liquid-glass',
+  'dialogs',
   'aurora',
   'classic-stack',
   'classic-bar',

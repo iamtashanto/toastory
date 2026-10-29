@@ -139,15 +139,36 @@ export function openBottomSheet(options: BottomSheetOptions): BottomSheetHandle 
     'data-gk-theme': options.theme ?? config.theme,
     'data-gk-mode': config.mode,
   });
+  if (options.variant) panel.setAttribute('data-gk-variant', options.variant);
   const grab = el('button', 'gk-grab', {
     type: 'button',
     'aria-label': options.handleLabel ?? 'Resize sheet',
   });
+  const iconBox = el('div', 'gk-dialog-icon gk-dialog-badge');
+  iconBox.hidden = true;
+  if (options.icon) {
+    iconBox.hidden = false;
+    iconBox.dataset.tone = options.tone ?? 'danger';
+    const ic = icon(options.icon === 'trash' ? 'trash' : options.icon === 'warning' ? 'warning' : 'error');
+    if (ic) iconBox.append(ic);
+  }
   const title = el('h2', 'gk-bsheet-title', { id: titleId });
   const body = el('div', 'gk-bsheet-body');
+  const buttons = el('div', 'gk-dialog-buttons gk-dialog-actions', { 'data-layout': 'stack' });
+  buttons.hidden = true;
+  if (options.confirmButton || options.cancelButton || options.variant === 'bottom-sheet-confirm') {
+    buttons.hidden = false;
+    const confirmBtn = el('button', 'gk-btn gk-confirm gk-btn--confirm', { type: 'button' });
+    confirmBtn.textContent = options.confirmButton?.label ?? 'Confirm';
+    confirmBtn.addEventListener('click', () => void controller.submit('confirm'));
+    const cancelBtn = el('button', 'gk-btn gk-cancel gk-btn--cancel', { type: 'button' });
+    cancelBtn.textContent = options.cancelButton?.label ?? 'Cancel';
+    cancelBtn.addEventListener('click', () => void controller.dismiss('cancel'));
+    buttons.append(confirmBtn, cancelBtn);
+  }
   const closeBtn = el('button', 'gk-dialog-close', { type: 'button' });
   closeBtn.append(icon('close'));
-  panel.append(closeBtn, grab, title, body);
+  panel.append(closeBtn, grab, iconBox, title, body, buttons);
   overlay.root.append(panel);
 
   const setHeight = (fraction: number, animate: boolean): void => {

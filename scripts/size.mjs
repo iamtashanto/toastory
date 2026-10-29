@@ -1,5 +1,5 @@
 import { Buffer } from 'node:buffer';
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 import { gzipSync } from 'node:zlib';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -79,5 +79,21 @@ if (hasDialogCode) {
   process.exit(1);
 }
 console.log('Tree-shaking:           ✓ Toast-only import eliminates dialog & sheet code');
+
+// Budget 4: Each theme CSS < 4 KB gzip (toast and dialog styles in separate files)
+const themeFiles = await readdir(join(dist, 'themes'));
+let maxThemeGzip = 0;
+for (const file of themeFiles) {
+  if (file.endsWith('.toast.css') || file.endsWith('.dialog.css')) {
+    const data = await readFile(join(dist, 'themes', file));
+    const gz = gzipSync(data).length;
+    if (gz > maxThemeGzip) maxThemeGzip = gz;
+    if (gz >= 4 * 1024) {
+      console.error(`ERROR: Theme CSS budget exceeded for ${file}! ${gz} >= 4096 bytes`);
+      process.exit(1);
+    }
+  }
+}
+console.log(`Theme CSS modules:      ✓ All modules < 4.00 KB (max: ${formatKb(maxThemeGzip)} KB)`);
 
 console.log('✓ All size budgets passed successfully!\n');

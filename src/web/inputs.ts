@@ -152,6 +152,100 @@ export function buildInput(options: DialogOptions, labelId: string): InputContro
       read: () => Number(input.value),
     };
   }
+  if (type === 'otp') {
+    const len = options.otpLength ?? 6;
+    const isAlpha = options.otpType === 'alphanumeric';
+    const otpWrap = el('div', 'gk-otp');
+    const inputs: HTMLInputElement[] = [];
+
+    for (let i = 0; i < len; i++) {
+      const inp = el('input', 'gk-field gk-otp-input', {
+        type: 'text',
+        maxLength: '1',
+        inputmode: isAlpha ? 'text' : 'numeric',
+        autocomplete: i === 0 ? 'one-time-code' : 'off',
+        'aria-label': `Digit ${i + 1} of ${len}`,
+      }) as HTMLInputElement;
+      inputs.push(inp);
+      otpWrap.append(inp);
+
+      inp.addEventListener('input', () => {
+        if (!isAlpha) inp.value = inp.value.replace(/\D/g, '');
+        if (inp.value && inputs[i + 1]) inputs[i + 1]!.focus();
+        const code = inputs.map((x) => x.value).join('');
+        if (code.length === len) options.onOtpComplete?.(code);
+      });
+
+      inp.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && !inp.value && inputs[i - 1]) {
+          inputs[i - 1]!.focus();
+        }
+      });
+
+      inp.addEventListener('paste', (e) => {
+        const raw = e.clipboardData?.getData('text') || '';
+        const cleaned = (isAlpha ? raw.replace(/[^a-zA-Z0-9]/g, '') : raw.replace(/\D/g, '')).slice(
+          0,
+          len,
+        );
+        if (!cleaned) return;
+        e.preventDefault();
+        inputs.forEach((x, j) => {
+          x.value = cleaned[j] || '';
+        });
+        const nextIdx = Math.min(cleaned.length, len - 1);
+        inputs[nextIdx]?.focus();
+        if (cleaned.length === len) options.onOtpComplete?.(cleaned);
+      });
+    }
+
+    if (options.inputValue && typeof options.inputValue === 'string') {
+      const chars = options.inputValue.slice(0, len);
+      inputs.forEach((inp, idx) => {
+        inp.value = chars[idx] || '';
+      });
+    }
+
+    let footerNote: HTMLElement | null = null;
+    if (options.resendCooldown !== undefined) {
+      let cooldown = options.resendCooldown;
+      const resendWrap = el('p', 'gk-otp-resend', {
+        style: 'margin-top:12px;font-size:13px;text-align:center;',
+      });
+      const resendBtn = el('button', 'gk-btn-resend', {
+        type: 'button',
+        style: 'color:var(--gk-accent);font-weight:600;cursor:pointer;background:none;border:none;padding:0;font:inherit;',
+      }, 'Resend code');
+      const timerSpan = el('span', '', {}, cooldown > 0 ? ` (${cooldown}s)` : '');
+      resendBtn.disabled = cooldown > 0;
+      resendWrap.append("Didn't get it? ", resendBtn, timerSpan);
+      if (cooldown > 0) {
+        const interval = setInterval(() => {
+          cooldown--;
+          if (cooldown <= 0) {
+            clearInterval(interval);
+            timerSpan.textContent = '';
+            resendBtn.disabled = false;
+          } else {
+            timerSpan.textContent = ` (${cooldown}s)`;
+          }
+        }, 1000);
+      }
+      resendBtn.addEventListener('click', () => {
+        if (resendBtn.disabled) return;
+        options.onResend?.();
+      });
+      footerNote = resendWrap;
+    }
+
+    return {
+      node: wrap(labelNode, otpWrap, footerNote),
+      focusTarget: inputs[0]!,
+      fields: inputs,
+      read: () => inputs.map((x) => x.value).join(''),
+    };
+  }
+
   if (type === 'file') {
     return {
       node: wrap(labelNode, input),

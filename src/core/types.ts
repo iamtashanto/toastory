@@ -54,6 +54,9 @@ export type Position = ToastPosition | DialogPosition;
 
 /** Known theme presets. */
 export type ThemeName =
+  | 'essentials'
+  | 'showcase'
+  | 'dialogs'
   | 'ios-glass'
   | 'liquid-glass'
   | 'aurora'
@@ -73,6 +76,98 @@ export type ThemeName =
   | 'brutal'
   | 'pastel'
   | (string & {});
+
+/** Variants supported in the essentials theme. */
+export type EssentialsToastVariant =
+  | 'minimal'
+  | 'success'
+  | 'error'
+  | 'warning'
+  | 'accent-bar'
+  | 'badge-title'
+  | 'progress-bar'
+  | 'pill'
+  | 'undo-bar'
+  | 'inline-confirm'
+  | 'loading-percent'
+  | 'avatar';
+
+/** Variants supported in the showcase theme. */
+export type ShowcaseToastVariant =
+  | 'glass-gradient'
+  | 'emerald'
+  | 'neon-error'
+  | 'ios-banner'
+  | 'dev-dark'
+  | 'countdown-ring'
+  | 'stacked'
+  | 'upload-card'
+  | 'island'
+  | 'gradient-border'
+  | 'soft-light'
+  | 'message-actions';
+
+/** Variants supported in the ios-glass and liquid-glass themes. */
+export type IosGlassToastVariant =
+  | 'banner-light'
+  | 'banner-dark'
+  | 'capsule-success'
+  | 'island-call'
+  | 'hud-silent'
+  | 'system-alert'
+  | 'device-popup'
+  | 'grouped-stack'
+  | 'progress-ring'
+  | 'shake-error'
+  | 'focus-toggle'
+  | 'compact-action';
+
+/** Toast variant types across all themes. */
+export type ToastVariant =
+  | EssentialsToastVariant
+  | ShowcaseToastVariant
+  | IosGlassToastVariant
+  | (string & {});
+
+/** Dialog variant types across all themes. */
+export type DialogVariant =
+  | 'warning-confirm'
+  | 'danger-confirm'
+  | 'type-to-confirm'
+  | 'rename-prompt'
+  | 'success'
+  | 'update-info'
+  | 'dark-logout'
+  | 'ios-glass-alert'
+  | 'bottom-sheet-confirm'
+  | 'reauth-password'
+  | 'otp-code'
+  | 'session-countdown'
+  | (string & {});
+
+/** Action item button in a toast actions array. */
+export interface ToastActionItem {
+  text: string;
+  onClick?: (event: MouseEvent) => void;
+  kind?: 'primary' | 'secondary' | 'ghost' | 'danger';
+  autoDismiss?: boolean;
+}
+
+/** Avatar display options in a toast. */
+export interface ToastAvatarOption {
+  initials?: string;
+  name?: string;
+  src?: string;
+  alt?: string;
+  color?: string;
+}
+
+/** Switch toggle in a toast. */
+export interface ToastToggleOption {
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+  label?: string;
+}
 
 /** Color scheme selection. `auto` follows system preference. */
 export type ColorMode = 'light' | 'dark' | 'auto';
@@ -121,6 +216,9 @@ export interface ToastClassNames {
   actions?: string;
   action?: string;
   cancel?: string;
+  badge?: string;
+  time?: string;
+  kbd?: string;
 }
 
 /** Stacking mode for toasts. */
@@ -162,10 +260,42 @@ export interface ToastOptions {
   title?: Renderable;
   /** Secondary subtitle or body text. */
   description?: Renderable;
+  /** Theme-declared variant preset. */
+  variant?: ToastVariant;
+  /** Tone icon chip badge or custom badge description. */
+  badge?: string | { icon?: Renderable; tone?: string };
+  /** Keyboard shortcut hint chip, e.g. 'Esc'. */
+  kbd?: string;
+  /** Timestamp: number, Date, formatted string or boolean for 'now'. */
+  timestamp?: number | Date | string | boolean;
+  /** Locale for timestamp relative time formatting (e.g. 'en', 'es'). */
+  timestampLocale?: string;
+  /** Progress indicator type: 'bar' | 'ring' | 'none' or boolean. */
+  progress?: 'bar' | 'ring' | 'none' | boolean;
+  /** Determinate progress value between 0 and 1. */
+  progressValue?: number;
+  /** Progress label string, e.g. "64%" or "4.2 MB of 6.8 MB". */
+  progressLabel?: string;
+  /** Action buttons array. */
+  actions?: ToastActionItem[];
+  /** Interactive toggle switch. */
+  toggle?: ToastToggleOption;
+  /** Group key for grouped notifications stack. */
+  group?: string;
+  /** Play error shake animation on entrance. */
+  shake?: boolean;
+  /** Glowing border / box-shadow. */
+  glow?: boolean;
+  /** Gradient border accent. */
+  gradientBorder?: boolean;
+  /** Dynamic Island pill layout. */
+  island?: boolean;
+  /** Centered floating HUD overlay (does not steal focus). */
+  hud?: boolean;
   /** Icon: false disables, custom string or node replaces the built-in icon. */
   icon?: Renderable | false;
-  /** Avatar URL or node shown before text. */
-  avatar?: Renderable;
+  /** Avatar URL, initials object, or node shown before text. */
+  avatar?: Renderable | ToastAvatarOption;
   /** Duration in ms. `0` or `Infinity` makes it persistent. */
   duration?: number;
   /** Screen region placement. */
@@ -184,8 +314,6 @@ export interface ToastOptions {
   dismissible?: boolean;
   /** Dismiss on body click. */
   closeOnClick?: boolean;
-  /** Show timer progress bar. */
-  progress?: boolean;
   /** Triggers that pause countdown. */
   pauseOn?: PauseOn[];
   /** Enable swipe dismissal. */
@@ -350,10 +478,18 @@ export type DialogInputType =
   | 'datetime-local'
   | 'week'
   | 'month'
-  | 'file';
+  | 'file'
+  | 'otp';
 
 /** Icon preset for dialogs. */
-export type DialogIcon = 'success' | 'error' | 'warning' | 'info' | 'question' | 'custom';
+export type DialogIcon =
+  | 'success'
+  | 'error'
+  | 'warning'
+  | 'info'
+  | 'question'
+  | 'custom'
+  | (string & {});
 
 /** Tone preset for dialogs. */
 export type DialogTone = 'info' | 'warning' | 'danger';
@@ -408,6 +544,28 @@ export type ValidateResult = string | undefined | null;
 
 /** Options for dialogs (confirm, alert, prompt, steps). */
 export interface DialogOptions {
+  /** Theme-declared variant preset. */
+  variant?: DialogVariant;
+  /** Button layout direction or hairline division. */
+  buttonLayout?: 'row' | 'stack' | 'divided';
+  /** Expected text for type-to-confirm validation. */
+  confirmText?: string;
+  /** Whether type-to-confirm matching is case sensitive. */
+  caseSensitive?: boolean;
+  /** Inline callout notice box. */
+  notice?: { icon?: Renderable; text: string; tone?: 'info' | 'warning' | 'danger' };
+  /** OTP length in digits (defaults to 6). */
+  otpLength?: number;
+  /** OTP input kind. Defaults to 'numeric'. */
+  otpType?: 'numeric' | 'alphanumeric';
+  /** Callback fired when all OTP digits are filled. */
+  onOtpComplete?: (code: string) => void;
+  /** Live countdown in seconds or boolean. */
+  countdown?: number | boolean;
+  /** Resend cooldown in seconds. */
+  resendCooldown?: number;
+  /** Callback when user clicks resend code. */
+  onResend?: () => void;
   title?: string;
   text?: string;
   html?: string;
@@ -493,7 +651,8 @@ export type TypedDialogOptions<T = unknown> =
         | 'datetime-local'
         | 'week'
         | 'month'
-        | 'file';
+        | 'file'
+        | 'otp';
       inputValue?: string;
       validate?: (
         value: string,
@@ -546,6 +705,12 @@ export interface BottomSheetOptions {
   title?: string;
   text?: string;
   html?: string;
+  icon?: DialogIcon | string;
+  iconContent?: Renderable;
+  tone?: DialogTone;
+  confirmButton?: DialogButton;
+  cancelButton?: DialogButton;
+  variant?: DialogVariant;
   snapPoints?: readonly number[];
   initialSnap?: number;
   dismissible?: boolean;
