@@ -100,10 +100,21 @@ export const ui = {
 };
 
 export interface NativeToasterProps {
+  /** Toast placement. Defaults to 'top'. */
+  position?: 'top' | 'bottom' | 'center';
   /** Optional top/bottom inset offset. */
   offset?: number;
   /** Toast container style. */
   style?: Record<string, unknown>;
+}
+
+export interface GlazeProviderProps {
+  children?: React.ReactNode;
+}
+
+/** Root provider for React Native glazekit overlay hosting. */
+export function GlazeProvider({ children }: GlazeProviderProps): React.JSX.Element {
+  return <>{children}</>;
 }
 
 /**
@@ -126,12 +137,20 @@ export function Toaster(props: NativeToasterProps): React.JSX.Element | null {
 
   if (visibleToasts.length === 0) return null;
 
+  const position = props.position ?? 'top';
+  const posStyle: React.CSSProperties =
+    position === 'bottom'
+      ? { bottom: props.offset ?? 50 }
+      : position === 'center'
+        ? { top: '50%', transform: 'translateY(-50%)' }
+        : { top: props.offset ?? 50 };
+
   return (
     <div
       style={
         {
           position: 'absolute',
-          top: props.offset ?? 50,
+          ...posStyle,
           left: 16,
           right: 16,
           zIndex: 99999,

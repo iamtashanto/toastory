@@ -2,7 +2,15 @@
 import React, { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { configure, resetNativeEngine, toast, Toaster, ui, useNativeToast } from '../../src/native';
+import {
+  configure,
+  GlazeProvider,
+  resetNativeEngine,
+  toast,
+  Toaster,
+  ui,
+  useNativeToast,
+} from '../../src/native';
 
 // Enable React act environment for jsdom
 // @ts-expect-error React 18/19 act flag
@@ -66,6 +74,32 @@ describe('glazekit/native adapter', () => {
 
     expect(container.textContent).toContain('Status');
     expect(container.textContent).toContain('Action 1');
+
+    await act(async () => {
+      root.unmount();
+    });
+  });
+
+  it('GlazeProvider mounts children and supports position option on Toaster', async () => {
+    const container = document.getElementById('root') as HTMLElement;
+    const root = createRoot(container);
+
+    await act(async () => {
+      root.render(
+        <GlazeProvider>
+          <Toaster position="bottom" offset={24} />
+          <span>App Content</span>
+        </GlazeProvider>,
+      );
+    });
+
+    expect(container.textContent).toContain('App Content');
+
+    await act(async () => {
+      toast.success('Positioned Toast');
+    });
+
+    expect(container.textContent).toContain('Positioned Toast');
 
     await act(async () => {
       root.unmount();

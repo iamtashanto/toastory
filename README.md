@@ -1,8 +1,8 @@
 # glazekit
 
-Complete UI feedback toolkit: toast notifications, confirm / prompt / alert dialogs, sheets and loading overlays with Apple glass design. One API for modern web and mobile.
+Complete UI feedback toolkit: toast notifications, confirm / prompt / alert dialogs, sheets and loading overlays with frosted glass design. One API for modern web and mobile.
 
-[![CI](https://img.shields.io/github/actions/workflow/status/glazekit/glazekit/ci.yml?branch=main&label=CI)](https://github.com/glazekit/glazekit/actions)
+[![CI](https://img.shields.io/github/actions/workflow/status/iamtashanto/glazekit/ci.yml?branch=main&label=CI)](https://github.com/iamtashanto/glazekit/actions)
 [![npm version](https://img.shields.io/npm/v/glazekit?color=blue)](https://www.npmjs.com/package/glazekit)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Bundle Size](https://img.shields.io/badge/gzip-5.97%20KB-brightgreen)](https://bundlephobia.com/package/glazekit)
@@ -12,7 +12,7 @@ Complete UI feedback toolkit: toast notifications, confirm / prompt / alert dial
 
 > **Unofficial.** Not affiliated with, endorsed by, or sponsored by Sonner, React-Toastify, react-hot-toast, Notyf, SweetAlert2, or their maintainers.
 
-[Documentation](https://glazekit.dev) · [Playground](https://glazekit.dev/playground) · [Issues](https://github.com/glazekit/glazekit/issues)
+[Documentation](https://glazekit.dev) · [Playground](https://glazekit.dev/playground) · [Issues](https://github.com/iamtashanto/glazekit/issues)
 
 ---
 
@@ -20,7 +20,7 @@ Complete UI feedback toolkit: toast notifications, confirm / prompt / alert dial
 
 - **One API for every platform.** Write the same feedback calls across vanilla JavaScript, React, Next.js, Vue, Nuxt, Angular, Svelte, Electron, and React Native.
 - **Accessible by default.** Built with WCAG 2.2 AA compliance, live regions, focus trapping, keyboard hotkey navigation (`Alt+T`), and contrast-verified color tokens.
-- **Signature Apple glass aesthetics.** Frosted glass translucency with backdrop blur, saturation boost, specular highlights, and solid contrast fallbacks.
+- **Signature frosted glass aesthetics.** Frosted glass translucency with backdrop blur, saturation boost, specular highlights, and solid contrast fallbacks.
 - **Zero runtime dependencies.** Published package contains zero dependencies with strict tree-shaking keeping toast-only bundles under 6 KB gzipped.
 - **Promise-driven interactive dialogs.** Confirm, prompt, multi-step wizards, action sheets, and loading overlays return strongly typed asynchronous results.
 
@@ -114,10 +114,12 @@ import 'glazekit/themes/ios-glass.css';
 ### Nuxt
 
 ```ts
-// nuxt.config.ts
-export default defineNuxtConfig({
-  modules: ['glazekit/nuxt'],
-  glazekit: { theme: 'ios-glass' },
+// plugins/glazekit.client.ts
+import { glazekitPlugin } from 'glazekit/vue';
+import 'glazekit/themes/ios-glass.css';
+
+export default defineNuxtPlugin((nuxtApp) => {
+  nuxtApp.vueApp.use(glazekitPlugin);
 });
 ```
 
@@ -178,7 +180,7 @@ export default function App() {
 
 ## Themes
 
-![glazekit showcase themes](https://raw.githubusercontent.com/glazekit/glazekit/main/design-refs/toasts-showcase-1.png)
+![glazekit showcase themes](https://raw.githubusercontent.com/iamtashanto/glazekit/main/design-refs/toasts-showcase-1.png)
 
 Ships with 21 handcrafted themes supporting light, dark, and auto modes: `ios-glass`, `liquid-glass`, `aurora`, `classic-stack`, `classic-bar`, `pill`, `ripple`, `gradient-strip`, `sweet`, `material`, `basic`, `minimal`, `flat`, `outline`, `neon`, `gradient`, `brutal`, `pastel`, `essentials`, `showcase`, `dialogs`.
 
@@ -224,7 +226,7 @@ Ships with 21 handcrafted themes supporting light, dark, and auto modes: `ios-gl
 | **Gzip Core + Toast Size**    |  **5.97 KB**  |  ~4.5 KB   |     ~14 KB     |     ~5.2 KB     |    ~15 KB    |
 | **Multi-Framework Adapters**  | **All major** | React only |   React only   |   React only    |   Wrappers   |
 | **Dialogs & Sheets Included** |    **Yes**    |     No     |       No       |       No        | Dialogs only |
-| **Apple Glass Themes**        | **Yes (21)**  |     No     |       No       |       No        |      No      |
+| **Frosted Glass Themes**      | **Yes (21)**  |     No     |       No       |       No        |      No      |
 | **WCAG 2.2 AA (0 errors)**    | **Verified**  |  Partial   |    Partial     |     Partial     |   Partial    |
 
 ---
@@ -243,7 +245,7 @@ Glazekit supports familiar API signatures for quick migrations:
 
 ## Contributing
 
-Contributions are welcome! Please read [`CONTRIBUTING.md`](https://github.com/glazekit/glazekit/blob/main/CONTRIBUTING.md) for local development setup, coding standards, and testing procedures.
+Contributions are welcome! Please read [`CONTRIBUTING.md`](https://github.com/iamtashanto/glazekit/blob/main/CONTRIBUTING.md) for local development setup, coding standards, and testing procedures.
 
 ---
 
