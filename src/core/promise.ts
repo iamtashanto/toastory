@@ -37,15 +37,13 @@ export function runPromiseToast<T>(
     duration: 0, // persistent while pending
   });
 
-  const settle = (
-    type: 'success' | 'error',
-    raw: unknown,
-    payload: unknown,
-  ): void => {
+  const settle = (type: 'success' | 'error', raw: unknown, payload: unknown): void => {
     const desc =
       typeof messages.description === 'function'
         ? messages.description(
-            type === 'success' ? { status: type, value: payload as T } : { status: type, error: payload },
+            type === 'success'
+              ? { status: type, value: payload as T }
+              : { status: type, error: payload },
           )
         : messages.description;
     store.update(id, {
@@ -62,7 +60,11 @@ export function runPromiseToast<T>(
       if (messages.success === undefined) {
         store.dismiss(id);
       } else {
-        settle('success', typeof messages.success === 'function' ? messages.success(value) : messages.success, value);
+        settle(
+          'success',
+          typeof messages.success === 'function' ? messages.success(value) : messages.success,
+          value,
+        );
       }
     })
     .catch((error: unknown) => {

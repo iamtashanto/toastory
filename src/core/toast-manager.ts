@@ -21,7 +21,10 @@ import type {
 /** Reasons that originate from a person and are blocked on non-dismissible toasts. */
 const USER_REASONS: ReadonlySet<CloseReason> = new Set<CloseReason>(['user', 'swipe', 'click']);
 
-const safeCall = <A extends unknown[]>(fn: ((...args: A) => void) | undefined, ...args: A): void => {
+const safeCall = <A extends unknown[]>(
+  fn: ((...args: A) => void) | undefined,
+  ...args: A
+): void => {
   try {
     fn?.(...args);
   } catch (err) {
@@ -282,7 +285,6 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
     }
   };
 
-
   const store: ToastManager = {
     config,
     types,
@@ -341,7 +343,7 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
       }
       let changed = false;
       for (const key in rest) {
-        const value = rest[key as keyof ToastPatch];
+        const value = (rest as Record<string, unknown>)[key];
         if (value !== undefined) {
           if ((entry.opts as Record<string, unknown>)[key] !== value) changed = true;
           (next as Record<string, unknown>)[key] = value;
@@ -380,7 +382,11 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
     },
 
     pause(id, reason) {
-      for (const entry of id === undefined ? entries.values() : entries.has(id) ? [entries.get(id)!] : []) {
+      const list =
+        id === undefined
+          ? [...entries.values()]
+          : [entries.get(id)].filter((e): e is Entry => Boolean(e));
+      for (const entry of list) {
         if (entry.record.pausedBy.includes(reason)) continue;
         entry.timer.pause(reason);
         entry.record = {
@@ -393,7 +399,11 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
     },
 
     resume(id, reason) {
-      for (const entry of id === undefined ? entries.values() : entries.has(id) ? [entries.get(id)!] : []) {
+      const list =
+        id === undefined
+          ? [...entries.values()]
+          : [entries.get(id)].filter((e): e is Entry => Boolean(e));
+      for (const entry of list) {
         if (!entry.record.pausedBy.includes(reason)) continue;
         entry.timer.resume(reason);
         const nextPausedBy = entry.record.pausedBy.filter((value) => value !== reason);

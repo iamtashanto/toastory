@@ -23,7 +23,7 @@ export function normalizeChoices(options: DialogOptions['options']): DialogChoic
   }
   return Object.keys(options).map((value) => ({
     value,
-    label: (options as Record<string, string>)[value]!,
+    label: (options as Record<string, string>)[value] as string,
   }));
 }
 
@@ -178,17 +178,24 @@ export function buildInput(options: DialogOptions, labelId: string): InputContro
       });
 
       inp.addEventListener('keydown', (e) => {
-        const prev = inputs[i - 1], next = inputs[i + 1];
-        if ((e.key === 'Backspace' && !inp.value && prev) || (e.key === 'ArrowLeft' && prev)) prev.focus();
+        const prev = inputs[i - 1],
+          next = inputs[i + 1];
+        if ((e.key === 'Backspace' && !inp.value && prev) || (e.key === 'ArrowLeft' && prev))
+          prev.focus();
         else if (e.key === 'ArrowRight' && next) next.focus();
       });
 
       inp.addEventListener('paste', (e) => {
         const raw = e.clipboardData?.getData('text') || '';
-        const cleaned = (isAlpha ? raw.replace(/[^a-zA-Z0-9]/g, '') : raw.replace(/\D/g, '')).slice(0, len);
+        const cleaned = (isAlpha ? raw.replace(/[^a-zA-Z0-9]/g, '') : raw.replace(/\D/g, '')).slice(
+          0,
+          len,
+        );
         if (!cleaned) return;
         e.preventDefault();
-        inputs.forEach((x, j) => { x.value = cleaned[j] || ''; });
+        inputs.forEach((x, j) => {
+          x.value = cleaned[j] || '';
+        });
         inputs[Math.min(cleaned.length, len - 1)]?.focus();
         if (cleaned.length === len) options.onOtpComplete?.(cleaned);
       });
@@ -196,7 +203,9 @@ export function buildInput(options: DialogOptions, labelId: string): InputContro
 
     if (typeof options.inputValue === 'string') {
       const chars = options.inputValue.slice(0, len);
-      inputs.forEach((inp, idx) => { inp.value = chars[idx] || ''; });
+      inputs.forEach((inp, idx) => {
+        inp.value = chars[idx] || '';
+      });
     }
 
     let footerNote: HTMLElement | null = null;

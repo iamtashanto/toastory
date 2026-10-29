@@ -1,6 +1,6 @@
 import { composite, contrast, flatten, parseColor } from '../src/themes/color.ts';
 import { THEMES } from '../src/themes/themes.ts';
-import type { ThemeDefinition, ThemeTokens } from '../src/themes/themes.ts';
+import type { ThemeTokens } from '../src/themes/themes.ts';
 
 interface ContrastResult {
   theme: string;
@@ -182,10 +182,12 @@ export function evaluateContrast(): {
 
 function run(): void {
   console.log('--- glazekit Contrast Verification Tool (WCAG 2.2 AA) ---');
-  const { results, failures, totalChecks } = evaluateContrast();
+  const { failures, totalChecks } = evaluateContrast();
 
   const themesCount = THEMES.length;
-  console.log(`Evaluated ${themesCount} themes across light and dark modes over white and black backdrops.`);
+  console.log(
+    `Evaluated ${themesCount} themes across light and dark modes over white and black backdrops.`,
+  );
   console.log(`Total contrast assertions evaluated: ${totalChecks}`);
 
   if (failures.length > 0) {
@@ -198,7 +200,9 @@ function run(): void {
     process.exit(1);
   }
 
-  console.log(`✓ SUCCESS: 0 violations found. All ${totalChecks} color contrast combinations satisfy WCAG 2.2 AA!`);
+  console.log(
+    `✓ SUCCESS: 0 violations found. All ${totalChecks} color contrast combinations satisfy WCAG 2.2 AA!`,
+  );
 }
 
 if (process.argv[1]?.endsWith('contrast.ts') || process.argv[1]?.endsWith('contrast.js')) {

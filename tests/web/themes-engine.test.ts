@@ -86,3 +86,4 @@ describe('theme-engine in DOM environment', () => {
     expect(cfg.mode).toBe('dark');
   });
 });
+

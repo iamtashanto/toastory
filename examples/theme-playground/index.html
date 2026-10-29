@@ -28,7 +28,9 @@
     <link rel="stylesheet" href="/dist/themes/pastel.css" />
     <style>
       :root {
-        --system-font: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', Inter, system-ui, sans-serif;
+        --system-font:
+          -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', Inter, system-ui,
+          sans-serif;
       }
       * {
         box-sizing: border-box;
@@ -43,29 +45,38 @@
         transition: background 0.4s ease;
       }
       /* Wallpapers */
-      body[data-wp="monterey"] {
-        background: radial-gradient(circle at 20% 20%, #bf360c 0%, transparent 40%),
-                    radial-gradient(circle at 80% 30%, #4a148c 0%, transparent 45%),
-                    radial-gradient(circle at 40% 80%, #0d47a1 0%, transparent 50%),
-                    linear-gradient(135deg, #1a0826 0%, #050b1a 100%);
+      body[data-wp='monterey'] {
+        background:
+          radial-gradient(circle at 20% 20%, #bf360c 0%, transparent 40%),
+          radial-gradient(circle at 80% 30%, #4a148c 0%, transparent 45%),
+          radial-gradient(circle at 40% 80%, #0d47a1 0%, transparent 50%),
+          linear-gradient(135deg, #1a0826 0%, #050b1a 100%);
       }
-      body[data-wp="aurora"] {
-        background: radial-gradient(circle at 10% 40%, rgba(34, 197, 94, 0.4) 0%, transparent 50%),
-                    radial-gradient(circle at 85% 20%, rgba(56, 189, 248, 0.5) 0%, transparent 45%),
-                    radial-gradient(circle at 50% 90%, rgba(168, 85, 247, 0.4) 0%, transparent 50%),
-                    linear-gradient(180deg, #020617 0%, #090d16 100%);
+      body[data-wp='aurora'] {
+        background:
+          radial-gradient(circle at 10% 40%, rgba(34, 197, 94, 0.4) 0%, transparent 50%),
+          radial-gradient(circle at 85% 20%, rgba(56, 189, 248, 0.5) 0%, transparent 45%),
+          radial-gradient(circle at 50% 90%, rgba(168, 85, 247, 0.4) 0%, transparent 50%),
+          linear-gradient(180deg, #020617 0%, #090d16 100%);
       }
-      body[data-wp="sonoma"] {
-        background: radial-gradient(circle at 75% 25%, #ff8a00 0%, transparent 40%),
-                    radial-gradient(circle at 20% 70%, #e52e71 0%, transparent 45%),
-                    radial-gradient(circle at 60% 80%, #9c27b0 0%, transparent 50%),
-                    linear-gradient(135deg, #310d20 0%, #0f071e 100%);
+      body[data-wp='sonoma'] {
+        background:
+          radial-gradient(circle at 75% 25%, #ff8a00 0%, transparent 40%),
+          radial-gradient(circle at 20% 70%, #e52e71 0%, transparent 45%),
+          radial-gradient(circle at 60% 80%, #9c27b0 0%, transparent 50%),
+          linear-gradient(135deg, #310d20 0%, #0f071e 100%);
       }
-      body[data-wp="darkmesh"] {
+      body[data-wp='darkmesh'] {
         background: radial-gradient(circle at 30% 30%, #1e293b 0%, #020617 100%);
       }
-      body[data-wp="lightmesh"] {
-        background: radial-gradient(circle at 30% 20%, #e0f2fe 0%, #f0fdf4 40%, #fef3c7 70%, #ffffff 100%);
+      body[data-wp='lightmesh'] {
+        background: radial-gradient(
+          circle at 30% 20%,
+          #e0f2fe 0%,
+          #f0fdf4 40%,
+          #fef3c7 70%,
+          #ffffff 100%
+        );
         color: #0f172a;
       }
 
@@ -84,7 +95,7 @@
         top: 0;
         z-index: 100;
       }
-      body[data-wp="lightmesh"] .top-nav {
+      body[data-wp='lightmesh'] .top-nav {
         background: rgba(255, 255, 255, 0.7);
         border-bottom: 1px solid rgba(0, 0, 0, 0.1);
         color: #0f172a;
@@ -104,7 +115,7 @@
         border-radius: 999px;
         background: rgba(255, 255, 255, 0.15);
       }
-      body[data-wp="lightmesh"] .brand span {
+      body[data-wp='lightmesh'] .brand span {
         background: rgba(0, 0, 0, 0.08);
       }
       .controls {
@@ -119,7 +130,9 @@
         gap: 6px;
         font-size: 13px;
       }
-      select, button, input {
+      select,
+      button,
+      input {
         font-family: inherit;
         font-size: 13px;
         border-radius: 8px;
@@ -131,9 +144,9 @@
         outline: none;
         transition: all 0.2s ease;
       }
-      body[data-wp="lightmesh"] select,
-      body[data-wp="lightmesh"] button,
-      body[data-wp="lightmesh"] input {
+      body[data-wp='lightmesh'] select,
+      body[data-wp='lightmesh'] button,
+      body[data-wp='lightmesh'] input {
         border: 1px solid rgba(0, 0, 0, 0.15);
         background: rgba(0, 0, 0, 0.04);
       }
@@ -144,7 +157,7 @@
       button:hover {
         background: rgba(255, 255, 255, 0.2);
       }
-      body[data-wp="lightmesh"] button:hover {
+      body[data-wp='lightmesh'] button:hover {
         background: rgba(0, 0, 0, 0.08);
       }
       button:active {
@@ -172,7 +185,7 @@
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
       }
-      body[data-wp="lightmesh"] .card {
+      body[data-wp='lightmesh'] .card {
         background: rgba(255, 255, 255, 0.5);
         border: 1px solid rgba(0, 0, 0, 0.08);
       }
@@ -218,9 +231,7 @@
   </head>
   <body data-wp="monterey">
     <header class="top-nav">
-      <div class="brand">
-        glazekit <span>Theme Playground</span>
-      </div>
+      <div class="brand">glazekit <span>Theme Playground</span></div>
       <div class="controls">
         <div class="ctrl-group">
           <label for="theme-sel">Theme:</label>
@@ -287,7 +298,10 @@
         <!-- Toast Triggers -->
         <div class="card">
           <h2>Toast Notifications</h2>
-          <p>Translucent glass toasts with spring entrance, interactive drag-to-dismiss, and stacking.</p>
+          <p>
+            Translucent glass toasts with spring entrance, interactive drag-to-dismiss, and
+            stacking.
+          </p>
           <div class="btn-row">
             <button id="btn-toast-success" class="btn-primary" type="button">Success</button>
             <button id="btn-toast-error" type="button">Error</button>
@@ -304,9 +318,13 @@
         <!-- Dialog Triggers -->
         <div class="card">
           <h2>Dialogs & Confirmations</h2>
-          <p>Full glass modal shells with accessible focus trap, backdrop blur, and custom actions.</p>
+          <p>
+            Full glass modal shells with accessible focus trap, backdrop blur, and custom actions.
+          </p>
           <div class="btn-row">
-            <button id="btn-dialog-confirm" class="btn-primary" type="button">Confirm Dialog</button>
+            <button id="btn-dialog-confirm" class="btn-primary" type="button">
+              Confirm Dialog
+            </button>
             <button id="btn-dialog-alert" type="button">Alert Dialog</button>
             <button id="btn-dialog-prompt" type="button">Prompt Input</button>
             <button id="btn-dialog-danger" type="button">Destructive Action</button>
@@ -317,7 +335,10 @@
         <!-- Sheets & Overlays -->
         <div class="card">
           <h2>Sheets & Overlays</h2>
-          <p>Action sheets, draggable bottom sheets with snap points, and non-blocking loading overlays.</p>
+          <p>
+            Action sheets, draggable bottom sheets with snap points, and non-blocking loading
+            overlays.
+          </p>
           <div class="btn-row">
             <button id="btn-sheet" class="btn-primary" type="button">Action Sheet</button>
             <button id="btn-bottom-sheet" type="button">Bottom Sheet (Snap)</button>
@@ -347,8 +368,10 @@
               <input id="custom-blur" type="text" value="28px" />
             </label>
           </div>
-          <div style="margin-top: 14px;">
-            <button id="btn-define-theme" class="btn-primary" type="button">Register & Apply Theme</button>
+          <div style="margin-top: 14px">
+            <button id="btn-define-theme" class="btn-primary" type="button">
+              Register & Apply Theme
+            </button>
           </div>
         </div>
       </div>
@@ -503,7 +526,8 @@
           input: 'text',
           inputValue: 'Glazekit NextGen',
           placeholder: 'Workspace name...',
-          validate: (val) => (!val || String(val).trim().length < 3 ? 'Name must be at least 3 characters' : true),
+          validate: (val) =>
+            !val || String(val).trim().length < 3 ? 'Name must be at least 3 characters' : true,
         });
         if (res.isConfirmed) ui.toast.success(`Renamed to "${res.value}"`);
       });
@@ -598,7 +622,10 @@
             overlay.close();
             ui.toast.success('Audio synthesis completed!');
           } else {
-            overlay.update({ progress: prog, text: `Synthesizing Audio (${Math.round(prog * 100)}%)...` });
+            overlay.update({
+              progress: prog,
+              text: `Synthesizing Audio (${Math.round(prog * 100)}%)...`,
+            });
           }
         }, 500);
       });

@@ -98,4 +98,3 @@ test.describe('glazekit Visual Comparison & Diff Regression Suite', () => {
     await expect(playEl).toBeVisible();
   });
 });
-

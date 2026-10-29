@@ -80,15 +80,14 @@ export function createToastApi(store: ToastStore): ToastApi {
   api.loading = make('loading');
   api.message = make('message');
 
-  api.custom = (renderer, options = {}) => store.add({ ...options, custom: renderer });
-  api.update = (id, patch) => store.update(id, patch);
-  api.dismiss = (id) => store.dismiss(id);
-  api.dismissAll = () => store.dismissAll();
-  api.getToasts = () => store.getToasts();
-  api.getHistory = () => store.getHistory();
-  Object.defineProperty(api, 'types', { value: store.types, enumerable: true });
-
-  api.promise = (input, messages, options = {}) => runPromiseToast(store, input, messages, options);
+  api.custom = (renderer, options) => store.add({ ...options, custom: renderer });
+  api.update = store.update;
+  api.dismiss = store.dismiss;
+  api.dismissAll = store.dismissAll;
+  api.getToasts = store.getToasts;
+  api.getHistory = store.getHistory;
+  (api as unknown as { types: TypeRegistry }).types = store.types;
+  api.promise = (input, messages, options) => runPromiseToast(store, input, messages, options);
 
   return api;
 }

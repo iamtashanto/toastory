@@ -26,10 +26,14 @@ export function createStore<T>(initialValue: T): Store<T> {
   };
 
   const scheduleNotify = (immediate: boolean): void => {
-    if (immediate) { notify(); return; }
+    if (immediate) {
+      notify();
+      return;
+    }
     if (batchScheduled) return;
     batchScheduled = true;
-    typeof queueMicrotask === 'function' ? queueMicrotask(notify) : void Promise.resolve().then(notify);
+    if (typeof queueMicrotask === 'function') queueMicrotask(notify);
+    else void Promise.resolve().then(notify);
   };
 
   return {

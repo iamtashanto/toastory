@@ -214,8 +214,10 @@ export function openBottomSheet(options: BottomSheetOptions): BottomSheetHandle 
   };
 
   grab.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowUp') { e.preventDefault(); snapTo(index + 1); }
-    else if (e.key === 'ArrowDown') {
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      snapTo(index + 1);
+    } else if (e.key === 'ArrowDown') {
       e.preventDefault();
       if (!index && options.dismissible !== false) controller.dismiss('close');
       else snapTo(index - 1);

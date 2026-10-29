@@ -84,8 +84,10 @@ export function createTimer(
   };
 
   const stopTimers = (): void => {
-    cancelTimeout = cancelTimeout?.();
-    cancelInterval = cancelInterval?.();
+    cancelTimeout?.();
+    cancelTimeout = undefined;
+    cancelInterval?.();
+    cancelInterval = undefined;
   };
 
   const arm = (): void => {
@@ -151,7 +153,10 @@ export function createTimer(
     add(ms: number) {
       if (done || !Number.isFinite(remainingMs)) return;
       const live = started && pauseReasons.size === 0;
-      remainingMs = Math.max(1, (live ? remainingMs - (clock.now() - startedAt) : remainingMs) + ms);
+      remainingMs = Math.max(
+        1,
+        (live ? remainingMs - (clock.now() - startedAt) : remainingMs) + ms,
+      );
       totalDuration = Math.max(totalDuration, remainingMs);
       if (live) arm();
       notifyTick();

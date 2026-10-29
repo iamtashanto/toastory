@@ -24,7 +24,7 @@ export function el<K extends keyof HTMLElementTagNameMap>(
 ): HTMLElementTagNameMap[K] {
   const node = document.createElement(tag);
   if (className) node.className = className;
-  for (const k in attrs) if (attrs[k] !== undefined) node.setAttribute(k, attrs[k]!);
+  for (const k in attrs) if (attrs[k] !== undefined) node.setAttribute(k, attrs[k] as string);
   for (const child of children) {
     if (child) node.append(child);
   }

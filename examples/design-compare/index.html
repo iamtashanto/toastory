@@ -210,12 +210,22 @@
       .layer-ref {
         position: absolute;
         pointer-events: none;
-        transition: opacity 0.05s;
         z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
       .layer-live {
         position: relative;
         z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .split-pane .gk-toast,
+      .layer-live .gk-toast,
+      .layer-ref .gk-toast {
+        position: relative;
       }
       /* Background Presets */
       .bg-aurora {

@@ -197,7 +197,9 @@ export function createUI(options: CreateUIOptions = {}): CoreUI {
         ? activeRenderer.openSheet(opts)
         : new Promise((res) => {
             replayQueue.push(() =>
-              activeRenderer?.openSheet ? void activeRenderer.openSheet(opts).then(res) : res(DISMISSED),
+              activeRenderer?.openSheet
+                ? void activeRenderer.openSheet(opts).then(res)
+                : res(DISMISSED),
             );
           }),
 
@@ -223,7 +225,9 @@ export function createUI(options: CreateUIOptions = {}): CoreUI {
       const opts = typeof loadingOpts === 'string' ? { text: loadingOpts } : loadingOpts;
       if (activeRenderer?.openLoading) return activeRenderer.openLoading(opts);
       let live: LoadingHandle | undefined, done: () => void;
-      const closed = new Promise<void>((res) => { done = res; });
+      const closed = new Promise<void>((res) => {
+        done = res;
+      });
       replayQueue.push(() =>
         activeRenderer?.openLoading
           ? void (live = activeRenderer.openLoading(opts)).closed.then(done)
@@ -231,7 +235,10 @@ export function createUI(options: CreateUIOptions = {}): CoreUI {
       );
       return {
         update: (p) => live?.update(p),
-        close: () => { live?.close(); done(); },
+        close: () => {
+          live?.close();
+          done();
+        },
         closed,
       };
     },
@@ -292,7 +299,7 @@ export const ui: CoreUI = {
 
 /** Registers the renderer with the default UI instance. */
 export function registerRenderer(renderer: Renderer): void {
-  getDefaultUI().registerRenderer(renderer);
+  def().registerRenderer(renderer);
 }
 
 /** Backward-compatible ToastEngine interface. */

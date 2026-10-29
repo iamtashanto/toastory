@@ -3,7 +3,6 @@ import type {
   DialogButton,
   DialogController,
   DialogOptions,
-  DialogPosition,
   DialogPromise,
   DialogState,
 } from '../core';
@@ -256,7 +255,9 @@ export function openDialog(initial: DialogOptions): DialogPromise {
           ? 'divided'
           : 'row');
     buttons.hidden = confirmBtn.hidden && denyBtn.hidden && cancelBtn.hidden;
-    const ld = state.loading, isC = ld === 'confirm', isD = ld === 'deny';
+    const ld = state.loading,
+      isC = ld === 'confirm',
+      isD = ld === 'deny';
     confirmBtn.disabled = denyBtn.disabled = ld !== null;
     confirmBtn.setAttribute('aria-busy', String(isC));
     denyBtn.setAttribute('aria-busy', String(isD));

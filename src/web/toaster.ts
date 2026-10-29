@@ -22,7 +22,7 @@ const COLORS = ['#38bdf8', '#818cf8', '#ec4899', '#f97316', '#10b981', '#6366f1'
 function deterministicColor(str: string): string {
   let h = 0;
   for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) >>> 0;
-  return COLORS[h % 7]!;
+  return COLORS[h % 7] as string;
 }
 
 function formatRelativeTime(ts: number | Date | string | boolean, locale = 'en'): string {
@@ -31,10 +31,14 @@ function formatRelativeTime(ts: number | Date | string | boolean, locale = 'en')
   const d = ts instanceof Date ? ts.getTime() : Number(ts) || Date.now();
   const min = Math.round((Date.now() - d) / 60000);
   if (!min) return 'now';
-  const hr = Math.round(min / 60), day = Math.round(hr / 24);
+  const hr = Math.round(min / 60),
+    day = Math.round(hr / 24);
   const [val, unit] = hr < 1 ? [min, 'minute'] : day < 1 ? [hr, 'hour'] : [day, 'day'];
   try {
-    return new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(-val, unit as Intl.RelativeTimeFormatUnit);
+    return new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(
+      -val,
+      unit as Intl.RelativeTimeFormatUnit,
+    );
   } catch {
     return `${val}${unit[0]} ago`;
   }
@@ -103,11 +107,7 @@ export function parseHotkey(
     ctrl: parts.some((p) => p === 'ctrl' || p === 'control'),
     shift: parts.includes('shift'),
     meta: parts.some((p) => p === 'meta' || p === 'cmd'),
-    code: /^[a-z]$/.test(key)
-      ? `Key${key.toUpperCase()}`
-      : /^\d$/.test(key)
-        ? `Digit${key}`
-        : key,
+    code: /^[a-z]$/.test(key) ? `Key${key.toUpperCase()}` : /^\d$/.test(key) ? `Digit${key}` : key,
   };
 }
 
@@ -341,7 +341,14 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
     node.addEventListener('click', (event) => {
       event.stopPropagation();
       let p = false;
-      onClick?.({ preventDefault: () => { p = true; }, get defaultPrevented() { return p; } });
+      onClick?.({
+        preventDefault: () => {
+          p = true;
+        },
+        get defaultPrevented() {
+          return p;
+        },
+      });
       if (!p) close(record.id, reason);
     });
     return node;
@@ -409,12 +416,22 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
           const opt = av as ToastAvatarOption;
           if (opt.src) {
             holder.append(
-              el('img', '', { src: safeUrl(opt.src) ? opt.src : '', alt: opt.alt ?? opt.name ?? '' }),
+              el('img', '', {
+                src: safeUrl(opt.src) ? opt.src : '',
+                alt: opt.alt ?? opt.name ?? '',
+              }),
             );
           } else {
             const initials =
               opt.initials ??
-              (opt.name ? opt.name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase() : '?');
+              (opt.name
+                ? opt.name
+                    .split(' ')
+                    .map((w) => w[0])
+                    .join('')
+                    .slice(0, 2)
+                    .toUpperCase()
+                : '?');
             holder.textContent = initials;
             holder.style.background = opt.color ?? deterministicColor(opt.name ?? initials);
             holder.style.color = '#fff';
@@ -471,23 +488,22 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
         );
       }
     }
-    let body: HTMLElement = content;
-    if (record.href && safeUrl(record.href)) {
-      const target = record.target ?? '_self';
-      body = el(
-        'a',
-        k('gk-toast__link gk-link', names.link),
-        {
-          href: record.href,
-          target,
-          rel: target === '_blank' ? 'noopener noreferrer' : undefined,
-        },
-        content,
-      );
-    }
+    const body =
+      record.href && safeUrl(record.href)
+        ? el(
+            'a',
+            k('gk-toast__link gk-link', names.link),
+            {
+              href: record.href,
+              target: record.target ?? '_self',
+              rel: record.target === '_blank' ? 'noopener noreferrer' : undefined,
+            },
+            content,
+          )
+        : content;
     node.append(body);
 
-    if (record.timestamp !== undefined) {
+    if (record.timestamp) {
       node.append(
         el(
           'time',
@@ -498,9 +514,7 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       );
     }
 
-    if (record.kbd) {
-      node.append(el('kbd', k('gk-toast__kbd gk-kbd', names.kbd), {}, record.kbd));
-    }
+    if (record.kbd) node.append(el('kbd', k('gk-toast__kbd gk-kbd', names.kbd), {}, record.kbd));
 
     if (record.toggle) {
       const tg = record.toggle;
@@ -530,14 +544,19 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       const dash = 100.5 * (1 - val);
       const div = document.createElement('div');
       div.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" class="gk-ring-svg"><circle cx="18" cy="18" r="16" fill="none" stroke="currentColor" stroke-width="3" opacity="0.2"/><circle cx="18" cy="18" r="16" fill="none" stroke="currentColor" stroke-width="3" stroke-dasharray="100.5" stroke-linecap="round" stroke-dashoffset="${dash}"/></svg>`;
-      node.append(div.firstElementChild!);
+      node.append(div.firstElementChild as Element);
     }
 
     if (record.actions?.length) {
       const actionsDiv = el('div', k('gk-toast__actions gk-actions', names.actions));
       for (const act of record.actions) {
         const label = act.label ?? act.text ?? 'Action';
-        const actBtn = el('button', `gk-toast__action gk-btn gk-action gk-btn--${act.kind ?? 'secondary'}`, { type: 'button', 'aria-label': label }, label);
+        const actBtn = el(
+          'button',
+          `gk-toast__action gk-btn gk-action gk-btn--${act.kind ?? 'secondary'}`,
+          { type: 'button', 'aria-label': label },
+          label,
+        );
         actBtn.addEventListener('click', (e) => {
           e.stopPropagation();
           act.onClick?.(e);
@@ -597,7 +616,10 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
     if (showBar) {
       const bar = el('i');
       bar.style.setProperty('--gk-d', `${record.duration}ms`);
-      bar.style.setProperty('--gk-delay', `-${Math.max(0, record.duration - store.getRemaining(record.id))}ms`);
+      bar.style.setProperty(
+        '--gk-delay',
+        `-${Math.max(0, record.duration - store.getRemaining(record.id))}ms`,
+      );
       node.append(
         el(
           'div',
@@ -843,7 +865,8 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       const setPx = (p: string, v: string | number | undefined) => {
         if (v !== undefined) region.el.style.setProperty(p, typeof v === 'number' ? `${v}px` : v);
       };
-      const off = c.offset, isOff = typeof off === 'object' && off !== null;
+      const off = c.offset,
+        isOff = typeof off === 'object' && off !== null;
       for (const s of ['top', 'bottom', 'left', 'right'] as const) {
         setPx(`--gk-offset-${s}`, isOff ? (off as Record<string, string | number>)[s] : off);
       }
@@ -883,9 +906,7 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
     tgt.addEventListener(ev, fn);
     cleanups.push(() => tgt.removeEventListener(ev, fn));
   };
-  addEvt(document, 'visibilitychange', () =>
-    toggleHidden(document.visibilityState === 'hidden'),
-  );
+  addEvt(document, 'visibilitychange', () => toggleHidden(document.visibilityState === 'hidden'));
   addEvt(window, 'blur', () => toggleHidden(true));
   addEvt(window, 'focus', () => toggleHidden(false));
   addEvt(window, 'resize', () => regions.forEach(layout));

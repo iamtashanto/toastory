@@ -2,7 +2,6 @@ import { runSteps } from '../core';
 import type {
   BottomSheetHandle,
   BottomSheetOptions,
-  DialogButton,
   DialogOptions,
   DialogPromise,
   GlazeConfig,

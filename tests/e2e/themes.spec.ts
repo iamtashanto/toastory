@@ -86,3 +86,4 @@ test.describe('Theme System and Playground E2E Tests', () => {
     await expect(region).toHaveAttribute('data-gk-theme', 'e2e-cyber');
   });
 });
+

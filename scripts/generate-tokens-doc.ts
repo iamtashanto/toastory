@@ -2,7 +2,6 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { iosGlassTheme } from '../src/themes/ios-glass/tokens.ts';
-import { liquidGlassTheme } from '../src/themes/liquid-glass/tokens.ts';
 import { THEMES } from '../src/themes/themes.ts';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -32,7 +31,8 @@ const TOKEN_DEFINITIONS: TokenMeta[] = [
     cssVar: '--gk-bg-solid',
     prop: 'solid',
     type: 'color',
-    description: 'Opaque fallback color used when backdrop-filter is unsupported or in forced-colors/reduced-transparency modes.',
+    description:
+      'Opaque fallback color used when backdrop-filter is unsupported or in forced-colors/reduced-transparency modes.',
     iosGlassLight: iosGlassTheme.light.solid,
     iosGlassDark: iosGlassTheme.dark.solid,
   },
@@ -220,7 +220,9 @@ export function generateTokensMarkdown(): string {
       `| \`${t.cssVar}\` | \`${t.prop}\` | ${t.type} | ${t.description} | \`${t.iosGlassLight}\` | \`${t.iosGlassDark}\` |`,
   ).join('\n');
 
-  const themeList = THEMES.map((t) => `- **\`${t.name}\`**: ${t.radius} radius, ${t.blur} blur`).join('\n');
+  const themeList = THEMES.map(
+    (t) => `- **\`${t.name}\`**: ${t.radius} radius, ${t.blur} blur`,
+  ).join('\n');
 
   return `# glazekit Theme Tokens Specification
 

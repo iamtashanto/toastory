@@ -326,5 +326,11 @@ export async function runSteps(
     if (!res.isConfirmed) return { ...res, isConfirmed: false, value: values };
     values.push(res.value);
   }
-  return { isConfirmed: true, isDenied: false, isDismissed: false, value: values, dismiss: undefined };
+  return {
+    isConfirmed: true,
+    isDenied: false,
+    isDismissed: false,
+    value: values,
+    dismiss: undefined,
+  };
 }
