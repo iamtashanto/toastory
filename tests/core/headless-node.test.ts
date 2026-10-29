@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { createUI, resolvePrecedence } from '../../src/core';
+import { createUI, createToastEngine, resolvePrecedence, ui } from '../../src/core';
 import type { Renderer } from '../../src/core';
 
 describe('headless node execution and renderer registration', () => {
@@ -118,10 +118,7 @@ describe('headless node execution and renderer registration', () => {
     expect(promptRes.isConfirmed).toBe(true);
     expect(promptRes.value).toBe('Direct Prompt-done');
 
-    const stepsRes = await ui.steps([
-      { title: 'Step 1' },
-      { title: 'Step 2' },
-    ]);
+    const stepsRes = await ui.steps([{ title: 'Step 1' }, { title: 'Step 2' }]);
     expect(stepsRes.isConfirmed).toBe(true);
     expect(stepsRes.values).toEqual(['Step 1-done', 'Step 2-done']);
   });
@@ -133,7 +130,7 @@ describe('headless node execution and renderer registration', () => {
     const liveClose = vi.fn();
     const liveUpdate = vi.fn();
     const fakeRenderer: Renderer = {
-      openLoading(options) {
+      openLoading() {
         return {
           update: liveUpdate,
           close: liveClose,
@@ -225,15 +222,103 @@ describe('headless node execution and renderer registration', () => {
 
   it('evaluates configuration precedence correctly: call > theme > global > library default', () => {
     // 1. Call option wins
-    expect(resolvePrecedence('call-val', 'theme-val', 'global-val', 'default-val')).toBe('call-val');
+    expect(resolvePrecedence('call-val', 'theme-val', 'global-val', 'default-val')).toBe(
+      'call-val',
+    );
 
     // 2. Theme default wins over global
-    expect(resolvePrecedence(undefined, 'theme-val', 'global-val', 'default-val')).toBe('theme-val');
+    expect(resolvePrecedence(undefined, 'theme-val', 'global-val', 'default-val')).toBe(
+      'theme-val',
+    );
 
     // 3. Global config wins over default
     expect(resolvePrecedence(undefined, undefined, 'global-val', 'default-val')).toBe('global-val');
 
     // 4. Default applies when all are undefined
     expect(resolvePrecedence(undefined, undefined, undefined, 'default-val')).toBe('default-val');
+  });
+
+  it('exercises the default singleton ui export and createToastEngine factory', async () => {
+    // Test createToastEngine
+    const engine = createToastEngine();
+    const id = engine.toast('From engine');
+    expect(engine.store.getToasts().map((t) => t.id)).toContain(id);
+
+    // Test default singleton ui getters and methods
+    expect(ui.toast).toBeDefined();
+    expect(ui.config).toBeDefined();
+    expect(ui.toastStore).toBeDefined();
+    expect(ui.dialogManager).toBeDefined();
+
+    ui.configure({ duration: 3200 });
+    expect(ui.getConfig().duration).toBe(3200);
+
+    const fakeRenderer: Renderer = {
+      openDialog(opts, handle) {
+        handle.close({ isConfirmed: true, value: opts.title });
+      },
+      openSheet(opts) {
+        return Promise.resolve({
+          isConfirmed: true,
+          isDenied: false,
+          isDismissed: false,
+          value: opts.title,
+          dismiss: undefined,
+        });
+      },
+      openBottomSheet(opts) {
+        return {
+          body: null,
+          close: vi.fn(),
+          snapTo: vi.fn(),
+          update: vi.fn(),
+          result: Promise.resolve({
+            isConfirmed: true,
+            isDenied: false,
+            isDismissed: false,
+            value: opts.title,
+            dismiss: undefined,
+          }),
+        };
+      },
+      openLoading() {
+        return {
+          update: vi.fn(),
+          close: vi.fn(),
+          closed: Promise.resolve(),
+        };
+      },
+    };
+
+    ui.registerRenderer(fakeRenderer);
+    expect(ui.getRenderer()).toBe(fakeRenderer);
+
+    const cRes = await ui.confirm('Singleton Confirm');
+    expect(cRes.isConfirmed).toBe(true);
+
+    const aRes = await ui.alert('Singleton Alert');
+    expect(aRes.isConfirmed).toBe(true);
+
+    const pRes = await ui.prompt('Singleton Prompt');
+    expect(pRes.isConfirmed).toBe(true);
+
+    const sRes = await ui.steps([{ title: 'Step 1' }]);
+    expect(sRes.isConfirmed).toBe(true);
+
+    const sheetRes = await ui.sheet({ title: 'Singleton Sheet', actions: [] });
+    expect(sheetRes.isConfirmed).toBe(true);
+
+    const bsHandle = ui.bottomSheet({ title: 'Singleton BottomSheet' });
+    const bsRes = await bsHandle.result;
+    expect(bsRes.isConfirmed).toBe(true);
+
+    const loadHandle = ui.loading('Singleton Loading');
+    loadHandle.close();
+    await loadHandle.closed;
+
+    ui.toast('Hello singleton');
+    expect(ui.toastStore.getToasts().length).toBeGreaterThan(0);
+    ui.clear();
+    expect(ui.toastStore.getToasts()).toHaveLength(0);
   });
 });

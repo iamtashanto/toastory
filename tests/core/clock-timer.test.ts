@@ -73,8 +73,16 @@ describe('clock and timer', () => {
     timer.add(1000);
     expect(timer.remaining()).toBe(4000);
 
-    // Clear reasons and cancel
+    // Negative add while running drops remaining to floor of 1
+    timer.add(-10000);
+    expect(timer.remaining()).toBe(1);
+
+    // Clear reasons while running and live
+    timer.pause('manual');
     timer.clearReasons();
+    expect(timer.isRunning()).toBe(true);
+
+    // Clear reasons and cancel
     timer.cancel();
     expect(timer.isRunning()).toBe(false);
     expect(timer.remaining()).toBe(0);
@@ -126,6 +134,9 @@ describe('clock and timer', () => {
     timer.resume('hover');
     expect(timer.isPaused()).toBe(false);
 
+    // Resuming unknown reason is a no-op
+    timer.resume('unknown-reason');
+
     // reset() without args resets to original duration
     nowTime += 500;
     expect(timer.remaining()).toBe(1500);
@@ -137,18 +148,25 @@ describe('clock and timer', () => {
     expect(timer.remaining()).toBe(0);
     expect(timer.isRunning()).toBe(false);
 
+    // add when done is a no-op
+    timer.cancel();
+    timer.add(500);
+    expect(timer.remaining()).toBe(0);
+
     // onTick while running attaches interval
     const timer2 = createTimer(3000, done, fakeClock);
     timer2.start();
     const errSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    const tickUnsub = timer2.onTick(() => {
+    const tickUnsub1 = timer2.onTick(() => {
       throw new Error('tick boom');
     });
-    expect(typeof tickUnsub).toBe('function');
+    const tickUnsub2 = timer2.onTick(() => {});
+    expect(typeof tickUnsub1).toBe('function');
     timer2.reset();
     expect(errSpy).toHaveBeenCalled();
     errSpy.mockRestore();
-    tickUnsub();
+    tickUnsub1();
+    tickUnsub2();
     timer2.cancel();
   });
 });

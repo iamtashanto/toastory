@@ -108,4 +108,3 @@ export const glazekitPlugin = {
     app.component('GlazeToaster', GlazeToaster);
   },
 };
-

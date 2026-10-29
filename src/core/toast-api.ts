@@ -48,9 +48,9 @@ export interface ToastApi extends ToastFn {
     options?: ToastOptions,
   ) => PromiseHandle<T>;
   /** Returns a snapshot of active and queued toasts. */
-  getToasts: () => ToastRecord[];
+  getToasts: () => readonly ToastRecord[];
   /** Returns closed toasts up to `config.historyLimit`. */
-  getHistory: () => ToastRecord[];
+  getHistory: () => readonly ToastRecord[];
   /** Registry of custom toast types. */
   readonly types: TypeRegistry;
 }

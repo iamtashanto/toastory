@@ -43,6 +43,10 @@ describe('toast variants', () => {
     const toasts = store.getToasts();
     expect(toasts[0]?.title).toBe('Header');
     expect(toasts[0]?.description).toBe('Description text');
+
+    // When both title and description are already provided
+    toast('Ignored text', { title: 'T', description: 'D' });
+    expect(store.getToasts()[1]?.description).toBe('D');
   });
 
   it('updates custom renderer when adding with existing id', () => {

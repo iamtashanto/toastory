@@ -1,5 +1,12 @@
 import { describe, expect, it, vi } from 'vitest';
 import { createDialogManager, runSteps } from '../../src/core/dialog-manager';
+import type { DialogManager, HeadlessDialogController } from '../../src/core/dialog-manager';
+
+function requireActive(manager: DialogManager): HeadlessDialogController {
+  const active = manager.getActive();
+  if (!active) throw new Error('Expected active dialog controller');
+  return active;
+}
 
 describe('headless dialog manager and state machine', () => {
   it('opens a dialog and resolves on confirm with input value', async () => {
@@ -57,7 +64,7 @@ describe('headless dialog manager and state machine', () => {
       validate: (val) => (!val ? 'Field is required' : undefined),
     });
 
-    const active = manager.getActive()!;
+    const active = requireActive(manager);
     active.setValueReader(() => '');
     await active.submit('confirm');
 
@@ -78,9 +85,34 @@ describe('headless dialog manager and state machine', () => {
         throw new Error('Validate crash');
       },
     });
-    const activeThrow = manager.getActive()!;
+    const activeThrow = requireActive(manager);
     await activeThrow.submit('confirm');
     expect(activeThrow.getState().error).toBe('Validate crash');
+    hThrow.close();
+
+    // preConfirm throwing a string
+    const hStrThrow = manager.open({
+      title: 'String Throw',
+      preConfirm: () => {
+        throw 'String error message';
+      },
+    });
+    const activeStr = requireActive(manager);
+    await activeStr.submit('confirm');
+    expect(activeStr.getState().error).toBe('String error message');
+    hStrThrow.close();
+
+    // preConfirm throwing an object
+    const hObjThrow = manager.open({
+      title: 'Obj Throw',
+      preConfirm: () => {
+        throw { custom: true };
+      },
+    });
+    const activeObj = requireActive(manager);
+    await activeObj.submit('confirm');
+    expect(activeObj.getState().error).toBe('[object Object]');
+    hObjThrow.close();
   });
 
   it('handles async preConfirm error without dismissing', async () => {
@@ -95,7 +127,7 @@ describe('headless dialog manager and state machine', () => {
       },
     });
 
-    const active = manager.getActive()!;
+    const active = requireActive(manager);
     await active.submit('confirm');
     expect(active.getState().error).toBe('Network timeout');
     expect(active.getState().open).toBe(true);
@@ -105,6 +137,18 @@ describe('headless dialog manager and state machine', () => {
     const result = await handle.result;
     expect(result.isConfirmed).toBe(true);
     expect(result.value).toBe('Done');
+
+    // preConfirm returning undefined keeps original value
+    const hUndef = manager.open({
+      title: 'Undef Return',
+      inputValue: 'Original',
+      preConfirm: async () => {
+        // returns undefined
+      },
+    });
+    const activeUndef = requireActive(manager);
+    await activeUndef.submit('confirm');
+    expect((await hUndef.result).value).toBe('Original');
   });
 
   it('handles preDeny hook with error catching', async () => {
@@ -121,7 +165,7 @@ describe('headless dialog manager and state machine', () => {
       },
     });
 
-    const active = manager.getActive()!;
+    const active = requireActive(manager);
     await active.submit('deny');
     expect(active.getState().error).toBe('Deny failed');
     expect(active.getState().open).toBe(true);
@@ -135,7 +179,7 @@ describe('headless dialog manager and state machine', () => {
   it('exercises handle API: update, setLoading, showError and timer controls', () => {
     const manager = createDialogManager();
     const handle = manager.open({ title: 'Test Handle', timer: 3000 });
-    const active = manager.getActive()!;
+    const active = requireActive(manager);
 
     handle.update({ title: 'Updated Title' });
     expect(active.getState().options.title).toBe('Updated Title');
@@ -159,6 +203,15 @@ describe('headless dialog manager and state machine', () => {
     expect(handle.timer.paused()).toBe(false);
 
     handle.close();
+
+    // Dialog without timer controls fallback
+    const noTimerHandle = manager.open({ title: 'No Timer' });
+    expect(noTimerHandle.timer.remaining()).toBe(0);
+    expect(noTimerHandle.timer.paused()).toBe(false);
+    noTimerHandle.timer.pause();
+    noTimerHandle.timer.resume();
+    noTimerHandle.timer.add(500);
+    noTimerHandle.close();
   });
 
   it('resolves dismiss reasons: cancel, backdrop, close, esc, timer', async () => {
@@ -191,18 +244,19 @@ describe('headless dialog manager and state machine', () => {
     const sequencePromise = runSteps(
       [
         { title: 'Step 1', input: 'text', inputValue: 'Val 1' },
+        undefined as unknown as { title: string },
         { title: 'Step 2', input: 'text', inputValue: 'Val 2' },
       ],
       manager,
     );
 
     // Step 1
-    const active1 = manager.getActive()!;
+    const active1 = requireActive(manager);
     expect(active1.getState().options.title).toBe('Step 1');
     await active1.submit('confirm');
 
     // Step 2
-    const active2 = manager.getActive()!;
+    const active2 = requireActive(manager);
     expect(active2.getState().options.title).toBe('Step 2');
     await active2.submit('confirm');
 
@@ -212,7 +266,7 @@ describe('headless dialog manager and state machine', () => {
 
     // Cancel in step 1
     const cancelSeq = runSteps([{ title: 'Step A' }], manager);
-    await manager.getActive()!.dismiss('cancel');
+    await requireActive(manager).dismiss('cancel');
     const cancelRes = await cancelSeq;
     expect(cancelRes.isDismissed).toBe(true);
   });
@@ -233,12 +287,21 @@ describe('headless dialog manager and state machine', () => {
   it('subscribes to controller state changes and unsubscribes', () => {
     const manager = createDialogManager();
     manager.open({ title: 'Sub test' });
-    const active = manager.getActive()!;
+    const active = requireActive(manager);
+    const errSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    // Listener throwing error
+    active.subscribe(() => {
+      throw new Error('Listener crash');
+    });
+
     const listener = vi.fn();
     const unsubscribe = active.subscribe(listener);
 
     active.handle.update({ title: 'New Sub' });
     expect(listener).toHaveBeenCalled();
+    expect(errSpy).toHaveBeenCalled();
+    errSpy.mockRestore();
 
     unsubscribe();
     listener.mockClear();
@@ -258,7 +321,7 @@ describe('headless dialog manager and state machine', () => {
       },
     });
 
-    const active = manager.getActive()!;
+    const active = requireActive(manager);
     await active.submit('confirm');
     expect(active.getState().loading).toBeNull();
     expect(active.getState().open).toBe(true);
@@ -281,7 +344,7 @@ describe('headless dialog manager and state machine', () => {
       },
     });
 
-    const active = manager.getActive()!;
+    const active = requireActive(manager);
     await active.submit('deny');
     expect(active.getState().loading).toBeNull();
     expect(active.getState().open).toBe(true);
@@ -306,7 +369,7 @@ describe('headless dialog manager and state machine', () => {
       },
     });
 
-    const active = manager.getActive()!;
+    const active = requireActive(manager);
     expect(errSpy).toHaveBeenCalledTimes(1);
 
     await active.submit('confirm');
@@ -331,7 +394,7 @@ describe('headless dialog manager and state machine', () => {
         throw new Error('dismiss crash');
       },
     });
-    await manager.getActive()!.dismiss('backdrop');
+    await requireActive(manager).dismiss('backdrop');
     await h3.result;
     expect(errSpy).toHaveBeenCalledTimes(4);
 
@@ -341,7 +404,7 @@ describe('headless dialog manager and state machine', () => {
   it('ignores operations when settled or loading', async () => {
     const manager = createDialogManager();
     const handle = manager.open({ title: 'Settled test' });
-    const active = manager.getActive()!;
+    const active = requireActive(manager);
 
     handle.close({ isConfirmed: true, value: 'Manual' });
     await handle.result;
@@ -358,7 +421,7 @@ describe('headless dialog manager and state machine', () => {
     try {
       const manager = createDialogManager();
       const handle = manager.open({ title: 'Auto Timer', timer: 500 });
-      const active = manager.getActive()!;
+      const active = requireActive(manager);
       active.opened();
 
       vi.advanceTimersByTime(500);

@@ -1,10 +1,4 @@
-import type {
-  PromiseHandle,
-  PromiseMessages,
-  ToastId,
-  ToastOptions,
-  ToastPatch,
-} from './types';
+import type { PromiseHandle, PromiseMessages, ToastId, ToastOptions, ToastPatch } from './types';
 import type { ToastStore } from './toast-manager';
 
 function toPatch(message: string | ToastPatch): ToastPatch {

@@ -341,7 +341,7 @@ export async function runSteps(
     if (!step) continue;
     const handle = manager.open({
       ...step,
-      reverseButtons: step.reverseButtons ?? (i > 0),
+      reverseButtons: step.reverseButtons ?? i > 0,
       confirmButton: {
         label: i === steps.length - 1 ? 'Finish' : 'Next',
         ...step.confirmButton,

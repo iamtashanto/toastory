@@ -1,6 +1,6 @@
 import { createTimer } from './timer';
 import type { PausableTimer } from './timer';
-import type { Listener, Renderable, Unsubscribe } from './types';
+import type { Listener, Unsubscribe } from './types';
 
 export type {
   DialogBackdrop,

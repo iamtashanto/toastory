@@ -69,6 +69,15 @@ describe('dialog controller', () => {
     await expect(c.handle.result).resolves.toMatchObject({ isConfirmed: true });
   });
 
+  it('empty string from validate is treated as valid', async () => {
+    const c = createDialogController({
+      validate: () => '',
+    });
+    await c.submit('confirm');
+    expect(c.getState().open).toBe(false);
+    await expect(c.handle.result).resolves.toMatchObject({ isConfirmed: true });
+  });
+
   it('a throwing validate becomes an error message', async () => {
     const c = createDialogController({
       validate: () => {
@@ -80,7 +89,6 @@ describe('dialog controller', () => {
 
     const c2 = createDialogController({
       validate: () => {
-        // eslint-disable-next-line @typescript-eslint/only-throw-error
         throw 'raw string error';
       },
     });
@@ -89,7 +97,6 @@ describe('dialog controller', () => {
 
     const c3 = createDialogController({
       validate: () => {
-        // eslint-disable-next-line @typescript-eslint/only-throw-error
         throw { code: 400 };
       },
     });
@@ -256,6 +263,28 @@ describe('dialog controller', () => {
     expect(d.getState().open).toBe(false);
   });
 
+  it('opened after close is a no-op', () => {
+    const c = createDialogController({ timer: 1000 });
+    c.dismiss('cancel');
+    c.opened();
+    expect(c.getState().open).toBe(false);
+  });
+
+  it('closing while validate is pending drops late validation', async () => {
+    let resolveVal: (val: string) => void = () => {};
+    const c = createDialogController({
+      validate: () =>
+        new Promise((resolve) => {
+          resolveVal = resolve;
+        }),
+    });
+    const subPromise = c.submit('confirm');
+    c.handle.close();
+    resolveVal('error from late validate');
+    await subPromise;
+    expect(c.getState().open).toBe(false);
+  });
+
   it('operations after close are no-ops', async () => {
     const c = createDialogController({});
     c.dismiss('cancel');
@@ -313,5 +342,24 @@ describe('runSteps', () => {
   it('handles an empty list as dismissed', async () => {
     const result = await runSteps([], async () => confirmed(1));
     expect(result).toMatchObject({ isDismissed: true, values: [] });
+  });
+
+  it('handles undefined step in runSteps and restores boolean previous value', async () => {
+    const seenInputs: unknown[] = [];
+    let callCount = 0;
+    const open = vi.fn(async (o: DialogOptions) => {
+      callCount += 1;
+      seenInputs.push(o.inputValue);
+      if (callCount === 1) return confirmed(true);
+      if (callCount === 2) return { ...confirmed(undefined), isConfirmed: false, isDenied: true };
+      return confirmed(true);
+    });
+
+    const result = await runSteps(
+      [{ title: 'step 1' }, { title: 'step 2' }, undefined as unknown as DialogOptions],
+      open,
+    );
+    expect(seenInputs).toContain(true);
+    expect(result.values).toHaveLength(2);
   });
 });

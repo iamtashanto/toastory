@@ -117,9 +117,9 @@ describe('type registry', () => {
 
   it('handles errors thrown in onOpen and onAutoClose safely', () => {
     const errSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    const { toast } = createToastEngine();
+    const { toast, store } = createToastEngine();
 
-    toast('Auto close error test', {
+    const id = toast('Auto close error test', {
       duration: 100,
       onOpen: () => {
         throw new Error('onOpen crash');
@@ -127,11 +127,49 @@ describe('type registry', () => {
       onAutoClose: () => {
         throw new Error('onAutoClose crash');
       },
+      onDismiss: () => {
+        throw new Error('onDismiss crash');
+      },
+      onClose: () => {
+        throw new Error('onClose crash');
+      },
     });
 
     expect(errSpy).toHaveBeenCalled();
-    vi.advanceTimersByTime(100);
-    expect(errSpy).toHaveBeenCalledTimes(2);
+    store.dismiss(id);
+    expect(errSpy).toHaveBeenCalledTimes(2); // onDismiss
+    vi.advanceTimersByTime(500); // finalize / onClose
+    expect(errSpy).toHaveBeenCalledTimes(3);
+
     errSpy.mockRestore();
+  });
+
+  it('triggers onTick listener periodically via interval', () => {
+    const done = vi.fn();
+    const timer = createTimer(1000, done);
+    const tickSpy = vi.fn();
+    const unsub = timer.onTick(tickSpy);
+    timer.start();
+
+    vi.advanceTimersByTime(50);
+    expect(tickSpy).toHaveBeenCalled();
+
+    unsub();
+    timer.cancel();
+  });
+
+  it('queues toast beyond maxVisible and promotes when visible toast is dismissed', () => {
+    const config = createConfigStore({ maxVisible: 1, exitDuration: 0 });
+    const { toast, store } = createToastEngine({ config });
+
+    const id1 = toast('Toast 1', { duration: 0 });
+    expect(store.getToasts().find((t) => t.id === id1)?.visible).toBe(true);
+
+    const id2 = toast('Toast 2', { duration: 0 });
+    expect(store.getToasts().find((t) => t.id === id2)?.visible).toBe(false);
+
+    // Dismiss first toast, second toast gets promoted
+    toast.dismiss(id1);
+    expect(store.getToasts().find((t) => t.id === id2)?.visible).toBe(true);
   });
 });

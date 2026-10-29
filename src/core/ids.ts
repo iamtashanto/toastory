@@ -27,3 +27,4 @@ export function normalizeId(id: ToastId | undefined, prefix = 'gk'): ToastId {
 export function resetIdCounter(): void {
   counter = 0;
 }
+

@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { createToastEngine } from '../../src/core';
 
 describe('promise helper (runPromiseToast)', () => {

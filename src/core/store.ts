@@ -1,4 +1,4 @@
-import type { Store, Unsubscribe } from './types';
+import type { Store } from './types';
 
 /**
  * Creates a tiny observable store with batched microtask updates.
@@ -65,11 +65,7 @@ export function createStore<T>(initialValue: T): Store<T> {
 }
 
 // Re-exports for backward-compatibility with tests and adapters
-export {
-  createToastManager,
-  createToastStore,
-  MANUAL_PAUSE,
-} from './toast-manager';
+export { createToastManager, createToastStore, MANUAL_PAUSE } from './toast-manager';
 export type {
   AddToastInput,
   ToastManager,

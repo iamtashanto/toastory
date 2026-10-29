@@ -110,4 +110,3 @@ describe('accessibility (WCAG 2.2 AA with axe-core)', () => {
     if (overlay) await checkA11y(overlay);
   });
 });
-

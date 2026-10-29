@@ -69,3 +69,4 @@ export function decideDialogLabels(options: DialogOptions): {
     cancelLabel: options.cancelButton?.label ?? 'Cancel',
   };
 }
+

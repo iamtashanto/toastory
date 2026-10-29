@@ -15,25 +15,14 @@ export type Renderable = unknown;
 
 /** Built-in toast types. */
 export type BuiltInToastType =
-  | 'default'
-  | 'message'
-  | 'success'
-  | 'error'
-  | 'info'
-  | 'warning'
-  | 'loading';
+  'default' | 'message' | 'success' | 'error' | 'info' | 'warning' | 'loading';
 
 /** Toast type name: a built-in type or custom registered type string. */
 export type ToastType = BuiltInToastType | (string & {});
 
 /** Placements supported by toast regions (6 positions). */
 export type ToastPosition =
-  | 'top-left'
-  | 'top-center'
-  | 'top-right'
-  | 'bottom-left'
-  | 'bottom-center'
-  | 'bottom-right';
+  'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right';
 
 /** The five rows of the dialog placement grid. */
 export type DialogRow = 'top' | 'upper' | 'center' | 'lower' | 'bottom';
@@ -100,14 +89,7 @@ export type SwipeDirection = 'left' | 'right' | 'up' | 'down';
 
 /** Why a toast was removed. */
 export type CloseReason =
-  | 'auto'
-  | 'user'
-  | 'swipe'
-  | 'click'
-  | 'action'
-  | 'cancel'
-  | 'api'
-  | 'overflow';
+  'auto' | 'user' | 'swipe' | 'click' | 'action' | 'cancel' | 'api' | 'overflow';
 
 /** A clickable action or cancel button rendered inside a toast. */
 export interface ToastAction {
@@ -298,8 +280,7 @@ export type GlazeConfigPatch = Partial<GlazeConfig>;
 
 /** Outcome delivered to promise descriptions. */
 export type PromiseOutcome<T> =
-  | { status: 'success'; value: T }
-  | { status: 'error'; error: unknown };
+  { status: 'success'; value: T } | { status: 'error'; error: unknown };
 
 /** Message or patch for a promise state phase. */
 export type PromiseMessage<V> = string | ToastPatch | ((value: V) => string | ToastPatch);
@@ -443,25 +424,52 @@ export type TypedDialogOptions<T = unknown> =
   | (Omit<DialogOptions, 'input' | 'inputValue' | 'validate' | 'preConfirm'> & {
       input?: undefined;
       inputValue?: undefined;
-      validate?: (value: undefined, handle: DialogHandle<undefined>) => ValidateResult | Promise<ValidateResult>;
+      validate?: (
+        value: undefined,
+        handle: DialogHandle<undefined>,
+      ) => ValidateResult | Promise<ValidateResult>;
       preConfirm?: (value: undefined, handle: DialogHandle<undefined>) => T | Promise<T>;
     })
   | (Omit<DialogOptions, 'input' | 'inputValue' | 'validate' | 'preConfirm'> & {
       input: 'number' | 'range';
       inputValue?: number;
-      validate?: (value: number, handle: DialogHandle<number>) => ValidateResult | Promise<ValidateResult>;
+      validate?: (
+        value: number,
+        handle: DialogHandle<number>,
+      ) => ValidateResult | Promise<ValidateResult>;
       preConfirm?: (value: number, handle: DialogHandle<number>) => T | Promise<T>;
     })
   | (Omit<DialogOptions, 'input' | 'inputValue' | 'validate' | 'preConfirm'> & {
       input: 'checkbox';
       inputValue?: boolean;
-      validate?: (value: boolean, handle: DialogHandle<boolean>) => ValidateResult | Promise<ValidateResult>;
+      validate?: (
+        value: boolean,
+        handle: DialogHandle<boolean>,
+      ) => ValidateResult | Promise<ValidateResult>;
       preConfirm?: (value: boolean, handle: DialogHandle<boolean>) => T | Promise<T>;
     })
   | (Omit<DialogOptions, 'input' | 'inputValue' | 'validate' | 'preConfirm'> & {
-      input: 'text' | 'email' | 'password' | 'tel' | 'url' | 'search' | 'textarea' | 'select' | 'radio' | 'date' | 'time' | 'datetime-local' | 'week' | 'month' | 'file';
+      input:
+        | 'text'
+        | 'email'
+        | 'password'
+        | 'tel'
+        | 'url'
+        | 'search'
+        | 'textarea'
+        | 'select'
+        | 'radio'
+        | 'date'
+        | 'time'
+        | 'datetime-local'
+        | 'week'
+        | 'month'
+        | 'file';
       inputValue?: string;
-      validate?: (value: string, handle: DialogHandle<string>) => ValidateResult | Promise<ValidateResult>;
+      validate?: (
+        value: string,
+        handle: DialogHandle<string>,
+      ) => ValidateResult | Promise<ValidateResult>;
       preConfirm?: (value: string, handle: DialogHandle<string>) => T | Promise<T>;
     });
 

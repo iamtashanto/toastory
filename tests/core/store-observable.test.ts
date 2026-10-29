@@ -87,6 +87,11 @@ describe('observable store (createStore)', () => {
       await Promise.resolve();
       expect(listener).toHaveBeenCalledTimes(1);
       expect(store.getSnapshot()).toBe(200);
+
+      // Identical value does not notify (Object.is check)
+      store.setState(200);
+      await Promise.resolve();
+      expect(listener).toHaveBeenCalledTimes(1);
     } finally {
       globalThis.queueMicrotask = originalQueueMicrotask;
     }

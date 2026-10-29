@@ -24,28 +24,15 @@ export { createConfigStore, DEFAULT_CONFIG, resolvePrecedence } from './config';
 export type { ConfigStore } from './config';
 
 export { createToastManager, createToastStore, MANUAL_PAUSE } from './toast-manager';
-export type {
-  AddToastInput,
-  ToastManager,
-  ToastManagerOptions,
-  ToastStore,
-} from './toast-manager';
+export type { AddToastInput, ToastManager, ToastManagerOptions, ToastStore } from './toast-manager';
 
 export { runPromiseToast } from './promise';
 
 export { createDialogManager } from './dialog-manager';
-export type {
-  DialogManager,
-  DialogQueueItem,
-  HeadlessDialogController,
-} from './dialog-manager';
+export type { DialogManager, DialogQueueItem, HeadlessDialogController } from './dialog-manager';
 
 export { createDialogController, runSteps } from './dialog';
-export type {
-  DialogController,
-  DialogPromise,
-  StepsResult,
-} from './dialog';
+export type { DialogController, DialogPromise, StepsResult } from './dialog';
 
 export { createToastApi } from './toast-api';
 export type {
@@ -89,7 +76,7 @@ import type {
  * If a call happens before a renderer is registered, it queues and replays upon registration.
  */
 export interface Renderer {
-  openDialog?(options: DialogOptions, handle: DialogHandle): void | Promise<DialogResult>;
+  openDialog?(options: DialogOptions, handle: DialogHandle): Promise<DialogResult> | undefined;
   openSheet?(options: SheetOptions): Promise<DialogResult>;
   openBottomSheet?(options: BottomSheetOptions): BottomSheetHandle;
   openLoading?(options: LoadingOptions): LoadingHandle;
@@ -245,7 +232,6 @@ export function createUI(options: CreateUIOptions = {}): CoreUI {
       if (activeRenderer?.openBottomSheet) {
         return activeRenderer.openBottomSheet(bottomOpts);
       }
-      let handleStub: BottomSheetHandle;
       const resultPromise = new Promise<DialogResult>((resolve) => {
         replayQueue.push(() => {
           if (activeRenderer?.openBottomSheet) {
@@ -263,7 +249,7 @@ export function createUI(options: CreateUIOptions = {}): CoreUI {
         });
       });
 
-      handleStub = {
+      const handleStub: BottomSheetHandle = {
         body: undefined,
         close: () => undefined,
         snapTo: () => undefined,
@@ -326,11 +312,39 @@ export function createUI(options: CreateUIOptions = {}): CoreUI {
   return ui;
 }
 
-/** Default singleton instance of the CoreUI toolkit. */
-export const ui = createUI();
+let defaultUI: CoreUI | undefined;
+function getDefaultUI(): CoreUI {
+  if (!defaultUI) defaultUI = createUI();
+  return defaultUI;
+}
 
-/** Default singleton toast instance. */
-export const toast = ui.toast;
+/** Default singleton instance of the CoreUI toolkit. */
+export const ui: CoreUI = {
+  get toast() {
+    return getDefaultUI().toast;
+  },
+  get config() {
+    return getDefaultUI().config;
+  },
+  get toastStore() {
+    return getDefaultUI().toastStore;
+  },
+  get dialogManager() {
+    return getDefaultUI().dialogManager;
+  },
+  confirm: (options) => getDefaultUI().confirm(options),
+  alert: (options) => getDefaultUI().alert(options),
+  prompt: (options) => getDefaultUI().prompt(options),
+  steps: (stepList, backLabel) => getDefaultUI().steps(stepList, backLabel),
+  sheet: (options) => getDefaultUI().sheet(options),
+  bottomSheet: (options) => getDefaultUI().bottomSheet(options),
+  loading: (options) => getDefaultUI().loading(options),
+  configure: (patch) => getDefaultUI().configure(patch),
+  getConfig: () => getDefaultUI().getConfig(),
+  clear: () => getDefaultUI().clear(),
+  registerRenderer: (renderer) => getDefaultUI().registerRenderer(renderer),
+  getRenderer: () => getDefaultUI().getRenderer(),
+};
 
 /** Backward-compatible ToastEngine interface. */
 export interface ToastEngine {

@@ -1,9 +1,8 @@
-import { decideAriaLive, decideToastRole } from './a11y-rules';
 import type { Clock } from './clock';
 import { defaultClock } from './clock';
 import type { ConfigStore } from './config';
 import { createConfigStore } from './config';
-import { nextId, normalizeId } from './ids';
+import { normalizeId } from './ids';
 import { createTimer } from './timer';
 import type { PausableTimer } from './timer';
 import { createTypeRegistry } from './types-registry';
@@ -46,7 +45,7 @@ interface Entry {
   record: ToastRecord;
   timer: PausableTimer;
   dedupeKey: string | undefined;
-  exitHandle: (() => void) | ReturnType<typeof setTimeout> | undefined;
+  exitHandle: (() => void) | undefined;
   reason: CloseReason | undefined;
   openedFired: boolean;
   closedFired: boolean;
@@ -180,15 +179,14 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
   };
 
   const finalize = (entry: Entry): void => {
-    if (typeof entry.exitHandle === 'function') {
-      entry.exitHandle();
-    } else if (entry.exitHandle !== undefined) {
-      clearTimeout(entry.exitHandle);
-    }
+    entry.exitHandle?.();
     entry.timer.cancel();
     entries.delete(entry.record.id);
     order = order.filter((id) => id !== entry.record.id);
-    history = [{ ...entry.record, dismissed: true }, ...history].slice(0, config.get().historyLimit);
+    history = [{ ...entry.record, dismissed: true }, ...history].slice(
+      0,
+      config.get().historyLimit,
+    );
     promote();
     flushOpened();
     emit();
@@ -238,24 +236,10 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
   const makeEntry = (id: ToastId, input: AddToastInput): Entry => {
     const { custom, ...opts } = input;
     const record = build(id, opts, undefined, custom);
-    let entry!: Entry;
-    const timer = createTimer(
-      record.duration,
-      () => {
-        if (!entry.autoCloseFired) {
-          entry.autoCloseFired = true;
-          try {
-            entry.record.onAutoClose?.(entry.record);
-          } catch (err) {
-            console.error(err);
-          }
-        }
-        dismissEntry(entry, 'auto');
-      },
-      clock,
-    );
+    let onTimerDone = (): void => {};
+    const timer = createTimer(record.duration, () => onTimerDone(), clock);
     if (record.pausedBy.length) timer.pause();
-    entry = {
+    const entry: Entry = {
       opts,
       custom,
       record,
@@ -267,6 +251,17 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
       closedFired: false,
       dismissFired: false,
       autoCloseFired: false,
+    };
+    onTimerDone = () => {
+      if (!entry.autoCloseFired) {
+        entry.autoCloseFired = true;
+        try {
+          entry.record.onAutoClose?.(entry.record);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      dismissEntry(entry, 'auto');
     };
     return entry;
   };
