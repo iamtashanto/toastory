@@ -6,7 +6,7 @@
   "author": "TA Shanto <shanto@glazekit.dev>",
   "homepage": "https://glazekit.dev",
   "bugs": {
-    "url": "https://github.com/iamtashanto/glazekit/issues"
+    "url": "https://github.com/iamtashanto/toastory/issues"
   },
   "type": "module",
   "sideEffects": [
@@ -36,7 +36,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/iamtashanto/glazekit.git"
+    "url": "git+https://github.com/iamtashanto/toastory.git"
   },
   "publishConfig": {
     "access": "public"

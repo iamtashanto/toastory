@@ -7,7 +7,7 @@ Thank you for your interest in contributing to toastory!
 1. **Clone the repository**:
 
    ```bash
-   git clone https://github.com/iamtashanto/glazekit.git
+   git clone https://github.com/iamtashanto/toastory.git
    cd glazekit
    ```
 

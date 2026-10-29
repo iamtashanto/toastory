@@ -57,8 +57,8 @@ console.log('\n[3/5] Verifying image assets...');
 const imgRegex = /!\[([^\]]*)\]\((https?:\/\/[^)]+)\)/g;
 for (const match of readme.matchAll(imgRegex)) {
   const url = match[2];
-  if (url.includes('raw.githubusercontent.com/iamtashanto/glazekit/main/')) {
-    const localRelPath = url.split('raw.githubusercontent.com/iamtashanto/glazekit/main/')[1];
+  if (url.includes('raw.githubusercontent.com/iamtashanto/toastory/main/')) {
+    const localRelPath = url.split('raw.githubusercontent.com/iamtashanto/toastory/main/')[1];
     const localPath = join(root, localRelPath);
     try {
       await access(localPath, constants.R_OK);

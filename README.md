@@ -2,7 +2,7 @@
 
 Complete UI feedback toolkit: toast notifications, confirm / prompt / alert dialogs, sheets and loading overlays with frosted glass design. One API for modern web and mobile.
 
-[![CI](https://img.shields.io/github/actions/workflow/status/iamtashanto/glazekit/ci.yml?branch=main&label=CI)](https://github.com/iamtashanto/glazekit/actions)
+[![CI](https://img.shields.io/github/actions/workflow/status/iamtashanto/toastory/ci.yml?branch=main&label=CI)](https://github.com/iamtashanto/toastory/actions)
 [![npm version](https://img.shields.io/npm/v/toastory?color=blue)](https://www.npmjs.com/package/toastory)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Bundle Size](https://img.shields.io/badge/gzip-5.97%20KB-brightgreen)](https://bundlephobia.com/package/toastory)
@@ -12,7 +12,7 @@ Complete UI feedback toolkit: toast notifications, confirm / prompt / alert dial
 
 > **Unofficial.** Not affiliated with, endorsed by, or sponsored by Sonner, React-Toastify, react-hot-toast, Notyf, SweetAlert2, or their maintainers.
 
-[Documentation](https://glazekit.dev) · [Playground](https://glazekit.dev/playground) · [Issues](https://github.com/iamtashanto/glazekit/issues)
+[Documentation](https://glazekit.dev) · [Playground](https://glazekit.dev/playground) · [Issues](https://github.com/iamtashanto/toastory/issues)
 
 ---
 
@@ -180,7 +180,7 @@ export default function App() {
 
 ## Themes
 
-![toastory showcase themes](https://raw.githubusercontent.com/iamtashanto/glazekit/main/design-refs/toasts-showcase-1.png)
+![toastory showcase themes](https://raw.githubusercontent.com/iamtashanto/toastory/main/design-refs/toasts-showcase-1.png)
 
 Ships with 21 handcrafted themes supporting light, dark, and auto modes: `ios-glass`, `liquid-glass`, `aurora`, `classic-stack`, `classic-bar`, `pill`, `ripple`, `gradient-strip`, `sweet`, `material`, `basic`, `minimal`, `flat`, `outline`, `neon`, `gradient`, `brutal`, `pastel`, `essentials`, `showcase`, `dialogs`.
 
@@ -245,7 +245,7 @@ Glazekit supports familiar API signatures for quick migrations:
 
 ## Contributing
 
-Contributions are welcome! Please read [`CONTRIBUTING.md`](https://github.com/iamtashanto/glazekit/blob/main/CONTRIBUTING.md) for local development setup, coding standards, and testing procedures.
+Contributions are welcome! Please read [`CONTRIBUTING.md`](https://github.com/iamtashanto/toastory/blob/main/CONTRIBUTING.md) for local development setup, coding standards, and testing procedures.
 
 ---
 

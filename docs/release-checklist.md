@@ -10,15 +10,15 @@ The package metadata in `package.json` is configured to match the canonical GitH
 
 | Field | Configured Value | Verification Status |
 |---|---|:---:|
-| **Repository URL** | `REPO_URL=https://github.com/iamtashanto/glazekit.git` | Verified |
+| **Repository URL** | `REPO_URL=https://github.com/iamtashanto/toastory.git` | Verified |
 | **Documentation Site** | `SITE_URL=https://glazekit.dev` | Verified |
-| **Issue Tracker** | `BUGS_URL=https://github.com/iamtashanto/glazekit/issues` | Verified |
+| **Issue Tracker** | `BUGS_URL=https://github.com/iamtashanto/toastory/issues` | Verified |
 | **Author** | `AUTHOR=TA Shanto <shanto@glazekit.dev>` | Verified |
 | **License** | `MIT` | Verified |
 | **Dependencies** | `0 runtime dependencies` (`dependencies: {}`) | Verified |
 
 > [!IMPORTANT]
-> The `repository.url` in `package.json` must exactly match the GitHub Actions repository where provenance signing occurs (`iamtashanto/glazekit`), or npm Sigstore verification will fail during publish.
+> The `repository.url` in `package.json` must exactly match the GitHub Actions repository where provenance signing occurs (`iamtashanto/toastory`), or npm Sigstore verification will fail during publish.
 
 ---
 
@@ -30,7 +30,7 @@ The Open Graph social preview image has been generated at 1280x640:
 - **Generation Script**: `node scripts/generate-social-preview.mjs`
 
 ### How to Configure in GitHub Repository Settings:
-1. Open [https://github.com/iamtashanto/glazekit](https://github.com/iamtashanto/glazekit).
+1. Open [https://github.com/iamtashanto/toastory](https://github.com/iamtashanto/toastory).
 2. Click **Settings** (top repository navigation).
 3. Under **General**, scroll to **Social preview**.
 4. Click **Edit** -> **Upload an image**.
