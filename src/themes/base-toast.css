@@ -6,13 +6,12 @@
   --gk-duration: 380ms;
   --gk-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --gk-border-w: 1px;
+  --gk-mobile-offset: 32px;
   font-family: var(--gk-font, system-ui, sans-serif);
   -webkit-font-smoothing: antialiased;
   box-sizing: border-box;
 }
-.gk-root *,
-.gk-root *::before,
-.gk-root *::after {
+.gk-root * {
   box-sizing: border-box;
 }
 .gk-root [hidden] {
@@ -23,7 +22,7 @@
   z-index: var(--gk-z);
   width: var(--gk-width);
   max-width: calc(100vw - 32px);
-  margin: 16px;
+  margin: 0;
   padding: 0;
   pointer-events: none;
   transition: height var(--gk-duration) var(--gk-ease);
@@ -35,24 +34,33 @@
   outline: none;
 }
 .gk-region[data-position^='top'] {
-  top: 0;
+  top: max(var(--gk-offset-top, 16px), env(safe-area-inset-top, 0));
 }
 .gk-region[data-position^='bottom'] {
-  bottom: 0;
+  bottom: max(var(--gk-offset-bottom, 16px), env(safe-area-inset-bottom, 0));
 }
 .gk-region[data-position$='left'] {
-  left: 0;
+  left: max(var(--gk-offset-left, 16px), env(safe-area-inset-left, 0));
 }
 .gk-region[data-position$='right'] {
-  right: 0;
+  right: max(var(--gk-offset-right, 16px), env(safe-area-inset-right, 0));
 }
 .gk-region[data-position$='center'] {
   left: 50%;
-  margin-left: 0;
-  margin-right: 0;
   transform: translateX(-50%);
 }
-.gk-list {
+
+@media (max-width: 600px) {
+  .gk-region {
+    width: calc(100vw - var(--gk-mobile-offset)) !important;
+    max-width: 100vw !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+  }
+}
+
+.gk-toast-list {
   position: relative;
   height: 100%;
   margin: 0;
@@ -81,10 +89,7 @@
   user-select: none;
   transform-origin: center top;
   transform: translate3d(var(--gk-sx, 0px), calc(var(--gk-y) + var(--gk-sy, 0px)), 0);
-  transition:
-    transform var(--gk-duration) var(--gk-ease),
-    opacity var(--gk-duration) var(--gk-ease),
-    height var(--gk-duration) var(--gk-ease);
+  transition: all var(--gk-duration) var(--gk-ease);
 }
 .gk-region[data-position^='top'] .gk-toast {
   top: 0;
@@ -96,9 +101,15 @@
 .gk-region[data-shadow='false'] .gk-toast {
   box-shadow: none;
 }
-.gk-toast:focus-visible {
+.gk-toast:focus-visible,
+.gk-btn:focus-visible,
+.gk-close:focus-visible,
+.gk-link:focus-visible {
   outline: 2px solid var(--gk-accent);
   outline-offset: 2px;
+}
+.gk-link:focus-visible {
+  border-radius: 4px;
 }
 .gk-region[data-expanded='false'] .gk-toast {
   --gk-y: calc(var(--gk-dir, 1) * var(--gk-index, 0) * 10px);
@@ -115,9 +126,6 @@
 .gk-region[data-expanded='false'] .gk-toast[data-far] {
   opacity: 0;
 }
-.gk-toast[data-type]:not([data-type='default']):not([data-type='message']) {
-  --gk-type: var(--gk-info);
-}
 .gk-toast[data-type='success'] {
   --gk-type: var(--gk-success);
 }
@@ -133,9 +141,9 @@
 .gk-toast[data-type='loading'] {
   --gk-type: var(--gk-accent);
 }
-.gk-toast[data-rich][data-type]:not([data-type='default']):not([data-type='message']) {
-  background: color-mix(in srgb, var(--gk-type) 16%, var(--gk-bg-solid));
-  border-color: var(--gk-type);
+.gk-toast[data-rich] {
+  background: color-mix(in srgb, var(--gk-type, transparent) 16%, var(--gk-bg-solid));
+  border-color: var(--gk-type, var(--gk-border));
 }
 .gk-toast[data-clickable] {
   cursor: pointer;
@@ -167,11 +175,6 @@
 }
 .gk-link:hover .gk-title {
   text-decoration: underline;
-}
-.gk-link:focus-visible {
-  outline: 2px solid var(--gk-accent);
-  outline-offset: 2px;
-  border-radius: 4px;
 }
 .gk-title {
   font-size: 14px;
@@ -215,11 +218,6 @@
   border: 1px solid var(--gk-border);
   border-radius: calc(var(--gk-radius) / 2);
   cursor: pointer;
-}
-.gk-btn:focus-visible,
-.gk-close:focus-visible {
-  outline: 2px solid var(--gk-accent);
-  outline-offset: 2px;
 }
 .gk-action {
   color: var(--gk-accent-fg);
@@ -281,31 +279,92 @@
     transform: rotate(360deg);
   }
 }
-/* State rules come last so they win over the collapsed stack layout. */
-.gk-region .gk-toast[data-mounted='false'] {
-  opacity: 0;
-  transform: translate3d(0, calc(var(--gk-y) + var(--gk-dir, 1) * -60%), 0) scale(0.96);
+@keyframes gk-bounce {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+  to {
+    transform: scale(1);
+  }
 }
-.gk-region .gk-toast[data-swiping] {
+@keyframes gk-zoom {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+}
+@keyframes gk-flip {
+  from {
+    opacity: 0;
+    transform: perspective(600px) rotateX(80deg);
+  }
+}
+@keyframes gk-spring {
+  0% {
+    opacity: 0;
+    transform: translateY(-35px);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+}
+@keyframes gk-fade {
+  from {
+    opacity: 0;
+  }
+}
+.gk-toast[data-animation] {
+  animation-duration: var(--gk-duration);
+  animation-timing-function: var(--gk-ease);
+}
+.gk-toast[data-animation='bounce'] {
+  animation-name: gk-bounce;
+}
+.gk-toast[data-animation='zoom'] {
+  animation-name: gk-zoom;
+}
+.gk-toast[data-animation='flip'] {
+  animation-name: gk-flip;
+}
+.gk-toast[data-animation='spring'] {
+  animation-name: gk-spring;
+}
+.gk-toast[data-animation='fade'] {
+  animation-name: gk-fade;
+}
+.gk-toast[data-animation='none'] {
+  animation: none;
   transition: none;
 }
-.gk-region .gk-toast[data-dismissed] {
+.gk-toast[data-mounted='false'] {
+  opacity: 0;
+  transform: translate(0, calc(var(--gk-y) + var(--gk-dir, 1) * -60%)) scale(0.96);
+}
+.gk-toast[data-swiping] {
+  transition: none;
+}
+.gk-toast[data-dismissed] {
   opacity: 0;
   pointer-events: none;
 }
-.gk-region .gk-toast[data-swipe-out='left'] {
-  transform: translate3d(-120%, var(--gk-y), 0);
+.gk-toast[data-swipe-out='left'] {
+  transform: translate(-120%, var(--gk-y));
 }
-.gk-region .gk-toast[data-swipe-out='right'] {
-  transform: translate3d(120%, var(--gk-y), 0);
+.gk-toast[data-swipe-out='right'] {
+  transform: translate(120%, var(--gk-y));
 }
-.gk-region .gk-toast[data-swipe-out='up'] {
-  transform: translate3d(0, calc(var(--gk-y) - 120%), 0);
+.gk-toast[data-swipe-out='up'] {
+  transform: translate(0, calc(var(--gk-y) - 120%));
 }
-.gk-region .gk-toast[data-swipe-out='down'] {
-  transform: translate3d(0, calc(var(--gk-y) + 120%), 0);
+.gk-toast[data-swipe-out='down'] {
+  transform: translate(0, calc(var(--gk-y) + 120%));
 }
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+@supports not (backdrop-filter: blur(1px)) {
   .gk-toast {
     background: var(--gk-bg-solid);
   }
@@ -313,7 +372,10 @@
 @media (prefers-reduced-motion: reduce) {
   .gk-toast,
   .gk-region {
-    transition: none;
+    transition: opacity 150ms ease !important;
+  }
+  .gk-toast {
+    animation: gk-fade 150ms ease !important;
   }
   .gk-spin {
     animation: none;

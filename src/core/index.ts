@@ -346,6 +346,11 @@ export const ui: CoreUI = {
   getRenderer: () => getDefaultUI().getRenderer(),
 };
 
+/** Registers the renderer with the default UI instance. */
+export function registerRenderer(renderer: Renderer): void {
+  getDefaultUI().registerRenderer(renderer);
+}
+
 /** Backward-compatible ToastEngine interface. */
 export interface ToastEngine {
   store: ToastStore;

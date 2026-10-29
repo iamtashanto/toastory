@@ -42,6 +42,20 @@ describe('accessibility (WCAG 2.2 AA with axe-core)', () => {
     if (region) await checkA11y(region);
   });
 
+  it('toast notification in dark mode satisfies accessibility standards', async () => {
+    ui.configure({ mode: 'dark' });
+    ui.toast.error('Dark mode alert', {
+      description: 'Your changes could not be synced.',
+      action: { label: 'Retry' },
+      cancel: { label: 'Dismiss' },
+      closeButton: true,
+    });
+
+    const region = document.querySelector('.gk-region');
+    expect(region).not.toBeNull();
+    if (region) await checkA11y(region);
+  });
+
   it('confirmation dialog satisfies accessibility standards', async () => {
     ui.confirm({
       title: 'Delete Confirmation',

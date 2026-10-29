@@ -246,7 +246,7 @@ export const THEMES: readonly ThemeDefinition[] = [
   ),
   make(
     'basic',
-    { radius: '6px', font: SYSTEM },
+    { radius: '6px' },
     { border: '#cfcfd6', shadow: '0 2px 8px rgba(0, 0, 0, 0.1)' },
     { bg: '#202024', solid: '#202024', border: '#3a3a40', shadow: '0 2px 8px rgba(0, 0, 0, 0.4)' },
   ),

@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { resetEngine, setAutoMount, ui } from '../../src/web';
-import { defaultSwipe, parseHotkey, resolveMode } from '../../src/web/toaster';
+import { resetEngine, setAutoMount, registerWebRenderer, ui } from '../../src/web';
+import { defaultSwipe, parseHotkey, resolveMode, mountToaster } from '../../src/web/toaster';
 
 const region = (): HTMLElement | null => document.querySelector('.gk-region');
 const toastEls = (): HTMLElement[] =>
@@ -507,5 +507,101 @@ describe('open callbacks', () => {
     vi.advanceTimersByTime(300);
     expect(onClose).toHaveBeenCalledTimes(1);
     expect(onDismiss).not.toHaveBeenCalled();
+  });
+});
+
+describe('advanced web renderer features', () => {
+  it('supports BEM class names and structure', () => {
+    ui.toast('BEM title', {
+      description: 'BEM description',
+      action: { label: 'BEM Action' },
+      cancel: { label: 'BEM Cancel' },
+      closeButton: true,
+      progress: true,
+      duration: 3000,
+    });
+    const t = last();
+    expect(t.tagName).toBe('LI');
+    expect(t.classList.contains('gk-toast')).toBe(true);
+    expect(t.querySelector('.gk-toast__title')).not.toBeNull();
+    expect(t.querySelector('.gk-toast__description')).not.toBeNull();
+    expect(t.querySelector('.gk-toast__actions')).not.toBeNull();
+    expect(t.querySelector('.gk-toast__action')).not.toBeNull();
+    expect(t.querySelector('.gk-toast__cancel')).not.toBeNull();
+    expect(t.querySelector('.gk-toast__close')).not.toBeNull();
+    expect(t.querySelector('.gk-toast__progress')).not.toBeNull();
+  });
+
+  it('sets animation data attributes for custom animations', () => {
+    ui.toast('Bounce', { animation: 'bounce' });
+    expect(last().getAttribute('data-animation')).toBe('bounce');
+
+    ui.toast('Zoom', { animation: 'zoom' });
+    expect(last().getAttribute('data-animation')).toBe('zoom');
+
+    ui.toast('Spring', { animation: 'spring' });
+    expect(last().getAttribute('data-animation')).toBe('spring');
+  });
+
+  it('supports per-side offset and mobileOffset configuration', () => {
+    ui.configure({
+      offset: { top: 24, bottom: 32, left: '20px', right: '20px' },
+      mobileOffset: 40,
+    });
+    ui.toast('Offset toast');
+    const r = region();
+    expect(r?.style.getPropertyValue('--gk-offset-top')).toBe('24px');
+    expect(r?.style.getPropertyValue('--gk-offset-bottom')).toBe('32px');
+    expect(r?.style.getPropertyValue('--gk-offset-left')).toBe('20px');
+    expect(r?.style.getPropertyValue('--gk-offset-right')).toBe('20px');
+    expect(r?.style.getPropertyValue('--gk-mobile-offset')).toBe('40px');
+  });
+
+  it('pauses toasts on window blur and resumes on window focus', () => {
+    ui.toast('Blur pause', { duration: 1000 });
+    window.dispatchEvent(new Event('blur'));
+    vi.advanceTimersByTime(5000);
+    expect(ui.toast.getToasts()[0]?.dismissed).toBe(false);
+
+    window.dispatchEvent(new Event('focus'));
+    vi.advanceTimersByTime(1000);
+    expect(ui.toast.getToasts()[0]?.dismissed).toBe(true);
+  });
+
+  it('supports arrow key roving focus between toasts in the region', () => {
+    ui.toast('First', { duration: 0 });
+    ui.toast('Second', { duration: 0 });
+    const toasts = toastEls();
+    toasts[0]?.focus();
+
+    toasts[0]?.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+    expect(document.activeElement).toBe(toasts[1]);
+
+    toasts[1]?.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true }));
+    expect(document.activeElement).toBe(toasts[0]);
+  });
+
+  it('registers web renderer and mounts in shadow DOM mode', () => {
+    const host = document.createElement('div');
+    host.id = 'shadow-host';
+    document.body.append(host);
+
+    const handle = mountToaster(ui.toastStore, { container: host, shadow: true });
+    ui.toast('Shadow toast', { duration: 0 });
+
+    const shadowPortal = host.querySelector('#gk-shadow-portal');
+    expect(shadowPortal).not.toBeNull();
+    expect(shadowPortal?.shadowRoot).not.toBeNull();
+    const shadowToast = shadowPortal?.shadowRoot?.querySelector('.gk-toast');
+    expect(shadowToast).not.toBeNull();
+
+    handle.destroy();
+  });
+
+  it('registerWebRenderer connects engine and returns it', () => {
+    const engine = registerWebRenderer();
+    expect(engine).toBeDefined();
+    expect(engine.store).toBeDefined();
+    expect(engine.toast).toBeDefined();
   });
 });

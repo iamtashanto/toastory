@@ -29,4 +29,3 @@ export const defaultClock: Clock = {
     return () => clearInterval(id);
   },
 };
-

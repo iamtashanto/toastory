@@ -11,6 +11,7 @@ import type {
   SheetOptions,
   StepsResult,
   ToastApi,
+  ToastStore,
 } from '../core';
 import { openDialog } from './dialog';
 import { configure, getEngine } from './engine';
@@ -36,6 +37,8 @@ export interface Ui {
   loading(options?: LoadingOptions): LoadingHandle;
   /** Sets global configuration. Returns the resulting configuration. */
   configure(patch: Partial<GlazeConfig>): Readonly<GlazeConfig>;
+  /** The underlying toast store. */
+  readonly toastStore: ToastStore;
 }
 
 function withButtons(
@@ -67,6 +70,9 @@ export function createUi(): Ui {
     bottomSheet: (options = {}) => openBottomSheet(options),
     loading: (options = {}) => openLoading(options),
     configure,
+    get toastStore() {
+      return getEngine().store;
+    },
   };
 }
 

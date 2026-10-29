@@ -1,7 +1,8 @@
 import { createToastEngine } from '../core';
 import type { GlazeConfig, ToastApi, ToastStore } from '../core';
+import { setSanitizer } from './sanitize';
 import { canMountToaster, mountToaster } from './toaster';
-import type { ToasterHandle } from './toaster';
+import type { ToasterHandle, ToasterOptions } from './toaster';
 
 /** Shared state behind `ui`. One instance exists per page, even when the package is bundled twice. */
 export interface WebEngine {
@@ -16,6 +17,23 @@ export interface WebEngine {
 }
 
 const KEY = Symbol.for('glazekit.engine.v1');
+
+/** Options for registering the web renderer. */
+export type WebRendererOptions = ToasterOptions;
+
+/**
+ * Registers the web DOM renderer with the core UI toolkit and mounts the toaster.
+ * Safe to call multiple times; auto-runs on first use in a browser.
+ */
+export function registerWebRenderer(options: WebRendererOptions = {}): WebEngine {
+  const engine = getEngine();
+  if (canMountToaster()) {
+    if (!engine.toaster) {
+      engine.toaster = mountToaster(engine.store, options);
+    }
+  }
+  return engine;
+}
 
 /** Returns the page wide engine, creating it on first use. Safe on the server. */
 export function getEngine(): WebEngine {
@@ -71,4 +89,5 @@ export function resetEngine(): void {
   engine.toaster?.destroy();
   engine.toaster = undefined;
   engine.autoMount = true;
+  setSanitizer(undefined);
 }

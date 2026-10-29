@@ -18,28 +18,28 @@ export interface TypeRegistry {
 
 const BUILT_IN_TYPES: Record<string, ToastTypeDefinition> = {
   success: {
-    color: 'var(--gk-success, #34c759)',
+    color: 'var(--gk-success)',
     ariaLive: 'polite',
   },
   error: {
-    color: 'var(--gk-error, #ff3b30)',
+    color: 'var(--gk-error)',
     ariaLive: 'assertive',
   },
   warning: {
-    color: 'var(--gk-warning, #ff9500)',
+    color: 'var(--gk-warning)',
     ariaLive: 'assertive',
   },
   info: {
-    color: 'var(--gk-info, #007aff)',
+    color: 'var(--gk-info)',
     ariaLive: 'polite',
   },
   loading: {
-    color: 'var(--gk-info, #007aff)',
+    color: 'var(--gk-info)',
     ariaLive: 'polite',
     defaults: { duration: 0, dismissible: false },
   },
   message: {
-    color: 'var(--gk-fg, #1d1d1f)',
+    color: 'var(--gk-fg)',
     ariaLive: 'polite',
   },
 };

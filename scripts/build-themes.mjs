@@ -15,9 +15,11 @@ const baseToast = await readFile(join(root, 'src/themes/base-toast.css'), 'utf8'
 const baseDialog = await readFile(join(root, 'src/themes/base-dialog.css'), 'utf8');
 
 await mkdir(out, { recursive: true });
+await writeFile(join(out, '_base.toast.css'), await minify(baseToast));
+await writeFile(join(out, '_base.css'), await minify(baseToast + baseDialog));
 for (const def of THEMES) {
   const own = themeCss(def);
   await writeFile(join(out, `${def.name}.toast.css`), await minify(baseToast + own));
   await writeFile(join(out, `${def.name}.css`), await minify(baseToast + baseDialog + own));
 }
-console.log(`themes: wrote ${THEMES.length * 2} files to dist/themes`);
+console.log(`themes: wrote ${THEMES.length * 2 + 2} files to dist/themes`);

@@ -29,7 +29,7 @@ const toastCoreBundle = (
   })
 ).outputFiles[0].text;
 
-const themeData = await readFile(join(dist, 'themes', 'ios-glass.toast.css'));
+const themeData = await readFile(join(dist, 'themes', 'basic.toast.css'));
 const coreAndThemeGzip = gzipSync(
   Buffer.concat([Buffer.from(toastCoreBundle), Buffer.from(themeData)]),
 ).length;

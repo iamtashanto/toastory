@@ -116,7 +116,29 @@ export interface ToastClassNames {
   closeButton?: string;
   progress?: string;
   content?: string;
+  count?: string;
+  link?: string;
+  actions?: string;
+  action?: string;
+  cancel?: string;
 }
+
+/** Stacking mode for toasts. */
+export type StackMode = boolean | 'stacked' | 'expanded' | 'list';
+
+/** Built-in animation presets for toast enter/exit. */
+export type AnimationType = 'slide' | 'bounce' | 'zoom' | 'flip' | 'spring' | 'fade' | 'none';
+
+/** Region offset configuration. */
+export type OffsetConfig =
+  | number
+  | string
+  | {
+      top?: number | string;
+      bottom?: number | string;
+      left?: number | string;
+      right?: number | string;
+    };
 
 /** Context provided to `ui.toast.custom` renderers. */
 export interface ToastRenderContext {
@@ -154,6 +176,10 @@ export interface ToastOptions {
   cancel?: ToastAction;
   /** Show explicit close button. */
   closeButton?: boolean;
+  /** Accessible label for the close button. */
+  closeButtonLabel?: string;
+  /** Enter/exit animation preset. */
+  animation?: AnimationType;
   /** Allow user dismissal. */
   dismissible?: boolean;
   /** Dismiss on body click. */
@@ -253,7 +279,7 @@ export interface GlazeConfig {
   duration: number;
   maxVisible: number;
   gap: number;
-  stack: boolean;
+  stack: StackMode;
   dir: Direction;
   hotkey: string;
   pauseOn: PauseOn[];
@@ -273,6 +299,9 @@ export interface GlazeConfig {
   startPaused: boolean;
   newestOnTop: boolean;
   dedupeWindow: number;
+  animation?: AnimationType;
+  offset?: OffsetConfig;
+  mobileOffset?: number | string;
 }
 
 export type Config = GlazeConfig;
