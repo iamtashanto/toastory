@@ -91,20 +91,41 @@ describe('theme contrast (WCAG 2.2 AA)', () => {
         expect(contrast(parseColor(t.muted), solid), 'muted on solid').toBeGreaterThanOrEqual(4.5);
         for (const backdrop of BACKDROPS) {
           const surface = flatten(t.bg, backdrop);
-          expect(contrast(parseColor(t.fg), surface), `fg on bg over ${backdrop}`).toBeGreaterThanOrEqual(4.5);
-          expect(contrast(parseColor(t.muted), surface), `muted on bg over ${backdrop}`).toBeGreaterThanOrEqual(4.5);
-          expect(contrast(parseColor(t.accent), surface), `accent text over ${backdrop}`).toBeGreaterThanOrEqual(4.5);
-          expect(contrast(parseColor(t.error), surface), `error text over ${backdrop}`).toBeGreaterThanOrEqual(4.5);
+          expect(
+            contrast(parseColor(t.fg), surface),
+            `fg on bg over ${backdrop}`,
+          ).toBeGreaterThanOrEqual(4.5);
+          expect(
+            contrast(parseColor(t.muted), surface),
+            `muted on bg over ${backdrop}`,
+          ).toBeGreaterThanOrEqual(4.5);
+          expect(
+            contrast(parseColor(t.accent), surface),
+            `accent text over ${backdrop}`,
+          ).toBeGreaterThanOrEqual(4.5);
+          expect(
+            contrast(parseColor(t.error), surface),
+            `error text over ${backdrop}`,
+          ).toBeGreaterThanOrEqual(4.5);
         }
       });
 
       it(`${theme.name} ${mode}: buttons and status icons meet contrast`, () => {
-        expect(contrast(parseColor(t.accentFg), parseColor(t.accent)), 'accent button').toBeGreaterThanOrEqual(4.5);
-        expect(contrast(parseColor(t.dangerFg), parseColor(t.danger)), 'danger button').toBeGreaterThanOrEqual(4.5);
+        expect(
+          contrast(parseColor(t.accentFg), parseColor(t.accent)),
+          'accent button',
+        ).toBeGreaterThanOrEqual(4.5);
+        expect(
+          contrast(parseColor(t.dangerFg), parseColor(t.danger)),
+          'danger button',
+        ).toBeGreaterThanOrEqual(4.5);
         for (const backdrop of BACKDROPS) {
           const surface = flatten(t.bg, backdrop);
           for (const key of ['success', 'error', 'warning', 'info'] as const) {
-            expect(contrast(parseColor(t[key]), surface), `${key} icon over ${backdrop}`).toBeGreaterThanOrEqual(3);
+            expect(
+              contrast(parseColor(t[key]), surface),
+              `${key} icon over ${backdrop}`,
+            ).toBeGreaterThanOrEqual(3);
           }
         }
       });
@@ -116,11 +137,16 @@ describe('theme contrast (WCAG 2.2 AA)', () => {
           const surface = composite(tint, flatten(t.bg, '#ffffff'));
           const dark = composite(tint, flatten(t.bg, '#000000'));
           expect(contrast(parseColor(t.fg), surface), `${key} fg tint`).toBeGreaterThanOrEqual(4.5);
-          expect(contrast(parseColor(t.muted), surface), `${key} muted tint`).toBeGreaterThanOrEqual(4.5);
-          expect(contrast(parseColor(t.fg), dark), `${key} fg tint dark backdrop`).toBeGreaterThanOrEqual(4.5);
+          expect(
+            contrast(parseColor(t.muted), surface),
+            `${key} muted tint`,
+          ).toBeGreaterThanOrEqual(4.5);
+          expect(
+            contrast(parseColor(t.fg), dark),
+            `${key} fg tint dark backdrop`,
+          ).toBeGreaterThanOrEqual(4.5);
         }
       });
     }
   }
 });
-

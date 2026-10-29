@@ -106,7 +106,7 @@ export interface DialogHandle {
 }
 
 /** Validation result: a non-empty string is the error message, anything else means valid. */
-export type ValidateResult = string | undefined | void;
+export type ValidateResult = string | undefined;
 
 /** Options shared by `confirm`, `alert`, `prompt` and `steps`. */
 export interface DialogOptions {

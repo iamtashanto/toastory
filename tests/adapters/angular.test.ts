@@ -61,7 +61,7 @@ describe('glazekit/angular adapter', () => {
     expect(cfg.richColors).toBe(true);
 
     component.theme = 'minimal';
-    component.ngOnChanges({});
+    component.ngOnChanges();
     expect(ui.configure({}).theme).toBe('minimal');
 
     component.ngOnDestroy();

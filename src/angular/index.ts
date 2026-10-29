@@ -6,7 +6,6 @@ import {
   type OnChanges,
   type OnDestroy,
   type OnInit,
-  type SimpleChanges,
 } from '@angular/core';
 import { Observable } from 'rxjs';
 import type { GlazeConfig, ToastApi, ToastRecord } from '../core';
@@ -82,7 +81,7 @@ export class GlazeToasterComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  ngOnChanges(_changes: SimpleChanges): void {
+  ngOnChanges(): void {
     this.applyInputs();
   }
 

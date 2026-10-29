@@ -73,7 +73,9 @@ describe('region and semantics', () => {
     ui.toast('n', { icon: node });
     expect(last().querySelector('.gk-icon b')).toBe(node);
     ui.toast('a', { avatar: 'https://example.com/a.png' });
-    expect(last().querySelector('.gk-avatar img')?.getAttribute('src')).toBe('https://example.com/a.png');
+    expect(last().querySelector('.gk-avatar img')?.getAttribute('src')).toBe(
+      'https://example.com/a.png',
+    );
     ui.toast('bad', { avatar: 'javascript:alert(1)' });
     expect(last().querySelector('.gk-avatar img')?.getAttribute('src')).toBe('');
     ui.toast.types.add('rocket', { icon: 'R', color: '#ff00ff' });
@@ -117,7 +119,11 @@ describe('region and semantics', () => {
     ui.toast('b', { position: 'top-center' });
     ui.toast('c', { container: 'host' });
     const regions = Array.from(document.querySelectorAll<HTMLElement>('.gk-region'));
-    expect(regions.map((r) => r.dataset.position).sort()).toEqual(['bottom-left', 'top-center', 'top-right']);
+    expect(regions.map((r) => r.dataset.position).sort()).toEqual([
+      'bottom-left',
+      'top-center',
+      'top-right',
+    ]);
     expect(host.querySelector('.gk-region')?.hasAttribute('data-contained')).toBe(true);
     ui.configure({ container: 'host' });
     ui.toast('d', { position: 'top-left' });
@@ -241,7 +247,11 @@ describe('buttons', () => {
   });
 
   it('closeOnClick dismisses when the body is clicked but not when a button is', () => {
-    ui.toast('x', { closeOnClick: true, id: 'c', action: { label: 'A', onClick: (e) => e.preventDefault() } });
+    ui.toast('x', {
+      closeOnClick: true,
+      id: 'c',
+      action: { label: 'A', onClick: (e) => e.preventDefault() },
+    });
     expect(last().hasAttribute('data-clickable')).toBe(true);
     last().querySelector<HTMLElement>('.gk-action')?.click();
     expect(ui.toast.getToasts()[0]?.dismissed).toBe(false);
@@ -389,7 +399,9 @@ describe('keyboard', () => {
   it('the hotkey focuses the newest toast', () => {
     ui.toast('old');
     ui.toast('new');
-    document.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyT', altKey: true, bubbles: true }));
+    document.dispatchEvent(
+      new KeyboardEvent('keydown', { code: 'KeyT', altKey: true, bubbles: true }),
+    );
     expect(document.activeElement).toBe(last());
   });
 
@@ -398,12 +410,20 @@ describe('keyboard', () => {
     document.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyT', bubbles: true }));
     expect(document.activeElement).not.toBe(last());
     ui.configure({ hotkey: '' });
-    document.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyT', altKey: true, bubbles: true }));
+    document.dispatchEvent(
+      new KeyboardEvent('keydown', { code: 'KeyT', altKey: true, bubbles: true }),
+    );
     expect(document.activeElement).not.toBe(last());
   });
 
   it('parses hotkeys', () => {
-    expect(parseHotkey('alt+t')).toEqual({ alt: true, ctrl: false, shift: false, meta: false, code: 'KeyT' });
+    expect(parseHotkey('alt+t')).toEqual({
+      alt: true,
+      ctrl: false,
+      shift: false,
+      meta: false,
+      code: 'KeyT',
+    });
     expect(parseHotkey('ctrl+shift+5')).toMatchObject({ ctrl: true, shift: true, code: 'Digit5' });
     expect(parseHotkey('')).toBeUndefined();
     expect(parseHotkey('alt+')).toBeUndefined();
@@ -489,4 +509,3 @@ describe('open callbacks', () => {
     expect(onDismiss).not.toHaveBeenCalled();
   });
 });
-

@@ -48,13 +48,10 @@ describe('glazekit/vue adapter', () => {
   });
 
   it('useToast composable returns reactive toasts array', async () => {
-    let capturedToasts: readonly unknown[] = [];
-
     const app = createApp(
       defineComponent({
         setup() {
           const { toast: t, toasts } = useToast();
-          capturedToasts = toasts.value;
           return { t, toasts };
         },
         template: '<div :data-count="toasts.length">{{ toasts.length }}</div>',
@@ -62,7 +59,10 @@ describe('glazekit/vue adapter', () => {
     );
 
     const container = document.getElementById('app') as HTMLElement;
-    const vm = app.mount(container) as { t: typeof toast; toasts: readonly unknown[] };
+    const vm = app.mount(container) as unknown as {
+      t: typeof toast;
+      toasts: readonly unknown[];
+    };
     await nextTick();
 
     expect(vm.toasts).toHaveLength(0);
@@ -88,7 +88,7 @@ describe('glazekit/vue adapter', () => {
     );
 
     const container = document.getElementById('app') as HTMLElement;
-    const vm = app.mount(container) as { u: typeof ui; config: { theme: string } };
+    const vm = app.mount(container) as unknown as { u: typeof ui; config: { theme: string } };
     await nextTick();
 
     expect(vm.config.theme).toBeDefined();

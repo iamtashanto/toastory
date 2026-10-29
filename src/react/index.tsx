@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useSyncExternalStore } from 'react';
+import { useEffect, useMemo, useSyncExternalStore, type JSX } from 'react';
 import type { GlazeConfig, ToastApi, ToastRecord } from '../core';
 import { canMountToaster, mountToaster } from '../web/toaster';
 import { getEngine, setAutoMount } from '../web/engine';
@@ -17,8 +17,9 @@ export interface ToasterProps extends Partial<GlazeConfig> {
  * React Toaster provider and container.
  * Safe for SSR and hydration. Configures glazekit and handles toast rendering.
  */
-export function Toaster(props: ToasterProps): React.JSX.Element | null {
-  const { className, ...configPatch } = props;
+export function Toaster(props: ToasterProps): JSX.Element | null {
+  const { className: _className, ...configPatch } = props;
+  void _className;
   const engine = getEngine();
 
   // Apply configuration on mount and prop changes

@@ -36,6 +36,7 @@ const SAFE_URL = /^(?:https?:|mailto:|tel:|\/|#|\.\/|\.\.\/|[^:]*$)/i;
 
 /** Whether a URL is safe to place in `href` or `src`. Rejects `javascript:` and similar schemes. */
 export function safeUrl(url: string): boolean {
+  // eslint-disable-next-line no-control-regex -- control character stripping is essential for url security
   return SAFE_URL.test(url.replace(/[\s\u0000-\u001f]/g, ''));
 }
 

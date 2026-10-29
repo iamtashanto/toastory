@@ -3,7 +3,6 @@ import type {
   Direction,
   GlazeConfig,
   PauseOn,
-  Renderable,
   SwipeDirection,
   ToastId,
   ToastPosition,
