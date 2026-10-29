@@ -458,12 +458,46 @@
   background: var(--gk-accent);
   transition: width 200ms var(--gk-ease);
 }
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+.gk-dialog:not([data-mounted="true"]),
+.gk-dialog[data-state="closing"],
+.gk-sheet:not([data-mounted="true"]),
+.gk-bsheet:not([data-mounted="true"]) {
+  will-change: transform, opacity;
+}
+@supports not (backdrop-filter: blur(1px)) {
   .gk-dialog,
   .gk-sheet,
   .gk-bsheet,
   .gk-loading {
     background: var(--gk-bg-solid);
+  }
+}
+@media (forced-colors: active) {
+  .gk-dialog,
+  .gk-sheet,
+  .gk-bsheet,
+  .gk-loading {
+    background: var(--gk-bg-solid);
+    border: 1px solid ButtonBorder;
+    color: CanvasText;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .gk-dialog,
+  .gk-sheet,
+  .gk-bsheet,
+  .gk-loading {
+    background: var(--gk-bg-solid);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+@media (max-width: 600px) {
+  .gk-dialog,
+  .gk-sheet,
+  .gk-bsheet,
+  .gk-loading {
+    --gk-blur: min(var(--gk-blur), 12px);
   }
 }
 @media (prefers-reduced-motion: reduce) {

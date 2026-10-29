@@ -16,6 +16,7 @@ import type {
 import { openDialog } from './dialog';
 import { configure, getEngine } from './engine';
 import { openBottomSheet, openLoading, openSheet } from './sheets';
+import { defineTheme, type CustomThemeDefinition } from './theme-engine';
 
 /** The unified glazekit API. */
 export interface Ui {
@@ -37,39 +38,27 @@ export interface Ui {
   loading(options?: LoadingOptions): LoadingHandle;
   /** Sets global configuration. Returns the resulting configuration. */
   configure(patch: Partial<GlazeConfig>): Readonly<GlazeConfig>;
+  /** Defines a custom theme with tokens and optional CSS rules. */
+  defineTheme(name: string, definition: CustomThemeDefinition): string;
   /** The underlying toast store. */
   readonly toastStore: ToastStore;
 }
 
-function withButtons(
-  options: DialogOptions,
-  defaults: { confirm?: DialogButton; cancel?: DialogButton },
-): DialogOptions {
-  return {
-    ...options,
-    confirmButton: { ...defaults.confirm, ...options.confirmButton },
-    cancelButton: { ...defaults.cancel, ...options.cancelButton },
-  };
-}
-
 /** Builds the `ui` object. Called once at module load; touches no DOM. */
 export function createUi(): Ui {
+  const wb = (opts: DialogOptions, cancel: boolean, extra: Partial<DialogOptions> = {}) =>
+    openDialog({ ...opts, ...extra, cancelButton: { show: cancel, ...opts.cancelButton } });
   return {
     toast: getEngine().toast,
-    confirm: (options = {}) => openDialog(withButtons(options, { cancel: { show: true } })),
-    alert: (options = {}) => openDialog(withButtons(options, { cancel: { show: false } })),
-    prompt: (options = {}) =>
-      openDialog(withButtons({ input: 'text', ...options }, { cancel: { show: true } })),
-    steps: (steps, backLabel) =>
-      runSteps(
-        steps,
-        (options) => openDialog(withButtons(options, { cancel: { show: true } })),
-        backLabel,
-      ),
+    confirm: (options = {}) => wb(options, true),
+    alert: (options = {}) => wb(options, false),
+    prompt: (options = {}) => wb(options, true, { input: options.input ?? 'text' }),
+    steps: (steps, backLabel) => runSteps(steps, (options) => wb(options, true), backLabel),
     sheet: (options) => openSheet(options),
     bottomSheet: (options = {}) => openBottomSheet(options),
     loading: (options = {}) => openLoading(options),
     configure,
+    defineTheme,
     get toastStore() {
       return getEngine().store;
     },

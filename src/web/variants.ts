@@ -1,3 +1,18 @@
+const IOS_VARIANTS = [
+  'banner-light',
+  'banner-dark',
+  'capsule-success',
+  'island-call',
+  'hud-silent',
+  'system-alert',
+  'device-popup',
+  'grouped-stack',
+  'progress-ring',
+  'shake-error',
+  'focus-toggle',
+  'compact-action',
+] as const;
+
 /** Supported variant lookup for runtime check and fallback warnings. */
 export const THEME_VARIANTS: Record<string, readonly string[]> = {
   essentials: [
@@ -28,34 +43,8 @@ export const THEME_VARIANTS: Record<string, readonly string[]> = {
     'soft-light',
     'message-actions',
   ],
-  'ios-glass': [
-    'banner-light',
-    'banner-dark',
-    'capsule-success',
-    'island-call',
-    'hud-silent',
-    'system-alert',
-    'device-popup',
-    'grouped-stack',
-    'progress-ring',
-    'shake-error',
-    'focus-toggle',
-    'compact-action',
-  ],
-  'liquid-glass': [
-    'banner-light',
-    'banner-dark',
-    'capsule-success',
-    'island-call',
-    'hud-silent',
-    'system-alert',
-    'device-popup',
-    'grouped-stack',
-    'progress-ring',
-    'shake-error',
-    'focus-toggle',
-    'compact-action',
-  ],
+  'ios-glass': IOS_VARIANTS,
+  'liquid-glass': IOS_VARIANTS,
   dialogs: [
     'warning-confirm',
     'danger-confirm',

@@ -21,17 +21,17 @@ export function normalizeChoices(options: DialogOptions['options']): DialogChoic
       typeof entry === 'string' ? { value: entry, label: entry } : entry,
     );
   }
-  return Object.entries(options as Readonly<Record<string, string>>).map(([value, label]) => ({
+  return Object.keys(options).map((value) => ({
     value,
-    label,
+    label: (options as Record<string, string>)[value]!,
   }));
 }
 
 function applyAttributes(node: HTMLElement, attributes: DialogOptions['inputAttributes']): void {
   if (!attributes) return;
-  for (const key of Object.keys(attributes)) {
-    const value = attributes[key];
-    if (value !== undefined) node.setAttribute(key, value);
+  for (const k in attributes) {
+    const value = attributes[k];
+    if (value !== undefined) node.setAttribute(k, value);
   }
 }
 

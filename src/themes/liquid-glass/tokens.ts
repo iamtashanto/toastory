@@ -2,57 +2,59 @@ import type { ThemeDefinition, ThemeTokens } from '../themes.ts';
 import { css as iosCss, variants } from '../ios-glass/tokens.ts';
 
 const SYSTEM =
-  '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, system-ui, sans-serif';
+  '-apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, system-ui, sans-serif';
 
 export const tokensLight: ThemeTokens = {
-  bg: 'rgba(255, 255, 255, 0.88)',
-  solid: '#f2f2f7',
-  fg: '#0a0a0d',
-  muted: '#33333a',
-  border: 'rgba(255, 255, 255, 0.55)',
+  bg: 'rgba(255, 255, 255, 0.74)',
+  solid: '#ffffff',
+  fg: '#0a0a0c',
+  muted: '#2c2c32',
+  border: 'rgba(255, 255, 255, 0.65)',
   shadow:
-    '0 14px 44px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.8), inset 0 -1px 0 rgba(255, 255, 255, 0.25)',
-  accent: '#0057c2',
+    '0 14px 44px rgba(0, 0, 0, 0.16), inset 0 1.5px 0 rgba(255, 255, 255, 0.95), inset 0 3px 8px rgba(255, 255, 255, 0.35), inset 0 -1px 0 rgba(255, 255, 255, 0.25)',
+  accent: '#003d8f',
   accentFg: '#ffffff',
-  danger: '#b71c1c',
+  danger: '#8a0a0a',
   dangerFg: '#ffffff',
-  success: '#1a7f37',
-  error: '#b71c1c',
-  warning: '#8a5a00',
-  info: '#0b5cc7',
+  success: '#0d5926',
+  error: '#8a0a0a',
+  warning: '#5e3a00',
+  info: '#003f8a',
 };
 
 export const tokensDark: ThemeTokens = {
-  bg: 'rgba(24, 24, 28, 0.88)',
+  bg: 'rgba(24, 24, 28, 0.74)',
   solid: '#1c1c20',
-  fg: '#f5f5f7',
-  muted: '#d0d0d8',
-  border: 'rgba(255, 255, 255, 0.2)',
+  fg: '#ffffff',
+  muted: '#f0f0f6',
+  border: 'rgba(255, 255, 255, 0.22)',
   shadow:
-    '0 14px 44px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.18), inset 0 -1px 0 rgba(255, 255, 255, 0.05)',
-  accent: '#4da3ff',
+    '0 16px 48px rgba(0, 0, 0, 0.6), inset 0 1.5px 0 rgba(255, 255, 255, 0.3), inset 0 3px 8px rgba(255, 255, 255, 0.1), inset 0 -1px 0 rgba(255, 255, 255, 0.06)',
+  accent: '#b0dcff',
   accentFg: '#00152e',
-  danger: '#ff8a8a',
+  danger: '#ff9494',
   dangerFg: '#2b0000',
-  success: '#4ade80',
-  error: '#ff7b7b',
-  warning: '#ffc857',
-  info: '#6cb6ff',
+  success: '#6ae69a',
+  error: '#ffc2c2',
+  warning: '#ffd470',
+  info: '#a8d8ff',
 };
 
 export const css =
-  '.gk-toast&::before,.gk-dialog&::before,.gk-sheet&::before,.gk-bsheet&::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;background:linear-gradient(135deg,rgba(255,255,255,.22),rgba(255,255,255,0) 45%)}.gk-dialog&,.gk-sheet&,.gk-bsheet&{isolation:isolate}' +
+  `.gk-toast&,.gk-dialog&,.gk-sheet&,.gk-bsheet&{background-image:radial-gradient(ellipse 90% 60% at 50% -20%,rgba(255,255,255,.32),transparent 70%),radial-gradient(ellipse 60% 40% at 50% 120%,rgba(255,255,255,.08),transparent 70%)}` +
+  `.gk-toast&[data-gk-variant="pill"],.gk-toast&.gk-toast--pill{border-radius:9999px;padding:8px 18px}` +
   iosCss;
 
 export const liquidGlassTheme: ThemeDefinition = {
   name: 'liquid-glass',
   radius: '28px',
-  blur: '36px',
-  saturate: '220%',
+  blur: '32px',
+  saturate: '200%',
   font: SYSTEM,
+  ease: 'cubic-bezier(0.16, 1, 0.3, 1)',
+  duration: '360ms',
   light: tokensLight,
   dark: tokensDark,
   css,
   supportedVariants: variants,
 };
-

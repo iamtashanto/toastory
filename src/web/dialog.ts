@@ -17,20 +17,6 @@ import { openOverlay } from './overlay';
 import { sanitizeToFragment } from './sanitize';
 import { resolveVariant } from './variants';
 
-const ICONS: Record<string, IconName> = {
-  success: 'success',
-  error: 'error',
-  warning: 'warning',
-  info: 'info',
-  question: 'question',
-  trash: 'trash',
-  lock: 'lock',
-  upload: 'upload',
-  pencil: 'pencil',
-  clock: 'clock',
-  shield: 'shield',
-};
-
 const DEFAULT_LABELS = { confirm: 'OK', deny: 'No', cancel: 'Cancel' } as const;
 
 function applyButton(
@@ -171,7 +157,7 @@ export function openDialog(initial: DialogOptions): DialogPromise {
     iconBox.dataset.tone = toneVal;
     if (o.icon === 'custom') fill(iconBox, o.iconContent);
     else if (o.icon) {
-      const iconKey = ICONS[o.icon] ?? (o.icon as IconName);
+      const iconKey = o.icon as IconName;
       const iconNode = icon(iconKey);
       if (iconNode) iconBox.append(iconNode);
     }

@@ -84,14 +84,8 @@ export function createTimer(
   };
 
   const stopTimers = (): void => {
-    if (cancelTimeout) {
-      cancelTimeout();
-      cancelTimeout = undefined;
-    }
-    if (cancelInterval) {
-      cancelInterval();
-      cancelInterval = undefined;
-    }
+    cancelTimeout = cancelTimeout?.();
+    cancelInterval = cancelInterval?.();
   };
 
   const arm = (): void => {
@@ -117,8 +111,7 @@ export function createTimer(
 
   const pauseTimer = (reason = 'manual'): void => {
     if (done) return;
-    const currentCount = pauseReasons.get(reason) ?? 0;
-    pauseReasons.set(reason, currentCount + 1);
+    pauseReasons.set(reason, (pauseReasons.get(reason) ?? 0) + 1);
 
     if (started && pauseReasons.size === 1) {
       remainingMs = Math.max(0, remainingMs - (clock.now() - startedAt));
@@ -129,14 +122,11 @@ export function createTimer(
 
   const resumeTimer = (reason = 'manual'): void => {
     if (done) return;
-    const currentCount = pauseReasons.get(reason);
-    if (currentCount === undefined) return;
+    const count = pauseReasons.get(reason);
+    if (!count) return;
 
-    if (currentCount <= 1) {
-      pauseReasons.delete(reason);
-    } else {
-      pauseReasons.set(reason, currentCount - 1);
-    }
+    if (count <= 1) pauseReasons.delete(reason);
+    else pauseReasons.set(reason, count - 1);
 
     if (started && pauseReasons.size === 0 && isLive()) {
       arm();
@@ -160,25 +150,15 @@ export function createTimer(
     },
     add(ms: number) {
       if (done || !Number.isFinite(remainingMs)) return;
-      if (started && pauseReasons.size === 0) {
-        remainingMs = Math.max(0, remainingMs - (clock.now() - startedAt)) + ms;
-        totalDuration = Math.max(totalDuration, remainingMs);
-        if (remainingMs <= 0) remainingMs = 1;
-        arm();
-      } else {
-        remainingMs = Math.max(1, remainingMs + ms);
-        totalDuration = Math.max(totalDuration, remainingMs);
-      }
+      const live = started && pauseReasons.size === 0;
+      remainingMs = Math.max(1, (live ? remainingMs - (clock.now() - startedAt) : remainingMs) + ms);
+      totalDuration = Math.max(totalDuration, remainingMs);
+      if (live) arm();
       notifyTick();
     },
     reset(ms?: number) {
       done = false;
-      if (ms !== undefined) {
-        totalDuration = ms;
-        remainingMs = ms;
-      } else {
-        remainingMs = totalDuration;
-      }
+      remainingMs = totalDuration = ms !== undefined ? ms : totalDuration;
       if (started && pauseReasons.size === 0) {
         if (isLive()) arm();
         else stopTimers();
@@ -195,15 +175,9 @@ export function createTimer(
     elapsed() {
       return Math.max(0, totalDuration - getRemaining());
     },
-    isRunning() {
-      return started && !done && pauseReasons.size === 0 && isLive();
-    },
-    isPaused() {
-      return pauseReasons.size > 0;
-    },
-    pausedReasons() {
-      return Array.from(pauseReasons.keys());
-    },
+    isRunning: () => started && !done && !pauseReasons.size && isLive(),
+    isPaused: () => pauseReasons.size > 0,
+    pausedReasons: () => [...pauseReasons.keys()],
     onTick(callback) {
       tickListeners.add(callback);
       if (started && pauseReasons.size === 0 && !cancelInterval) {

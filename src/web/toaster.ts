@@ -17,13 +17,6 @@ import type { IconName } from './icons';
 import { safeUrl, sanitizeToFragment } from './sanitize';
 import { resolveVariant } from './variants';
 
-const ICONS: Record<string, string> = {
-  success: 'success',
-  error: 'error',
-  warning: 'warning',
-  info: 'info',
-};
-
 function deterministicColor(str: string): string {
   const colors = ['#38bdf8', '#818cf8', '#ec4899', '#f97316', '#10b981', '#6366f1', '#eab308'];
   let hash = 0;
@@ -38,29 +31,18 @@ function formatRelativeTime(ts: number | Date | string | boolean, locale = 'en')
   const diffSec = Math.round((Date.now() - date) / 1000);
   if (Math.abs(diffSec) < 60) return 'now';
   const diffMin = Math.round(diffSec / 60);
-  if (Math.abs(diffMin) < 60) {
-    try {
-      const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
-      return rtf.format(-diffMin, 'minute');
-    } catch {
-      return `${diffMin}m ago`;
-    }
-  }
   const diffHr = Math.round(diffMin / 60);
-  if (Math.abs(diffHr) < 24) {
-    try {
-      const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
-      return rtf.format(-diffHr, 'hour');
-    } catch {
-      return `${diffHr}h ago`;
-    }
-  }
   const diffDay = Math.round(diffHr / 24);
+  const [val, unit, fallback] =
+    Math.abs(diffMin) < 60
+      ? [diffMin, 'minute' as const, `${diffMin}m ago`]
+      : Math.abs(diffHr) < 24
+        ? [diffHr, 'hour' as const, `${diffHr}h ago`]
+        : [diffDay, 'day' as const, `${diffDay}d ago`];
   try {
-    const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
-    return rtf.format(-diffDay, 'day');
+    return new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(-val, unit);
   } catch {
-    return `${diffDay}d ago`;
+    return fallback;
   }
 }
 
@@ -138,10 +120,24 @@ export function parseHotkey(
   };
 }
 
+/** Detects whether the host document has an explicit dark mode via .dark class or data attribute. */
+export function isDocumentDark(): boolean {
+  if (!hasDom()) return false;
+  const doc = document.documentElement;
+  return (
+    doc.classList.contains('dark') ||
+    document.body?.classList.contains('dark') ||
+    doc.getAttribute('data-theme') === 'dark' ||
+    doc.getAttribute('data-gk-mode') === 'dark' ||
+    document.body?.getAttribute('data-theme') === 'dark' ||
+    document.body?.getAttribute('data-gk-mode') === 'dark'
+  );
+}
+
 /** Resolves the mode attribute value, flipping it for inverted toasts. */
 export function resolveMode(mode: GlazeConfig['mode'], invert: boolean): string {
   if (!invert) return mode;
-  const dark = mode === 'dark' || (mode === 'auto' && prefersDark());
+  const dark = mode === 'dark' || (mode === 'auto' && (isDocumentDark() || prefersDark()));
   return dark ? 'light' : 'dark';
 }
 
@@ -416,13 +412,13 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
           fill(badgeEl, badgeObj.icon);
         } else if (badgeObj && badgeObj.label) {
           badgeEl.textContent = badgeObj.label;
-        } else if (typeof record.badge === 'string' && (ICONS[tone] || PATHS[tone as IconName])) {
-          const ic = icon((ICONS[tone] ?? tone) as IconName);
+        } else if (typeof record.badge === 'string' && PATHS[tone as IconName]) {
+          const ic = icon(tone as IconName);
           if (ic) badgeEl.append(ic);
         } else if (typeof record.badge === 'string') {
           badgeEl.textContent = record.badge;
         } else {
-          const ic = icon((ICONS[tone] ?? 'info') as IconName);
+          const ic = icon((PATHS[tone as IconName] ? tone : 'info') as IconName);
           if (ic) badgeEl.append(ic);
         }
         node.append(badgeEl);
@@ -688,7 +684,11 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       else node.setAttribute(name, value);
     };
 
-    const themeName = record.theme ?? c.theme;
+    const hostEl =
+      (record.container ? document.getElementById(record.container) : undefined) ??
+      node.parentElement?.closest('[data-gk-theme]');
+    const containerTheme = hostEl?.getAttribute('data-gk-theme');
+    const themeName = record.theme ?? containerTheme ?? c.theme;
     const activeVariant = resolveVariant(themeName, record.variant);
     set('data-gk-variant', activeVariant);
 
@@ -916,39 +916,18 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       else region.el.setAttribute('dir', dir);
 
       // Offsets
+      const setPx = (prop: string, val: string | number | undefined) => {
+        if (val !== undefined) region.el.style.setProperty(prop, typeof val === 'number' ? `${val}px` : val);
+      };
       if (typeof c.offset === 'object' && c.offset !== null) {
-        if (c.offset.top !== undefined)
-          region.el.style.setProperty(
-            '--gk-offset-top',
-            typeof c.offset.top === 'number' ? `${c.offset.top}px` : c.offset.top,
-          );
-        if (c.offset.bottom !== undefined)
-          region.el.style.setProperty(
-            '--gk-offset-bottom',
-            typeof c.offset.bottom === 'number' ? `${c.offset.bottom}px` : c.offset.bottom,
-          );
-        if (c.offset.left !== undefined)
-          region.el.style.setProperty(
-            '--gk-offset-left',
-            typeof c.offset.left === 'number' ? `${c.offset.left}px` : c.offset.left,
-          );
-        if (c.offset.right !== undefined)
-          region.el.style.setProperty(
-            '--gk-offset-right',
-            typeof c.offset.right === 'number' ? `${c.offset.right}px` : c.offset.right,
-          );
+        setPx('--gk-offset-top', c.offset.top);
+        setPx('--gk-offset-bottom', c.offset.bottom);
+        setPx('--gk-offset-left', c.offset.left);
+        setPx('--gk-offset-right', c.offset.right);
       } else if (c.offset !== undefined) {
-        const ov = typeof c.offset === 'number' ? `${c.offset}px` : c.offset;
-        region.el.style.setProperty('--gk-offset-top', ov);
-        region.el.style.setProperty('--gk-offset-bottom', ov);
-        region.el.style.setProperty('--gk-offset-left', ov);
-        region.el.style.setProperty('--gk-offset-right', ov);
+        for (const side of ['top', 'bottom', 'left', 'right']) setPx(`--gk-offset-${side}`, c.offset);
       }
-
-      if (c.mobileOffset !== undefined) {
-        const mv = typeof c.mobileOffset === 'number' ? `${c.mobileOffset}px` : c.mobileOffset;
-        region.el.style.setProperty('--gk-mobile-offset', mv);
-      }
+      setPx('--gk-mobile-offset', c.mobileOffset);
 
       if (region.items.size === 0) {
         region.el.remove();

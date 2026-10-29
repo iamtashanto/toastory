@@ -12,7 +12,6 @@ export const DEFAULT_CONFIG: Readonly<GlazeConfig> = Object.freeze({
   dir: 'auto',
   hotkey: 'alt+t',
   pauseOn: ['hover', 'focus', 'hidden'],
-  container: undefined,
   shadow: true,
   closeButton: false,
   richColors: false,
@@ -67,7 +66,7 @@ export function createConfigStore(initial: Partial<GlazeConfig> = {}): ConfigSto
   const listeners = new Set<Listener>();
 
   const emit = (): void => {
-    for (const listener of [...listeners]) listener();
+    listeners.forEach((listener) => listener());
   };
 
   return {
@@ -92,8 +91,6 @@ export function createConfigStore(initial: Partial<GlazeConfig> = {}): ConfigSto
 
 function stripUndefined<T extends object>(value: T): Partial<T> {
   const out: Partial<T> = {};
-  for (const key of Object.keys(value) as (keyof T)[]) {
-    if (value[key] !== undefined) out[key] = value[key];
-  }
+  for (const k in value) if (value[k] !== undefined) out[k] = value[k];
   return out;
 }

@@ -7,8 +7,7 @@ let counter = 0;
  * @param prefix Optional prefix for the id (default: 'gk').
  */
 export function nextId(prefix = 'gk'): string {
-  counter += 1;
-  return `${prefix}-${counter}`;
+  return `${prefix}-${++counter}`;
 }
 
 /**
@@ -17,8 +16,7 @@ export function nextId(prefix = 'gk'): string {
  * @param prefix Prefix used when generating an id.
  */
 export function normalizeId(id: ToastId | undefined, prefix = 'gk'): ToastId {
-  if (id !== undefined && id !== '') return id;
-  return nextId(prefix);
+  return id !== undefined && id !== '' ? id : nextId(prefix);
 }
 
 /**

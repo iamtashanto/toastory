@@ -71,19 +71,21 @@ export const PATHS: Record<IconName, string[]> = {
  */
 export function icon(name: IconName): SVGElement {
   const svg = document.createElementNS(NS, 'svg');
-  svg.setAttribute('viewBox', '0 0 24 24');
-  svg.setAttribute('width', '20');
-  svg.setAttribute('height', '20');
-  svg.setAttribute('fill', 'none');
-  svg.setAttribute('stroke', 'currentColor');
-  svg.setAttribute('stroke-width', '2');
-  svg.setAttribute('stroke-linecap', 'round');
-  svg.setAttribute('stroke-linejoin', 'round');
-  svg.setAttribute('aria-hidden', 'true');
-  svg.setAttribute('focusable', 'false');
-  if (name === 'loading') svg.setAttribute('class', 'gk-spin');
-  const paths = PATHS[name] ?? PATHS.info;
-  for (const d of paths) {
+  const attrs: Record<string, string> = {
+    viewBox: '0 0 24 24',
+    width: '20',
+    height: '20',
+    fill: 'none',
+    stroke: 'currentColor',
+    'stroke-width': '2',
+    'stroke-linecap': 'round',
+    'stroke-linejoin': 'round',
+    'aria-hidden': 'true',
+    focusable: 'false',
+  };
+  if (name === 'loading') attrs.class = 'gk-spin';
+  for (const k in attrs) svg.setAttribute(k, attrs[k]);
+  for (const d of PATHS[name] ?? PATHS.info) {
     const path = document.createElementNS(NS, 'path');
     path.setAttribute('d', d);
     svg.append(path);

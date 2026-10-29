@@ -118,9 +118,11 @@
     "format": "prettier --write .",
     "test": "vitest run",
     "test:e2e": "playwright test",
+    "contrast": "node scripts/contrast.ts",
+    "docs:tokens": "node scripts/generate-tokens-doc.ts",
     "build": "tsup && node scripts/build-themes.mjs",
     "size": "node scripts/size.mjs",
-    "check": "npm run typecheck && npm run lint && npm run test && npm run build && npm run size",
+    "check": "npm run typecheck && npm run lint && npm run test && npm run contrast && npm run build && npm run size",
     "check:all": "npm run check && npm run test:e2e",
     "changeset": "changeset",
     "release": "npm run check && changeset publish"

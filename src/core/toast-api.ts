@@ -88,13 +88,7 @@ export function createToastApi(store: ToastStore): ToastApi {
   api.getHistory = () => store.getHistory();
   Object.defineProperty(api, 'types', { value: store.types, enumerable: true });
 
-  api.promise = <T>(
-    input: Promise<T> | (() => Promise<T>),
-    messages: PromiseMessages<T>,
-    options: ToastOptions = {},
-  ): PromiseHandle<T> => {
-    return runPromiseToast(store, input, messages, options);
-  };
+  api.promise = (input, messages, options = {}) => runPromiseToast(store, input, messages, options);
 
   return api;
 }

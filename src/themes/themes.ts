@@ -133,7 +133,9 @@ export const THEMES: readonly ThemeDefinition[] = [
       fg: '#f4f1ff',
       muted: '#d2ccf0',
     },
-    '.gk-toast&::before,.gk-dialog&::before,.gk-sheet&::before,.gk-bsheet&::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;background:linear-gradient(120deg,rgba(120,119,255,.22),rgba(255,119,200,.18) 50%,rgba(80,220,255,.2))}.gk-dialog&,.gk-sheet&,.gk-bsheet&{isolation:isolate}',
+    '@keyframes gk-aurora-glow{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}' +
+      '.gk-toast&::before,.gk-dialog&::before,.gk-sheet&::before,.gk-bsheet&::before{content:"";position:absolute;inset:-3px;z-index:-1;border-radius:inherit;pointer-events:none;background:linear-gradient(135deg,rgba(120,119,255,.28),rgba(255,119,200,.24) 40%,rgba(80,220,255,.26) 70%,rgba(168,85,247,.25));background-size:200% 200%;animation:gk-aurora-glow 10s ease infinite;filter:blur(6px);opacity:0.85}.gk-toast&,.gk-dialog&,.gk-sheet&,.gk-bsheet&{isolation:isolate}' +
+      '@media (prefers-reduced-motion:reduce){.gk-toast&::before,.gk-dialog&::before,.gk-sheet&::before,.gk-bsheet&::before{animation:none}}',
   ),
   make(
     'classic-stack',

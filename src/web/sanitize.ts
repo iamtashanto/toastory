@@ -41,7 +41,7 @@ export function safeUrl(url: string): boolean {
 }
 
 function walk(parent: Node): void {
-  for (const node of Array.from(parent.childNodes)) {
+  for (const node of [...parent.childNodes]) {
     if (node.nodeType === 3) continue;
     if (node.nodeType !== 1) {
       parent.removeChild(node);
@@ -65,7 +65,7 @@ function walk(parent: Node): void {
       }
       continue;
     }
-    for (const attr of Array.from(element.attributes)) {
+    for (const attr of [...element.attributes]) {
       const name = attr.name.toLowerCase();
       const unsafeUrl = URL_ATTRS.has(name) && !safeUrl(attr.value);
       if (!ATTRS.has(name) || unsafeUrl) element.removeAttribute(attr.name);

@@ -28,10 +28,8 @@ export type WebRendererOptions = ToasterOptions;
  */
 export function registerWebRenderer(options: WebRendererOptions = {}): WebEngine {
   const engine = getEngine();
-  if (canMountToaster()) {
-    if (!engine.toaster) {
-      engine.toaster = mountToaster(engine.store, options);
-    }
+  if (canMountToaster() && !engine.toaster) {
+    engine.toaster = mountToaster(engine.store, options);
   }
   return engine;
 }

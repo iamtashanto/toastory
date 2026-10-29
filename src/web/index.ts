@@ -7,3 +7,5 @@ export { setSanitizer } from './sanitize';
 export type { Sanitizer } from './sanitize';
 export { mountToaster } from './toaster';
 export type { ToasterHandle, ToasterOptions } from './toaster';
+export { defineTheme, clearCustomThemes } from './theme-engine';
+export type { CustomThemeDefinition } from './theme-engine';

@@ -6,8 +6,7 @@ function toPatch(message: string | ToastPatch): ToastPatch {
 }
 
 function errorText(error: unknown): string {
-  if (error instanceof Error) return error.message;
-  return typeof error === 'string' ? error : String(error);
+  return error instanceof Error ? error.message : String(error);
 }
 
 /**
@@ -38,50 +37,44 @@ export function runPromiseToast<T>(
     duration: 0, // persistent while pending
   });
 
+  const settle = (
+    type: 'success' | 'error',
+    raw: unknown,
+    payload: unknown,
+  ): void => {
+    const desc =
+      typeof messages.description === 'function'
+        ? messages.description(
+            type === 'success' ? { status: type, value: payload as T } : { status: type, error: payload },
+          )
+        : messages.description;
+    store.update(id, {
+      duration: base.duration ?? store.config.get().duration,
+      ...toPatch(raw as string | ToastPatch),
+      type,
+      ...(desc !== undefined ? { description: desc } : {}),
+      resetTimer: true,
+    });
+  };
+
   promise
     .then((value) => {
       if (messages.success === undefined) {
         store.dismiss(id);
-        return;
+      } else {
+        settle('success', typeof messages.success === 'function' ? messages.success(value) : messages.success, value);
       }
-      const raw =
-        typeof messages.success === 'function' ? messages.success(value) : messages.success;
-      const patch = toPatch(raw);
-      let desc: string | undefined;
-      if (typeof messages.description === 'function') {
-        desc = messages.description({ status: 'success', value });
-      } else if (messages.description !== undefined) {
-        desc = messages.description;
-      }
-      store.update(id, {
-        duration: base.duration ?? store.config.get().duration,
-        ...patch,
-        type: 'success',
-        ...(desc !== undefined ? { description: desc } : {}),
-        resetTimer: true,
-      });
     })
     .catch((error: unknown) => {
-      const raw =
+      settle(
+        'error',
         messages.error === undefined
           ? errorText(error)
           : typeof messages.error === 'function'
             ? messages.error(error)
-            : messages.error;
-      const patch = toPatch(raw);
-      let desc: string | undefined;
-      if (typeof messages.description === 'function') {
-        desc = messages.description({ status: 'error', error });
-      } else if (messages.description !== undefined) {
-        desc = messages.description;
-      }
-      store.update(id, {
-        duration: base.duration ?? store.config.get().duration,
-        ...patch,
-        type: 'error',
-        ...(desc !== undefined ? { description: desc } : {}),
-        resetTimer: true,
-      });
+            : messages.error,
+        error,
+      );
     })
     .finally(() => {
       try {

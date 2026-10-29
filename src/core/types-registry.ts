@@ -16,32 +16,16 @@ export interface TypeRegistry {
   list(): string[];
 }
 
+const pol = (color: string) => ({ color: `var(--gk-${color})`, ariaLive: 'polite' as const });
+const ass = (color: string) => ({ color: `var(--gk-${color})`, ariaLive: 'assertive' as const });
+
 const BUILT_IN_TYPES: Record<string, ToastTypeDefinition> = {
-  success: {
-    color: 'var(--gk-success)',
-    ariaLive: 'polite',
-  },
-  error: {
-    color: 'var(--gk-error)',
-    ariaLive: 'assertive',
-  },
-  warning: {
-    color: 'var(--gk-warning)',
-    ariaLive: 'assertive',
-  },
-  info: {
-    color: 'var(--gk-info)',
-    ariaLive: 'polite',
-  },
-  loading: {
-    color: 'var(--gk-info)',
-    ariaLive: 'polite',
-    defaults: { duration: 0, dismissible: false },
-  },
-  message: {
-    color: 'var(--gk-fg)',
-    ariaLive: 'polite',
-  },
+  success: pol('success'),
+  error: ass('error'),
+  warning: ass('warning'),
+  info: pol('info'),
+  loading: { ...pol('info'), defaults: { duration: 0, dismissible: false } },
+  message: pol('fg'),
 };
 
 /** Creates a type registry. */
@@ -57,6 +41,6 @@ export function createTypeRegistry(): TypeRegistry {
     },
     remove: (name) => custom.delete(name),
     get: (name) => custom.get(name) ?? BUILT_IN_TYPES[name],
-    list: () => Array.from(custom.keys()),
+    list: () => [...custom.keys()],
   };
 }

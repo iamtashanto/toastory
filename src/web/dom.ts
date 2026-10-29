@@ -24,10 +24,7 @@ export function el<K extends keyof HTMLElementTagNameMap>(
 ): HTMLElementTagNameMap[K] {
   const node = document.createElement(tag);
   if (className) node.className = className;
-  for (const key of Object.keys(attrs)) {
-    const value = attrs[key];
-    if (value !== undefined) node.setAttribute(key, value);
-  }
+  for (const k in attrs) if (attrs[k] !== undefined) node.setAttribute(k, attrs[k]!);
   for (const child of children) {
     if (child) node.append(child);
   }
@@ -74,7 +71,7 @@ export const FOCUSABLE =
 
 /** Lists visible focusable descendants in DOM order. */
 export function focusables(root: HTMLElement): HTMLElement[] {
-  return Array.from(root.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
+  return [...root.querySelectorAll<HTMLElement>(FOCUSABLE)].filter(
     (node) => !node.hasAttribute('hidden') && node.getAttribute('aria-hidden') !== 'true',
   );
 }

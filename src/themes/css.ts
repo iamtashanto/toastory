@@ -23,21 +23,24 @@ const tokens = (t: ThemeTokens): string =>
     .join('');
 
 /**
- * Renders the token blocks (light, explicit dark, and automatic dark) plus the extra rules of a
- * theme. The result is unminified CSS without the shared base styles.
+ * Renders the token blocks (light, explicit dark, class-based dark, and automatic dark) plus
+ * fallbacks (no backdrop-filter, forced-colors, reduced transparency) and mobile optimizations.
  */
 export function themeCss(def: ThemeDefinition): string {
   const sel = `[data-gk-theme="${def.name}"]`;
   const shape =
     `--gk-radius:${def.radius};--gk-blur:${def.blur};--gk-saturate:${def.saturate};` +
-    `--gk-border-w:${def.borderWidth ?? '1px'};` +
+    (def.borderWidth ? `--gk-border-w:${def.borderWidth};` : '') +
     (def.font ? `--gk-font:${def.font};` : '') +
     (def.ease ? `--gk-ease:${def.ease};` : '') +
     (def.duration ? `--gk-duration:${def.duration};` : '');
+
+  const darkSel = `${sel}[data-gk-mode="dark"],:is(.dark,[data-theme="dark"]) ${sel}`;
   const extra = (def.css ?? '').split('&').join(sel);
+
   return (
     `${sel}{color-scheme:light;${shape}${tokens(def.light)}}` +
-    `${sel}[data-gk-mode="dark"]{color-scheme:dark;${tokens(def.dark)}}` +
+    `${darkSel}{color-scheme:dark;${tokens(def.dark)}}` +
     `@media (prefers-color-scheme:dark){${sel}[data-gk-mode="auto"]{color-scheme:dark;${tokens(def.dark)}}}` +
     extra
   );

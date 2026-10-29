@@ -21,6 +21,14 @@ import type {
 /** Reasons that originate from a person and are blocked on non-dismissible toasts. */
 const USER_REASONS: ReadonlySet<CloseReason> = new Set<CloseReason>(['user', 'swipe', 'click']);
 
+const safeCall = <A extends unknown[]>(fn: ((...args: A) => void) | undefined, ...args: A): void => {
+  try {
+    fn?.(...args);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 /** Pause reason used by `startPaused`. */
 export const MANUAL_PAUSE = 'manual';
 
@@ -91,11 +99,8 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
   const listeners = new Set<Listener>();
 
   const emit = (): void => {
-    snapshot = order.flatMap((id) => {
-      const entry = entries.get(id);
-      return entry ? [entry.record] : [];
-    });
-    for (const listener of [...listeners]) listener();
+    snapshot = order.map((id) => entries.get(id)?.record).filter(Boolean) as ToastRecord[];
+    listeners.forEach((listener) => listener());
   };
 
   const regionOf = (record: ToastRecord): string => `${record.container ?? ''}|${record.position}`;
@@ -126,15 +131,15 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
       position: merged.position ?? cfg.position,
       ariaLive: merged.ariaLive ?? (urgent ? 'assertive' : 'polite'),
       role: merged.role ?? (urgent ? 'alert' : 'status'),
-      createdAt: previous ? previous.createdAt : stamp,
+      createdAt: previous?.createdAt ?? stamp,
       updatedAt: stamp,
-      revision: previous ? previous.revision + 1 : 0,
-      timerEpoch: previous ? previous.timerEpoch : 0,
-      count: previous ? previous.count : 1,
-      visible: previous ? previous.visible : false,
+      revision: (previous?.revision ?? -1) + 1,
+      timerEpoch: previous?.timerEpoch ?? 0,
+      count: previous?.count ?? 1,
+      visible: previous?.visible ?? false,
       dismissed: false,
-      pausedBy: previous ? previous.pausedBy : cfg.startPaused ? [MANUAL_PAUSE] : [],
-      remaining: previous ? previous.remaining : duration === 0 ? Infinity : duration,
+      pausedBy: previous?.pausedBy ?? (cfg.startPaused ? [MANUAL_PAUSE] : []),
+      remaining: previous?.remaining ?? (duration === 0 ? Infinity : duration),
       custom,
     };
     return record;
@@ -147,11 +152,9 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
   const dedupeKeyOf = (opts: ToastOptions): string | undefined => {
     if (opts.dedupe === false) return undefined;
     if (typeof opts.dedupe === 'string') return opts.dedupe;
-    const type = opts.type ?? 'default';
-    const title = typeof opts.title === 'string' ? opts.title : '';
-    const desc = typeof opts.description === 'string' ? opts.description : '';
-    if (!title && !desc) return undefined;
-    return `${type}|${title}|${desc}`;
+    const t = typeof opts.title === 'string' ? opts.title : '';
+    const d = typeof opts.description === 'string' ? opts.description : '';
+    return t || d ? `${opts.type ?? 'default'}|${t}|${d}` : undefined;
   };
 
   const promote = (): void => {
@@ -192,11 +195,7 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
     emit();
     if (!entry.closedFired) {
       entry.closedFired = true;
-      try {
-        entry.record.onClose?.(entry.record, entry.reason ?? 'api');
-      } catch (err) {
-        console.error(err);
-      }
+      safeCall(entry.record.onClose, entry.record, entry.reason ?? 'api');
     }
   };
 
@@ -214,11 +213,7 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
 
     if (!entry.dismissFired && reason !== 'auto') {
       entry.dismissFired = true;
-      try {
-        entry.record.onDismiss?.(entry.record, reason);
-      } catch (err) {
-        console.error(err);
-      }
+      safeCall(entry.record.onDismiss, entry.record, reason);
     }
 
     promote();
@@ -236,14 +231,11 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
   const makeEntry = (id: ToastId, input: AddToastInput): Entry => {
     const { custom, ...opts } = input;
     const record = build(id, opts, undefined, custom);
-    let onTimerDone = (): void => {};
-    const timer = createTimer(record.duration, () => onTimerDone(), clock);
-    if (record.pausedBy.length) timer.pause();
     const entry: Entry = {
       opts,
       custom,
       record,
-      timer,
+      timer: undefined as unknown as PausableTimer,
       dedupeKey: dedupeKeyOf(opts),
       exitHandle: undefined,
       reason: undefined,
@@ -252,17 +244,18 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
       dismissFired: false,
       autoCloseFired: false,
     };
-    onTimerDone = () => {
-      if (!entry.autoCloseFired) {
-        entry.autoCloseFired = true;
-        try {
-          entry.record.onAutoClose?.(entry.record);
-        } catch (err) {
-          console.error(err);
+    entry.timer = createTimer(
+      record.duration,
+      () => {
+        if (!entry.autoCloseFired) {
+          entry.autoCloseFired = true;
+          safeCall(entry.record.onAutoClose, entry.record);
         }
-      }
-      dismissEntry(entry, 'auto');
-    };
+        dismissEntry(entry, 'auto');
+      },
+      clock,
+    );
+    if (record.pausedBy.length) entry.timer.pause();
     return entry;
   };
 
@@ -284,19 +277,11 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
       const entry = entries.get(id);
       if (entry && entry.record.visible && !entry.openedFired && !entry.record.dismissed) {
         entry.openedFired = true;
-        try {
-          entry.record.onOpen?.(entry.record);
-        } catch (err) {
-          console.error(err);
-        }
+        safeCall(entry.record.onOpen, entry.record);
       }
     }
   };
 
-  const pick = (id: ToastId): Entry[] => {
-    const entry = entries.get(id);
-    return entry ? [entry] : [];
-  };
 
   const store: ToastManager = {
     config,
@@ -355,15 +340,14 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
         delete next.icon;
       }
       let changed = false;
-      for (const [key, value] of Object.entries(rest)) {
+      for (const key in rest) {
+        const value = rest[key as keyof ToastPatch];
         if (value !== undefined) {
           if ((entry.opts as Record<string, unknown>)[key] !== value) changed = true;
-          Object.assign(next, { [key]: value });
+          (next as Record<string, unknown>)[key] = value;
         }
       }
-      if (!changed && rest.type === undefined && rest.position === undefined) {
-        return true;
-      }
+      if (!changed && rest.type === undefined && rest.position === undefined) return true;
       entry.opts = next;
       entry.dedupeKey = dedupeKeyOf(next);
       const rebuilt = build(id, next, entry.record, entry.custom);
@@ -386,21 +370,17 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
     },
 
     dismiss(id, reason = 'api') {
-      if (id === undefined) {
-        store.dismissAll(reason);
-        return;
-      }
+      if (id === undefined) return store.dismissAll(reason);
       const entry = entries.get(id);
       if (entry) dismissEntry(entry, reason);
     },
 
     dismissAll(reason = 'api') {
-      for (const entry of [...entries.values()]) dismissEntry(entry, reason);
+      for (const entry of entries.values()) dismissEntry(entry, reason);
     },
 
     pause(id, reason) {
-      const targets = id === undefined ? [...entries.values()] : pick(id);
-      for (const entry of targets) {
+      for (const entry of id === undefined ? entries.values() : entries.has(id) ? [entries.get(id)!] : []) {
         if (entry.record.pausedBy.includes(reason)) continue;
         entry.timer.pause(reason);
         entry.record = {
@@ -413,8 +393,7 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
     },
 
     resume(id, reason) {
-      const targets = id === undefined ? [...entries.values()] : pick(id);
-      for (const entry of targets) {
+      for (const entry of id === undefined ? entries.values() : entries.has(id) ? [entries.get(id)!] : []) {
         if (!entry.record.pausedBy.includes(reason)) continue;
         entry.timer.resume(reason);
         const nextPausedBy = entry.record.pausedBy.filter((value) => value !== reason);
