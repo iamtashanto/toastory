@@ -2,12 +2,24 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { transform } from 'esbuild';
-import { themeCss } from '../src/themes/css.ts';
-import { THEMES } from '../src/themes/themes.ts';
+import { build, transform } from 'esbuild';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const out = join(root, 'dist', 'themes');
+
+async function loadTs(filePath) {
+  const res = await build({
+    entryPoints: [filePath],
+    bundle: true,
+    format: 'esm',
+    write: false,
+  });
+  const code = res.outputFiles[0].text;
+  return import(`data:text/javascript;base64,${Buffer.from(code).toString('base64')}`);
+}
+
+const { themeCss } = await loadTs(join(root, 'src/themes/css.ts'));
+const { THEMES } = await loadTs(join(root, 'src/themes/themes.ts'));
 
 const minify = async (css) => (await transform(css, { loader: 'css', minify: true })).code;
 
