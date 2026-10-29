@@ -15,7 +15,8 @@
     "skipLibCheck": true,
     "noEmit": true,
     "allowImportingTsExtensions": true,
-    "types": ["node"]
+    "types": ["node"],
+    "experimentalDecorators": true
   },
   "include": ["src", "tests", "tsup.config.ts", "vitest.config.ts"]
 }

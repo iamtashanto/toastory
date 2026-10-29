@@ -133,7 +133,7 @@ describe('dialog options and styling', () => {
   it('renders all icon types and custom icons', async () => {
     for (const iconType of ['success', 'error', 'warning', 'info', 'question'] as const) {
       const p = ui.alert({ icon: iconType });
-      const iconBox = dialogEl()?.querySelector('.gk-dialog-icon');
+      const iconBox = dialogEl()?.querySelector<HTMLElement>('.gk-dialog-icon');
       expect(iconBox?.dataset.icon).toBe(iconType);
       expect(iconBox?.querySelector('svg')).not.toBeNull();
       p.handle.close();

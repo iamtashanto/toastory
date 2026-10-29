@@ -83,10 +83,20 @@ export function configure(patch: Partial<GlazeConfig>): Readonly<GlazeConfig> {
   return getNativeEngine().store.config.set(patch);
 }
 
+/** Resets the native engine for tests. */
+export function resetNativeEngine(): void {
+  if (nativeEngine) {
+    nativeEngine.store.clear();
+    nativeEngine.store.clearHistory();
+    nativeEngine.store.config.reset();
+  }
+}
+
 /** Native UI namespace. */
 export const ui = {
   toast,
   configure,
+  reset: resetNativeEngine,
 };
 
 export interface NativeToasterProps {
@@ -118,33 +128,34 @@ export function Toaster(props: NativeToasterProps): React.JSX.Element | null {
 
   return (
     <div
-      style={{
-        position: 'absolute',
-        top: props.offset ?? 50,
-        left: 16,
-        right: 16,
-        zIndex: 99999,
-        pointerEvents: 'box-none',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: 8,
-        ...props.style,
-      }}
+      style={
+        {
+          position: 'absolute',
+          top: props.offset ?? 50,
+          left: 16,
+          right: 16,
+          zIndex: 99999,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: 8,
+          ...props.style,
+        } as React.CSSProperties
+      }
     >
       {visibleToasts.map((item) => (
         <div
           key={String(item.id)}
-          style={{
-            backgroundColor: 'rgba(28, 28, 30, 0.85)',
-            padding: 14,
-            borderRadius: 16,
-            minWidth: 200,
-            maxWidth: '100%',
-            shadowColor: '#000',
-            shadowOpacity: 0.25,
-            shadowRadius: 10,
-          }}
+          style={
+            {
+              backgroundColor: 'rgba(28, 28, 30, 0.85)',
+              padding: 14,
+              borderRadius: 16,
+              minWidth: 200,
+              maxWidth: '100%',
+              boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25)',
+            } as React.CSSProperties
+          }
         >
           {item.title ? (
             <div style={{ color: '#fff', fontWeight: '600', fontSize: 15 }}>
