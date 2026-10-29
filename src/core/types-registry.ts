@@ -31,3 +31,4 @@ export function createTypeRegistry(): TypeRegistry {
     list: () => [...map.keys()],
   };
 }
+

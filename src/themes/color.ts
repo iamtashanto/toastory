@@ -65,3 +65,4 @@ export function toHex(color: Rgba): string {
 export function flatten(color: string, backdrop: string): Rgba {
   return composite(parseColor(color), { ...parseColor(backdrop), a: 1 });
 }
+

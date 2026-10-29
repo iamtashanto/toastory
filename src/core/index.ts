@@ -66,3 +66,4 @@ export function createToastEngine(options: ToastStoreOptions = {}): ToastEngine 
   const store = createToastStore({ config: options.config ?? createConfigStore(), ...options });
   return { store, toast: createToastApi(store) };
 }
+

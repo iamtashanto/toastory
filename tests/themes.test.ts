@@ -123,3 +123,4 @@ describe('theme contrast (WCAG 2.2 AA)', () => {
     }
   }
 });
+
