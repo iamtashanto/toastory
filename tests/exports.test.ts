@@ -74,4 +74,9 @@ describe('Package Subpath Exports Verification', () => {
       expect(check(mod)).toBeTruthy();
     });
   }
+
+  it('generates dist/themes/all.css containing all themes', () => {
+    const allCssPath = join(root, 'dist/themes/all.css');
+    expect(existsSync(allCssPath)).toBe(true);
+  });
 });

@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "../lib/toastory/toastory.css";
+@import "toastory/themes/all.css";
 
 :root {
   --site-bg: #0b0c12;

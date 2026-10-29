@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { ui, toast } from 'toastory';
-import { THEME_REGISTRY } from '@/lib/toastory/theme-generator';
+import { THEME_REGISTRY } from '@/lib/theme-generator';
 
 export default function ThemesPage() {
   const [filterCategory, setFilterCategory] = useState<string>('all');

@@ -1,14 +1,15 @@
 import { useEffect, useMemo, useSyncExternalStore, type JSX } from 'react';
-import type { GlazeConfig, ToastApi, ToastRecord } from '../core';
+import type { GlazeConfig, ToastApi, ToastRecord, ToastoryConfig } from '../core';
 import { canMountToaster, mountToaster } from '../web/toaster';
 import { getEngine, setAutoMount } from '../web/engine';
 import { toast, ui } from '../web/ui';
 
 export { ui, toast };
 export type { Ui } from '../web/ui';
+export type { GlazeConfig, ToastoryConfig };
 
 /** Props for the React Toaster component. */
-export interface ToasterProps extends Partial<GlazeConfig> {
+export interface ToasterProps extends Partial<ToastoryConfig> {
   /** Custom container class name. */
   className?: string;
 }

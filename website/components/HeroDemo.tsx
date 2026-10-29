@@ -73,7 +73,7 @@ export function HeroDemo() {
       {
         loading: 'Optimizing and tree-shaking bundle...',
         success: (data: { id: string }) => `Deployed build ${data.id} in 420ms!`,
-        error: (err: { message?: string }) => `Failed: ${err.message || 'Error'}`,
+        error: (err: unknown) => `Failed: ${(err as { message?: string })?.message || 'Error'}`,
         description: 'Compiling ESM + CJS subpaths with zero dependencies.',
       },
       {
@@ -108,7 +108,7 @@ export function HeroDemo() {
       theme: activeTheme,
       validate: (val: unknown) => {
         if (!val || typeof val !== 'string' || val.trim().length < 3) return 'Project slug must be at least 3 characters.';
-        return true;
+        return undefined;
       },
     });
 

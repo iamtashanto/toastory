@@ -31,10 +31,13 @@ await mkdir(out, { recursive: true });
 await writeFile(join(out, '_base.toast.css'), await minify(baseToast));
 await writeFile(join(out, '_base.dialog.css'), await minify(baseDialog));
 await writeFile(join(out, '_base.css'), await minify(baseToast + baseDialog));
+let allThemesCss = baseToast + baseDialog;
 for (const def of THEMES) {
   const own = themeCss(def);
+  allThemesCss += '\n' + own;
   await writeFile(join(out, `${def.name}.toast.css`), await minify(baseToast + own));
   await writeFile(join(out, `${def.name}.dialog.css`), await minify(baseDialog + own));
   await writeFile(join(out, `${def.name}.css`), await minify(baseToast + baseDialog + own));
 }
-console.log(`themes: wrote ${THEMES.length * 3 + 3} files to dist/themes`);
+await writeFile(join(out, 'all.css'), await minify(allThemesCss));
+console.log(`themes: wrote ${THEMES.length * 3 + 4} files to dist/themes`);

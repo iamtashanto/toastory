@@ -431,7 +431,9 @@ export interface GlazeConfig {
   mobileOffset?: number | string;
 }
 
-export type Config = GlazeConfig;
+export type ToastoryConfig = GlazeConfig;
+export type ToastoryConfigPatch = Partial<ToastoryConfig>;
+export type Config = ToastoryConfig;
 export type GlazeConfigPatch = Partial<GlazeConfig>;
 
 /** Outcome delivered to promise descriptions. */

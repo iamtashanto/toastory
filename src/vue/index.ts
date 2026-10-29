@@ -1,24 +1,25 @@
 import { defineComponent, onMounted, onUnmounted, shallowRef, type App, type PropType } from 'vue';
-import type { GlazeConfig, ToastApi, ToastRecord } from '../core';
+import type { GlazeConfig, ToastApi, ToastRecord, ToastoryConfig } from '../core';
 import { canMountToaster, mountToaster } from '../web/toaster';
 import { getEngine, setAutoMount } from '../web/engine';
 import { toast, ui } from '../web/ui';
 
 export { ui, toast };
 export type { Ui } from '../web/ui';
+export type { GlazeConfig, ToastoryConfig };
 
 /** Vue component that manages the toastory Toaster lifecycle. */
-export const GlazeToaster = defineComponent({
-  name: 'GlazeToaster',
+export const ToastoryToaster = defineComponent({
+  name: 'ToastoryToaster',
   props: {
     theme: { type: String, default: undefined },
-    mode: { type: String as PropType<GlazeConfig['mode']>, default: undefined },
-    position: { type: String as PropType<GlazeConfig['position']>, default: undefined },
+    mode: { type: String as PropType<ToastoryConfig['mode']>, default: undefined },
+    position: { type: String as PropType<ToastoryConfig['position']>, default: undefined },
     duration: { type: Number, default: undefined },
     maxVisible: { type: Number, default: undefined },
     gap: { type: Number, default: undefined },
     stack: { type: Boolean, default: undefined },
-    dir: { type: String as PropType<GlazeConfig['dir']>, default: undefined },
+    dir: { type: String as PropType<ToastoryConfig['dir']>, default: undefined },
     hotkey: { type: String, default: undefined },
     richColors: { type: Boolean, default: undefined },
     closeButton: { type: Boolean, default: undefined },
@@ -28,7 +29,7 @@ export const GlazeToaster = defineComponent({
     const engine = getEngine();
 
     onMounted(() => {
-      const patch: Partial<GlazeConfig> = {};
+      const patch: Partial<ToastoryConfig> = {};
       for (const [key, val] of Object.entries(props)) {
         if (val !== undefined) (patch as Record<string, unknown>)[key] = val;
       }
@@ -49,6 +50,8 @@ export const GlazeToaster = defineComponent({
     return () => null;
   },
 });
+
+export const GlazeToaster = ToastoryToaster;
 
 /** Composable returning toast actions and reactive active toasts array. */
 export function useToast(): {
@@ -115,4 +118,3 @@ export const toastoryPlugin = {
 };
 
 export const glazekitPlugin = toastoryPlugin;
-export const ToastoryToaster = GlazeToaster;

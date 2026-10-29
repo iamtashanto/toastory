@@ -19,9 +19,7 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"],
-      "toastory": ["./lib/toastory/index.ts"],
-      "toastory/*": ["./lib/toastory/*"]
+      "@/*": ["./*"]
     }
   },
   "include": [
