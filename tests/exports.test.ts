@@ -1,12 +1,20 @@
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { existsSync } from 'node:fs';
+import { execSync } from 'node:child_process';
+import { beforeAll, describe, expect, it } from 'vitest';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const require = createRequire(import.meta.url);
 
 describe('Package Subpath Exports Verification', () => {
+  beforeAll(() => {
+    if (!existsSync(join(root, 'dist/index.js')) || !existsSync(join(root, 'dist/index.cjs'))) {
+      execSync('npm run build', { cwd: root, stdio: 'pipe' });
+    }
+  });
+
   const subpaths = [
     {
       name: '.',
@@ -30,13 +38,14 @@ describe('Package Subpath Exports Verification', () => {
       name: './vue',
       esm: './dist/vue.js',
       cjs: './dist/vue.cjs',
-      check: (m: Record<string, unknown>) => Boolean(m.GlazeToaster),
+      check: (m: Record<string, unknown>) => Boolean(m.ToastoryToaster || m.GlazeToaster),
     },
     {
       name: './angular',
       esm: './dist/angular.js',
       cjs: './dist/angular.cjs',
-      check: (m: Record<string, unknown>) => Boolean(m.GlazeToasterComponent),
+      check: (m: Record<string, unknown>) =>
+        Boolean(m.ToastoryToasterComponent || m.GlazeToasterComponent),
     },
     {
       name: './svelte',
