@@ -100,9 +100,6 @@ const ALLOW_LIST = [
   'https://glazekit.dev/playground',
   'https://glazekit.dev/themes',
   'https://glazekit.dev/docs/migration',
-  'https://bundlephobia.com/package/glazekit',
-  'https://www.npmjs.com/package/glazekit',
-  'https://www.npmjs.com/package/glazekit?activeTab=dependencies',
 ];
 
 // Check if network is accessible
