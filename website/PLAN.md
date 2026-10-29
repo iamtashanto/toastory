@@ -135,3 +135,4 @@
 7. **Documentation System (`/docs/*`)**: All 30+ documentation guides, recipes, migration guides, theming reference, and API specifications.
 8. **Meta & SEO Endpoints**: `/changelog`, `/roadmap`, `/security`, `/privacy`, `/sitemap.xml`, `/robots.txt`, `/llms.txt`, `/llms-full.txt`.
 9. **Quality Gate Verification**: Run `next build --webpack` and `npm run lint` until 100% green and error-free.
+

@@ -20,7 +20,7 @@
     ],
     "paths": {
       "@/*": ["./*"],
-      "glazekit": ["./lib/glazekit/index.js"],
+      "glazekit": ["./lib/glazekit/index.ts"],
       "glazekit/*": ["./lib/glazekit/*"]
     }
   },

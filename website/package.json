@@ -8,7 +8,8 @@
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
-    "check": "npm run build && npm run lint"
+    "typecheck": "tsc --noEmit",
+    "check": "npm run typecheck && npm run build && npm run lint"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.3.3",

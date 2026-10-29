@@ -55,3 +55,4 @@ Place a \`_headers\` file in your publish directory to enforce strict security h
 1. In Cloudflare Pages, navigate to **Custom Domains**.
 2. Add \`glazekit.dev\` and \`www.glazekit.dev\`.
 3. Cloudflare will automatically provision a Universal SSL certificate and configure DNS CNAME records.
+

@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { ui, toast, ToastPosition, ToastOptions } from 'glazekit';
+import { ui, toast } from 'glazekit';
+import type { ToastPosition, ToastOptions } from 'glazekit';
 import { THEME_REGISTRY } from '@/lib/glazekit/theme-generator';
 import { CodeSnippet } from '@/components/CodeSnippet';
 

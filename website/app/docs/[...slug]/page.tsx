@@ -224,3 +224,4 @@ export default async function DocArticlePage({ params }: Props) {
     </article>
   );
 }
+

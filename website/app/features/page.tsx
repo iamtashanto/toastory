@@ -326,3 +326,4 @@ setTimeout(() => handle.close(), 2000);`,
     </div>
   );
 }
+

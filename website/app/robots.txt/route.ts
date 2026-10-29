@@ -12,3 +12,4 @@ Sitemap: https://glazekit.dev/sitemap.xml
     },
   });
 }
+

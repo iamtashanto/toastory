@@ -1,12 +1,12 @@
 {
   "name": "glazekit",
   "version": "0.1.0",
-  "description": "Complete UI feedback toolkit: toast notifications, confirm / prompt / alert dialogs, sheets and loading overlays with Apple glass design.",
+  "description": "Complete UI feedback toolkit: toast notifications, confirm / prompt / alert dialogs, sheets and loading overlays with frosted glass design.",
   "license": "MIT",
-  "author": "glazekit contributors",
+  "author": "TA Shanto <shanto@glazekit.dev>",
   "homepage": "https://glazekit.dev",
   "bugs": {
-    "url": "https://github.com/glazekit/glazekit/issues"
+    "url": "https://github.com/iamtashanto/glazekit/issues"
   },
   "type": "module",
   "sideEffects": [
@@ -50,41 +50,86 @@
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "core": ["./dist/core.d.ts"],
+      "react": ["./dist/react.d.ts"],
+      "vue": ["./dist/vue.d.ts"],
+      "angular": ["./dist/angular.d.ts"],
+      "svelte": ["./dist/svelte.d.ts"],
+      "native": ["./dist/native.d.ts"]
+    }
+  },
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     },
     "./core": {
-      "types": "./dist/core.d.ts",
-      "import": "./dist/core.js",
-      "require": "./dist/core.cjs"
+      "import": {
+        "types": "./dist/core.d.ts",
+        "default": "./dist/core.js"
+      },
+      "require": {
+        "types": "./dist/core.d.cts",
+        "default": "./dist/core.cjs"
+      }
     },
     "./react": {
-      "types": "./dist/react.d.ts",
-      "import": "./dist/react.js",
-      "require": "./dist/react.cjs"
+      "import": {
+        "types": "./dist/react.d.ts",
+        "default": "./dist/react.js"
+      },
+      "require": {
+        "types": "./dist/react.d.cts",
+        "default": "./dist/react.cjs"
+      }
     },
     "./vue": {
-      "types": "./dist/vue.d.ts",
-      "import": "./dist/vue.js",
-      "require": "./dist/vue.cjs"
+      "import": {
+        "types": "./dist/vue.d.ts",
+        "default": "./dist/vue.js"
+      },
+      "require": {
+        "types": "./dist/vue.d.cts",
+        "default": "./dist/vue.cjs"
+      }
     },
     "./angular": {
-      "types": "./dist/angular.d.ts",
-      "import": "./dist/angular.js",
-      "require": "./dist/angular.cjs"
+      "import": {
+        "types": "./dist/angular.d.ts",
+        "default": "./dist/angular.js"
+      },
+      "require": {
+        "types": "./dist/angular.d.cts",
+        "default": "./dist/angular.cjs"
+      }
     },
     "./svelte": {
-      "types": "./dist/svelte.d.ts",
-      "import": "./dist/svelte.js",
-      "require": "./dist/svelte.cjs"
+      "import": {
+        "types": "./dist/svelte.d.ts",
+        "default": "./dist/svelte.js"
+      },
+      "require": {
+        "types": "./dist/svelte.d.cts",
+        "default": "./dist/svelte.cjs"
+      }
     },
     "./native": {
-      "types": "./dist/native.d.ts",
-      "import": "./dist/native.js",
-      "require": "./dist/native.cjs"
+      "import": {
+        "types": "./dist/native.d.ts",
+        "default": "./dist/native.js"
+      },
+      "require": {
+        "types": "./dist/native.d.cts",
+        "default": "./dist/native.cjs"
+      }
     },
     "./themes/*.css": "./dist/themes/*.css",
     "./package.json": "./package.json"
@@ -150,6 +195,7 @@
   },
   "devDependencies": {
     "@angular/core": "^21.2.25",
+    "@arethetypeswrong/cli": "^0.18.5",
     "@changesets/cli": "^3.0.3",
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.64.1",
@@ -162,6 +208,7 @@
     "eslint": "^10.13.0",
     "jsdom": "^29.1.1",
     "prettier": "^3.9.10",
+    "publint": "^0.3.25",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "rxjs": "^7.8.2",

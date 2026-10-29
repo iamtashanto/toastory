@@ -78,3 +78,4 @@ export function CodeSnippet({ code, language = 'typescript', filename }: CodeSni
     </div>
   );
 }
+

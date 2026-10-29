@@ -977,3 +977,4 @@ ${selector}[data-gk-mode="dark"],
 ${t.css ? t.css.replace(/&/g, selector) : ''}
 `;
 }
+
