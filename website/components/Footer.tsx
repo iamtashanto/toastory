@@ -135,7 +135,7 @@ export function Footer() {
             </li>
             <li>
               <a
-                href="https://github.com/glazekit/glazekit"
+                href="https://github.com/iamtashanto/toastory"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-white transition-colors"

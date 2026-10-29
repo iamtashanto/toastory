@@ -83,9 +83,8 @@ export function Header() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`text-sm font-medium transition-colors ${
-                    isActive ? 'text-blue-400' : 'text-gray-300 hover:text-white'
-                  }`}
+                  className={`text-sm font-medium transition-colors ${isActive ? 'text-blue-400' : 'text-gray-300 hover:text-white'
+                    }`}
                 >
                   {link.label}
                 </Link>
@@ -132,7 +131,7 @@ export function Header() {
 
             {/* GitHub Link */}
             <a
-              href="https://github.com/glazekit/glazekit"
+              href="https://github.com/iamtashanto/toastory"
               target="_blank"
               rel="noopener noreferrer"
               className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors"

@@ -213,7 +213,7 @@ export default async function DocArticlePage({ params }: Props) {
       {/* GitHub Edit Link */}
       <div className="mt-8 text-center sm:text-left text-xs text-gray-400">
         <a
-          href={`https://github.com/glazekit/glazekit/edit/main/docs/${slug}.md`}
+          href={`https://github.com/iamtashanto/toastory/edit/main/docs/${slug}.md`}
           target="_blank"
           rel="noopener noreferrer"
           className="hover:text-white transition-colors underline"

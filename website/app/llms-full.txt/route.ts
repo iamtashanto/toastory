@@ -6,7 +6,7 @@ export async function GET() {
 Package: toastory
 Version: 0.1.0
 License: MIT
-Repository: https://github.com/glazekit/glazekit
+Repository: https://github.com/iamtashanto/toastory
 
 ================================================================================
 `;
