@@ -1,188 +1,943 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Modal and confirmation designs</title>
-<style>
-:root{--bg:#f4f4f2;--fg:#17171a;--mut:#6b6b73;--card:#fff;--bd:#e4e4e0;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d0d0f;--fg:#f4f4f5;--mut:#9a9aa3;--card:#17171a;--bd:#2a2a30;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0d0d0f;--fg:#f4f4f5;--mut:#9a9aa3;--card:#17171a;--bd:#2a2a30;color-scheme:dark}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--fg);font-family:Inter,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.5}
-.wrap{max-width:1080px;margin:0 auto;padding:32px 20px 56px}
-h1{font-size:28px;font-weight:600;letter-spacing:-.02em;margin:0 0 6px}
-.sub{color:var(--mut);margin:0 0 20px;font-size:15px}
-.top{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px}
-.top button,.rp{font:inherit;font-size:13px;padding:7px 13px;border-radius:10px;border:1px solid var(--bd);background:var(--card);color:var(--fg);cursor:pointer}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,470px),1fr));gap:18px}
-.card{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:10px 10px 12px}
-.ch{display:flex;align-items:center;justify-content:space-between;margin:2px 6px 10px}
-.ch h3{font-size:13px;font-weight:500;color:var(--mut);margin:0}
-.rp{padding:3px 10px;font-size:12px}
-.stage{border-radius:12px;min-height:340px;display:flex;align-items:center;justify-content:center;padding:20px 14px;position:relative;overflow:hidden;background:linear-gradient(135deg,#e8e6f5,#f3e7e1);isolation:isolate}
-.stage::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.05) 0 14px,transparent 14px 34px);z-index:-2}
-.ov{position:absolute;inset:0;background:rgba(14,14,20,.5);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);z-index:-1}
-.wp{background:radial-gradient(circle at 15% 20%,#ff7a59 0,transparent 45%),radial-gradient(circle at 85% 30%,#7c5cff 0,transparent 50%),radial-gradient(circle at 50% 100%,#19c3b1 0,transparent 55%),#2a2f6b}
-.wp::before,.wp .ov{display:none}
-.m{width:100%;max-width:350px;background:#fff;color:#18181b;border-radius:20px;padding:24px 22px 20px;box-shadow:0 24px 60px rgba(0,0,0,.3);position:relative;text-align:center}
-.play{animation:pop .45s cubic-bezier(.2,.95,.25,1.15) both}
-@keyframes pop{from{opacity:0;transform:translateY(14px) scale(.93)}to{opacity:1;transform:none}}
-@keyframes up{from{transform:translateY(100%)}to{transform:none}}
-@keyframes draw{to{stroke-dashoffset:0}}
-@keyframes shrink{from{width:100%}to{width:0}}
-.m h4{margin:14px 0 6px;font-size:18px;font-weight:600;letter-spacing:-.015em}
-.m p{margin:0;font-size:14px;color:#6b6b73;line-height:1.5}
-.icb{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;margin:0 auto}
-.icb svg,.ic{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.ia{background:#fef3c7;color:#d97706}.ir{background:#fee2e2;color:#dc2626}.ig{background:#dcfce7;color:#16a34a}.ib2{background:#dbeafe;color:#2563eb}.ip{background:#ede9fe;color:#7c3aed}
-.acts{display:flex;gap:10px;margin-top:20px}
-.acts.col{flex-direction:column}
-.b{flex:1;font:inherit;font-size:14px;font-weight:600;padding:10px 14px;border-radius:11px;border:1px solid #e4e4e7;background:#fff;color:#27272a;cursor:pointer;transition:transform .15s,opacity .15s}
-.b:active{transform:scale(.97)}
-.b.am{background:#f59e0b;border-color:#f59e0b;color:#fff}
-.b.rd{background:#dc2626;border-color:#dc2626;color:#fff}
-.b.bl{background:#2563eb;border-color:#2563eb;color:#fff}
-.b.gr{background:#16a34a;border-color:#16a34a;color:#fff}
-.b.dk{background:#18181b;border-color:#18181b;color:#fff}
-.b[disabled]{opacity:.4;cursor:not-allowed}
-.in{width:100%;font:inherit;font-size:14px;padding:10px 12px;border-radius:10px;border:1px solid #d4d4d8;background:#fff;color:#18181b;outline:none;margin-top:14px;text-align:left}
-.in:focus{border-color:#6366f1;box-shadow:0 0 0 3px rgba(99,102,241,.2)}
-.lb{display:block;text-align:left;font-size:12.5px;font-weight:500;color:#52525b;margin-top:14px}
-.lb+.in{margin-top:6px}
-.code{background:#f4f4f5;border-radius:6px;padding:1px 6px;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:#18181b}
-.xb{position:absolute;right:12px;top:12px;width:28px;height:28px;border-radius:50%;background:#f4f4f5;display:grid;place-items:center;color:#71717a}
-.xb svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round}
-.left{text-align:left}.left .icb{margin:0}
-.hd{display:flex;gap:14px;align-items:flex-start;text-align:left}
-.hd .icb{width:42px;height:42px;flex:none;margin:0}
-.hd h4{margin:0 0 4px;font-size:16.5px}
-.note{display:flex;gap:8px;align-items:flex-start;background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:10px;padding:9px 11px;font-size:12.5px;text-align:left;margin-top:14px}
-.note svg{width:16px;height:16px;flex:none;margin-top:1px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.ck{width:30px;height:30px}
-.ck path{stroke-dasharray:26;stroke-dashoffset:26;animation:draw .5s .3s ease forwards}
-.dark{background:#17171c;color:#f4f4f5;border:1px solid #2c2c34}
-.dark p{color:#a1a1aa}.dark .b{background:#24242b;border-color:#33333b;color:#f4f4f5}
-.dark .b.rd{background:#ef4444;border-color:#ef4444}
-.dark .in{background:#0f0f13;border-color:#33333b;color:#f4f4f5}
-.dark .lb{color:#a1a1aa}
-.otp{display:flex;gap:8px;justify-content:center;margin-top:18px}
-.otp input{width:42px;height:50px;text-align:center;font:inherit;font-size:20px;font-weight:600;border-radius:10px;border:1px solid #d4d4d8;outline:none;color:#18181b;background:#fff}
-.otp input:focus{border-color:#6366f1;box-shadow:0 0 0 3px rgba(99,102,241,.2)}
-.sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;color:#18181b;border-radius:24px 24px 0 0;padding:10px 20px 20px;animation:up .45s cubic-bezier(.2,.9,.25,1) both;text-align:center}
-.sheet.play{animation:up .45s cubic-bezier(.2,.9,.25,1) both}
-.hdl{width:38px;height:4px;border-radius:9px;background:#d4d4d8;margin:0 auto 16px}
-.glass{background:rgba(245,245,247,.7);backdrop-filter:blur(30px) saturate(190%);-webkit-backdrop-filter:blur(30px) saturate(190%);border-radius:20px;max-width:290px;padding:0;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.28)}
-.glass .bd{padding:18px 16px 16px}
-.glass h4{margin:0;font-size:16px}
-.glass p{margin-top:4px;font-size:13px;color:#3c3c43}
-.glass .row{display:flex;border-top:.5px solid rgba(60,60,67,.3)}
-.glass .row span{flex:1;padding:12px 0;font-size:16px;color:#0a84ff;cursor:pointer}
-.glass .row span+span{border-left:.5px solid rgba(60,60,67,.3);font-weight:600;color:#ff3b30}
-.tm{height:5px;border-radius:9px;background:#e4e4e7;overflow:hidden;margin-top:16px}
-.tm i{display:block;height:100%;background:#f59e0b;animation:shrink 60s linear infinite}
-.big{font-size:34px;font-weight:600;letter-spacing:-.03em;margin:10px 0 2px;color:#18181b}
-</style>
-</head>
-<body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-<symbol id="warn" viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01"/></symbol>
-<symbol id="trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6"/></symbol>
-<symbol id="check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
-<symbol id="info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></symbol>
-<symbol id="out" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></symbol>
-<symbol id="lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
-<symbol id="clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
-<symbol id="edit" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></symbol>
-<symbol id="shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
-<symbol id="up" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></symbol>
-</svg>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Modal and confirmation designs</title>
+    <style>
+      :root {
+        --bg: #f4f4f2;
+        --fg: #17171a;
+        --mut: #6b6b73;
+        --card: #fff;
+        --bd: #e4e4e0;
+        color-scheme: light;
+        box-sizing: border-box;
+        padding-top: env(safe-area-inset-top, 0px);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme='light']) {
+          --bg: #0d0d0f;
+          --fg: #f4f4f5;
+          --mut: #9a9aa3;
+          --card: #17171a;
+          --bd: #2a2a30;
+          color-scheme: dark;
+        }
+      }
+      :root[data-theme='dark'] {
+        --bg: #0d0d0f;
+        --fg: #f4f4f5;
+        --mut: #9a9aa3;
+        --card: #17171a;
+        --bd: #2a2a30;
+        color-scheme: dark;
+      }
+      html {
+        scroll-padding-top: env(safe-area-inset-top, 0px);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font-family:
+          Inter,
+          -apple-system,
+          'Segoe UI',
+          Roboto,
+          Helvetica,
+          Arial,
+          sans-serif;
+        line-height: 1.5;
+      }
+      .wrap {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 32px 20px 56px;
+      }
+      h1 {
+        font-size: 28px;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        margin: 0 0 6px;
+      }
+      .sub {
+        color: var(--mut);
+        margin: 0 0 20px;
+        font-size: 15px;
+      }
+      .top {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+      }
+      .top button,
+      .rp {
+        font: inherit;
+        font-size: 13px;
+        padding: 7px 13px;
+        border-radius: 10px;
+        border: 1px solid var(--bd);
+        background: var(--card);
+        color: var(--fg);
+        cursor: pointer;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 470px), 1fr));
+        gap: 18px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--bd);
+        border-radius: 18px;
+        padding: 10px 10px 12px;
+      }
+      .ch {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 2px 6px 10px;
+      }
+      .ch h3 {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--mut);
+        margin: 0;
+      }
+      .rp {
+        padding: 3px 10px;
+        font-size: 12px;
+      }
+      .stage {
+        border-radius: 12px;
+        min-height: 340px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px 14px;
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, #e8e6f5, #f3e7e1);
+        isolation: isolate;
+      }
+      .stage::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: repeating-linear-gradient(
+          0deg,
+          rgba(0, 0, 0, 0.05) 0 14px,
+          transparent 14px 34px
+        );
+        z-index: -2;
+      }
+      .ov {
+        position: absolute;
+        inset: 0;
+        background: rgba(14, 14, 20, 0.5);
+        backdrop-filter: blur(2px);
+        -webkit-backdrop-filter: blur(2px);
+        z-index: -1;
+      }
+      .wp {
+        background:
+          radial-gradient(circle at 15% 20%, #ff7a59 0, transparent 45%),
+          radial-gradient(circle at 85% 30%, #7c5cff 0, transparent 50%),
+          radial-gradient(circle at 50% 100%, #19c3b1 0, transparent 55%), #2a2f6b;
+      }
+      .wp::before,
+      .wp .ov {
+        display: none;
+      }
+      .m {
+        width: 100%;
+        max-width: 350px;
+        background: #fff;
+        color: #18181b;
+        border-radius: 20px;
+        padding: 24px 22px 20px;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3);
+        position: relative;
+        text-align: center;
+      }
+      .play {
+        animation: pop 0.45s cubic-bezier(0.2, 0.95, 0.25, 1.15) both;
+      }
+      @keyframes pop {
+        from {
+          opacity: 0;
+          transform: translateY(14px) scale(0.93);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      @keyframes up {
+        from {
+          transform: translateY(100%);
+        }
+        to {
+          transform: none;
+        }
+      }
+      @keyframes draw {
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+      @keyframes shrink {
+        from {
+          width: 100%;
+        }
+        to {
+          width: 0;
+        }
+      }
+      .m h4 {
+        margin: 14px 0 6px;
+        font-size: 18px;
+        font-weight: 600;
+        letter-spacing: -0.015em;
+      }
+      .m p {
+        margin: 0;
+        font-size: 14px;
+        color: #6b6b73;
+        line-height: 1.5;
+      }
+      .icb {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        margin: 0 auto;
+      }
+      .icb svg,
+      .ic {
+        width: 24px;
+        height: 24px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .ia {
+        background: #fef3c7;
+        color: #d97706;
+      }
+      .ir {
+        background: #fee2e2;
+        color: #dc2626;
+      }
+      .ig {
+        background: #dcfce7;
+        color: #16a34a;
+      }
+      .ib2 {
+        background: #dbeafe;
+        color: #2563eb;
+      }
+      .ip {
+        background: #ede9fe;
+        color: #7c3aed;
+      }
+      .acts {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+      .acts.col {
+        flex-direction: column;
+      }
+      .b {
+        flex: 1;
+        font: inherit;
+        font-size: 14px;
+        font-weight: 600;
+        padding: 10px 14px;
+        border-radius: 11px;
+        border: 1px solid #e4e4e7;
+        background: #fff;
+        color: #27272a;
+        cursor: pointer;
+        transition:
+          transform 0.15s,
+          opacity 0.15s;
+      }
+      .b:active {
+        transform: scale(0.97);
+      }
+      .b.am {
+        background: #f59e0b;
+        border-color: #f59e0b;
+        color: #fff;
+      }
+      .b.rd {
+        background: #dc2626;
+        border-color: #dc2626;
+        color: #fff;
+      }
+      .b.bl {
+        background: #2563eb;
+        border-color: #2563eb;
+        color: #fff;
+      }
+      .b.gr {
+        background: #16a34a;
+        border-color: #16a34a;
+        color: #fff;
+      }
+      .b.dk {
+        background: #18181b;
+        border-color: #18181b;
+        color: #fff;
+      }
+      .b[disabled] {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      .in {
+        width: 100%;
+        font: inherit;
+        font-size: 14px;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid #d4d4d8;
+        background: #fff;
+        color: #18181b;
+        outline: none;
+        margin-top: 14px;
+        text-align: left;
+      }
+      .in:focus {
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+      }
+      .lb {
+        display: block;
+        text-align: left;
+        font-size: 12.5px;
+        font-weight: 500;
+        color: #52525b;
+        margin-top: 14px;
+      }
+      .lb + .in {
+        margin-top: 6px;
+      }
+      .code {
+        background: #f4f4f5;
+        border-radius: 6px;
+        padding: 1px 6px;
+        font-family: ui-monospace, Menlo, monospace;
+        font-size: 12.5px;
+        color: #18181b;
+      }
+      .xb {
+        position: absolute;
+        right: 12px;
+        top: 12px;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: #f4f4f5;
+        display: grid;
+        place-items: center;
+        color: #71717a;
+      }
+      .xb svg {
+        width: 14px;
+        height: 14px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2.4;
+        stroke-linecap: round;
+      }
+      .left {
+        text-align: left;
+      }
+      .left .icb {
+        margin: 0;
+      }
+      .hd {
+        display: flex;
+        gap: 14px;
+        align-items: flex-start;
+        text-align: left;
+      }
+      .hd .icb {
+        width: 42px;
+        height: 42px;
+        flex: none;
+        margin: 0;
+      }
+      .hd h4 {
+        margin: 0 0 4px;
+        font-size: 16.5px;
+      }
+      .note {
+        display: flex;
+        gap: 8px;
+        align-items: flex-start;
+        background: #fffbeb;
+        border: 1px solid #fde68a;
+        color: #92400e;
+        border-radius: 10px;
+        padding: 9px 11px;
+        font-size: 12.5px;
+        text-align: left;
+        margin-top: 14px;
+      }
+      .note svg {
+        width: 16px;
+        height: 16px;
+        flex: none;
+        margin-top: 1px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .ck {
+        width: 30px;
+        height: 30px;
+      }
+      .ck path {
+        stroke-dasharray: 26;
+        stroke-dashoffset: 26;
+        animation: draw 0.5s 0.3s ease forwards;
+      }
+      .dark {
+        background: #17171c;
+        color: #f4f4f5;
+        border: 1px solid #2c2c34;
+      }
+      .dark p {
+        color: #a1a1aa;
+      }
+      .dark .b {
+        background: #24242b;
+        border-color: #33333b;
+        color: #f4f4f5;
+      }
+      .dark .b.rd {
+        background: #ef4444;
+        border-color: #ef4444;
+      }
+      .dark .in {
+        background: #0f0f13;
+        border-color: #33333b;
+        color: #f4f4f5;
+      }
+      .dark .lb {
+        color: #a1a1aa;
+      }
+      .otp {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        margin-top: 18px;
+      }
+      .otp input {
+        width: 42px;
+        height: 50px;
+        text-align: center;
+        font: inherit;
+        font-size: 20px;
+        font-weight: 600;
+        border-radius: 10px;
+        border: 1px solid #d4d4d8;
+        outline: none;
+        color: #18181b;
+        background: #fff;
+      }
+      .otp input:focus {
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+      }
+      .sheet {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: #fff;
+        color: #18181b;
+        border-radius: 24px 24px 0 0;
+        padding: 10px 20px 20px;
+        animation: up 0.45s cubic-bezier(0.2, 0.9, 0.25, 1) both;
+        text-align: center;
+      }
+      .sheet.play {
+        animation: up 0.45s cubic-bezier(0.2, 0.9, 0.25, 1) both;
+      }
+      .hdl {
+        width: 38px;
+        height: 4px;
+        border-radius: 9px;
+        background: #d4d4d8;
+        margin: 0 auto 16px;
+      }
+      .glass {
+        background: rgba(245, 245, 247, 0.7);
+        backdrop-filter: blur(30px) saturate(190%);
+        -webkit-backdrop-filter: blur(30px) saturate(190%);
+        border-radius: 20px;
+        max-width: 290px;
+        padding: 0;
+        overflow: hidden;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.28);
+      }
+      .glass .bd {
+        padding: 18px 16px 16px;
+      }
+      .glass h4 {
+        margin: 0;
+        font-size: 16px;
+      }
+      .glass p {
+        margin-top: 4px;
+        font-size: 13px;
+        color: #3c3c43;
+      }
+      .glass .row {
+        display: flex;
+        border-top: 0.5px solid rgba(60, 60, 67, 0.3);
+      }
+      .glass .row span {
+        flex: 1;
+        padding: 12px 0;
+        font-size: 16px;
+        color: #0a84ff;
+        cursor: pointer;
+      }
+      .glass .row span + span {
+        border-left: 0.5px solid rgba(60, 60, 67, 0.3);
+        font-weight: 600;
+        color: #ff3b30;
+      }
+      .tm {
+        height: 5px;
+        border-radius: 9px;
+        background: #e4e4e7;
+        overflow: hidden;
+        margin-top: 16px;
+      }
+      .tm i {
+        display: block;
+        height: 100%;
+        background: #f59e0b;
+        animation: shrink 60s linear infinite;
+      }
+      .big {
+        font-size: 34px;
+        font-weight: 600;
+        letter-spacing: -0.03em;
+        margin: 10px 0 2px;
+        color: #18181b;
+      }
+    </style>
+  </head>
+  <body>
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <symbol id="warn" viewBox="0 0 24 24">
+        <path
+          d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01"
+        />
+      </symbol>
+      <symbol id="trash" viewBox="0 0 24 24">
+        <path
+          d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6"
+        />
+      </symbol>
+      <symbol id="check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" /></symbol>
+      <symbol id="info" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 16v-4M12 8h.01" />
+      </symbol>
+      <symbol id="out" viewBox="0 0 24 24">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
+      </symbol>
+      <symbol id="lock" viewBox="0 0 24 24">
+        <rect x="3" y="11" width="18" height="11" rx="2" />
+        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+      </symbol>
+      <symbol id="clock" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 6v6l4 2" />
+      </symbol>
+      <symbol id="edit" viewBox="0 0 24 24">
+        <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z" />
+      </symbol>
+      <symbol id="shield" viewBox="0 0 24 24">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        <path d="m9 12 2 2 4-4" />
+      </symbol>
+      <symbol id="up" viewBox="0 0 24 24">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
+      </symbol>
+    </svg>
 
-<div class="wrap">
-  <h1>Modal and confirmation designs</h1>
-  <p class="sub">Warning, delete, type-to-confirm, input prompts, OTP, bottom sheet and iOS glass alert. Inputs and buttons are interactive.</p>
-  <div class="top"><button id="all">Replay all</button><button id="theme">Toggle page theme</button></div>
+    <div class="wrap">
+      <h1>Modal and confirmation designs</h1>
+      <p class="sub">
+        Warning, delete, type-to-confirm, input prompts, OTP, bottom sheet and iOS glass alert.
+        Inputs and buttons are interactive.
+      </p>
+      <div class="top">
+        <button id="all">Replay all</button><button id="theme">Toggle page theme</button>
+      </div>
 
-  <div class="grid">
+      <div class="grid">
+        <div class="card">
+          <div class="ch">
+            <h3>1. Warning confirmation</h3>
+            <button class="rp">Replay</button>
+          </div>
+          <div class="stage">
+            <div class="ov"></div>
+            <div class="m play">
+              <div class="icb ia">
+                <svg class="ic"><use href="#warn" /></svg>
+              </div>
+              <h4>Unsaved changes</h4>
+              <p>You have changes that haven’t been saved. If you leave now, they’ll be lost.</p>
+              <div class="acts">
+                <button class="b">Stay here</button><button class="b am">Leave anyway</button>
+              </div>
+            </div>
+          </div>
+        </div>
 
-    <div class="card"><div class="ch"><h3>1. Warning confirmation</h3><button class="rp">Replay</button></div><div class="stage"><div class="ov"></div>
-      <div class="m play"><div class="icb ia"><svg class="ic"><use href="#warn"/></svg></div><h4>Unsaved changes</h4><p>You have changes that haven’t been saved. If you leave now, they’ll be lost.</p><div class="acts"><button class="b">Stay here</button><button class="b am">Leave anyway</button></div></div></div></div>
+        <div class="card">
+          <div class="ch">
+            <h3>2. Danger, delete confirmation</h3>
+            <button class="rp">Replay</button>
+          </div>
+          <div class="stage">
+            <div class="ov"></div>
+            <div class="m play">
+              <div class="icb ir">
+                <svg class="ic"><use href="#trash" /></svg>
+              </div>
+              <h4>Delete this file?</h4>
+              <p>“Q3-report.pdf” will be permanently removed. This action can’t be undone.</p>
+              <div class="acts">
+                <button class="b">Cancel</button><button class="b rd">Delete</button>
+              </div>
+            </div>
+          </div>
+        </div>
 
-    <div class="card"><div class="ch"><h3>2. Danger, delete confirmation</h3><button class="rp">Replay</button></div><div class="stage"><div class="ov"></div>
-      <div class="m play"><div class="icb ir"><svg class="ic"><use href="#trash"/></svg></div><h4>Delete this file?</h4><p>“Q3-report.pdf” will be permanently removed. This action can’t be undone.</p><div class="acts"><button class="b">Cancel</button><button class="b rd">Delete</button></div></div></div></div>
+        <div class="card">
+          <div class="ch">
+            <h3>3. Type to confirm (try typing it)</h3>
+            <button class="rp">Replay</button>
+          </div>
+          <div class="stage">
+            <div class="ov"></div>
+            <div class="m play left">
+              <div class="hd">
+                <div class="icb ir">
+                  <svg class="ic"><use href="#trash" /></svg>
+                </div>
+                <div>
+                  <h4>Delete project</h4>
+                  <p>This permanently deletes the project and all its data.</p>
+                </div>
+              </div>
+              <label class="lb">Type <span class="code">acme-website</span> to confirm</label
+              ><input
+                class="in tc"
+                data-word="acme-website"
+                placeholder="acme-website"
+                autocomplete="off"
+              />
+              <div class="acts">
+                <button class="b">Cancel</button
+                ><button class="b rd tcb" disabled>Delete project</button>
+              </div>
+            </div>
+          </div>
+        </div>
 
-    <div class="card"><div class="ch"><h3>3. Type to confirm (try typing it)</h3><button class="rp">Replay</button></div><div class="stage"><div class="ov"></div>
-      <div class="m play left"><div class="hd"><div class="icb ir"><svg class="ic"><use href="#trash"/></svg></div><div><h4>Delete project</h4><p>This permanently deletes the project and all its data.</p></div></div>
-      <label class="lb">Type <span class="code">acme-website</span> to confirm</label><input class="in tc" data-word="acme-website" placeholder="acme-website" autocomplete="off">
-      <div class="acts"><button class="b">Cancel</button><button class="b rd tcb" disabled>Delete project</button></div></div></div></div>
+        <div class="card">
+          <div class="ch">
+            <h3>4. Input prompt, rename</h3>
+            <button class="rp">Replay</button>
+          </div>
+          <div class="stage">
+            <div class="ov"></div>
+            <div class="m play left">
+              <div class="hd">
+                <div class="icb ib2">
+                  <svg class="ic"><use href="#edit" /></svg>
+                </div>
+                <div>
+                  <h4>Rename folder</h4>
+                  <p>Choose a new name for this folder.</p>
+                </div>
+              </div>
+              <label class="lb">Folder name</label><input class="in" value="Design assets" />
+              <div class="acts">
+                <button class="b">Cancel</button><button class="b bl">Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
 
-    <div class="card"><div class="ch"><h3>4. Input prompt, rename</h3><button class="rp">Replay</button></div><div class="stage"><div class="ov"></div>
-      <div class="m play left"><div class="hd"><div class="icb ib2"><svg class="ic"><use href="#edit"/></svg></div><div><h4>Rename folder</h4><p>Choose a new name for this folder.</p></div></div>
-      <label class="lb">Folder name</label><input class="in" value="Design assets">
-      <div class="acts"><button class="b">Cancel</button><button class="b bl">Save</button></div></div></div></div>
+        <div class="card">
+          <div class="ch">
+            <h3>5. Success</h3>
+            <button class="rp">Replay</button>
+          </div>
+          <div class="stage">
+            <div class="ov"></div>
+            <div class="m play">
+              <div class="icb ig">
+                <svg class="ic ck"><path d="M20 6 9 17l-5-5" /></svg>
+              </div>
+              <h4>Account verified</h4>
+              <p>Your email address has been confirmed. You can now access all features.</p>
+              <div class="acts"><button class="b gr">Continue</button></div>
+            </div>
+          </div>
+        </div>
 
-    <div class="card"><div class="ch"><h3>5. Success</h3><button class="rp">Replay</button></div><div class="stage"><div class="ov"></div>
-      <div class="m play"><div class="icb ig"><svg class="ic ck"><path d="M20 6 9 17l-5-5"/></svg></div><h4>Account verified</h4><p>Your email address has been confirmed. You can now access all features.</p><div class="acts"><button class="b gr">Continue</button></div></div></div></div>
+        <div class="card">
+          <div class="ch">
+            <h3>6. Info, update available</h3>
+            <button class="rp">Replay</button>
+          </div>
+          <div class="stage">
+            <div class="ov"></div>
+            <div class="m play">
+              <div class="icb ip">
+                <svg class="ic"><use href="#up" /></svg>
+              </div>
+              <h4>Version 3.2 is available</h4>
+              <p>Faster sync, a redesigned dashboard, and 14 bug fixes.</p>
+              <div class="acts col">
+                <button class="b dk">Update now</button
+                ><button class="b" style="border: none; color: #71717a">Remind me later</button>
+              </div>
+            </div>
+          </div>
+        </div>
 
-    <div class="card"><div class="ch"><h3>6. Info, update available</h3><button class="rp">Replay</button></div><div class="stage"><div class="ov"></div>
-      <div class="m play"><div class="icb ip"><svg class="ic"><use href="#up"/></svg></div><h4>Version 3.2 is available</h4><p>Faster sync, a redesigned dashboard, and 14 bug fixes.</p><div class="acts col"><button class="b dk">Update now</button><button class="b" style="border:none;color:#71717a">Remind me later</button></div></div></div></div>
+        <div class="card">
+          <div class="ch">
+            <h3>7. Logout, dark modal</h3>
+            <button class="rp">Replay</button>
+          </div>
+          <div class="stage">
+            <div class="ov"></div>
+            <div class="m play dark">
+              <div class="icb" style="background: #27272f; color: #e4e4e7">
+                <svg class="ic"><use href="#out" /></svg>
+              </div>
+              <h4>Sign out?</h4>
+              <p>You’ll need to enter your password again to access your account.</p>
+              <div class="acts">
+                <button class="b">Cancel</button><button class="b rd">Sign out</button>
+              </div>
+            </div>
+          </div>
+        </div>
 
-    <div class="card"><div class="ch"><h3>7. Logout, dark modal</h3><button class="rp">Replay</button></div><div class="stage"><div class="ov"></div>
-      <div class="m play dark"><div class="icb" style="background:#27272f;color:#e4e4e7"><svg class="ic"><use href="#out"/></svg></div><h4>Sign out?</h4><p>You’ll need to enter your password again to access your account.</p><div class="acts"><button class="b">Cancel</button><button class="b rd">Sign out</button></div></div></div></div>
+        <div class="card">
+          <div class="ch">
+            <h3>8. iOS glass alert</h3>
+            <button class="rp">Replay</button>
+          </div>
+          <div class="stage wp">
+            <div class="ov"></div>
+            <div class="m play glass">
+              <div class="bd">
+                <h4>Reset all settings?</h4>
+                <p>All preferences will return to their defaults. Your data won’t be affected.</p>
+              </div>
+              <div class="row"><span>Cancel</span><span>Reset</span></div>
+            </div>
+          </div>
+        </div>
 
-    <div class="card"><div class="ch"><h3>8. iOS glass alert</h3><button class="rp">Replay</button></div><div class="stage wp"><div class="ov"></div>
-      <div class="m play glass"><div class="bd"><h4>Reset all settings?</h4><p>All preferences will return to their defaults. Your data won’t be affected.</p></div><div class="row"><span>Cancel</span><span>Reset</span></div></div></div></div>
+        <div class="card">
+          <div class="ch">
+            <h3>9. Bottom sheet confirmation</h3>
+            <button class="rp">Replay</button>
+          </div>
+          <div class="stage" style="align-items: flex-end">
+            <div class="ov"></div>
+            <div class="sheet play">
+              <div class="hdl"></div>
+              <div class="icb ir">
+                <svg class="ic"><use href="#trash" /></svg>
+              </div>
+              <h4 style="margin: 12px 0 4px; font-size: 17px">Remove 3 items?</h4>
+              <p style="font-size: 14px; color: #6b6b73">
+                They will be moved to trash for 30 days.
+              </p>
+              <div class="acts col">
+                <button class="b rd">Move to trash</button><button class="b">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
 
-    <div class="card"><div class="ch"><h3>9. Bottom sheet confirmation</h3><button class="rp">Replay</button></div><div class="stage" style="align-items:flex-end"><div class="ov"></div>
-      <div class="sheet play"><div class="hdl"></div><div class="icb ir"><svg class="ic"><use href="#trash"/></svg></div><h4 style="margin:12px 0 4px;font-size:17px">Remove 3 items?</h4><p style="font-size:14px;color:#6b6b73">They will be moved to trash for 30 days.</p><div class="acts col"><button class="b rd">Move to trash</button><button class="b">Cancel</button></div></div></div></div>
+        <div class="card">
+          <div class="ch">
+            <h3>10. Re-enter password</h3>
+            <button class="rp">Replay</button>
+          </div>
+          <div class="stage">
+            <div class="ov"></div>
+            <div class="m play left">
+              <div class="hd">
+                <div class="icb ia">
+                  <svg class="ic"><use href="#lock" /></svg>
+                </div>
+                <div>
+                  <h4>Confirm your password</h4>
+                  <p>For your security, verify it’s you before changing billing details.</p>
+                </div>
+              </div>
+              <label class="lb">Password</label
+              ><input class="in" type="password" value="password123" />
+              <div class="note">
+                <svg viewBox="0 0 24 24"><use href="#shield" /></svg
+                ><span>This step protects your payment information.</span>
+              </div>
+              <div class="acts">
+                <button class="b">Cancel</button><button class="b dk">Verify</button>
+              </div>
+            </div>
+          </div>
+        </div>
 
-    <div class="card"><div class="ch"><h3>10. Re-enter password</h3><button class="rp">Replay</button></div><div class="stage"><div class="ov"></div>
-      <div class="m play left"><div class="hd"><div class="icb ia"><svg class="ic"><use href="#lock"/></svg></div><div><h4>Confirm your password</h4><p>For your security, verify it’s you before changing billing details.</p></div></div>
-      <label class="lb">Password</label><input class="in" type="password" value="password123">
-      <div class="note"><svg viewBox="0 0 24 24"><use href="#shield"/></svg><span>This step protects your payment information.</span></div>
-      <div class="acts"><button class="b">Cancel</button><button class="b dk">Verify</button></div></div></div></div>
+        <div class="card">
+          <div class="ch">
+            <h3>11. OTP code input</h3>
+            <button class="rp">Replay</button>
+          </div>
+          <div class="stage">
+            <div class="ov"></div>
+            <div class="m play">
+              <div class="icb ib2">
+                <svg class="ic"><use href="#shield" /></svg>
+              </div>
+              <h4>Enter verification code</h4>
+              <p>We sent a 6-digit code to <span class="code">m***@gmail.com</span></p>
+              <div class="otp">
+                <input maxlength="1" inputmode="numeric" /><input
+                  maxlength="1"
+                  inputmode="numeric"
+                /><input maxlength="1" inputmode="numeric" /><input
+                  maxlength="1"
+                  inputmode="numeric"
+                /><input maxlength="1" inputmode="numeric" /><input
+                  maxlength="1"
+                  inputmode="numeric"
+                />
+              </div>
+              <div class="acts"><button class="b bl">Verify</button></div>
+              <p style="margin-top: 12px; font-size: 13px">
+                Didn’t get it?
+                <span style="color: #2563eb; font-weight: 600; cursor: pointer">Resend code</span>
+              </p>
+            </div>
+          </div>
+        </div>
 
-    <div class="card"><div class="ch"><h3>11. OTP code input</h3><button class="rp">Replay</button></div><div class="stage"><div class="ov"></div>
-      <div class="m play"><div class="icb ib2"><svg class="ic"><use href="#shield"/></svg></div><h4>Enter verification code</h4><p>We sent a 6-digit code to <span class="code">m***@gmail.com</span></p>
-      <div class="otp"><input maxlength="1" inputmode="numeric"><input maxlength="1" inputmode="numeric"><input maxlength="1" inputmode="numeric"><input maxlength="1" inputmode="numeric"><input maxlength="1" inputmode="numeric"><input maxlength="1" inputmode="numeric"></div>
-      <div class="acts"><button class="b bl">Verify</button></div><p style="margin-top:12px;font-size:13px">Didn’t get it? <span style="color:#2563eb;font-weight:600;cursor:pointer">Resend code</span></p></div></div></div>
-
-    <div class="card"><div class="ch"><h3>12. Session timeout, live countdown</h3><button class="rp">Replay</button></div><div class="stage"><div class="ov"></div>
-      <div class="m play"><div class="icb ia"><svg class="ic"><use href="#clock"/></svg></div><h4>Are you still there?</h4><p>You’ll be signed out automatically due to inactivity.</p><div class="big"><span id="cd">60</span>s</div><div class="tm"><i></i></div><div class="acts"><button class="b">Sign out</button><button class="b am">Stay signed in</button></div></div></div></div>
-
-  </div>
-</div>
-<script>
-function replay(card){
-  card.querySelectorAll('.play').forEach(function(e){e.classList.remove('play');void e.offsetWidth;e.classList.add('play');});
-}
-document.querySelectorAll('.card').forEach(function(c){
-  var b=c.querySelector('.rp');if(b)b.addEventListener('click',function(){replay(c);});
-});
-document.getElementById('all').addEventListener('click',function(){document.querySelectorAll('.card').forEach(replay);});
-document.getElementById('theme').addEventListener('click',function(){
-  var r=document.documentElement;
-  var dark=r.getAttribute('data-theme')==='dark'||(!r.getAttribute('data-theme')&&window.matchMedia('(prefers-color-scheme: dark)').matches);
-  r.setAttribute('data-theme',dark?'light':'dark');
-});
-var tc=document.querySelector('.tc'),tb=document.querySelector('.tcb');
-tc.addEventListener('input',function(){tb.disabled=tc.value.trim()!==tc.dataset.word;});
-document.querySelectorAll('.otp').forEach(function(box){
-  var ins=box.querySelectorAll('input');
-  ins.forEach(function(inp,i){
-    inp.addEventListener('input',function(){inp.value=inp.value.replace(/\D/g,'');if(inp.value&&ins[i+1])ins[i+1].focus();});
-    inp.addEventListener('keydown',function(e){if(e.key==='Backspace'&&!inp.value&&ins[i-1])ins[i-1].focus();});
-    inp.addEventListener('paste',function(e){
-      var t=(e.clipboardData.getData('text')||'').replace(/\D/g,'').slice(0,6);
-      if(!t)return;e.preventDefault();
-      ins.forEach(function(x,j){x.value=t[j]||'';});
-      (ins[Math.min(t.length,5)]).focus();
-    });
-  });
-});
-var n=60,cd=document.getElementById('cd');
-setInterval(function(){n=n<=0?60:n-1;cd.textContent=n;},1000);
-</script>
-</body>
+        <div class="card">
+          <div class="ch">
+            <h3>12. Session timeout, live countdown</h3>
+            <button class="rp">Replay</button>
+          </div>
+          <div class="stage">
+            <div class="ov"></div>
+            <div class="m play">
+              <div class="icb ia">
+                <svg class="ic"><use href="#clock" /></svg>
+              </div>
+              <h4>Are you still there?</h4>
+              <p>You’ll be signed out automatically due to inactivity.</p>
+              <div class="big"><span id="cd">60</span>s</div>
+              <div class="tm"><i></i></div>
+              <div class="acts">
+                <button class="b">Sign out</button><button class="b am">Stay signed in</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      function replay(card) {
+        card.querySelectorAll('.play').forEach(function (e) {
+          e.classList.remove('play');
+          void e.offsetWidth;
+          e.classList.add('play');
+        });
+      }
+      document.querySelectorAll('.card').forEach(function (c) {
+        var b = c.querySelector('.rp');
+        if (b)
+          b.addEventListener('click', function () {
+            replay(c);
+          });
+      });
+      document.getElementById('all').addEventListener('click', function () {
+        document.querySelectorAll('.card').forEach(replay);
+      });
+      document.getElementById('theme').addEventListener('click', function () {
+        var r = document.documentElement;
+        var dark =
+          r.getAttribute('data-theme') === 'dark' ||
+          (!r.getAttribute('data-theme') &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches);
+        r.setAttribute('data-theme', dark ? 'light' : 'dark');
+      });
+      var tc = document.querySelector('.tc'),
+        tb = document.querySelector('.tcb');
+      tc.addEventListener('input', function () {
+        tb.disabled = tc.value.trim() !== tc.dataset.word;
+      });
+      document.querySelectorAll('.otp').forEach(function (box) {
+        var ins = box.querySelectorAll('input');
+        ins.forEach(function (inp, i) {
+          inp.addEventListener('input', function () {
+            inp.value = inp.value.replace(/\D/g, '');
+            if (inp.value && ins[i + 1]) ins[i + 1].focus();
+          });
+          inp.addEventListener('keydown', function (e) {
+            if (e.key === 'Backspace' && !inp.value && ins[i - 1]) ins[i - 1].focus();
+          });
+          inp.addEventListener('paste', function (e) {
+            var t = (e.clipboardData.getData('text') || '').replace(/\D/g, '').slice(0, 6);
+            if (!t) return;
+            e.preventDefault();
+            ins.forEach(function (x, j) {
+              x.value = t[j] || '';
+            });
+            ins[Math.min(t.length, 5)].focus();
+          });
+        });
+      });
+      var n = 60,
+        cd = document.getElementById('cd');
+      setInterval(function () {
+        n = n <= 0 ? 60 : n - 1;
+        cd.textContent = n;
+      }, 1000);
+    </script>
+  </body>
 </html>

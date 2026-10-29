@@ -105,9 +105,6 @@ const make = (
   ...(css ? { css } : {}),
 });
 
-const GLASS_SHEEN =
-  '.gk-toast&::before,.gk-dialog&::before,.gk-sheet&::before,.gk-bsheet&::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;background:linear-gradient(135deg,rgba(255,255,255,.14),rgba(255,255,255,0) 45%)}.gk-dialog&,.gk-sheet&,.gk-bsheet&{isolation:isolate}';
-
 import { essentialsTheme } from './essentials/tokens.ts';
 import { showcaseTheme } from './showcase/tokens.ts';
 import { iosGlassTheme } from './ios-glass/tokens.ts';

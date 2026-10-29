@@ -1,0 +1,752 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>glazekit — Themes & Variants Gallery</title>
+    <link rel="stylesheet" href="/dist/themes/_base.css" />
+    <link rel="stylesheet" href="/dist/themes/essentials.css" />
+    <link rel="stylesheet" href="/dist/themes/showcase.css" />
+    <link rel="stylesheet" href="/dist/themes/ios-glass.css" />
+    <link rel="stylesheet" href="/dist/themes/liquid-glass.css" />
+    <link rel="stylesheet" href="/dist/themes/dialogs.css" />
+    <style>
+      :root {
+        --bg: #f4f4f2;
+        --fg: #17171a;
+        --mut: #6b6b73;
+        --card: #ffffff;
+        --bd: #e4e4e0;
+        color-scheme: light;
+      }
+      :root[data-theme='dark'] {
+        --bg: #0d0d0f;
+        --fg: #f4f4f5;
+        --mut: #9a9aa3;
+        --card: #17171a;
+        --bd: #2a2a30;
+        color-scheme: dark;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'SF Pro Text', Inter, 'Segoe UI', Roboto, sans-serif;
+        line-height: 1.5;
+      }
+      .wrap {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 32px 20px 64px;
+      }
+      header {
+        margin-bottom: 24px;
+      }
+      h1 {
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        margin: 0 0 6px;
+      }
+      .sub {
+        color: var(--mut);
+        margin: 0 0 20px;
+        font-size: 15px;
+      }
+      .top-bar {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-bottom: 28px;
+      }
+      button,
+      select {
+        font: inherit;
+        font-size: 13.5px;
+        padding: 8px 14px;
+        border-radius: 10px;
+        border: 1px solid var(--bd);
+        background: var(--card);
+        color: var(--fg);
+        cursor: pointer;
+        transition: opacity 0.15s;
+      }
+      button:hover {
+        opacity: 0.88;
+      }
+      .section-title {
+        font-size: 20px;
+        font-weight: 600;
+        margin: 36px 0 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .badge {
+        font-size: 12px;
+        padding: 2px 8px;
+        border-radius: 99px;
+        background: var(--bd);
+        color: var(--mut);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 480px), 1fr));
+        gap: 20px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--bd);
+        border-radius: 18px;
+        padding: 12px 12px 16px;
+      }
+      .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 2px 6px 12px;
+      }
+      .card-header h3 {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--fg);
+        margin: 0;
+      }
+      .rp {
+        padding: 4px 10px;
+        font-size: 12px;
+        border-radius: 8px;
+      }
+      .stage {
+        border-radius: 14px;
+        min-height: 180px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px 18px;
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+        background: #0b0b0f;
+        transition: background 0.3s;
+      }
+      /* Stage background themes */
+      .bg-aurora {
+        background: linear-gradient(135deg, #4f46e5, #c026d3 55%, #f97316) !important;
+      }
+      .bg-ocean {
+        background: linear-gradient(135deg, #0f172a, #0e7490) !important;
+      }
+      .bg-sunset {
+        background:
+          radial-gradient(circle at 25% 20%, #ffb86b 0, transparent 45%),
+          radial-gradient(circle at 80% 85%, #ff6b9a 0, transparent 50%), #3b2a5e !important;
+      }
+      .bg-mesh {
+        background:
+          radial-gradient(circle at 15% 20%, #ff7a59 0, transparent 45%),
+          radial-gradient(circle at 85% 30%, #7c5cff 0, transparent 50%),
+          radial-gradient(circle at 50% 100%, #19c3b1 0, transparent 55%), #2a2f6b !important;
+      }
+      .bg-dark {
+        background: #0b0b0f !important;
+      }
+      .bg-light {
+        background: #eceae4 !important;
+      }
+
+      /* Animation trigger */
+      .play {
+        animation: gk-demo-in 0.55s cubic-bezier(0.2, 0.9, 0.25, 1.15) both;
+      }
+      @keyframes gk-demo-in {
+        from {
+          opacity: 0;
+          transform: translateY(18px) scale(0.94);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      /* Stacking demos hover expansion */
+      .stack-box {
+        position: relative;
+        width: 100%;
+        max-width: 380px;
+        height: 92px;
+        transition: height 0.35s cubic-bezier(0.2, 0.9, 0.3, 1);
+        display: flex;
+        align-items: flex-end;
+      }
+      .stack-box .gk-toast {
+        position: absolute;
+        left: 0;
+        right: 0;
+        transition:
+          transform 0.35s cubic-bezier(0.2, 0.9, 0.3, 1),
+          opacity 0.35s;
+      }
+      .stack-box .gk-toast:nth-child(3) {
+        bottom: 0;
+        transform: scale(0.88);
+        opacity: 0.55;
+        z-index: 1;
+      }
+      .stack-box .gk-toast:nth-child(2) {
+        bottom: 0;
+        transform: translateY(-10px) scale(0.94);
+        opacity: 0.8;
+        z-index: 2;
+      }
+      .stack-box .gk-toast:nth-child(1) {
+        bottom: 0;
+        transform: translateY(-20px);
+        z-index: 3;
+      }
+      .stack-box:hover,
+      .stack-box:focus-within {
+        height: 210px;
+      }
+      .stack-box:hover .gk-toast:nth-child(3),
+      .stack-box:focus-within .gk-toast:nth-child(3) {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      .stack-box:hover .gk-toast:nth-child(2),
+      .stack-box:focus-within .gk-toast:nth-child(2) {
+        transform: translateY(-62px) scale(1);
+        opacity: 1;
+      }
+      .stack-box:hover .gk-toast:nth-child(1),
+      .stack-box:focus-within .gk-toast:nth-child(1) {
+        transform: translateY(-124px);
+      }
+
+      /* Grouped stack demo hover expansion */
+      .group-box {
+        position: relative;
+        width: 100%;
+        max-width: 380px;
+        height: 150px;
+        transition: height 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
+      }
+      .group-box .gk-toast {
+        position: absolute;
+        left: 0;
+        right: 0;
+        transition:
+          transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1),
+          opacity 0.3s;
+      }
+      .group-box .gk-toast:nth-child(1) {
+        top: 0;
+        z-index: 3;
+      }
+      .group-box .gk-toast:nth-child(2) {
+        top: 0;
+        transform: translateY(10px) scale(0.95);
+        opacity: 0.8;
+        z-index: 2;
+      }
+      .group-box .gk-toast:nth-child(3) {
+        top: 0;
+        transform: translateY(20px) scale(0.9);
+        opacity: 0.55;
+        z-index: 1;
+      }
+      .group-box:hover,
+      .group-box:focus-within {
+        height: 210px;
+      }
+      .group-box:hover .gk-toast:nth-child(2),
+      .group-box:focus-within .gk-toast:nth-child(2) {
+        transform: translateY(68px) scale(1);
+        opacity: 1;
+      }
+      .group-box:hover .gk-toast:nth-child(3),
+      .group-box:focus-within .gk-toast:nth-child(3) {
+        transform: translateY(136px) scale(1);
+        opacity: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <h1>glazekit Themes & Variants Gallery</h1>
+        <p class="sub">
+          Rebuilding every approved design reference with framework-agnostic HTML, CSS tokens, and
+          full accessibility.
+        </p>
+        <div class="top-bar">
+          <button id="btn-theme">Toggle theme (Light / Dark)</button>
+          <label
+            >Background:
+            <select id="sel-bg">
+              <option value="bg-dark">Default Dark</option>
+              <option value="bg-aurora">Aurora Gradient</option>
+              <option value="bg-ocean">Ocean Deep</option>
+              <option value="bg-sunset">Sunset Mesh</option>
+              <option value="bg-mesh">Rainbow Mesh</option>
+              <option value="bg-light">Light Paper</option>
+            </select>
+          </label>
+          <button id="btn-replay-all">Replay all animations</button>
+        </div>
+      </header>
+
+      <!-- SECTION 1: SHOWCASE THEME -->
+      <div class="section-title">
+        <span>Theme: Showcase</span>
+        <span class="badge">12 variants</span>
+      </div>
+      <div class="grid" id="grid-showcase">
+        <!-- Items rendered dynamically with glazekit components -->
+      </div>
+
+      <!-- SECTION 2: IOS GLASS & LIQUID GLASS -->
+      <div class="section-title">
+        <span>Theme: iOS Glass & Liquid Glass</span>
+        <span class="badge">12 variants</span>
+      </div>
+      <div class="grid" id="grid-ios"></div>
+
+      <!-- SECTION 3: ESSENTIALS THEME -->
+      <div class="section-title">
+        <span>Theme: Essentials</span>
+        <span class="badge">12 variants</span>
+      </div>
+      <div class="grid" id="grid-essentials"></div>
+
+      <!-- SECTION 4: DIALOGS -->
+      <div class="section-title">
+        <span>Dialogs & Bottom Sheets</span>
+        <span class="badge">12 variants</span>
+      </div>
+      <div class="grid" id="grid-dialogs"></div>
+    </div>
+
+    <script type="module">
+      import { ui } from '/dist/index.js';
+
+      // SVG Icons helper
+      function svg(id, path) {
+        return `<svg viewBox="0 0 24 24" class="gk-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${path}</svg>`;
+      }
+      const checkPath = '<path d="M20 6L9 17l-5-5"/>';
+      const alertPath = '<circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>';
+      const cloudPath =
+        '<path d="M17.5 19a4.5 4.5 0 1 0-1.4-8.8A6 6 0 1 0 5 15.5 3.5 3.5 0 0 0 6.5 19z"/>';
+      const mailPath =
+        '<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/>';
+      const bellPath =
+        '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 0 0 3.4 0"/>';
+      const filePath =
+        '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6"/>';
+      const starPath =
+        '<path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/>';
+      const trashPath =
+        '<path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6"/>';
+      const lockPath =
+        '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>';
+      const editPath = '<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>';
+      const clockPath = '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>';
+      const shieldPath = '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>';
+      const phonePath =
+        '<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/>';
+      const bellxPath =
+        '<path d="M8.7 3A6 6 0 0 1 18 8c0 2.4.4 4.2.9 5.5M17 17H3s3-2 3-9c0-.7.1-1.3.3-1.9M10.3 21a1.9 1.9 0 0 0 3.4 0M2 2l20 20"/>';
+      const moonPath = '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>';
+      const linkPath =
+        '<path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/>';
+
+      // SHOWCASE ITEMS
+      const showcaseItems = [
+        {
+          num: 1,
+          name: 'Glassmorphism Card',
+          bg: 'bg-aurora',
+          html: `<div class="gk-toast play" data-gk-theme="showcase" data-gk-variant="glass-gradient"><div class="gk-chip">${svg('check', checkPath)}</div><div class="gk-content"><div class="gk-title">Changes published</div><div class="gk-desc">Your site is live on 3 regions</div></div><button type="button" class="gk-close" aria-label="Close">${svg('close', '<path d="M18 6 6 18M6 6l12 12"/>')}</button></div>`,
+        },
+        {
+          num: 2,
+          name: 'Emerald Success Card',
+          bg: 'bg-light',
+          html: `<div class="gk-toast play" data-gk-theme="showcase" data-gk-variant="emerald"><div class="gk-chip" style="width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.22);display:grid;place-items:center;">${svg('check', checkPath)}</div><div class="gk-content"><div class="gk-title">Payment successful</div><div class="gk-desc">Receipt sent to your email</div></div></div>`,
+        },
+        {
+          num: 3,
+          name: 'Neon Pulse Error',
+          bg: 'bg-dark',
+          html: `<div class="gk-toast play" data-gk-theme="showcase" data-gk-variant="neon-error"><div class="gk-icon" style="color:#fb7185">${svg('alert', alertPath)}</div><div class="gk-content"><div class="gk-title">Deployment failed</div><div class="gk-desc">Build exited with code 1</div></div><button type="button" class="gk-close" aria-label="Close">${svg('close', '<path d="M18 6 6 18M6 6l12 12"/>')}</button></div>`,
+        },
+        {
+          num: 4,
+          name: 'Rounded App Banner',
+          bg: 'bg-ocean',
+          html: `<div class="gk-toast play" data-gk-theme="showcase" data-gk-variant="ios-banner"><div class="gk-app-chip">${svg('cloud', cloudPath)}</div><div class="gk-content"><div class="gk-title">Backup complete</div><div class="gk-desc">2,481 photos saved to cloud</div></div><time class="gk-time">now</time></div>`,
+        },
+        {
+          num: 5,
+          name: 'Developer Dark Key Hint',
+          bg: 'bg-dark',
+          html: `<div class="gk-toast play" data-gk-theme="showcase" data-gk-variant="dev-dark"><span class="gk-dot"></span><div class="gk-content"><div class="gk-title">New deployment is ready</div></div><kbd class="gk-kbd">Esc</kbd></div>`,
+        },
+        {
+          num: 6,
+          name: 'Countdown Ring Timer',
+          bg: 'bg-mesh',
+          html: `<div class="gk-toast play" data-gk-theme="showcase" data-gk-variant="countdown-ring"><svg class="gk-ring-svg" viewBox="0 0 36 36"><circle cx="18" cy="18" r="16" fill="none" stroke="currentColor" stroke-width="3" opacity="0.2"/><circle cx="18" cy="18" r="16" fill="none" stroke="#6366f1" stroke-width="3" stroke-dasharray="100.5" stroke-dashoffset="30" stroke-linecap="round"/></svg><div class="gk-content"><div class="gk-title">Link copied</div><div class="gk-desc">Closing in a few seconds</div></div><button type="button" class="gk-action" style="background:none;border:none;color:#6366f1;font-weight:600;font-size:13px;cursor:pointer;">Undo</button></div>`,
+        },
+        {
+          num: 7,
+          name: 'Stacked Expanding Deck',
+          bg: 'bg-dark',
+          html: `<div class="stack-box"><div class="gk-toast" data-gk-theme="showcase" data-gk-mode="dark"><div class="gk-icon" style="color:#fbbf24">${svg('bell', bellPath)}</div><div class="gk-content"><div class="gk-title">Reminder</div><div class="gk-desc">Standup in 10 minutes</div></div></div><div class="gk-toast" data-gk-theme="showcase" data-gk-mode="dark"><div class="gk-icon" style="color:#60a5fa">${svg('mail', mailPath)}</div><div class="gk-content"><div class="gk-title">New message</div><div class="gk-desc">Sara sent you a file</div></div></div><div class="gk-toast" data-gk-theme="showcase" data-gk-mode="dark"><div class="gk-icon" style="color:#34d399">${svg('check', checkPath)}</div><div class="gk-content"><div class="gk-title">Invoice paid</div><div class="gk-desc">$1,240.00 from Acme</div></div></div></div>`,
+        },
+        {
+          num: 8,
+          name: 'File Upload Progress',
+          bg: 'bg-light',
+          html: `<div class="gk-toast play" data-gk-theme="showcase" data-gk-variant="upload-card"><div class="gk-file-chip">${svg('file', filePath)}</div><div class="gk-content"><div class="gk-title">brand-guidelines.pdf</div><div class="gk-desc">Uploading · 4.2 MB of 6.8 MB</div></div><div class="gk-track" role="progressbar" aria-valuenow="62" aria-valuemin="0" aria-valuemax="100"><i style="width:62%;display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#6366f1,#a855f7);"></i></div></div>`,
+        },
+        {
+          num: 9,
+          name: 'Dynamic Island Pill',
+          bg: 'bg-light',
+          html: `<div class="gk-toast play" data-gk-theme="showcase" data-gk-variant="island"><div class="gk-art"></div><div class="gk-content"><div class="gk-title" style="font-size:13px">Midnight City</div><div class="gk-desc" style="font-size:11.5px">M83 · Now playing</div></div><div class="gk-eq"><i></i><i></i><i></i><i></i></div></div>`,
+        },
+        {
+          num: 10,
+          name: 'Gradient Border Promo',
+          bg: 'bg-dark',
+          html: `<div class="gk-toast play" data-gk-theme="showcase" data-gk-variant="gradient-border"><div class="gk-in"><div class="gk-icon" style="color:#fbbf24">${svg('star', starPath)}</div><div class="gk-content"><div class="gk-title">You unlocked Pro</div><div class="gk-desc">14 days free, no card needed</div></div><button type="button" class="gk-btn">Explore</button></div></div>`,
+        },
+        {
+          num: 11,
+          name: 'Soft Minimal Card',
+          bg: 'bg-light',
+          html: `<div class="gk-toast play" data-gk-theme="showcase" data-gk-variant="soft-light"><div class="gk-chip">${svg('check', checkPath)}</div><div class="gk-content"><div class="gk-title">Event created</div><div class="gk-desc">Friday, 10:00 AM</div></div><button type="button" class="gk-close" aria-label="Close">${svg('close', '<path d="M18 6 6 18M6 6l12 12"/>')}</button></div>`,
+        },
+        {
+          num: 12,
+          name: 'Social Message Actions',
+          bg: 'bg-ocean',
+          html: `<div class="gk-toast play" data-gk-theme="showcase" data-gk-variant="message-actions"><div class="gk-av">NK</div><div class="gk-content"><div class="gk-title">Nusrat Karim</div><div class="gk-desc">Can we move the review to 3 PM?</div></div><time class="gk-time">2m</time><div class="gk-acts"><button type="button" class="gk-btn" style="background:#f4f4f5;color:#111;padding:6px 12px;border-radius:8px;font-size:12.5px;font-weight:600;border:none;">Reply</button><button type="button" class="gk-btn" style="background:#2c2c35;color:#fff;padding:6px 12px;border-radius:8px;font-size:12.5px;font-weight:600;border:none;">Dismiss</button></div></div>`,
+        },
+      ];
+
+      // IOS GLASS ITEMS
+      const iosItems = [
+        {
+          num: 1,
+          name: 'Frosted Banner (Light)',
+          bg: 'bg-aurora',
+          html: `<div class="gk-toast play" data-gk-theme="ios-glass" data-gk-variant="banner-light"><div class="gk-app-chip" style="background:linear-gradient(180deg,#5af07a,#16b543);width:38px;height:38px;border-radius:9px;display:grid;place-items:center;color:#fff;">${svg('mail', mailPath)}</div><div class="gk-content"><div class="gk-title">Sara Ahmed</div><div class="gk-desc">Are we still on for lunch at 1?</div></div><time class="gk-time">now</time></div>`,
+        },
+        {
+          num: 2,
+          name: 'Frosted Banner (Dark)',
+          bg: 'bg-sunset',
+          html: `<div class="gk-toast play" data-gk-theme="ios-glass" data-gk-variant="banner-dark"><div class="gk-app-chip" style="background:linear-gradient(180deg,#5ac8fa,#0a84ff);width:38px;height:38px;border-radius:9px;display:grid;place-items:center;color:#fff;">${svg('mail', mailPath)}</div><div class="gk-content"><div class="gk-title">Mail</div><div class="gk-desc">Your invoice for October is ready to view</div></div><time class="gk-time">2m ago</time></div>`,
+        },
+        {
+          num: 3,
+          name: 'Liquid Glass Capsule',
+          bg: 'bg-ocean',
+          html: `<div class="gk-toast play" data-gk-theme="liquid-glass" data-gk-variant="capsule-success"><div class="gk-ck">${svg('check', checkPath)}</div><div class="gk-content"><div class="gk-title" style="font-weight:600">Payment complete</div></div></div>`,
+        },
+        {
+          num: 4,
+          name: 'Dynamic Island Call',
+          bg: 'bg-dark',
+          html: `<div class="gk-toast play" data-gk-theme="ios-glass" data-gk-variant="island" style="background:#000;color:#fff;border-radius:30px;padding:12px 16px;"><div class="gk-avatar" style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#ff9f0a,#ff375f);display:grid;place-items:center;color:#fff;font-weight:600;font-size:13px;">JR</div><div class="gk-content"><div class="gk-title" style="font-size:14px">Jamil Rahman</div><div class="gk-desc" style="font-size:12px">Mobile · 00:12</div></div><div class="gk-actions" style="margin-left:auto;display:flex;gap:8px;"><button type="button" style="width:34px;height:34px;border-radius:50%;background:#ff453a;border:none;display:grid;place-items:center;color:#fff;cursor:pointer;">${svg('phone', phonePath)}</button><button type="button" style="width:34px;height:34px;border-radius:50%;background:#30d158;border:none;display:grid;place-items:center;color:#fff;cursor:pointer;">${svg('phone', phonePath)}</button></div></div>`,
+        },
+        {
+          num: 5,
+          name: 'Transient System HUD',
+          bg: 'bg-sunset',
+          html: `<div class="gk-toast play" data-gk-theme="ios-glass" data-gk-variant="hud-silent"><div class="gk-ib">${svg('bellx', bellxPath)}</div><div class="gk-content"><div class="gk-title" style="font-weight:500">Silent mode on</div></div></div>`,
+        },
+        {
+          num: 6,
+          name: 'System Alert (Divided)',
+          bg: 'bg-aurora',
+          html: `<div class="gk-dialog play" data-gk-theme="ios-glass" data-gk-variant="system-alert" style="max-width:290px;padding:0;overflow:hidden;text-align:center;"><div style="padding:18px 16px 16px"><h2 class="gk-dialog-title" style="font-size:16px;margin:0 0 4px">Delete this photo?</h2><div class="gk-dialog-text" style="font-size:13px;opacity:.75">This photo will be removed from all your devices.</div></div><div class="gk-dialog-actions" data-layout="divided"><button type="button">Cancel</button><button type="button" style="color:#ff3b30;font-weight:600">Delete</button></div></div>`,
+        },
+        {
+          num: 7,
+          name: 'Device Connected Card',
+          bg: 'bg-sunset',
+          html: `<div class="gk-toast play" data-gk-theme="ios-glass" data-gk-variant="device-popup"><div class="gk-big-icon">${svg('phone', phonePath)}</div><div class="gk-title" style="font-size:16px">Nafis’s Headphones</div><div class="gk-desc">Battery 82%</div><button type="button" class="gk-btn-connect">Connect</button></div>`,
+        },
+        {
+          num: 8,
+          name: 'Grouped Thread Stack',
+          bg: 'bg-dark',
+          html: `<div class="group-box"><div class="gk-toast" data-gk-theme="ios-glass" data-gk-variant="banner-dark"><div class="gk-app-chip" style="background:linear-gradient(180deg,#ffb340,#ff7a00);width:38px;height:38px;border-radius:9px;display:grid;place-items:center;color:#fff;">${svg('bell', bellPath)}</div><div class="gk-content"><div class="gk-title">Reminders</div><div class="gk-desc">Call the bank at 4 PM</div></div><time class="gk-time">10m</time></div><div class="gk-toast" data-gk-theme="ios-glass" data-gk-variant="banner-dark"><div class="gk-app-chip" style="background:linear-gradient(180deg,#5ac8fa,#0a84ff);width:38px;height:38px;border-radius:9px;display:grid;place-items:center;color:#fff;">${svg('mail', mailPath)}</div><div class="gk-content"><div class="gk-title">Mail</div><div class="gk-desc">Weekly report is ready</div></div><time class="gk-time">5m</time></div><div class="gk-toast" data-gk-theme="ios-glass" data-gk-variant="banner-dark"><div class="gk-app-chip" style="background:linear-gradient(180deg,#5af07a,#16b543);width:38px;height:38px;border-radius:9px;display:grid;place-items:center;color:#fff;">${svg('mail', mailPath)}</div><div class="gk-content"><div class="gk-title">Messages</div><div class="gk-desc">3 new messages from Family</div></div><time class="gk-time">now</time></div></div>`,
+        },
+        {
+          num: 9,
+          name: 'Download Progress Ring',
+          bg: 'bg-ocean',
+          html: `<div class="gk-toast play" data-gk-theme="ios-glass" data-gk-variant="banner-dark"><svg class="gk-ring-svg" viewBox="0 0 36 36"><circle cx="18" cy="18" r="16" fill="none" stroke="currentColor" stroke-width="3" opacity="0.25"/><circle cx="18" cy="18" r="16" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="100.5" stroke-dashoffset="40" stroke-linecap="round"/></svg><div class="gk-content"><div class="gk-title">Downloading update</div><div class="gk-desc">iOS 26.1 · 1.2 GB of 3.4 GB</div></div></div>`,
+        },
+        {
+          num: 10,
+          name: 'Shake Error Banner',
+          bg: 'bg-sunset',
+          html: `<div class="gk-toast play" data-gk-theme="ios-glass" data-gk-variant="shake-error" data-mounted="true"><div class="gk-icon">${svg('alert', alertPath)}</div><div class="gk-content"><div class="gk-title">Can’t connect to the server</div><div class="gk-desc">Check your network and try again</div></div></div>`,
+        },
+        {
+          num: 11,
+          name: 'Focus Mode Toggle',
+          bg: 'bg-dark',
+          html: `<div class="gk-toast play" data-gk-theme="ios-glass" data-gk-variant="focus-toggle"><div class="gk-ib">${svg('moon', moonPath)}</div><div class="gk-content"><div class="gk-title">Do Not Disturb</div><div class="gk-desc">Until 7:00 AM</div></div><button type="button" class="gk-sw" role="switch" aria-checked="true" aria-label="Toggle focus mode"></button></div>`,
+        },
+        {
+          num: 12,
+          name: 'Compact Banner Action',
+          bg: 'bg-aurora',
+          html: `<div class="gk-toast play" data-gk-theme="ios-glass" data-gk-variant="compact-action"><div class="gk-ib">${svg('link', linkPath)}</div><div class="gk-content"><div class="gk-title" style="font-weight:500;font-size:14px">Link copied</div></div><span class="gk-lnk">Share</span></div>`,
+        },
+      ];
+
+      // ESSENTIALS ITEMS
+      const essentialsItems = [
+        {
+          num: 1,
+          name: 'Minimal Card',
+          bg: 'bg-dark',
+          html: `<div class="gk-toast play" data-gk-theme="essentials" data-gk-variant="minimal"><div class="gk-content"><div class="gk-title">Settings updated</div><div class="gk-desc">Preferences saved successfully</div></div></div>`,
+        },
+        {
+          num: 2,
+          name: 'Success Alert',
+          bg: 'bg-dark',
+          html: `<div class="gk-toast play" data-gk-theme="essentials" data-type="success"><div class="gk-icon">${svg('check', checkPath)}</div><div class="gk-content"><div class="gk-title">Changes saved</div><div class="gk-desc">All changes were synced</div></div></div>`,
+        },
+        {
+          num: 3,
+          name: 'Error Notice',
+          bg: 'bg-dark',
+          html: `<div class="gk-toast play" data-gk-theme="essentials" data-type="error"><div class="gk-icon">${svg('alert', alertPath)}</div><div class="gk-content"><div class="gk-title">Connection lost</div><div class="gk-desc">Please retry in a moment</div></div></div>`,
+        },
+        {
+          num: 4,
+          name: 'Warning Notice',
+          bg: 'bg-dark',
+          html: `<div class="gk-toast play" data-gk-theme="essentials" data-type="warning"><div class="gk-icon">${svg('alert', alertPath)}</div><div class="gk-content"><div class="gk-title">Storage almost full</div><div class="gk-desc">92% of your limit used</div></div></div>`,
+        },
+        {
+          num: 5,
+          name: 'Accent Bar',
+          bg: 'bg-dark',
+          html: `<div class="gk-toast play" data-gk-theme="essentials" data-gk-variant="accent-bar"><div class="gk-content"><div class="gk-title">New notification</div><div class="gk-desc">Your order has shipped</div></div></div>`,
+        },
+        {
+          num: 6,
+          name: 'Badge Chip',
+          bg: 'bg-dark',
+          html: `<div class="gk-toast play" data-gk-theme="essentials" data-gk-variant="badge-title"><div class="gk-badge">${svg('star', starPath)}</div><div class="gk-content"><div class="gk-title">Pro Feature</div><div class="gk-desc">Available on your plan</div></div></div>`,
+        },
+        {
+          num: 7,
+          name: 'Progress Bar',
+          bg: 'bg-dark',
+          html: `<div class="gk-toast play" data-gk-theme="essentials" data-gk-variant="progress-bar"><div class="gk-content"><div class="gk-title">Exporting data...</div><div class="gk-desc">This may take a moment</div></div><div class="gk-track" role="progressbar" aria-valuenow="45"><i style="width:45%;display:block;height:100%;background:var(--gk-accent);"></i></div></div>`,
+        },
+        {
+          num: 8,
+          name: 'Capsule Pill',
+          bg: 'bg-dark',
+          html: `<div class="gk-toast play" data-gk-theme="essentials" data-gk-variant="pill"><div class="gk-content"><div class="gk-title">Copied to clipboard</div></div></div>`,
+        },
+        {
+          num: 9,
+          name: 'Undo Action Bar',
+          bg: 'bg-dark',
+          html: `<div class="gk-toast play" data-gk-theme="essentials" data-gk-variant="undo-bar"><div class="gk-content"><div class="gk-title">Conversation archived</div></div><button type="button" class="gk-action" style="background:none;border:none;cursor:pointer;">Undo</button></div>`,
+        },
+        {
+          num: 10,
+          name: 'Inline Confirm',
+          bg: 'bg-dark',
+          html: `<div class="gk-toast play" data-gk-theme="essentials" data-gk-variant="inline-confirm"><div class="gk-content"><div class="gk-title">Delete item?</div><div class="gk-desc">This cannot be undone.</div><div class="gk-actions"><button type="button" class="gk-btn gk-cancel">Cancel</button><button type="button" class="gk-btn gk-action" style="background:#dc2626;color:#fff;">Delete</button></div></div></div>`,
+        },
+        {
+          num: 11,
+          name: 'Loading Percent',
+          bg: 'bg-dark',
+          html: `<div class="gk-toast play" data-gk-theme="essentials" data-gk-variant="loading-percent"><div class="gk-content"><div class="gk-title">Syncing files...</div></div><span class="gk-percent">64%</span></div>`,
+        },
+        {
+          num: 12,
+          name: 'Initials Avatar',
+          bg: 'bg-dark',
+          html: `<div class="gk-toast play" data-gk-theme="essentials" data-gk-variant="avatar"><div class="gk-avatar" style="background:#1d4ed8;color:#fff;">RA</div><div class="gk-content"><div class="gk-title">Reza Ahmed</div><div class="gk-desc">Sent you an attachment</div></div><time class="gk-time">now</time></div>`,
+        },
+      ];
+
+      // DIALOGS ITEMS
+      const dialogsItems = [
+        {
+          num: 1,
+          name: 'Warning Confirmation',
+          bg: 'bg-dark',
+          html: `<div class="gk-dialog play" data-gk-theme="dialogs"><div class="gk-dialog-badge" data-tone="warning">${svg('alert', alertPath)}</div><h2 class="gk-dialog-title">Unsaved changes</h2><div class="gk-dialog-text">You have changes that haven’t been saved.</div><div class="gk-dialog-actions" data-layout="row"><button type="button" class="gk-btn gk-cancel">Stay here</button><button type="button" class="gk-btn gk-confirm" style="background:#f59e0b;color:#fff;">Leave anyway</button></div></div>`,
+        },
+        {
+          num: 2,
+          name: 'Danger Delete',
+          bg: 'bg-dark',
+          html: `<div class="gk-dialog play" data-gk-theme="dialogs"><div class="gk-dialog-badge" data-tone="danger">${svg('trash', trashPath)}</div><h2 class="gk-dialog-title">Delete this file?</h2><div class="gk-dialog-text">“Q3-report.pdf” will be permanently removed.</div><div class="gk-dialog-actions" data-layout="row"><button type="button" class="gk-btn gk-cancel">Cancel</button><button type="button" class="gk-btn gk-confirm" style="background:#dc2626;color:#fff;">Delete</button></div></div>`,
+        },
+        {
+          num: 3,
+          name: 'Type to Confirm',
+          bg: 'bg-dark',
+          html: `<div class="gk-dialog play" data-gk-theme="dialogs" data-gk-variant="type-to-confirm"><div style="display:flex;gap:12px;align-items:center;margin-bottom:12px;"><div class="gk-dialog-badge" data-tone="danger" style="margin:0">${svg('trash', trashPath)}</div><div><h2 class="gk-dialog-title" style="margin:0 0 2px">Delete project</h2><div class="gk-dialog-text">This action is permanent.</div></div></div><label style="display:block;margin-top:14px;font-size:12.5px;font-weight:500">Type <span class="gk-dialog-code">acme-website</span> to confirm</label><input class="gk-field in-tc" placeholder="acme-website" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid #d4d4d8;margin-top:6px;"><div class="gk-dialog-actions" data-layout="row" style="margin-top:16px"><button type="button" class="gk-btn gk-cancel">Cancel</button><button type="button" class="gk-btn gk-confirm btn-tcb" disabled style="background:#dc2626;color:#fff;">Delete project</button></div></div>`,
+        },
+        {
+          num: 4,
+          name: 'Rename Input Prompt',
+          bg: 'bg-dark',
+          html: `<div class="gk-dialog play" data-gk-theme="dialogs" data-gk-variant="rename-prompt"><div style="display:flex;gap:12px;align-items:center;margin-bottom:12px;"><div class="gk-dialog-badge" data-tone="info" style="margin:0">${svg('edit', editPath)}</div><div><h2 class="gk-dialog-title" style="margin:0 0 2px">Rename folder</h2><div class="gk-dialog-text">Choose a new name.</div></div></div><label style="display:block;margin-top:14px;font-size:12.5px;font-weight:500">Folder name</label><input class="gk-field" value="Design assets" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid #d4d4d8;margin-top:6px;"><div class="gk-dialog-actions" data-layout="row" style="margin-top:16px"><button type="button" class="gk-btn gk-cancel">Cancel</button><button type="button" class="gk-btn gk-confirm">Save</button></div></div>`,
+        },
+        {
+          num: 5,
+          name: 'Success Verified',
+          bg: 'bg-dark',
+          html: `<div class="gk-dialog play" data-gk-theme="dialogs"><div class="gk-dialog-badge" data-tone="success">${svg('check', checkPath)}</div><h2 class="gk-dialog-title">Account verified</h2><div class="gk-dialog-text">Your email address has been confirmed.</div><div class="gk-dialog-actions" data-layout="row"><button type="button" class="gk-btn gk-confirm" style="background:#16a34a;color:#fff;width:100%;">Continue</button></div></div>`,
+        },
+        {
+          num: 6,
+          name: 'Update Info (Stacked)',
+          bg: 'bg-dark',
+          html: `<div class="gk-dialog play" data-gk-theme="dialogs"><div class="gk-dialog-badge" data-tone="purple">${svg('star', starPath)}</div><h2 class="gk-dialog-title">Version 3.2 is available</h2><div class="gk-dialog-text">Faster sync and 14 bug fixes.</div><div class="gk-dialog-actions" data-layout="stack"><button type="button" class="gk-btn gk-confirm" style="background:#18181b;color:#fff;">Update now</button><button type="button" class="gk-btn gk-cancel" style="border:none;background:none;color:#71717a;">Remind me later</button></div></div>`,
+        },
+        {
+          num: 7,
+          name: 'Dark Logout Modal',
+          bg: 'bg-dark',
+          html: `<div class="gk-dialog play" data-gk-theme="dialogs" data-gk-mode="dark"><div class="gk-dialog-badge" style="background:#27272f;color:#e4e4e7;">${svg('bell', bellPath)}</div><h2 class="gk-dialog-title">Sign out?</h2><div class="gk-dialog-text">You will need your password to log in.</div><div class="gk-dialog-actions" data-layout="row"><button type="button" class="gk-btn gk-cancel">Cancel</button><button type="button" class="gk-btn gk-confirm" style="background:#ef4444;color:#fff;">Sign out</button></div></div>`,
+        },
+        {
+          num: 8,
+          name: 'iOS Glass Alert (Divided)',
+          bg: 'bg-aurora',
+          html: `<div class="gk-dialog play" data-gk-theme="dialogs" data-gk-variant="ios-glass-alert" style="max-width:290px;padding:0;overflow:hidden;text-align:center;"><div style="padding:18px 16px 16px"><h2 class="gk-dialog-title" style="font-size:16px;margin:0 0 4px">Reset all settings?</h2><div class="gk-dialog-text" style="font-size:13px;opacity:.75">All preferences will return to defaults.</div></div><div class="gk-dialog-actions" data-layout="divided"><button type="button">Cancel</button><button type="button" style="color:#ff3b30;font-weight:600">Reset</button></div></div>`,
+        },
+        {
+          num: 9,
+          name: 'Bottom Sheet Confirm',
+          bg: 'bg-dark',
+          html: `<div class="gk-bsheet play" data-gk-theme="dialogs" style="border-radius:24px 24px 0 0;padding:12px 20px 20px;text-align:center;"><div class="gk-sheet-handle" style="width:38px;height:4px;border-radius:9px;background:#d4d4d8;margin:0 auto 16px"></div><div class="gk-dialog-badge" data-tone="danger">${svg('trash', trashPath)}</div><h2 class="gk-bsheet-title" style="font-size:17px;margin:12px 0 4px">Remove 3 items?</h2><div class="gk-dialog-text">They will be moved to trash for 30 days.</div><div class="gk-dialog-actions" data-layout="stack" style="margin-top:16px;"><button type="button" class="gk-btn gk-confirm" style="background:#dc2626;color:#fff;">Move to trash</button><button type="button" class="gk-btn gk-cancel">Cancel</button></div></div>`,
+        },
+        {
+          num: 10,
+          name: 'Re-enter Password Notice',
+          bg: 'bg-dark',
+          html: `<div class="gk-dialog play" data-gk-theme="dialogs" data-gk-variant="reauth-password"><div style="display:flex;gap:12px;align-items:center;margin-bottom:12px;"><div class="gk-dialog-badge" data-tone="warning" style="margin:0">${svg('lock', lockPath)}</div><div><h2 class="gk-dialog-title" style="margin:0 0 2px">Confirm password</h2><div class="gk-dialog-text">Verify identity before changes.</div></div></div><label style="display:block;margin-top:14px;font-size:12.5px;font-weight:500">Password</label><input type="password" class="gk-field" value="password123" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid #d4d4d8;margin-top:6px;"><div class="gk-dialog-notice" data-tone="warning">${svg('shield', shieldPath)}<span>This step protects your account data.</span></div><div class="gk-dialog-actions" data-layout="row" style="margin-top:16px"><button type="button" class="gk-btn gk-cancel">Cancel</button><button type="button" class="gk-btn gk-confirm">Verify</button></div></div>`,
+        },
+        {
+          num: 11,
+          name: 'OTP Code Input',
+          bg: 'bg-dark',
+          html: `<div class="gk-dialog play" data-gk-theme="dialogs"><div class="gk-dialog-badge" data-tone="info">${svg('shield', shieldPath)}</div><h2 class="gk-dialog-title">Enter verification code</h2><div class="gk-dialog-text">We sent a 6-digit code to email</div><div class="gk-otp" style="display:flex;gap:8px;justify-content:center;margin-top:18px"><input class="gk-otp-input" maxlength="1" value="4"><input class="gk-otp-input" maxlength="1" value="2"><input class="gk-otp-input" maxlength="1" value="8"><input class="gk-otp-input" maxlength="1"><input class="gk-otp-input" maxlength="1"><input class="gk-otp-input" maxlength="1"></div><div class="gk-dialog-actions" data-layout="row" style="margin-top:18px"><button type="button" class="gk-btn gk-confirm" style="width:100%">Verify</button></div></div>`,
+        },
+        {
+          num: 12,
+          name: 'Session Countdown Live',
+          bg: 'bg-dark',
+          html: `<div class="gk-dialog play" data-gk-theme="dialogs"><div class="gk-dialog-badge" data-tone="warning">${svg('clock', clockPath)}</div><h2 class="gk-dialog-title">Are you still there?</h2><div class="gk-dialog-text">You will be signed out due to inactivity.</div><div class="gk-countdown-big"><span class="cd-num">60</span>s</div><div class="gk-countdown-track"><i class="gk-countdown-fill" style="width:100%"></i></div><div class="gk-dialog-actions" data-layout="row" style="margin-top:18px"><button type="button" class="gk-btn gk-cancel">Sign out</button><button type="button" class="gk-btn gk-confirm" style="background:#f59e0b;color:#fff;">Stay signed in</button></div></div>`,
+        },
+      ];
+
+      function renderGrid(containerId, items) {
+        const container = document.getElementById(containerId);
+        for (const item of items) {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+      <div class="card-header">
+        <h3>${item.num}. ${item.name}</h3>
+        <button type="button" class="rp">Replay</button>
+      </div>
+      <div class="stage ${item.bg}">${item.html}</div>
+    `;
+          const stage = card.querySelector('.stage');
+          const replayBtn = card.querySelector('.rp');
+          const replay = () => {
+            const el = stage.querySelector('.play');
+            if (el) {
+              el.classList.remove('play');
+              void el.offsetWidth;
+              el.classList.add('play');
+            }
+          };
+          stage.addEventListener('click', replay);
+          replayBtn.addEventListener('click', replay);
+
+          // Interactive type to confirm
+          const tc = stage.querySelector('.in-tc');
+          const tcb = stage.querySelector('.btn-tcb');
+          if (tc && tcb) {
+            tc.addEventListener('input', () => {
+              tcb.disabled = tc.value.trim() !== 'acme-website';
+            });
+          }
+
+          container.append(card);
+        }
+      }
+
+      renderGrid('grid-showcase', showcaseItems);
+      renderGrid('grid-ios', iosItems);
+      renderGrid('grid-essentials', essentialsItems);
+      renderGrid('grid-dialogs', dialogsItems);
+
+      // Global controls
+      document.getElementById('btn-replay-all').addEventListener('click', () => {
+        document.querySelectorAll('.stage .play').forEach((el) => {
+          el.classList.remove('play');
+          void el.offsetWidth;
+          el.classList.add('play');
+        });
+      });
+
+      document.getElementById('btn-theme').addEventListener('click', () => {
+        const r = document.documentElement;
+        const isDark = r.getAttribute('data-theme') === 'dark';
+        r.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      });
+
+      document.getElementById('sel-bg').addEventListener('change', (e) => {
+        const chosen = e.target.value;
+        document.querySelectorAll('.stage').forEach((st) => {
+          st.className = `stage ${chosen}`;
+        });
+      });
+
+      // Live session countdown demo
+      let count = 60;
+      setInterval(() => {
+        count = count <= 0 ? 60 : count - 1;
+        document.querySelectorAll('.cd-num').forEach((el) => {
+          el.textContent = count;
+        });
+        document.querySelectorAll('.gk-countdown-fill').forEach((el) => {
+          el.style.width = `${(count / 60) * 100}%`;
+        });
+      }, 1000);
+    </script>
+  </body>
+</html>

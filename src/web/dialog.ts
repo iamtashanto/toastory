@@ -1,4 +1,3 @@
-import { THEMES } from '../themes/themes';
 import { createDialogController } from '../core';
 import type {
   DialogButton,
@@ -16,6 +15,7 @@ import { buildInput } from './inputs';
 import type { InputControl } from './inputs';
 import { openOverlay } from './overlay';
 import { sanitizeToFragment } from './sanitize';
+import { resolveVariant } from './variants';
 
 const ICONS: Record<string, IconName> = {
   success: 'success',
@@ -95,7 +95,14 @@ export function openDialog(initial: DialogOptions): DialogPromise {
   const confirmBtn = el('button', 'gk-btn gk-confirm gk-btn--confirm', { type: 'button' });
   const denyBtn = el('button', 'gk-btn gk-deny gk-btn--deny', { type: 'button' });
   const cancelBtn = el('button', 'gk-btn gk-cancel gk-btn--cancel', { type: 'button' });
-  const buttons = el('div', 'gk-dialog-buttons gk-dialog-actions', {}, cancelBtn, denyBtn, confirmBtn);
+  const buttons = el(
+    'div',
+    'gk-dialog-buttons gk-dialog-actions',
+    {},
+    cancelBtn,
+    denyBtn,
+    confirmBtn,
+  );
   const footer = el('div', 'gk-dialog-footer');
   const bar = el('i');
   const timerBar = el('div', 'gk-timer', { 'aria-hidden': 'true' }, bar);
@@ -121,16 +128,7 @@ export function openDialog(initial: DialogOptions): DialogPromise {
   const sync = (state: DialogState): void => {
     const o = state.options;
     const themeName = o.theme ?? initial.theme ?? config.theme;
-    const themeDef = THEMES.find((t) => t.name === themeName);
-    let activeVariant = o.variant ?? initial.variant;
-    if (activeVariant && themeDef?.supportedVariants && !themeDef.supportedVariants.includes(activeVariant)) {
-      if (typeof process !== 'undefined' && process.env?.NODE_ENV !== 'production') {
-        console.warn(
-          `[glazekit] Theme "${themeName}" does not support variant "${activeVariant}". Falling back to default.`,
-        );
-      }
-      activeVariant = undefined;
-    }
+    const activeVariant = resolveVariant(themeName, o.variant ?? initial.variant);
     if (activeVariant) panel.setAttribute('data-gk-variant', activeVariant);
     else panel.removeAttribute('data-gk-variant');
 
@@ -294,7 +292,7 @@ export function openDialog(initial: DialogOptions): DialogPromise {
     if (o.confirmText) {
       const checkMatch = (): void => {
         const current = String(input ? input.read() : '');
-        const target = o.confirmText!;
+        const target = o.confirmText ?? '';
         const match = o.caseSensitive
           ? current === target
           : current.trim().toLowerCase() === target.toLowerCase();

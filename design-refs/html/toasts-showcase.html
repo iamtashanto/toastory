@@ -1,182 +1,832 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Premium toast designs</title>
-<style>
-:root{--bg:#f6f6f4;--fg:#18181b;--mut:#6b6b73;--card:#fff;--bd:#e4e4e0;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e0e10;--fg:#f4f4f5;--mut:#9a9aa3;--card:#17171a;--bd:#2a2a30;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0e0e10;--fg:#f4f4f5;--mut:#9a9aa3;--card:#17171a;--bd:#2a2a30;color-scheme:dark}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--fg);font-family:Inter,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.5}
-.wrap{max-width:1040px;margin:0 auto;padding:32px 20px 56px}
-h1{font-size:28px;font-weight:600;letter-spacing:-.02em;margin:0 0 6px}
-.sub{color:var(--mut);margin:0 0 20px;font-size:15px}
-.top{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px}
-.top button{font:inherit;font-size:14px;padding:8px 14px;border-radius:10px;border:1px solid var(--bd);background:var(--card);color:var(--fg);cursor:pointer}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,440px),1fr));gap:18px}
-.card{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:10px 10px 14px}
-.card h3{font-size:13px;font-weight:500;color:var(--mut);margin:4px 6px 10px}
-.stage{border-radius:12px;min-height:150px;display:flex;align-items:center;justify-content:center;padding:22px 16px;overflow:hidden;cursor:pointer}
-.s-dark{background:#0b0b0f}
-.s-aurora{background:linear-gradient(135deg,#4f46e5,#c026d3 55%,#f97316)}
-.s-light{background:#eceae4}
-.s-ocean{background:linear-gradient(135deg,#0f172a,#0e7490)}
-.s-mesh{background:linear-gradient(160deg,#1e1b4b,#581c87 60%,#9d174d)}
-.t{width:100%;max-width:380px;display:flex;align-items:center;gap:12px;font-size:14px;line-height:1.35;position:relative;overflow:hidden}
-.t b{display:block;font-weight:600;letter-spacing:-.005em}
-.t span.d{display:block;font-size:12.5px;opacity:.7;margin-top:1px}
-.ic{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.play{animation:in .55s cubic-bezier(.2,.9,.25,1.15) both}
-@keyframes in{from{opacity:0;transform:translateY(18px) scale(.94)}to{opacity:1;transform:none}}
-@keyframes shrink{from{width:100%}to{width:0}}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(244,63,94,.5)}50%{box-shadow:0 0 0 7px rgba(244,63,94,0)}}
-@keyframes ring{from{stroke-dashoffset:0}to{stroke-dashoffset:50.3}}
-@keyframes eq{0%,100%{height:4px}50%{height:15px}}
-@keyframes island{0%{width:120px}100%{width:100%}}
-@keyframes fill{from{width:8%}to{width:78%}}
-.x{margin-left:auto;opacity:.5;flex:none}
-.bar{position:absolute;left:0;bottom:0;height:3px;animation:shrink 4s linear infinite}
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Premium toast designs</title>
+    <style>
+      :root {
+        --bg: #f6f6f4;
+        --fg: #18181b;
+        --mut: #6b6b73;
+        --card: #fff;
+        --bd: #e4e4e0;
+        color-scheme: light;
+        box-sizing: border-box;
+        padding-top: env(safe-area-inset-top, 0px);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme='light']) {
+          --bg: #0e0e10;
+          --fg: #f4f4f5;
+          --mut: #9a9aa3;
+          --card: #17171a;
+          --bd: #2a2a30;
+          color-scheme: dark;
+        }
+      }
+      :root[data-theme='dark'] {
+        --bg: #0e0e10;
+        --fg: #f4f4f5;
+        --mut: #9a9aa3;
+        --card: #17171a;
+        --bd: #2a2a30;
+        color-scheme: dark;
+      }
+      html {
+        scroll-padding-top: env(safe-area-inset-top, 0px);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font-family:
+          Inter,
+          -apple-system,
+          'Segoe UI',
+          Roboto,
+          Helvetica,
+          Arial,
+          sans-serif;
+        line-height: 1.5;
+      }
+      .wrap {
+        max-width: 1040px;
+        margin: 0 auto;
+        padding: 32px 20px 56px;
+      }
+      h1 {
+        font-size: 28px;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        margin: 0 0 6px;
+      }
+      .sub {
+        color: var(--mut);
+        margin: 0 0 20px;
+        font-size: 15px;
+      }
+      .top {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+      }
+      .top button {
+        font: inherit;
+        font-size: 14px;
+        padding: 8px 14px;
+        border-radius: 10px;
+        border: 1px solid var(--bd);
+        background: var(--card);
+        color: var(--fg);
+        cursor: pointer;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 440px), 1fr));
+        gap: 18px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--bd);
+        border-radius: 18px;
+        padding: 10px 10px 14px;
+      }
+      .card h3 {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--mut);
+        margin: 4px 6px 10px;
+      }
+      .stage {
+        border-radius: 12px;
+        min-height: 150px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 22px 16px;
+        overflow: hidden;
+        cursor: pointer;
+      }
+      .s-dark {
+        background: #0b0b0f;
+      }
+      .s-aurora {
+        background: linear-gradient(135deg, #4f46e5, #c026d3 55%, #f97316);
+      }
+      .s-light {
+        background: #eceae4;
+      }
+      .s-ocean {
+        background: linear-gradient(135deg, #0f172a, #0e7490);
+      }
+      .s-mesh {
+        background: linear-gradient(160deg, #1e1b4b, #581c87 60%, #9d174d);
+      }
+      .t {
+        width: 100%;
+        max-width: 380px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 14px;
+        line-height: 1.35;
+        position: relative;
+        overflow: hidden;
+      }
+      .t b {
+        display: block;
+        font-weight: 600;
+        letter-spacing: -0.005em;
+      }
+      .t span.d {
+        display: block;
+        font-size: 12.5px;
+        opacity: 0.7;
+        margin-top: 1px;
+      }
+      .ic {
+        width: 20px;
+        height: 20px;
+        flex: none;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .play {
+        animation: in 0.55s cubic-bezier(0.2, 0.9, 0.25, 1.15) both;
+      }
+      @keyframes in {
+        from {
+          opacity: 0;
+          transform: translateY(18px) scale(0.94);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      @keyframes shrink {
+        from {
+          width: 100%;
+        }
+        to {
+          width: 0;
+        }
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.5);
+        }
+        50% {
+          box-shadow: 0 0 0 7px rgba(244, 63, 94, 0);
+        }
+      }
+      @keyframes ring {
+        from {
+          stroke-dashoffset: 0;
+        }
+        to {
+          stroke-dashoffset: 50.3;
+        }
+      }
+      @keyframes eq {
+        0%,
+        100% {
+          height: 4px;
+        }
+        50% {
+          height: 15px;
+        }
+      }
+      @keyframes island {
+        0% {
+          width: 120px;
+        }
+        100% {
+          width: 100%;
+        }
+      }
+      @keyframes fill {
+        from {
+          width: 8%;
+        }
+        to {
+          width: 78%;
+        }
+      }
+      .x {
+        margin-left: auto;
+        opacity: 0.5;
+        flex: none;
+      }
+      .bar {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        height: 3px;
+        animation: shrink 4s linear infinite;
+      }
 
-.glass{background:rgba(255,255,255,.14);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.28);color:#fff;padding:14px 16px;border-radius:16px;box-shadow:0 12px 32px rgba(0,0,0,.25)}
-.glass .chip{width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.22);display:grid;place-items:center;flex:none}
+      .glass {
+        background: rgba(255, 255, 255, 0.14);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        color: #fff;
+        padding: 14px 16px;
+        border-radius: 16px;
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+      }
+      .glass .chip {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.22);
+        display: grid;
+        place-items: center;
+        flex: none;
+      }
 
-.emerald{background:linear-gradient(135deg,#059669,#10b981);color:#fff;padding:14px 16px;border-radius:14px;box-shadow:0 10px 28px rgba(16,185,129,.4)}
-.emerald .chip{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.22);display:grid;place-items:center;flex:none}
+      .emerald {
+        background: linear-gradient(135deg, #059669, #10b981);
+        color: #fff;
+        padding: 14px 16px;
+        border-radius: 14px;
+        box-shadow: 0 10px 28px rgba(16, 185, 129, 0.4);
+      }
+      .emerald .chip {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.22);
+        display: grid;
+        place-items: center;
+        flex: none;
+      }
 
-.neon{background:#140509;color:#fecdd3;border:1px solid #f43f5e;border-radius:12px;padding:13px 15px;box-shadow:0 0 24px rgba(244,63,94,.45),inset 0 0 14px rgba(244,63,94,.12)}
-.neon .ic{color:#fb7185;animation:pulse 1.8s infinite;border-radius:50%}
+      .neon {
+        background: #140509;
+        color: #fecdd3;
+        border: 1px solid #f43f5e;
+        border-radius: 12px;
+        padding: 13px 15px;
+        box-shadow:
+          0 0 24px rgba(244, 63, 94, 0.45),
+          inset 0 0 14px rgba(244, 63, 94, 0.12);
+      }
+      .neon .ic {
+        color: #fb7185;
+        animation: pulse 1.8s infinite;
+        border-radius: 50%;
+      }
 
-.ios{background:rgba(250,250,250,.82);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);color:#111;padding:12px 14px;border-radius:22px;box-shadow:0 8px 30px rgba(0,0,0,.14)}
-.ios .app{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#34d399,#0ea5e9);display:grid;place-items:center;color:#fff;flex:none}
-.ios small{margin-left:auto;font-size:12px;color:#777;align-self:flex-start}
+      .ios {
+        background: rgba(250, 250, 250, 0.82);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        color: #111;
+        padding: 12px 14px;
+        border-radius: 22px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.14);
+      }
+      .ios .app {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #34d399, #0ea5e9);
+        display: grid;
+        place-items: center;
+        color: #fff;
+        flex: none;
+      }
+      .ios small {
+        margin-left: auto;
+        font-size: 12px;
+        color: #777;
+        align-self: flex-start;
+      }
 
-.vercel{background:#000;color:#ededed;border:1px solid #2e2e2e;border-radius:10px;padding:12px 14px;font-size:13.5px}
-.vercel kbd{margin-left:auto;font:inherit;font-size:11.5px;color:#a1a1a1;border:1px solid #333;border-radius:6px;padding:2px 7px;background:#111}
-.vercel .dot{width:8px;height:8px;border-radius:50%;background:#3b82f6;flex:none}
+      .vercel {
+        background: #000;
+        color: #ededed;
+        border: 1px solid #2e2e2e;
+        border-radius: 10px;
+        padding: 12px 14px;
+        font-size: 13.5px;
+      }
+      .vercel kbd {
+        margin-left: auto;
+        font: inherit;
+        font-size: 11.5px;
+        color: #a1a1a1;
+        border: 1px solid #333;
+        border-radius: 6px;
+        padding: 2px 7px;
+        background: #111;
+      }
+      .vercel .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #3b82f6;
+        flex: none;
+      }
 
-.ringt{background:#fff;color:#18181b;border-radius:16px;padding:14px 16px;box-shadow:0 10px 30px rgba(0,0,0,.12);border:1px solid #e7e5e4}
-.ringt svg.r{width:30px;height:30px;transform:rotate(-90deg);flex:none}
-.ringt circle{fill:none;stroke-width:3}
-.ringt .a{stroke:#6366f1;stroke-dasharray:50.3;animation:ring 4s linear infinite;stroke-linecap:round}
-.ringt .b{stroke:#e7e5e4}
-.ringt .cta{margin-left:auto;font-size:13px;font-weight:600;color:#4f46e5;cursor:pointer}
+      .ringt {
+        background: #fff;
+        color: #18181b;
+        border-radius: 16px;
+        padding: 14px 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+        border: 1px solid #e7e5e4;
+      }
+      .ringt svg.r {
+        width: 30px;
+        height: 30px;
+        transform: rotate(-90deg);
+        flex: none;
+      }
+      .ringt circle {
+        fill: none;
+        stroke-width: 3;
+      }
+      .ringt .a {
+        stroke: #6366f1;
+        stroke-dasharray: 50.3;
+        animation: ring 4s linear infinite;
+        stroke-linecap: round;
+      }
+      .ringt .b {
+        stroke: #e7e5e4;
+      }
+      .ringt .cta {
+        margin-left: auto;
+        font-size: 13px;
+        font-weight: 600;
+        color: #4f46e5;
+        cursor: pointer;
+      }
 
-.stackw{position:relative;width:100%;max-width:380px;height:92px}
-.stackw .t{position:absolute;left:0;right:0;background:#1c1c22;color:#f4f4f5;border:1px solid #33333b;border-radius:14px;padding:13px 15px;transition:transform .35s cubic-bezier(.2,.9,.3,1),opacity .35s}
-.stackw .t:nth-child(3){bottom:0;transform:scale(.88);opacity:.55}
-.stackw .t:nth-child(2){bottom:0;transform:translateY(-10px) scale(.94);opacity:.8}
-.stackw .t:nth-child(1){bottom:0;transform:translateY(-20px)}
-.stackw{height:130px;display:flex;align-items:flex-end}
-.stackw:hover .t:nth-child(3){transform:translateY(0)}
-.stackw:hover .t:nth-child(2){transform:translateY(-62px) scale(1);opacity:1}
-.stackw:hover .t:nth-child(1){transform:translateY(-124px)}
-.stackw:hover{height:210px}
+      .stackw {
+        position: relative;
+        width: 100%;
+        max-width: 380px;
+        height: 92px;
+      }
+      .stackw .t {
+        position: absolute;
+        left: 0;
+        right: 0;
+        background: #1c1c22;
+        color: #f4f4f5;
+        border: 1px solid #33333b;
+        border-radius: 14px;
+        padding: 13px 15px;
+        transition:
+          transform 0.35s cubic-bezier(0.2, 0.9, 0.3, 1),
+          opacity 0.35s;
+      }
+      .stackw .t:nth-child(3) {
+        bottom: 0;
+        transform: scale(0.88);
+        opacity: 0.55;
+      }
+      .stackw .t:nth-child(2) {
+        bottom: 0;
+        transform: translateY(-10px) scale(0.94);
+        opacity: 0.8;
+      }
+      .stackw .t:nth-child(1) {
+        bottom: 0;
+        transform: translateY(-20px);
+      }
+      .stackw {
+        height: 130px;
+        display: flex;
+        align-items: flex-end;
+      }
+      .stackw:hover .t:nth-child(3) {
+        transform: translateY(0);
+      }
+      .stackw:hover .t:nth-child(2) {
+        transform: translateY(-62px) scale(1);
+        opacity: 1;
+      }
+      .stackw:hover .t:nth-child(1) {
+        transform: translateY(-124px);
+      }
+      .stackw:hover {
+        height: 210px;
+      }
 
-.up{background:#fff;color:#18181b;border-radius:16px;padding:14px 16px;box-shadow:0 12px 30px rgba(0,0,0,.14);flex-wrap:wrap}
-.up .file{width:38px;height:38px;border-radius:10px;background:#eef2ff;color:#4f46e5;display:grid;place-items:center;flex:none}
-.up .track{width:100%;height:6px;border-radius:99px;background:#e7e5e4;overflow:hidden}
-.up .track i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#6366f1,#a855f7);animation:fill 3.2s ease-in-out infinite alternate}
+      .up {
+        background: #fff;
+        color: #18181b;
+        border-radius: 16px;
+        padding: 14px 16px;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.14);
+        flex-wrap: wrap;
+      }
+      .up .file {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        background: #eef2ff;
+        color: #4f46e5;
+        display: grid;
+        place-items: center;
+        flex: none;
+      }
+      .up .track {
+        width: 100%;
+        height: 6px;
+        border-radius: 99px;
+        background: #e7e5e4;
+        overflow: hidden;
+      }
+      .up .track i {
+        display: block;
+        height: 100%;
+        border-radius: 99px;
+        background: linear-gradient(90deg, #6366f1, #a855f7);
+        animation: fill 3.2s ease-in-out infinite alternate;
+      }
 
-.island{background:#000;color:#fff;border-radius:999px;padding:10px 16px;max-width:360px;animation:island .8s cubic-bezier(.2,.9,.3,1) both}
-.island .art{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#f97316,#ec4899);flex:none}
-.island .eq{display:flex;gap:3px;align-items:flex-end;height:16px;margin-left:auto}
-.island .eq i{display:block;width:3px;background:#34d399;border-radius:2px;animation:eq .9s ease-in-out infinite}
-.island .eq i:nth-child(2){animation-delay:.2s}.island .eq i:nth-child(3){animation-delay:.4s}.island .eq i:nth-child(4){animation-delay:.1s}
+      .island {
+        background: #000;
+        color: #fff;
+        border-radius: 999px;
+        padding: 10px 16px;
+        max-width: 360px;
+        animation: island 0.8s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+      }
+      .island .art {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #f97316, #ec4899);
+        flex: none;
+      }
+      .island .eq {
+        display: flex;
+        gap: 3px;
+        align-items: flex-end;
+        height: 16px;
+        margin-left: auto;
+      }
+      .island .eq i {
+        display: block;
+        width: 3px;
+        background: #34d399;
+        border-radius: 2px;
+        animation: eq 0.9s ease-in-out infinite;
+      }
+      .island .eq i:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .island .eq i:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+      .island .eq i:nth-child(4) {
+        animation-delay: 0.1s;
+      }
 
-.gb{padding:1.5px;border-radius:16px;background:linear-gradient(120deg,#f59e0b,#ec4899,#8b5cf6,#3b82f6);box-shadow:0 12px 34px rgba(139,92,246,.4)}
-.gb .in{background:#0f0f14;color:#f4f4f5;border-radius:14.5px;padding:14px 16px;display:flex;align-items:center;gap:12px}
-.gb .btn{margin-left:auto;background:#fff;color:#111;font-size:12.5px;font-weight:600;border-radius:8px;padding:6px 11px;flex:none}
-.gb .ic{color:#fbbf24}
+      .gb {
+        padding: 1.5px;
+        border-radius: 16px;
+        background: linear-gradient(120deg, #f59e0b, #ec4899, #8b5cf6, #3b82f6);
+        box-shadow: 0 12px 34px rgba(139, 92, 246, 0.4);
+      }
+      .gb .in {
+        background: #0f0f14;
+        color: #f4f4f5;
+        border-radius: 14.5px;
+        padding: 14px 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .gb .btn {
+        margin-left: auto;
+        background: #fff;
+        color: #111;
+        font-size: 12.5px;
+        font-weight: 600;
+        border-radius: 8px;
+        padding: 6px 11px;
+        flex: none;
+      }
+      .gb .ic {
+        color: #fbbf24;
+      }
 
-.soft{background:#fff;color:#18181b;border-radius:14px;padding:14px 16px;border:1px solid #e7e5e4;box-shadow:0 6px 20px rgba(0,0,0,.07)}
-.soft .chip{width:32px;height:32px;border-radius:10px;background:#dcfce7;color:#15803d;display:grid;place-items:center;flex:none}
+      .soft {
+        background: #fff;
+        color: #18181b;
+        border-radius: 14px;
+        padding: 14px 16px;
+        border: 1px solid #e7e5e4;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
+      }
+      .soft .chip {
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+        background: #dcfce7;
+        color: #15803d;
+        display: grid;
+        place-items: center;
+        flex: none;
+      }
 
-.msg{background:#1c1c22;color:#f4f4f5;border:1px solid #33333b;border-radius:16px;padding:14px;flex-wrap:wrap;box-shadow:0 14px 34px rgba(0,0,0,.4)}
-.msg .av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#38bdf8,#6366f1);display:grid;place-items:center;font-weight:600;font-size:13px;flex:none}
-.msg .acts{display:flex;gap:8px;width:100%;padding-left:50px}
-.msg .acts span{font-size:12.5px;font-weight:600;padding:6px 12px;border-radius:8px;background:#2c2c35}
-.msg .acts span.p{background:#f4f4f5;color:#111}
-.msg time{margin-left:auto;font-size:12px;opacity:.5;align-self:flex-start}
-</style>
-</head>
-<body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-<symbol id="check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
-<symbol id="x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
-<symbol id="alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></symbol>
-<symbol id="bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 0 0 3.4 0"/></symbol>
-<symbol id="file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6"/></symbol>
-<symbol id="star" viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></symbol>
-<symbol id="info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></symbol>
-<symbol id="mail" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></symbol>
-<symbol id="cloud" viewBox="0 0 24 24"><path d="M17.5 19a4.5 4.5 0 1 0-1.4-8.8A6 6 0 1 0 5 15.5 3.5 3.5 0 0 0 6.5 19z"/></symbol>
-</svg>
+      .msg {
+        background: #1c1c22;
+        color: #f4f4f5;
+        border: 1px solid #33333b;
+        border-radius: 16px;
+        padding: 14px;
+        flex-wrap: wrap;
+        box-shadow: 0 14px 34px rgba(0, 0, 0, 0.4);
+      }
+      .msg .av {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #38bdf8, #6366f1);
+        display: grid;
+        place-items: center;
+        font-weight: 600;
+        font-size: 13px;
+        flex: none;
+      }
+      .msg .acts {
+        display: flex;
+        gap: 8px;
+        width: 100%;
+        padding-left: 50px;
+      }
+      .msg .acts span {
+        font-size: 12.5px;
+        font-weight: 600;
+        padding: 6px 12px;
+        border-radius: 8px;
+        background: #2c2c35;
+      }
+      .msg .acts span.p {
+        background: #f4f4f5;
+        color: #111;
+      }
+      .msg time {
+        margin-left: auto;
+        font-size: 12px;
+        opacity: 0.5;
+        align-self: flex-start;
+      }
+    </style>
+  </head>
+  <body>
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <symbol id="check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" /></symbol>
+      <symbol id="x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12" /></symbol>
+      <symbol id="alert" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 8v4M12 16h.01" />
+      </symbol>
+      <symbol id="bell" viewBox="0 0 24 24">
+        <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 0 0 3.4 0" />
+      </symbol>
+      <symbol id="file" viewBox="0 0 24 24">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6" />
+      </symbol>
+      <symbol id="star" viewBox="0 0 24 24">
+        <path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z" />
+      </symbol>
+      <symbol id="info" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 16v-4M12 8h.01" />
+      </symbol>
+      <symbol id="mail" viewBox="0 0 24 24">
+        <rect x="2" y="4" width="20" height="16" rx="2" />
+        <path d="m22 7-10 6L2 7" />
+      </symbol>
+      <symbol id="cloud" viewBox="0 0 24 24">
+        <path d="M17.5 19a4.5 4.5 0 1 0-1.4-8.8A6 6 0 1 0 5 15.5 3.5 3.5 0 0 0 6.5 19z" />
+      </symbol>
+    </svg>
 
-<div class="wrap">
-  <h1>Premium toast designs</h1>
-  <p class="sub">Click any card to replay its entrance animation. Hover the stacked card to expand it.</p>
-  <div class="top"><button id="all">Replay all</button><button id="theme">Toggle page theme</button></div>
+    <div class="wrap">
+      <h1>Premium toast designs</h1>
+      <p class="sub">
+        Click any card to replay its entrance animation. Hover the stacked card to expand it.
+      </p>
+      <div class="top">
+        <button id="all">Replay all</button><button id="theme">Toggle page theme</button>
+      </div>
 
-  <div class="grid">
+      <div class="grid">
+        <div class="card">
+          <h3>1. Glassmorphism</h3>
+          <div class="stage s-aurora">
+            <div class="t glass play">
+              <div class="chip">
+                <svg class="ic"><use href="#check" /></svg>
+              </div>
+              <div>
+                <b>Changes published</b><span class="d">Your site is live on 3 regions</span>
+              </div>
+              <svg class="ic x"><use href="#x" /></svg>
+            </div>
+          </div>
+        </div>
 
-    <div class="card"><h3>1. Glassmorphism</h3><div class="stage s-aurora">
-      <div class="t glass play"><div class="chip"><svg class="ic"><use href="#check"/></svg></div><div><b>Changes published</b><span class="d">Your site is live on 3 regions</span></div><svg class="ic x"><use href="#x"/></svg></div></div></div>
+        <div class="card">
+          <h3>2. Emerald gradient success</h3>
+          <div class="stage s-light">
+            <div class="t emerald play">
+              <div class="chip">
+                <svg class="ic" style="width: 16px; height: 16px"><use href="#check" /></svg>
+              </div>
+              <div><b>Payment successful</b><span class="d">Receipt sent to your email</span></div>
+            </div>
+          </div>
+        </div>
 
-    <div class="card"><h3>2. Emerald gradient success</h3><div class="stage s-light">
-      <div class="t emerald play"><div class="chip"><svg class="ic" style="width:16px;height:16px"><use href="#check"/></svg></div><div><b>Payment successful</b><span class="d">Receipt sent to your email</span></div></div></div></div>
+        <div class="card">
+          <h3>3. Neon error</h3>
+          <div class="stage s-dark">
+            <div class="t neon play">
+              <svg class="ic"><use href="#alert" /></svg>
+              <div><b>Deployment failed</b><span class="d">Build exited with code 1</span></div>
+              <svg class="ic x"><use href="#x" /></svg>
+            </div>
+          </div>
+        </div>
 
-    <div class="card"><h3>3. Neon error</h3><div class="stage s-dark">
-      <div class="t neon play"><svg class="ic"><use href="#alert"/></svg><div><b>Deployment failed</b><span class="d">Build exited with code 1</span></div><svg class="ic x"><use href="#x"/></svg></div></div></div>
+        <div class="card">
+          <h3>4. iOS style notification</h3>
+          <div class="stage s-ocean">
+            <div class="t ios play">
+              <div class="app">
+                <svg class="ic"><use href="#cloud" /></svg>
+              </div>
+              <div><b>Backup complete</b><span class="d">2,481 photos saved to cloud</span></div>
+              <small>now</small>
+            </div>
+          </div>
+        </div>
 
-    <div class="card"><h3>4. iOS style notification</h3><div class="stage s-ocean">
-      <div class="t ios play"><div class="app"><svg class="ic"><use href="#cloud"/></svg></div><div><b>Backup complete</b><span class="d">2,481 photos saved to cloud</span></div><small>now</small></div></div></div>
+        <div class="card">
+          <h3>5. Developer dark (Vercel style)</h3>
+          <div class="stage s-dark">
+            <div class="t vercel play">
+              <span class="dot"></span><span>New deployment is ready</span><kbd>Esc</kbd>
+            </div>
+          </div>
+        </div>
 
-    <div class="card"><h3>5. Developer dark (Vercel style)</h3><div class="stage s-dark">
-      <div class="t vercel play"><span class="dot"></span><span>New deployment is ready</span><kbd>Esc</kbd></div></div></div>
+        <div class="card">
+          <h3>6. Countdown ring</h3>
+          <div class="stage s-mesh">
+            <div class="t ringt play">
+              <svg class="r" viewBox="0 0 20 20">
+                <circle class="b" cx="10" cy="10" r="8" />
+                <circle class="a" cx="10" cy="10" r="8" />
+              </svg>
+              <div><b>Link copied</b><span class="d">Closing in a few seconds</span></div>
+              <span class="cta">Undo</span>
+            </div>
+          </div>
+        </div>
 
-    <div class="card"><h3>6. Countdown ring</h3><div class="stage s-mesh">
-      <div class="t ringt play"><svg class="r" viewBox="0 0 20 20"><circle class="b" cx="10" cy="10" r="8"/><circle class="a" cx="10" cy="10" r="8"/></svg><div><b>Link copied</b><span class="d">Closing in a few seconds</span></div><span class="cta">Undo</span></div></div></div>
+        <div class="card">
+          <h3>7. Stacked toasts (hover to expand)</h3>
+          <div class="stage s-dark" style="align-items: flex-end; padding-bottom: 18px">
+            <div class="stackw">
+              <div class="t">
+                <svg class="ic" style="color: #34d399"><use href="#check" /></svg>
+                <div><b>Invoice paid</b><span class="d">$1,240.00 from Acme</span></div>
+              </div>
+              <div class="t">
+                <svg class="ic" style="color: #60a5fa"><use href="#mail" /></svg>
+                <div><b>New message</b><span class="d">Sara sent you a file</span></div>
+              </div>
+              <div class="t">
+                <svg class="ic" style="color: #fbbf24"><use href="#bell" /></svg>
+                <div><b>Reminder</b><span class="d">Standup in 10 minutes</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-    <div class="card"><h3>7. Stacked toasts (hover to expand)</h3><div class="stage s-dark" style="align-items:flex-end;padding-bottom:18px">
-      <div class="stackw">
-        <div class="t"><svg class="ic" style="color:#34d399"><use href="#check"/></svg><div><b>Invoice paid</b><span class="d">$1,240.00 from Acme</span></div></div>
-        <div class="t"><svg class="ic" style="color:#60a5fa"><use href="#mail"/></svg><div><b>New message</b><span class="d">Sara sent you a file</span></div></div>
-        <div class="t"><svg class="ic" style="color:#fbbf24"><use href="#bell"/></svg><div><b>Reminder</b><span class="d">Standup in 10 minutes</span></div></div>
-      </div></div></div>
+        <div class="card">
+          <h3>8. Upload progress</h3>
+          <div class="stage s-light">
+            <div class="t up play">
+              <div class="file">
+                <svg class="ic"><use href="#file" /></svg>
+              </div>
+              <div>
+                <b>brand-guidelines.pdf</b><span class="d">Uploading · 4.2 MB of 6.8 MB</span>
+              </div>
+              <div class="track"><i></i></div>
+            </div>
+          </div>
+        </div>
 
-    <div class="card"><h3>8. Upload progress</h3><div class="stage s-light">
-      <div class="t up play"><div class="file"><svg class="ic"><use href="#file"/></svg></div><div><b>brand-guidelines.pdf</b><span class="d">Uploading · 4.2 MB of 6.8 MB</span></div><div class="track"><i></i></div></div></div></div>
+        <div class="card">
+          <h3>9. Dynamic island</h3>
+          <div class="stage s-light" style="background: #d9d6ce">
+            <div class="t island play">
+              <div class="art"></div>
+              <div>
+                <b style="font-size: 13px">Midnight City</b
+                ><span class="d" style="font-size: 11.5px">M83 · Now playing</span>
+              </div>
+              <div class="eq"><i></i><i></i><i></i><i></i></div>
+            </div>
+          </div>
+        </div>
 
-    <div class="card"><h3>9. Dynamic island</h3><div class="stage s-light" style="background:#d9d6ce">
-      <div class="t island play"><div class="art"></div><div><b style="font-size:13px">Midnight City</b><span class="d" style="font-size:11.5px">M83 · Now playing</span></div><div class="eq"><i></i><i></i><i></i><i></i></div></div></div></div>
+        <div class="card">
+          <h3>10. Gradient border promo</h3>
+          <div class="stage s-dark">
+            <div class="t gb play" style="padding: 1.5px; overflow: visible">
+              <div class="in" style="width: 100%">
+                <svg class="ic"><use href="#star" /></svg>
+                <div>
+                  <b>You unlocked Pro</b><span class="d">14 days free, no card needed</span>
+                </div>
+                <span class="btn">Explore</span>
+              </div>
+            </div>
+          </div>
+        </div>
 
-    <div class="card"><h3>10. Gradient border promo</h3><div class="stage s-dark">
-      <div class="t gb play" style="padding:1.5px;overflow:visible"><div class="in" style="width:100%"><svg class="ic"><use href="#star"/></svg><div><b>You unlocked Pro</b><span class="d">14 days free, no card needed</span></div><span class="btn">Explore</span></div></div></div></div>
+        <div class="card">
+          <h3>11. Soft light (Sonner style)</h3>
+          <div class="stage s-light">
+            <div class="t soft play">
+              <div class="chip">
+                <svg class="ic" style="width: 17px; height: 17px"><use href="#check" /></svg>
+              </div>
+              <div><b>Event created</b><span class="d">Friday, 10:00 AM</span></div>
+              <svg class="ic x" style="color: #a1a1aa"><use href="#x" /></svg>
+            </div>
+          </div>
+        </div>
 
-    <div class="card"><h3>11. Soft light (Sonner style)</h3><div class="stage s-light">
-      <div class="t soft play"><div class="chip"><svg class="ic" style="width:17px;height:17px"><use href="#check"/></svg></div><div><b>Event created</b><span class="d">Friday, 10:00 AM</span></div><svg class="ic x" style="color:#a1a1aa"><use href="#x"/></svg></div></div></div>
-
-    <div class="card"><h3>12. Message with actions</h3><div class="stage s-ocean">
-      <div class="t msg play"><div class="av">NK</div><div><b>Nusrat Karim</b><span class="d">Can we move the review to 3 PM?</span></div><time>2m</time><div class="acts"><span class="p">Reply</span><span>Dismiss</span></div></div></div></div>
-
-  </div>
-</div>
-<script>
-function replay(stage){
-  var els=stage.querySelectorAll('.play');
-  els.forEach(function(e){e.classList.remove('play');void e.offsetWidth;e.classList.add('play');});
-}
-document.querySelectorAll('.stage').forEach(function(s){s.addEventListener('click',function(){replay(s);});});
-document.getElementById('all').addEventListener('click',function(){document.querySelectorAll('.stage').forEach(replay);});
-document.getElementById('theme').addEventListener('click',function(){
-  var r=document.documentElement;
-  var dark=r.getAttribute('data-theme')==='dark'||(!r.getAttribute('data-theme')&&window.matchMedia('(prefers-color-scheme: dark)').matches);
-  r.setAttribute('data-theme',dark?'light':'dark');
-});
-</script>
-</body>
+        <div class="card">
+          <h3>12. Message with actions</h3>
+          <div class="stage s-ocean">
+            <div class="t msg play">
+              <div class="av">NK</div>
+              <div><b>Nusrat Karim</b><span class="d">Can we move the review to 3 PM?</span></div>
+              <time>2m</time>
+              <div class="acts"><span class="p">Reply</span><span>Dismiss</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      function replay(stage) {
+        var els = stage.querySelectorAll('.play');
+        els.forEach(function (e) {
+          e.classList.remove('play');
+          void e.offsetWidth;
+          e.classList.add('play');
+        });
+      }
+      document.querySelectorAll('.stage').forEach(function (s) {
+        s.addEventListener('click', function () {
+          replay(s);
+        });
+      });
+      document.getElementById('all').addEventListener('click', function () {
+        document.querySelectorAll('.stage').forEach(replay);
+      });
+      document.getElementById('theme').addEventListener('click', function () {
+        var r = document.documentElement;
+        var dark =
+          r.getAttribute('data-theme') === 'dark' ||
+          (!r.getAttribute('data-theme') &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches);
+        r.setAttribute('data-theme', dark ? 'light' : 'dark');
+      });
+    </script>
+  </body>
 </html>

@@ -12,7 +12,8 @@ import type {
   ToastStore,
 } from '../core';
 import { el, fill, hasDom, prefersDark, prefersReducedMotion } from './dom';
-import { icon, iconForType } from './icons';
+import { icon, iconForType, PATHS } from './icons';
+import type { IconName } from './icons';
 import { safeUrl, sanitizeToFragment } from './sanitize';
 import { resolveVariant } from './variants';
 
@@ -27,7 +28,7 @@ function deterministicColor(str: string): string {
   const colors = ['#38bdf8', '#818cf8', '#ec4899', '#f97316', '#10b981', '#6366f1', '#eab308'];
   let hash = 0;
   for (let i = 0; i < str.length; i++) hash = (hash * 31 + str.charCodeAt(i)) >>> 0;
-  return colors[hash % colors.length]!;
+  return colors[hash % colors.length] ?? '#38bdf8';
 }
 
 function formatRelativeTime(ts: number | Date | string | boolean, locale = 'en'): string {
@@ -404,15 +405,23 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       else if (typeof out === 'string') content.append(out);
     } else {
       if (record.badge !== undefined) {
-        const tone = typeof record.badge === 'string' ? record.badge : record.badge.tone ?? 'info';
+        const isObj = typeof record.badge === 'object' && record.badge !== null;
+        const tone = isObj ? (record.badge.tone ?? 'info') : record.badge;
         const badgeEl = el('div', k('gk-toast__badge gk-badge', names.badge), {
           'aria-hidden': 'true',
           'data-tone': tone,
         });
-        if (typeof record.badge === 'object' && record.badge.icon) {
+        if (isObj && record.badge.icon) {
           fill(badgeEl, record.badge.icon);
+        } else if (isObj && record.badge.label) {
+          badgeEl.textContent = record.badge.label;
+        } else if (typeof record.badge === 'string' && (ICONS[tone] || PATHS[tone as IconName])) {
+          const ic = icon((ICONS[tone] ?? tone) as IconName);
+          if (ic) badgeEl.append(ic);
+        } else if (typeof record.badge === 'string') {
+          badgeEl.textContent = record.badge;
         } else {
-          const ic = icon((ICONS[tone] ?? tone) as any);
+          const ic = icon((ICONS[tone] ?? 'info') as IconName);
           if (ic) badgeEl.append(ic);
         }
         node.append(badgeEl);
@@ -492,6 +501,7 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
           'gk-toast__track gk-track',
           {
             role: 'progressbar',
+            'aria-label': record.progressLabel ?? 'Progress',
             'aria-valuenow': String(pct),
             'aria-valuemin': '0',
             'aria-valuemax': '100',
@@ -596,7 +606,9 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
             type: 'button',
           },
         );
-        actBtn.textContent = act.text;
+        const label = act.label ?? act.text ?? 'Action';
+        actBtn.textContent = label;
+        actBtn.setAttribute('aria-label', label);
         actBtn.addEventListener('click', (e) => {
           e.stopPropagation();
           if (act.onClick) act.onClick(e);
@@ -676,20 +688,7 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
     };
 
     const themeName = record.theme ?? c.theme;
-    const themeDef = THEMES.find((t) => t.name === themeName);
-    let activeVariant = record.variant;
-    if (
-      activeVariant &&
-      themeDef?.supportedVariants &&
-      !themeDef.supportedVariants.includes(activeVariant)
-    ) {
-      if (typeof process !== 'undefined' && process.env?.NODE_ENV !== 'production') {
-        console.warn(
-          `[glazekit] Theme "${themeName}" does not support variant "${activeVariant}". Falling back to default.`,
-        );
-      }
-      activeVariant = undefined;
-    }
+    const activeVariant = resolveVariant(themeName, record.variant);
     set('data-gk-variant', activeVariant);
 
     if (record.hud || activeVariant === 'hud-silent') {
@@ -709,7 +708,8 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
     set('data-animation', record.animation ?? c.animation ?? 'slide');
     if (record.shake || activeVariant === 'shake-error') set('data-shake', '');
     if (record.glow) set('data-glow', '');
-    if (record.gradientBorder || activeVariant === 'gradient-border') set('data-gradient-border', '');
+    if (record.gradientBorder || activeVariant === 'gradient-border')
+      set('data-gradient-border', '');
     if (record.group) set('data-group', record.group);
     if (record.island || activeVariant === 'island') set('data-island', '');
     set('data-gk-mode', resolveMode(c.mode, flag(record.invert, c.invert)));

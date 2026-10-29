@@ -1,5 +1,6 @@
 import { createToastEngine } from '../core';
 import type { GlazeConfig, ToastApi, ToastStore } from '../core';
+import { resetOverlays } from './overlay';
 import { setSanitizer } from './sanitize';
 import { canMountToaster, mountToaster } from './toaster';
 import type { ToasterHandle, ToasterOptions } from './toaster';
@@ -90,4 +91,5 @@ export function resetEngine(): void {
   engine.toaster = undefined;
   engine.autoMount = true;
   setSanitizer(undefined);
+  resetOverlays();
 }

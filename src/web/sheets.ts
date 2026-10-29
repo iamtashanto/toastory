@@ -92,6 +92,22 @@ export function openSheet(options: SheetOptions): DialogPromise {
     cancel.addEventListener('click', () => void controller.dismiss('cancel'));
     panel.append(cancel);
   }
+  panel.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      const buttons = Array.from(
+        panel.querySelectorAll<HTMLButtonElement>('button:not([disabled])'),
+      );
+      const currentIndex = buttons.indexOf(document.activeElement as HTMLButtonElement);
+      if (currentIndex !== -1) {
+        e.preventDefault();
+        const nextIndex =
+          e.key === 'ArrowDown'
+            ? (currentIndex + 1) % buttons.length
+            : (currentIndex - 1 + buttons.length) % buttons.length;
+        buttons[nextIndex]?.focus();
+      }
+    }
+  });
   overlay.root.append(panel);
   controller.subscribe(() => {
     if (!controller.getState().open) void overlay.close();
@@ -149,7 +165,9 @@ export function openBottomSheet(options: BottomSheetOptions): BottomSheetHandle 
   if (options.icon) {
     iconBox.hidden = false;
     iconBox.dataset.tone = options.tone ?? 'danger';
-    const ic = icon(options.icon === 'trash' ? 'trash' : options.icon === 'warning' ? 'warning' : 'error');
+    const ic = icon(
+      options.icon === 'trash' ? 'trash' : options.icon === 'warning' ? 'warning' : 'error',
+    );
     if (ic) iconBox.append(ic);
   }
   const title = el('h2', 'gk-bsheet-title', { id: titleId });

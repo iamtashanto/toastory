@@ -170,3 +170,17 @@ export function openOverlay(options: OverlayOptions): Overlay {
   stack.push(overlay);
   return overlay;
 }
+
+/** Resets all active overlays and restores page state. For tests and clean teardown. */
+export function resetOverlays(): void {
+  while (stack.length > 0) {
+    const o = stack.pop();
+    o?.root.remove();
+  }
+  document.removeEventListener('keydown', onKeydown, true);
+  locks = 0;
+  if (savedOverflow) document.body.style.overflow = savedOverflow;
+  if (savedPadding) document.body.style.paddingRight = savedPadding;
+  savedOverflow = '';
+  savedPadding = '';
+}

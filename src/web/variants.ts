@@ -72,10 +72,7 @@ export const THEME_VARIANTS: Record<string, readonly string[]> = {
   ],
 };
 
-export function resolveVariant(
-  themeName: string,
-  variant: string | undefined,
-): string | undefined {
+export function resolveVariant(themeName: string, variant: string | undefined): string | undefined {
   if (!variant) return undefined;
   const supported = THEME_VARIANTS[themeName];
   if (supported && !supported.includes(variant)) {

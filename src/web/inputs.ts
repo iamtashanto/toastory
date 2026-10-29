@@ -171,14 +171,18 @@ export function buildInput(options: DialogOptions, labelId: string): InputContro
 
       inp.addEventListener('input', () => {
         if (!isAlpha) inp.value = inp.value.replace(/\D/g, '');
-        if (inp.value && inputs[i + 1]) inputs[i + 1]!.focus();
+        if (inp.value && inputs[i + 1]) inputs[i + 1]?.focus();
         const code = inputs.map((x) => x.value).join('');
         if (code.length === len) options.onOtpComplete?.(code);
       });
 
       inp.addEventListener('keydown', (e) => {
         if (e.key === 'Backspace' && !inp.value && inputs[i - 1]) {
-          inputs[i - 1]!.focus();
+          inputs[i - 1]?.focus();
+        } else if (e.key === 'ArrowLeft' && inputs[i - 1]) {
+          inputs[i - 1]?.focus();
+        } else if (e.key === 'ArrowRight' && inputs[i + 1]) {
+          inputs[i + 1]?.focus();
         }
       });
 
@@ -212,10 +216,16 @@ export function buildInput(options: DialogOptions, labelId: string): InputContro
       const resendWrap = el('p', 'gk-otp-resend', {
         style: 'margin-top:12px;font-size:13px;text-align:center;',
       });
-      const resendBtn = el('button', 'gk-btn-resend', {
-        type: 'button',
-        style: 'color:var(--gk-accent);font-weight:600;cursor:pointer;background:none;border:none;padding:0;font:inherit;',
-      }, 'Resend code');
+      const resendBtn = el(
+        'button',
+        'gk-btn-resend',
+        {
+          type: 'button',
+          style:
+            'color:var(--gk-accent);font-weight:600;cursor:pointer;background:none;border:none;padding:0;font:inherit;',
+        },
+        'Resend code',
+      );
       const timerSpan = el('span', '', {}, cooldown > 0 ? ` (${cooldown}s)` : '');
       resendBtn.disabled = cooldown > 0;
       resendWrap.append("Didn't get it? ", resendBtn, timerSpan);
@@ -240,7 +250,7 @@ export function buildInput(options: DialogOptions, labelId: string): InputContro
 
     return {
       node: wrap(labelNode, otpWrap, footerNote),
-      focusTarget: inputs[0]!,
+      focusTarget: inputs[0] ?? otpWrap,
       fields: inputs,
       read: () => inputs.map((x) => x.value).join(''),
     };

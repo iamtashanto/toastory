@@ -124,10 +124,7 @@ export type IosGlassToastVariant =
 
 /** Toast variant types across all themes. */
 export type ToastVariant =
-  | EssentialsToastVariant
-  | ShowcaseToastVariant
-  | IosGlassToastVariant
-  | (string & {});
+  EssentialsToastVariant | ShowcaseToastVariant | IosGlassToastVariant | (string & {});
 
 /** Dialog variant types across all themes. */
 export type DialogVariant =
@@ -147,7 +144,8 @@ export type DialogVariant =
 
 /** Action item button in a toast actions array. */
 export interface ToastActionItem {
-  text: string;
+  label?: string;
+  text?: string;
   onClick?: (event: MouseEvent) => void;
   kind?: 'primary' | 'secondary' | 'ghost' | 'danger';
   autoDismiss?: boolean;
@@ -483,13 +481,7 @@ export type DialogInputType =
 
 /** Icon preset for dialogs. */
 export type DialogIcon =
-  | 'success'
-  | 'error'
-  | 'warning'
-  | 'info'
-  | 'question'
-  | 'custom'
-  | (string & {});
+  'success' | 'error' | 'warning' | 'info' | 'question' | 'custom' | (string & {});
 
 /** Tone preset for dialogs. */
 export type DialogTone = 'info' | 'warning' | 'danger';
