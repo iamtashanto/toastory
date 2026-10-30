@@ -40,23 +40,23 @@ export default function HomePage() {
         {/* 1. HERO SECTION */}
         <div className="text-center max-w-4xl mx-auto space-y-6">
           {/* Badge row */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-gray-300">
-            <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="font-semibold text-white">toastory v0.1.0</span>
-            <span className="text-gray-500">•</span>
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-xs text-[var(--site-muted)] shadow-sm">
+            <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="font-semibold text-[var(--site-fg)]">toastory v0.1.1</span>
+            <span className="text-[var(--site-muted)]">•</span>
             <span>Zero Dependencies</span>
-            <span className="text-gray-500">•</span>
-            <span className="text-blue-400 font-mono">5.2 KB gzip</span>
+            <span className="text-[var(--site-muted)]">•</span>
+            <span className="text-blue-500 font-mono font-medium">5.2 KB gzip</span>
           </div>
 
           {/* Headline */}
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-[1.1]">
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-[var(--site-fg)] leading-[1.1]">
             All UI feedback in one package.{' '}
             <span className="text-gradient-accent">Apple-style glass.</span>
           </h1>
 
           {/* Subline */}
-          <p className="text-base sm:text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-xl text-[var(--site-muted)] max-w-2xl mx-auto leading-relaxed">
             Toasts, confirm / alert / prompt dialogs, bottom sheets, and loading overlays. One identical API across plain JS, React, Next.js, Vue, Nuxt, Angular, Svelte, and React Native.
           </p>
 
@@ -71,7 +71,7 @@ export default function HomePage() {
 
             <Link
               href="/playground"
-              className="px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-white font-semibold text-sm transition-all hover:-translate-y-0.5 active:translate-y-0 backdrop-blur-md"
+              className="px-6 py-3.5 rounded-xl bg-[var(--site-surface-raised)] hover:bg-[var(--site-surface)] border border-[var(--site-border)] text-[var(--site-fg)] font-semibold text-sm transition-all hover:-translate-y-0.5 active:translate-y-0 backdrop-blur-md shadow-sm"
             >
               Open Live Playground ↵
             </Link>
@@ -79,7 +79,7 @@ export default function HomePage() {
 
           {/* Copyable install command */}
           <div className="pt-4 max-w-md mx-auto">
-            <div className="flex items-center justify-between p-1.5 rounded-xl bg-[#0e1017] border border-white/10 shadow-inner">
+            <div className="flex items-center justify-between p-1.5 rounded-xl bg-[var(--site-card-bg)] border border-[var(--site-border)] shadow-sm">
               {/* Package manager tabs */}
               <div className="flex items-center gap-1">
                 {(['npm', 'pnpm', 'yarn', 'bun'] as const).map((pm) => (
@@ -88,7 +88,9 @@ export default function HomePage() {
                     type="button"
                     onClick={() => setPkgManager(pm)}
                     className={`px-2.5 py-1 rounded-lg text-xs font-mono transition-colors ${
-                      pkgManager === pm ? 'bg-white/15 text-white font-semibold' : 'text-gray-400 hover:text-white'
+                      pkgManager === pm
+                        ? 'bg-blue-600/10 text-blue-600 dark:bg-white/15 dark:text-white font-semibold'
+                        : 'text-[var(--site-muted)] hover:text-[var(--site-fg)]'
                     }`}
                   >
                     {pm}
@@ -98,15 +100,15 @@ export default function HomePage() {
 
               {/* Command text & Copy */}
               <div className="flex items-center gap-2 pr-1">
-                <span className="font-mono text-xs text-blue-400">{installCommands[pkgManager]}</span>
+                <span className="font-mono text-xs text-blue-600 dark:text-blue-400 font-medium">{installCommands[pkgManager]}</span>
                 <button
                   type="button"
                   onClick={handleCopyInstall}
-                  className="p-1.5 rounded-md hover:bg-white/10 text-gray-400 hover:text-white transition-colors"
+                  className="p-1.5 rounded-md hover:bg-[var(--site-surface-raised)] text-[var(--site-muted)] hover:text-[var(--site-fg)] transition-colors"
                   aria-label="Copy install command"
                 >
                   {installCopied ? (
-                    <svg className="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
                     </svg>
                   ) : (
@@ -121,21 +123,21 @@ export default function HomePage() {
           </div>
 
           {/* Trust badges */}
-          <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-gray-400 pt-2">
+          <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-[var(--site-muted)] pt-2">
             <span className="flex items-center gap-1.5">
-              <span className="text-emerald-400">✓</span> WCAG 2.2 AA (0 axe errors)
+              <span className="text-emerald-500">✓</span> WCAG 2.2 AA (0 axe errors)
             </span>
-            <span className="text-gray-600">•</span>
+            <span className="text-[var(--site-muted)] opacity-60">•</span>
             <span className="flex items-center gap-1.5">
-              <span className="text-blue-400">✓</span> TypeScript Strict
+              <span className="text-blue-500">✓</span> TypeScript Strict
             </span>
-            <span className="text-gray-600">•</span>
+            <span className="text-[var(--site-muted)] opacity-60">•</span>
             <span className="flex items-center gap-1.5">
-              <span className="text-purple-400">✓</span> npm Provenance
+              <span className="text-purple-500">✓</span> npm Provenance
             </span>
-            <span className="text-gray-600">•</span>
+            <span className="text-[var(--site-muted)] opacity-60">•</span>
             <span className="flex items-center gap-1.5">
-              <span className="text-cyan-400">✓</span> Tree-shakable CSS & JS
+              <span className="text-cyan-500">✓</span> Tree-shakable CSS & JS
             </span>
           </div>
         </div>
@@ -155,36 +157,36 @@ export default function HomePage() {
         <ComparisonTable />
 
         {/* 6. MIGRATION TEASERS */}
-        <section className="my-20 p-8 rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.03] to-transparent text-left">
+        <section className="my-20 p-8 rounded-3xl border border-[var(--site-border)] bg-[var(--site-surface)] text-left shadow-sm">
           <div className="max-w-3xl">
-            <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">
+            <h3 className="text-xl sm:text-2xl font-bold text-[var(--site-fg)] mb-2">
               Migrating from Sonner, SweetAlert2 or React-Toastify?
             </h3>
-            <p className="text-sm text-gray-400 mb-6 leading-relaxed">
+            <p className="text-sm text-[var(--site-muted)] mb-6 leading-relaxed">
               toastory provides drop-in compatibility patterns with detailed side-by-side option maps so you can replace legacy dependencies in minutes.
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <Link
                 href="/docs/migration/sonner"
-                className="p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-white text-xs font-medium transition-colors"
+                className="p-3 rounded-xl bg-[var(--site-surface-raised)] border border-[var(--site-border)] hover:border-blue-500/40 text-[var(--site-fg)] text-xs font-medium transition-colors"
               >
                 Sonner Migration Guide →
               </Link>
               <Link
                 href="/docs/migration/sweetalert2"
-                className="p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-white text-xs font-medium transition-colors"
+                className="p-3 rounded-xl bg-[var(--site-surface-raised)] border border-[var(--site-border)] hover:border-blue-500/40 text-[var(--site-fg)] text-xs font-medium transition-colors"
               >
                 SweetAlert2 Migration →
               </Link>
               <Link
                 href="/docs/migration/react-toastify"
-                className="p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-white text-xs font-medium transition-colors"
+                className="p-3 rounded-xl bg-[var(--site-surface-raised)] border border-[var(--site-border)] hover:border-blue-500/40 text-[var(--site-fg)] text-xs font-medium transition-colors"
               >
                 React-Toastify Migration →
               </Link>
               <Link
                 href="/docs/migration/react-hot-toast"
-                className="p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-white text-xs font-medium transition-colors"
+                className="p-3 rounded-xl bg-[var(--site-surface-raised)] border border-[var(--site-border)] hover:border-blue-500/40 text-[var(--site-fg)] text-xs font-medium transition-colors"
               >
                 react-hot-toast Migration →
               </Link>
@@ -193,11 +195,11 @@ export default function HomePage() {
         </section>
 
         {/* 7. FINAL CTA */}
-        <section className="my-16 text-center space-y-6 max-w-2xl mx-auto py-12 px-6 rounded-3xl border border-blue-500/20 bg-gradient-to-b from-blue-600/10 to-transparent">
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white">
+        <section className="my-16 text-center space-y-6 max-w-2xl mx-auto py-12 px-6 rounded-3xl border border-blue-500/25 bg-blue-500/[0.04]">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--site-fg)]">
             Upgrade your UI feedback today.
           </h2>
-          <p className="text-sm sm:text-base text-gray-300">
+          <p className="text-sm sm:text-base text-[var(--site-muted)]">
             Zero runtime dependencies. Apple-style frosted glass. Built for accessibility and multi-framework workflows.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
@@ -209,7 +211,7 @@ export default function HomePage() {
             </Link>
             <Link
               href="/themes"
-              className="px-6 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white font-semibold text-sm transition-all"
+              className="px-6 py-3 rounded-xl bg-[var(--site-surface-raised)] hover:bg-[var(--site-surface)] border border-[var(--site-border)] text-[var(--site-fg)] font-semibold text-sm transition-all shadow-sm"
             >
               Explore 21 Themes
             </Link>

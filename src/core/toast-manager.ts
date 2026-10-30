@@ -19,7 +19,7 @@ import type {
 } from './types';
 
 /** Reasons that originate from a person and are blocked on non-dismissible toasts. */
-const USER_REASONS: ReadonlySet<CloseReason> = new Set<CloseReason>(['user', 'swipe', 'click']);
+const USER_REASONS = new Set<CloseReason>(['user', 'swipe', 'click']);
 
 const safeCall = <A extends unknown[]>(
   fn: ((...args: A) => void) | undefined,
@@ -123,7 +123,7 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
     };
     const rawDuration = merged.duration ?? cfg.duration;
     const duration = Number.isFinite(rawDuration) && rawDuration > 0 ? rawDuration : 0;
-    const urgent = merged.important === true || type === 'error';
+    const urgent = merged.important || type === 'error';
     const stamp = now();
 
     const record: ToastRecord = {
@@ -142,7 +142,7 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
       visible: previous?.visible ?? false,
       dismissed: false,
       pausedBy: previous?.pausedBy ?? (cfg.startPaused ? [MANUAL_PAUSE] : []),
-      remaining: previous?.remaining ?? (duration === 0 ? Infinity : duration),
+      remaining: previous?.remaining ?? (duration ? duration : Infinity),
       custom,
     };
     return record;
@@ -153,7 +153,7 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
   };
 
   const dedupeKeyOf = (opts: ToastOptions): string | undefined => {
-    if (opts.dedupe === false) return undefined;
+    if (opts.dedupe === false) return;
     if (typeof opts.dedupe === 'string') return opts.dedupe;
     const t = typeof opts.title === 'string' ? opts.title : '';
     const d = typeof opts.description === 'string' ? opts.description : '';
@@ -168,7 +168,7 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
       if (!entry || entry.record.dismissed) continue;
       const key = regionOf(entry.record);
       const used = counts.get(key) ?? 0;
-      const isImportant = entry.record.important === true;
+      const isImportant = !!entry.record.important;
       if (used < cfg.maxVisible || isImportant) {
         if (!entry.record.visible) {
           entry.record = { ...entry.record, visible: true };

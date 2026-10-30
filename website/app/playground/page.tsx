@@ -1020,6 +1020,8 @@ export default function NativeScreen() {
                   className="gk-toast relative w-full max-w-md pointer-events-auto shadow-2xl transition-all"
                   data-type={toastType}
                   data-rich={richColors ? 'true' : undefined}
+                  data-wrap={(description || (actionLabel && cancelLabel)) ? '' : undefined}
+                  data-has-close={closeButton ? '' : undefined}
                 >
                   <div className="gk-icon text-lg">
                     {toastType === 'success' && '✓'}
@@ -1030,21 +1032,31 @@ export default function NativeScreen() {
                   </div>
                   <div className="gk-content">
                     <div className="gk-title font-semibold">{title}</div>
-                    <div className="gk-desc text-xs mt-0.5">{description}</div>
+                    {description && <div className="gk-desc text-xs mt-0.5">{description}</div>}
                   </div>
-                  {actionLabel && (
-                    <div className="gk-actions ml-2">
-                      <button
-                        type="button"
-                        onClick={handleFire}
-                        className="gk-btn gk-action text-xs font-medium px-2.5 py-1 rounded"
-                      >
-                        {actionLabel}
-                      </button>
+                  {(actionLabel || cancelLabel) && (
+                    <div className="gk-actions">
+                      {cancelLabel && (
+                        <button
+                          type="button"
+                          className="gk-btn gk-cancel text-xs font-medium px-2.5 py-1 rounded"
+                        >
+                          {cancelLabel}
+                        </button>
+                      )}
+                      {actionLabel && (
+                        <button
+                          type="button"
+                          onClick={handleFire}
+                          className="gk-btn gk-action text-xs font-medium px-2.5 py-1 rounded"
+                        >
+                          {actionLabel}
+                        </button>
+                      )}
                     </div>
                   )}
                   {closeButton && (
-                    <button type="button" className="gk-close text-xs ml-1" aria-label="Close">
+                    <button type="button" className="gk-close text-xs" aria-label="Close">
                       ✕
                     </button>
                   )}
@@ -1058,11 +1070,15 @@ export default function NativeScreen() {
 
               {/* Simulated Live Promise Card */}
               {feedbackKind === 'promise' && (
-                <div className="gk-toast relative w-full max-w-md shadow-2xl" data-type={isPromiseLoading ? 'loading' : 'success'}>
+                <div
+                  className="gk-toast relative w-full max-w-md shadow-2xl"
+                  data-type={isPromiseLoading ? 'loading' : 'success'}
+                  data-wrap={description ? '' : undefined}
+                >
                   <div className="gk-icon text-lg">{isPromiseLoading ? '↻' : '✓'}</div>
                   <div className="gk-content">
                     <div className="gk-title font-semibold">{isPromiseLoading ? 'Executing async operation...' : title}</div>
-                    <div className="gk-desc text-xs mt-0.5">{description}</div>
+                    {description && <div className="gk-desc text-xs mt-0.5">{description}</div>}
                   </div>
                 </div>
               )}

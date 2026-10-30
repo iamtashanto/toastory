@@ -22,22 +22,22 @@ export function CodeSnippet({ code, language = 'typescript', filename }: CodeSni
   };
 
   return (
-    <div className="relative group rounded-xl border border-white/10 bg-[#0e1017] overflow-hidden my-4 text-left">
+    <div className="relative group rounded-xl border border-[var(--site-border)] bg-[var(--site-card-bg)] overflow-hidden my-4 text-left shadow-sm">
       {(filename || language) && (
-        <div className="flex items-center justify-between px-4 py-2 bg-white/[0.03] border-b border-white/10 text-xs text-gray-400">
+        <div className="flex items-center justify-between px-4 py-2 bg-[var(--site-surface-raised)] border-b border-[var(--site-border)] text-xs text-[var(--site-muted)]">
           <span className="font-mono">{filename || language}</span>
           <button
             type="button"
             onClick={handleCopy}
-            className="flex items-center gap-1.5 px-2 py-0.5 rounded hover:bg-white/10 text-gray-300 hover:text-white transition-colors"
+            className="flex items-center gap-1.5 px-2 py-0.5 rounded hover:bg-[var(--site-surface)] text-[var(--site-muted)] hover:text-[var(--site-fg)] transition-colors"
             aria-label={`Copy ${filename || 'code'} to clipboard`}
           >
             {copied ? (
               <>
-                <svg className="w-3.5 h-3.5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <svg className="w-3.5 h-3.5 text-emerald-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
-                <span className="text-emerald-400 font-medium">Copied!</span>
+                <span className="text-emerald-500 font-medium">Copied!</span>
               </>
             ) : (
               <>
@@ -56,11 +56,11 @@ export function CodeSnippet({ code, language = 'typescript', filename }: CodeSni
         <button
           type="button"
           onClick={handleCopy}
-          className="absolute top-3 right-3 p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100 z-10"
+          className="absolute top-3 right-3 p-1.5 rounded-lg bg-[var(--site-surface-raised)] border border-[var(--site-border)] hover:bg-[var(--site-surface)] text-[var(--site-muted)] hover:text-[var(--site-fg)] transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100 z-10 shadow-sm"
           aria-label="Copy code to clipboard"
         >
           {copied ? (
-            <svg className="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <svg className="w-4 h-4 text-emerald-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
             </svg>
           ) : (
@@ -72,7 +72,7 @@ export function CodeSnippet({ code, language = 'typescript', filename }: CodeSni
         </button>
       )}
 
-      <pre className="p-4 text-xs sm:text-sm font-mono overflow-x-auto text-gray-200 leading-relaxed">
+      <pre className="p-4 text-xs sm:text-sm font-mono overflow-x-auto text-[var(--site-fg)] leading-relaxed">
         <code>{code}</code>
       </pre>
     </div>

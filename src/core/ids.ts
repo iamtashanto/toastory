@@ -6,8 +6,8 @@ let counter = 0;
  * Returns a collision-safe, incremental unique identifier.
  * @param prefix Optional prefix for the id (default: 'gk').
  */
-export function nextId(prefix = 'gk'): string {
-  return `${prefix}-${++counter}`;
+export function nextId(p = 'gk'): string {
+  return `${p}-${++counter}`;
 }
 
 /**
@@ -15,8 +15,8 @@ export function nextId(prefix = 'gk'): string {
  * @param id User-supplied id or undefined.
  * @param prefix Prefix used when generating an id.
  */
-export function normalizeId(id: ToastId | undefined, prefix = 'gk'): ToastId {
-  return id !== undefined && id !== '' ? id : nextId(prefix);
+export function normalizeId(id: ToastId | undefined, p = 'gk'): ToastId {
+  return id !== undefined && id !== '' ? id : nextId(p);
 }
 
 /**

@@ -598,6 +598,22 @@ describe('advanced web renderer features', () => {
     handle.destroy();
   });
 
+  it('sets data-wrap and data-has-close for responsive layout wrapping', () => {
+    ui.toast('Short title');
+    expect(last().hasAttribute('data-wrap')).toBe(false);
+    expect(last().hasAttribute('data-has-close')).toBe(false);
+
+    ui.toast('Title with desc', { description: 'Detail prose', closeButton: true });
+    expect(last().hasAttribute('data-wrap')).toBe(true);
+    expect(last().hasAttribute('data-has-close')).toBe(true);
+
+    ui.toast('Title with 2 buttons', {
+      action: { label: 'Confirm' },
+      cancel: { label: 'Dismiss' },
+    });
+    expect(last().hasAttribute('data-wrap')).toBe(true);
+  });
+
   it('registerWebRenderer connects engine and returns it', () => {
     const engine = registerWebRenderer();
     expect(engine).toBeDefined();

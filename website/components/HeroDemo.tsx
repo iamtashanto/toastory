@@ -128,20 +128,20 @@ export function HeroDemo() {
   };
 
   return (
-    <div className="w-full relative rounded-3xl border border-white/15 bg-gradient-to-b from-[#141624]/90 to-[#0e101a]/95 p-6 sm:p-8 shadow-2xl backdrop-blur-2xl overflow-hidden text-left">
+    <div className="w-full relative rounded-3xl border border-[var(--site-border)] bg-[var(--site-surface-raised)] p-6 sm:p-8 shadow-xl backdrop-blur-2xl overflow-hidden text-left">
       {/* Background ambient lighting */}
-      <div className="absolute -top-24 -left-24 w-96 h-96 bg-blue-500/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-purple-500/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -top-24 -left-24 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
 
       {/* Control bar */}
       <div className="relative z-10 space-y-6">
         <div>
           <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
-            <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[var(--site-muted)]">
               Interactive Glass Dogfooding Demo
             </span>
             <div className="flex items-center gap-2 text-xs">
-              <span className="text-gray-400">Stack:</span>
+              <span className="text-[var(--site-muted)]">Stack:</span>
               <button
                 type="button"
                 onClick={() => {
@@ -150,7 +150,9 @@ export function HeroDemo() {
                   ui.configure({ stack: next ? 'stacked' : 'expanded' });
                 }}
                 className={`px-2.5 py-1 rounded-md font-medium transition-colors ${
-                  isStacked ? 'bg-blue-600 text-white' : 'bg-white/10 text-gray-300 hover:bg-white/15'
+                  isStacked
+                    ? 'bg-blue-600 text-white shadow-sm'
+                    : 'bg-[var(--site-surface)] border border-[var(--site-border)] text-[var(--site-muted)] hover:text-[var(--site-fg)]'
                 }`}
               >
                 {isStacked ? 'Deck Stacked' : 'List Expanded'}
@@ -169,8 +171,8 @@ export function HeroDemo() {
                   onClick={() => handleThemeChange(t.id)}
                   className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
                     isSelected
-                      ? 'bg-white text-black shadow-lg shadow-white/20 scale-105'
-                      : 'bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10 hover:text-white'
+                      ? 'bg-blue-600 text-white shadow-md shadow-blue-500/25 scale-105 font-semibold'
+                      : 'bg-[var(--site-surface)] border border-[var(--site-border)] text-[var(--site-muted)] hover:text-[var(--site-fg)] hover:border-blue-500/30'
                   }`}
                   aria-pressed={isSelected}
                 >
@@ -186,7 +188,7 @@ export function HeroDemo() {
           <button
             type="button"
             onClick={fireSuccessToast}
-            className="flex flex-col items-center justify-center p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/25 hover:bg-emerald-500/20 text-emerald-300 font-medium text-xs sm:text-sm transition-all hover:-translate-y-0.5 active:translate-y-0"
+            className="flex flex-col items-center justify-center p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/25 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-semibold text-xs sm:text-sm transition-all hover:-translate-y-0.5 active:translate-y-0"
           >
             <span className="text-base mb-1">✓</span>
             Success Toast
@@ -195,7 +197,7 @@ export function HeroDemo() {
           <button
             type="button"
             onClick={fireErrorToast}
-            className="flex flex-col items-center justify-center p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/25 hover:bg-rose-500/20 text-rose-300 font-medium text-xs sm:text-sm transition-all hover:-translate-y-0.5 active:translate-y-0"
+            className="flex flex-col items-center justify-center p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/25 hover:bg-rose-500/20 text-rose-700 dark:text-rose-300 font-semibold text-xs sm:text-sm transition-all hover:-translate-y-0.5 active:translate-y-0"
           >
             <span className="text-base mb-1">✕</span>
             Error Alert
@@ -204,7 +206,7 @@ export function HeroDemo() {
           <button
             type="button"
             onClick={firePromiseToast}
-            className="flex flex-col items-center justify-center p-3.5 rounded-xl bg-blue-500/10 border border-blue-500/25 hover:bg-blue-500/20 text-blue-300 font-medium text-xs sm:text-sm transition-all hover:-translate-y-0.5 active:translate-y-0"
+            className="flex flex-col items-center justify-center p-3.5 rounded-xl bg-blue-500/10 border border-blue-500/25 hover:bg-blue-500/20 text-blue-700 dark:text-blue-300 font-semibold text-xs sm:text-sm transition-all hover:-translate-y-0.5 active:translate-y-0"
           >
             <span className="text-base mb-1">⟳</span>
             Promise Toast
@@ -213,7 +215,7 @@ export function HeroDemo() {
           <button
             type="button"
             onClick={fireConfirmDialog}
-            className="flex flex-col items-center justify-center p-3.5 rounded-xl bg-purple-500/10 border border-purple-500/25 hover:bg-purple-500/20 text-purple-300 font-medium text-xs sm:text-sm transition-all hover:-translate-y-0.5 active:translate-y-0"
+            className="flex flex-col items-center justify-center p-3.5 rounded-xl bg-purple-500/10 border border-purple-500/25 hover:bg-purple-500/20 text-purple-700 dark:text-purple-300 font-semibold text-xs sm:text-sm transition-all hover:-translate-y-0.5 active:translate-y-0"
           >
             <span className="text-base mb-1">⚠</span>
             Confirm Dialog
@@ -222,7 +224,7 @@ export function HeroDemo() {
           <button
             type="button"
             onClick={firePromptDialog}
-            className="flex flex-col items-center justify-center p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/25 hover:bg-amber-500/20 text-amber-300 font-medium text-xs sm:text-sm transition-all hover:-translate-y-0.5 active:translate-y-0"
+            className="flex flex-col items-center justify-center p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/25 hover:bg-amber-500/20 text-amber-800 dark:text-amber-300 font-semibold text-xs sm:text-sm transition-all hover:-translate-y-0.5 active:translate-y-0"
           >
             <span className="text-base mb-1">✎</span>
             Prompt Input
@@ -231,7 +233,7 @@ export function HeroDemo() {
           <button
             type="button"
             onClick={fireBottomSheet}
-            className="flex flex-col items-center justify-center p-3.5 rounded-xl bg-cyan-500/10 border border-cyan-500/25 hover:bg-cyan-500/20 text-cyan-300 font-medium text-xs sm:text-sm transition-all hover:-translate-y-0.5 active:translate-y-0"
+            className="flex flex-col items-center justify-center p-3.5 rounded-xl bg-cyan-500/10 border border-cyan-500/25 hover:bg-cyan-500/20 text-cyan-800 dark:text-cyan-300 font-semibold text-xs sm:text-sm transition-all hover:-translate-y-0.5 active:translate-y-0"
           >
             <span className="text-base mb-1">⇡</span>
             Bottom Sheet
@@ -239,7 +241,7 @@ export function HeroDemo() {
         </div>
 
         {/* Position pills */}
-        <div className="flex flex-wrap items-center justify-between text-xs text-gray-400 pt-2 border-t border-white/5">
+        <div className="flex flex-wrap items-center justify-between text-xs text-[var(--site-muted)] pt-3 border-t border-[var(--site-border)]">
           <div className="flex items-center gap-2">
             <span>Placement:</span>
             {(['top-right', 'top-center', 'bottom-right', 'bottom-center'] as const).map((pos) => (
@@ -251,7 +253,9 @@ export function HeroDemo() {
                   ui.configure({ position: pos });
                 }}
                 className={`px-2 py-0.5 rounded transition-colors ${
-                  activePosition === pos ? 'bg-white/20 text-white font-medium' : 'hover:text-gray-200'
+                  activePosition === pos
+                    ? 'bg-blue-600/15 text-blue-600 dark:bg-white/20 dark:text-white font-medium'
+                    : 'text-[var(--site-muted)] hover:text-[var(--site-fg)]'
                 }`}
               >
                 {pos}
@@ -259,12 +263,12 @@ export function HeroDemo() {
             ))}
           </div>
 
-          <div className="flex items-center gap-1.5 text-gray-400">
+          <div className="flex items-center gap-1.5 text-[var(--site-muted)]">
             <span>Dismiss all:</span>
             <button
               type="button"
               onClick={() => toast.dismissAll()}
-              className="text-gray-400 hover:text-white underline"
+              className="text-[var(--site-muted)] hover:text-[var(--site-fg)] underline"
             >
               clear stack
             </button>

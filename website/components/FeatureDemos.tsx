@@ -172,76 +172,76 @@ export function FeatureDemos() {
     <div className="w-full my-16 space-y-20 text-left">
       {/* 1. Toasts Feature Section */}
       <section className="space-y-6">
-        <div className="border-b border-white/10 pb-4">
-          <span className="text-xs font-semibold text-blue-400 uppercase tracking-wider">Feature 01</span>
-          <h3 className="text-2xl sm:text-3xl font-bold text-white mt-1">
+        <div className="border-b border-[var(--site-border)] pb-4">
+          <span className="text-xs font-semibold text-blue-500 uppercase tracking-wider">Feature 01</span>
+          <h3 className="text-2xl sm:text-3xl font-bold text-[var(--site-fg)] mt-1">
             Toasts: Types, Promises, Actions & Stacking
           </h3>
-          <p className="text-gray-400 text-sm sm:text-base mt-2">
+          <p className="text-[var(--site-muted)] text-sm sm:text-base mt-2">
             Polite live regions, actionable Undo buttons, 4-direction swipe dismissal, and automatic deduplication windows.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="p-5 rounded-2xl border border-white/10 bg-white/[0.02] flex flex-col justify-between">
+          <div className="p-5 rounded-2xl border border-[var(--site-border)] bg-[var(--site-surface)] flex flex-col justify-between shadow-sm">
             <div>
-              <div className="text-base font-semibold text-white mb-1">Standard Toast</div>
-              <p className="text-xs text-gray-400 mb-4">
+              <div className="text-base font-semibold text-[var(--site-fg)] mb-1">Standard Toast</div>
+              <p className="text-xs text-[var(--site-muted)] mb-4">
                 Rich icons, titles, secondary descriptions, and auto-dismiss timing.
               </p>
             </div>
             <button
               type="button"
               onClick={demoSuccess}
-              className="w-full py-2.5 px-4 rounded-xl bg-white/10 hover:bg-white/15 text-white font-medium text-xs transition-colors"
+              className="w-full py-2.5 px-4 rounded-xl bg-[var(--site-surface-raised)] border border-[var(--site-border)] hover:border-blue-500/40 text-[var(--site-fg)] font-medium text-xs transition-colors shadow-sm"
             >
               Trigger Success Toast ↵
             </button>
           </div>
 
-          <div className="p-5 rounded-2xl border border-white/10 bg-white/[0.02] flex flex-col justify-between">
+          <div className="p-5 rounded-2xl border border-[var(--site-border)] bg-[var(--site-surface)] flex flex-col justify-between shadow-sm">
             <div>
-              <div className="text-base font-semibold text-white mb-1">Action & Undo Bar</div>
-              <p className="text-xs text-gray-400 mb-4">
+              <div className="text-base font-semibold text-[var(--site-fg)] mb-1">Action & Undo Bar</div>
+              <p className="text-xs text-[var(--site-muted)] mb-4">
                 Inline actionable buttons with visible keyboard focus rings.
               </p>
             </div>
             <button
               type="button"
               onClick={demoActionToast}
-              className="w-full py-2.5 px-4 rounded-xl bg-white/10 hover:bg-white/15 text-white font-medium text-xs transition-colors"
+              className="w-full py-2.5 px-4 rounded-xl bg-[var(--site-surface-raised)] border border-[var(--site-border)] hover:border-blue-500/40 text-[var(--site-fg)] font-medium text-xs transition-colors shadow-sm"
             >
               Trigger Action Toast ↵
             </button>
           </div>
 
-          <div className="p-5 rounded-2xl border border-white/10 bg-white/[0.02] flex flex-col justify-between">
+          <div className="p-5 rounded-2xl border border-[var(--site-border)] bg-[var(--site-surface)] flex flex-col justify-between shadow-sm">
             <div>
-              <div className="text-base font-semibold text-white mb-1">Async Promise Toast</div>
-              <p className="text-xs text-gray-400 mb-4">
+              <div className="text-base font-semibold text-[var(--site-fg)] mb-1">Async Promise Toast</div>
+              <p className="text-xs text-[var(--site-muted)] mb-4">
                 Tracks Promise resolution with loading spinner and automatic unwrapping.
               </p>
             </div>
             <button
               type="button"
               onClick={demoPromise}
-              className="w-full py-2.5 px-4 rounded-xl bg-blue-600/20 border border-blue-500/30 hover:bg-blue-600/30 text-blue-300 font-medium text-xs transition-colors"
+              className="w-full py-2.5 px-4 rounded-xl bg-blue-500/10 border border-blue-500/30 hover:bg-blue-500/20 text-blue-700 dark:text-blue-300 font-medium text-xs transition-colors shadow-sm"
             >
               Trigger Promise Toast ↵
             </button>
           </div>
 
-          <div className="p-5 rounded-2xl border border-white/10 bg-white/[0.02] flex flex-col justify-between">
+          <div className="p-5 rounded-2xl border border-[var(--site-border)] bg-[var(--site-surface)] flex flex-col justify-between shadow-sm">
             <div>
-              <div className="text-base font-semibold text-white mb-1">Determinate Progress</div>
-              <p className="text-xs text-gray-400 mb-4">
+              <div className="text-base font-semibold text-[var(--site-fg)] mb-1">Determinate Progress</div>
+              <p className="text-xs text-[var(--site-muted)] mb-4">
                 Smooth progress tracks and rings with pausable hover/focus states.
               </p>
             </div>
             <button
               type="button"
               onClick={demoProgressToast}
-              className="w-full py-2.5 px-4 rounded-xl bg-white/10 hover:bg-white/15 text-white font-medium text-xs transition-colors"
+              className="w-full py-2.5 px-4 rounded-xl bg-[var(--site-surface-raised)] border border-[var(--site-border)] hover:border-blue-500/40 text-[var(--site-fg)] font-medium text-xs transition-colors shadow-sm"
             >
               Trigger Progress Toast ↵
             </button>
@@ -251,101 +251,101 @@ export function FeatureDemos() {
 
       {/* 2. Dialogs & Prompts Feature Section */}
       <section className="space-y-6">
-        <div className="border-b border-white/10 pb-4">
-          <span className="text-xs font-semibold text-purple-400 uppercase tracking-wider">Feature 02</span>
-          <h3 className="text-2xl sm:text-3xl font-bold text-white mt-1">
+        <div className="border-b border-[var(--site-border)] pb-4">
+          <span className="text-xs font-semibold text-purple-500 uppercase tracking-wider">Feature 02</span>
+          <h3 className="text-2xl sm:text-3xl font-bold text-[var(--site-fg)] mt-1">
             Dialogs: Confirm, Prompts, OTP & Steps
           </h3>
-          <p className="text-gray-400 text-sm sm:text-base mt-2">
+          <p className="text-[var(--site-muted)] text-sm sm:text-base mt-2">
             SweetAlert2 replacement with Apple glass styling. Built-in focus trap, 16 input types, type-to-confirm guards, and drawer bottom sheets.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div className="p-5 rounded-2xl border border-white/10 bg-white/[0.02] flex flex-col justify-between">
+          <div className="p-5 rounded-2xl border border-[var(--site-border)] bg-[var(--site-surface)] flex flex-col justify-between shadow-sm">
             <div>
-              <div className="text-base font-semibold text-white mb-1">Danger Destructive Confirm</div>
-              <p className="text-xs text-gray-400 mb-4">
+              <div className="text-base font-semibold text-[var(--site-fg)] mb-1">Danger Destructive Confirm</div>
+              <p className="text-xs text-[var(--site-muted)] mb-4">
                 Modal confirmation with default focus lock on Cancel button to protect accidental deletions.
               </p>
             </div>
             <button
               type="button"
               onClick={demoConfirmDanger}
-              className="w-full py-2.5 px-4 rounded-xl bg-rose-500/15 border border-rose-500/30 hover:bg-rose-500/25 text-rose-300 font-medium text-xs transition-colors"
+              className="w-full py-2.5 px-4 rounded-xl bg-rose-500/10 border border-rose-500/30 hover:bg-rose-500/20 text-rose-700 dark:text-rose-300 font-medium text-xs transition-colors"
             >
               Confirm Destructive Action ↵
             </button>
           </div>
 
-          <div className="p-5 rounded-2xl border border-white/10 bg-white/[0.02] flex flex-col justify-between">
+          <div className="p-5 rounded-2xl border border-[var(--site-border)] bg-[var(--site-surface)] flex flex-col justify-between shadow-sm">
             <div>
-              <div className="text-base font-semibold text-white mb-1">Type-to-Confirm Guard</div>
-              <p className="text-xs text-gray-400 mb-4">
+              <div className="text-base font-semibold text-[var(--site-fg)] mb-1">Type-to-Confirm Guard</div>
+              <p className="text-xs text-[var(--site-muted)] mb-4">
                 Disables the confirmation button until the user exactly types the specified confirmation string.
               </p>
             </div>
             <button
               type="button"
               onClick={demoTypeToConfirm}
-              className="w-full py-2.5 px-4 rounded-xl bg-amber-500/15 border border-amber-500/30 hover:bg-amber-500/25 text-amber-300 font-medium text-xs transition-colors"
+              className="w-full py-2.5 px-4 rounded-xl bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20 text-amber-800 dark:text-amber-300 font-medium text-xs transition-colors"
             >
               Type-to-Confirm Modal ↵
             </button>
           </div>
 
-          <div className="p-5 rounded-2xl border border-white/10 bg-white/[0.02] flex flex-col justify-between">
+          <div className="p-5 rounded-2xl border border-[var(--site-border)] bg-[var(--site-surface)] flex flex-col justify-between shadow-sm">
             <div>
-              <div className="text-base font-semibold text-white mb-1">6-Box Discrete OTP Input</div>
-              <p className="text-xs text-gray-400 mb-4">
+              <div className="text-base font-semibold text-[var(--site-fg)] mb-1">6-Box Discrete OTP Input</div>
+              <p className="text-xs text-[var(--site-muted)] mb-4">
                 Auto-advances between numeric inputs, clipboard paste parsing, and live resend timer countdown.
               </p>
             </div>
             <button
               type="button"
               onClick={demoOtpDialog}
-              className="w-full py-2.5 px-4 rounded-xl bg-purple-500/15 border border-purple-500/30 hover:bg-purple-500/25 text-purple-300 font-medium text-xs transition-colors"
+              className="w-full py-2.5 px-4 rounded-xl bg-purple-500/10 border border-purple-500/30 hover:bg-purple-500/20 text-purple-700 dark:text-purple-300 font-medium text-xs transition-colors"
             >
               Launch OTP Dialog ↵
             </button>
           </div>
 
-          <div className="p-5 rounded-2xl border border-white/10 bg-white/[0.02] flex flex-col justify-between">
+          <div className="p-5 rounded-2xl border border-[var(--site-border)] bg-[var(--site-surface)] flex flex-col justify-between shadow-sm">
             <div>
-              <div className="text-base font-semibold text-white mb-1">Session Inactivity Countdown</div>
-              <p className="text-xs text-gray-400 mb-4">
+              <div className="text-base font-semibold text-[var(--site-fg)] mb-1">Session Inactivity Countdown</div>
+              <p className="text-xs text-[var(--site-muted)] mb-4">
                 Real-time ticking seconds display with animated timer track and pause/resume hooks.
               </p>
             </div>
             <button
               type="button"
               onClick={demoCountdownDialog}
-              className="w-full py-2.5 px-4 rounded-xl bg-white/10 hover:bg-white/15 text-white font-medium text-xs transition-colors"
+              className="w-full py-2.5 px-4 rounded-xl bg-[var(--site-surface-raised)] border border-[var(--site-border)] hover:border-blue-500/40 text-[var(--site-fg)] font-medium text-xs transition-colors"
             >
               Trigger Session Timer ↵
             </button>
           </div>
 
-          <div className="p-5 rounded-2xl border border-white/10 bg-white/[0.02] flex flex-col justify-between">
+          <div className="p-5 rounded-2xl border border-[var(--site-border)] bg-[var(--site-surface)] flex flex-col justify-between shadow-sm">
             <div>
-              <div className="text-base font-semibold text-white mb-1">Multi-Step Wizard (`ui.steps`)</div>
-              <p className="text-xs text-gray-400 mb-4">
+              <div className="text-base font-semibold text-[var(--site-fg)] mb-1">Multi-Step Wizard (`ui.steps`)</div>
+              <p className="text-xs text-[var(--site-muted)] mb-4">
                 Sequential wizard dialog with back/forward history and aggregated results.
               </p>
             </div>
             <button
               type="button"
               onClick={demoStepsWizard}
-              className="w-full py-2.5 px-4 rounded-xl bg-white/10 hover:bg-white/15 text-white font-medium text-xs transition-colors"
+              className="w-full py-2.5 px-4 rounded-xl bg-[var(--site-surface-raised)] border border-[var(--site-border)] hover:border-blue-500/40 text-[var(--site-fg)] font-medium text-xs transition-colors"
             >
               Run 2-Step Wizard ↵
             </button>
           </div>
 
-          <div className="p-5 rounded-2xl border border-white/10 bg-white/[0.02] flex flex-col justify-between">
+          <div className="p-5 rounded-2xl border border-[var(--site-border)] bg-[var(--site-surface)] flex flex-col justify-between shadow-sm">
             <div>
-              <div className="text-base font-semibold text-white mb-1">Mobile Bottom Sheet & Action Sheet</div>
-              <p className="text-xs text-gray-400 mb-4">
+              <div className="text-base font-semibold text-[var(--site-fg)] mb-1">Mobile Bottom Sheet & Action Sheet</div>
+              <p className="text-xs text-[var(--site-muted)] mb-4">
                 Swipeable gesture drawer with configurable snap points and drag handles.
               </p>
             </div>
@@ -353,14 +353,14 @@ export function FeatureDemos() {
               <button
                 type="button"
                 onClick={demoBottomSheet}
-                className="py-2.5 px-2 rounded-xl bg-cyan-500/15 border border-cyan-500/30 hover:bg-cyan-500/25 text-cyan-300 font-medium text-xs transition-colors text-center"
+                className="py-2.5 px-2 rounded-xl bg-cyan-500/10 border border-cyan-500/30 hover:bg-cyan-500/20 text-cyan-800 dark:text-cyan-300 font-medium text-xs transition-colors text-center"
               >
                 Bottom Sheet
               </button>
               <button
                 type="button"
                 onClick={demoActionSheet}
-                className="py-2.5 px-2 rounded-xl bg-white/10 hover:bg-white/15 text-white font-medium text-xs transition-colors text-center"
+                className="py-2.5 px-2 rounded-xl bg-[var(--site-surface-raised)] border border-[var(--site-border)] hover:border-blue-500/40 text-[var(--site-fg)] font-medium text-xs transition-colors text-center"
               >
                 Action Sheet
               </button>
@@ -371,22 +371,22 @@ export function FeatureDemos() {
 
       {/* 3. Live Token Customiser */}
       <section className="space-y-6">
-        <div className="border-b border-white/10 pb-4">
-          <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wider">Feature 03</span>
-          <h3 className="text-2xl sm:text-3xl font-bold text-white mt-1">
+        <div className="border-b border-[var(--site-border)] pb-4">
+          <span className="text-xs font-semibold text-emerald-500 uppercase tracking-wider">Feature 03</span>
+          <h3 className="text-2xl sm:text-3xl font-bold text-[var(--site-fg)] mt-1">
             Live Design Token Customiser
           </h3>
-          <p className="text-gray-400 text-sm sm:text-base mt-2">
+          <p className="text-[var(--site-muted)] text-sm sm:text-base mt-2">
             Adjust CSS variables live. Watch the toast restyle instantly and export the ready CSS token overrides.
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-          <div className="p-6 rounded-2xl border border-white/10 bg-[#12141f] space-y-6">
+          <div className="p-6 rounded-2xl border border-[var(--site-border)] bg-[var(--site-card-bg)] space-y-6 shadow-sm">
             <div>
-              <label className="flex items-center justify-between text-sm font-medium text-gray-300 mb-2">
+              <label className="flex items-center justify-between text-sm font-medium text-[var(--site-fg)] mb-2">
                 <span>Accent Color (`--gk-accent`)</span>
-                <span className="font-mono text-xs text-gray-400">{customAccent}</span>
+                <span className="font-mono text-xs text-[var(--site-muted)]">{customAccent}</span>
               </label>
               <div className="flex items-center gap-3">
                 <input
@@ -401,7 +401,7 @@ export function FeatureDemos() {
                       key={c}
                       type="button"
                       onClick={() => setCustomAccent(c)}
-                      className="w-7 h-7 rounded-full border border-white/20 transition-transform hover:scale-110"
+                      className="w-7 h-7 rounded-full border border-black/10 dark:border-white/20 transition-transform hover:scale-110"
                       style={{ backgroundColor: c }}
                       aria-label={`Select color ${c}`}
                     />
@@ -411,9 +411,9 @@ export function FeatureDemos() {
             </div>
 
             <div>
-              <label className="flex items-center justify-between text-sm font-medium text-gray-300 mb-2">
+              <label className="flex items-center justify-between text-sm font-medium text-[var(--site-fg)] mb-2">
                 <span>Corner Radius (`--gk-radius`)</span>
-                <span className="font-mono text-xs text-gray-400">{customRadius}px</span>
+                <span className="font-mono text-xs text-[var(--site-muted)]">{customRadius}px</span>
               </label>
               <input
                 type="range"
@@ -426,9 +426,9 @@ export function FeatureDemos() {
             </div>
 
             <div>
-              <label className="flex items-center justify-between text-sm font-medium text-gray-300 mb-2">
+              <label className="flex items-center justify-between text-sm font-medium text-[var(--site-fg)] mb-2">
                 <span>Backdrop Blur (`--gk-blur`)</span>
-                <span className="font-mono text-xs text-gray-400">{customBlur}px</span>
+                <span className="font-mono text-xs text-[var(--site-muted)]">{customBlur}px</span>
               </label>
               <input
                 type="range"
@@ -450,7 +450,7 @@ export function FeatureDemos() {
           </div>
 
           <div>
-            <div className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">
+            <div className="text-xs font-semibold uppercase tracking-wider text-[var(--site-muted)] mb-2">
               Generated CSS Token Output
             </div>
             <CodeSnippet code={generatedCustomCss} language="css" filename="theme-override.css" />
@@ -460,21 +460,21 @@ export function FeatureDemos() {
 
       {/* 4. Accessibility & Performance Section */}
       <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="p-6 rounded-2xl border border-white/10 bg-[#12141f] space-y-4">
+        <div className="p-6 rounded-2xl border border-[var(--site-border)] bg-[var(--site-card-bg)] space-y-4 shadow-sm">
           <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+            <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
               WCAG 2.2 AA
             </span>
-            <h4 className="text-lg font-bold text-white">Accessibility & Live Regions</h4>
+            <h4 className="text-lg font-bold text-[var(--site-fg)]">Accessibility & Live Regions</h4>
           </div>
-          <p className="text-sm text-gray-400 leading-relaxed">
+          <p className="text-sm text-[var(--site-muted)] leading-relaxed">
             Standard toasts announce politely with `role=&quot;status&quot;` and `aria-live=&quot;polite&quot;`. Error notices escalate to `role=&quot;alert&quot;` and `aria-live=&quot;assertive&quot;`. Active dialogs trap keyboard focus and restore focus on dismiss.
           </p>
-          <div className="pt-2 flex items-center justify-between text-xs text-gray-400 border-t border-white/5">
+          <div className="pt-2 flex items-center justify-between text-xs text-[var(--site-muted)] border-t border-[var(--site-border-subtle)]">
             <span>Focus Navigation Hotkey:</span>
-            <kbd className="px-2 py-1 rounded bg-white/10 text-white font-mono">Alt + T</kbd>
+            <kbd className="px-2 py-1 rounded bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-[var(--site-fg)] font-mono">Alt + T</kbd>
           </div>
-          <div className="flex items-center justify-between text-xs text-gray-400">
+          <div className="flex items-center justify-between text-xs text-[var(--site-muted)]">
             <span>Reduced Motion Preference:</span>
             <button
               type="button"
@@ -489,52 +489,52 @@ export function FeatureDemos() {
                   toast.success('Full motion animations restored.');
                 }
               }}
-              className="text-blue-400 hover:underline"
+              className="text-blue-500 hover:underline font-medium"
             >
               {reducedMotionActive ? 'Restore Animations' : 'Toggle Simulation'}
             </button>
           </div>
         </div>
 
-        <div className="p-6 rounded-2xl border border-white/10 bg-[#12141f] space-y-4">
+        <div className="p-6 rounded-2xl border border-[var(--site-border)] bg-[var(--site-card-bg)] space-y-4 shadow-sm">
           <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-blue-500/20 text-blue-400 border border-blue-500/30">
+            <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/30">
               Verifiable Benchmarks
             </span>
-            <h4 className="text-lg font-bold text-white">Ultra-lightweight Size Budget</h4>
+            <h4 className="text-lg font-bold text-[var(--site-fg)]">Ultra-lightweight Size Budget</h4>
           </div>
           <div className="space-y-3 pt-1">
             <div>
               <div className="flex justify-between text-xs mb-1">
-                <span className="text-gray-300">Core + Toast + 1 Theme</span>
-                <span className="font-mono text-emerald-400">5.20 KB (budget &lt; 6.00 KB)</span>
+                <span className="text-[var(--site-fg)] font-medium">Core + Toast + 1 Theme</span>
+                <span className="font-mono text-emerald-600 dark:text-emerald-400 font-semibold">5.20 KB (budget &lt; 6.00 KB)</span>
               </div>
-              <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
+              <div className="w-full h-2 rounded-full bg-slate-200 dark:bg-white/10 overflow-hidden">
                 <div className="h-full bg-emerald-500 rounded-full" style={{ width: '86%' }} />
               </div>
             </div>
 
             <div>
               <div className="flex justify-between text-xs mb-1">
-                <span className="text-gray-300">Full Web Bundle (All Dialogs)</span>
-                <span className="font-mono text-blue-400">14.10 KB (budget &lt; 22.00 KB)</span>
+                <span className="text-[var(--site-fg)] font-medium">Full Web Bundle (All Dialogs)</span>
+                <span className="font-mono text-blue-600 dark:text-blue-400 font-semibold">14.10 KB (budget &lt; 22.00 KB)</span>
               </div>
-              <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
+              <div className="w-full h-2 rounded-full bg-slate-200 dark:bg-white/10 overflow-hidden">
                 <div className="h-full bg-blue-500 rounded-full" style={{ width: '64%' }} />
               </div>
             </div>
 
             <div>
               <div className="flex justify-between text-xs mb-1">
-                <span className="text-gray-300">Runtime Dependencies</span>
-                <span className="font-mono text-purple-400">0 Bytes (Zero Dependencies)</span>
+                <span className="text-[var(--site-fg)] font-medium">Runtime Dependencies</span>
+                <span className="font-mono text-purple-600 dark:text-purple-400 font-semibold">0 Bytes (Zero Dependencies)</span>
               </div>
-              <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
+              <div className="w-full h-2 rounded-full bg-slate-200 dark:bg-white/10 overflow-hidden">
                 <div className="h-full bg-purple-500 rounded-full" style={{ width: '0%' }} />
               </div>
             </div>
           </div>
-          <div className="text-[11px] text-gray-400 pt-2 border-t border-white/5">
+          <div className="text-[11px] text-[var(--site-muted)] pt-2 border-t border-[var(--site-border-subtle)]">
             Measured via `esbuild --bundle --minify` with `gzipSync`. Verified 2026.
           </div>
         </div>

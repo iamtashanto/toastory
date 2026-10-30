@@ -15,14 +15,13 @@ export function createStore<T>(initialValue: T): Store<T> {
   const notify = (): void => {
     batchScheduled = false;
     const current = state;
-    for (const listener of [...listeners]) {
+    listeners.forEach((fn) => {
       try {
-        (listener as (val: T) => void)(current);
+        (fn as (val: T) => void)(current);
       } catch (err) {
-        // Prevent subscriber errors from breaking other listeners
         console.error(err);
       }
-    }
+    });
   };
 
   const scheduleNotify = (immediate: boolean): void => {

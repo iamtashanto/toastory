@@ -179,10 +179,10 @@ export function FrameworkQuickstart() {
   return (
     <div className="w-full my-12 text-left">
       <div className="text-center max-w-3xl mx-auto mb-8">
-        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-3">
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--site-fg)] mb-3">
           Every platform. One identical API.
         </h2>
-        <p className="text-gray-400 text-sm sm:text-base leading-relaxed">
+        <p className="text-[var(--site-muted)] text-sm sm:text-base leading-relaxed">
           Switch from React to Svelte, Next.js to React Native, or Vanilla JS to Vue without rewriting options, parameters, or themes.
         </p>
       </div>
@@ -198,8 +198,8 @@ export function FrameworkQuickstart() {
               onClick={() => setActiveTab(f.id)}
               className={`px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-medium whitespace-nowrap transition-all ${
                 isSelected
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/25'
-                  : 'bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:bg-white/10'
+                  ? 'bg-blue-600 text-white shadow-md shadow-blue-500/25 font-semibold'
+                  : 'bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-[var(--site-muted)] hover:text-[var(--site-fg)] hover:border-blue-500/30'
               }`}
             >
               {f.name}
@@ -210,9 +210,9 @@ export function FrameworkQuickstart() {
 
       {/* Code box */}
       <div className="max-w-3xl mx-auto mt-4">
-        <div className="p-3 bg-black/40 border border-white/10 rounded-xl mb-2 flex items-center justify-between text-xs text-gray-400 font-mono">
-          <span>{current.install}</span>
-          <span className="text-emerald-400 text-[11px]">0 dependencies</span>
+        <div className="p-3 bg-[var(--site-card-bg)] border border-[var(--site-border)] rounded-xl mb-2 flex items-center justify-between text-xs text-[var(--site-muted)] font-mono shadow-sm">
+          <span className="text-[var(--site-fg)] font-medium">{current.install}</span>
+          <span className="text-emerald-500 font-semibold text-[11px]">0 dependencies</span>
         </div>
         <CodeSnippet code={current.code} filename={current.filename} />
       </div>

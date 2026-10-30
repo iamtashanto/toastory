@@ -676,6 +676,15 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
     set('data-dismissed', record.dismissed ? '' : undefined);
     set('data-state', record.dismissed ? 'exiting' : 'entered');
     set('data-paused', record.pausedBy.length > 0 ? '' : undefined);
+    if (
+      record.description ||
+      record.html ||
+      (record.action && record.cancel) ||
+      (record.actions && record.actions.length > 1)
+    )
+      set('data-wrap', '');
+    if (flag(record.closeButton, c.closeButton) && record.dismissible !== false)
+      set('data-has-close', '');
     set(
       'data-clickable',
       flag(record.closeOnClick, c.closeOnClick) && record.dismissible !== false ? '' : undefined,

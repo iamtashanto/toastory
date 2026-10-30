@@ -36,38 +36,38 @@ export default function RoadmapPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-20 text-left">
-      <div className="border-b border-white/10 pb-6 mb-12">
-        <span className="text-xs font-semibold text-blue-400 uppercase tracking-wider">Future Vision</span>
-        <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mt-1 mb-4">
+      <div className="border-b border-[var(--site-border)] pb-6 mb-12">
+        <span className="text-xs font-semibold text-blue-500 uppercase tracking-wider">Future Vision</span>
+        <h1 className="text-3xl sm:text-5xl font-extrabold text-[var(--site-fg)] tracking-tight mt-1 mb-4">
           Public Roadmap
         </h1>
-        <p className="text-base text-gray-400">
+        <p className="text-base text-[var(--site-muted)]">
           Our planned milestones and open-source feature commitments for upcoming toastory releases.
         </p>
       </div>
 
       <div className="space-y-10">
         {roadmapItems.map((milestone) => (
-          <div key={milestone.quarter} className="p-6 rounded-2xl border border-white/10 bg-[#10121b] space-y-4">
+          <div key={milestone.quarter} className="p-6 rounded-2xl border border-[var(--site-border)] bg-[var(--site-surface-raised)] space-y-4 shadow-sm">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold text-white">{milestone.quarter}</h2>
+              <h2 className="text-xl font-bold text-[var(--site-fg)]">{milestone.quarter}</h2>
               <span
                 className={`px-3 py-1 rounded-full text-xs font-semibold ${
                   milestone.status === 'Completed'
-                    ? 'bg-emerald-500/15 border border-emerald-500/30 text-emerald-400'
+                    ? 'bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400'
                     : milestone.status === 'In Progress'
-                    ? 'bg-blue-500/15 border border-blue-500/30 text-blue-400'
-                    : 'bg-white/10 text-gray-400'
+                    ? 'bg-blue-500/15 border border-blue-500/30 text-blue-600 dark:text-blue-400'
+                    : 'bg-[var(--site-surface)] text-[var(--site-muted)]'
                 }`}
               >
                 {milestone.status}
               </span>
             </div>
 
-            <ul className="space-y-2 text-sm text-gray-300">
+            <ul className="space-y-2 text-sm text-[var(--site-muted)]">
               {milestone.items.map((it, i) => (
                 <li key={i} className="flex items-center gap-2">
-                  <span className="text-blue-400">▸</span>
+                  <span className="text-blue-500">▸</span>
                   <span>{it}</span>
                 </li>
               ))}

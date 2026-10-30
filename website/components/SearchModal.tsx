@@ -344,19 +344,19 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
       onClick={onClose}
     >
       <div
-        className="w-full max-w-2xl bg-[#12141e] border border-white/15 rounded-2xl shadow-2xl overflow-hidden text-left"
+        className="w-full max-w-2xl bg-[var(--site-surface-raised)] border border-[var(--site-border)] rounded-2xl shadow-2xl overflow-hidden text-left"
         onClick={(e) => e.stopPropagation()}
         onKeyDown={handleKeyDownList}
       >
         {/* Search Input Bar */}
-        <div className="flex items-center gap-3 px-4 py-3.5 border-b border-white/10 bg-white/[0.02]">
-          <svg className="w-5 h-5 text-gray-400 flex-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="flex items-center gap-3 px-4 py-3.5 border-b border-[var(--site-border)] bg-[var(--site-surface)]">
+          <svg className="w-5 h-5 text-[var(--site-muted)] flex-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
           <input
             ref={inputRef}
             type="text"
-            className="flex-1 bg-transparent text-white placeholder-gray-400 text-base focus:outline-none"
+            className="flex-1 bg-transparent text-[var(--site-fg)] placeholder-[var(--site-muted)] text-base focus:outline-none"
             placeholder="Search guides, components, API tokens, recipes..."
             value={query}
             onChange={(e) => {
@@ -364,16 +364,16 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
               setSelectedIndex(0);
             }}
           />
-          <kbd className="hidden sm:inline-flex items-center px-2 py-0.5 text-xs text-gray-400 bg-white/10 border border-white/10 rounded">
+          <kbd className="hidden sm:inline-flex items-center px-2 py-0.5 text-xs text-[var(--site-muted)] bg-[var(--site-surface)] border border-[var(--site-border)] rounded">
             Esc
           </kbd>
         </div>
 
         {/* Search Results */}
-        <div className="max-h-96 overflow-y-auto p-2 divide-y divide-white/5">
+        <div className="max-h-96 overflow-y-auto p-2 divide-y divide-[var(--site-border-subtle)]">
           {filtered.length === 0 ? (
-            <div className="p-8 text-center text-sm text-gray-400">
-              No results found for &ldquo;<span className="text-white font-medium">{query}</span>&rdquo;.
+            <div className="p-8 text-center text-sm text-[var(--site-muted)]">
+              No results found for &ldquo;<span className="text-[var(--site-fg)] font-medium">{query}</span>&rdquo;.
             </div>
           ) : (
             filtered.map((item, idx) => {
@@ -384,15 +384,15 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
                   href={item.url}
                   onClick={onClose}
                   className={`block px-4 py-3 rounded-xl transition-colors ${
-                    isSelected ? 'bg-blue-600/20 text-white' : 'hover:bg-white/[0.04] text-gray-300'
+                    isSelected ? 'bg-blue-600/15 text-[var(--site-fg)]' : 'hover:bg-[var(--site-surface)] text-[var(--site-muted)]'
                   }`}
                 >
                   <div className="flex items-center justify-between text-xs mb-1">
-                    <span className="font-semibold text-blue-400">{item.category}</span>
-                    {isSelected && <span className="text-gray-400">Press Enter ↵</span>}
+                    <span className="font-semibold text-blue-500">{item.category}</span>
+                    {isSelected && <span className="text-[var(--site-muted)]">Press Enter ↵</span>}
                   </div>
-                  <div className="text-sm font-medium text-white">{item.title}</div>
-                  <div className="text-xs text-gray-400 mt-0.5 line-clamp-1">{item.snippet}</div>
+                  <div className="text-sm font-medium text-[var(--site-fg)]">{item.title}</div>
+                  <div className="text-xs text-[var(--site-muted)] mt-0.5 line-clamp-1">{item.snippet}</div>
                 </Link>
               );
             })
@@ -400,9 +400,9 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
         </div>
 
         {/* Footer info */}
-        <div className="px-4 py-2.5 bg-black/40 border-t border-white/5 flex items-center justify-between text-xs text-gray-400">
-          <span>Navigate with <kbd className="px-1.5 py-0.5 bg-white/10 rounded text-[11px]">↑</kbd> <kbd className="px-1.5 py-0.5 bg-white/10 rounded text-[11px]">↓</kbd></span>
-          <span>Select with <kbd className="px-1.5 py-0.5 bg-white/10 rounded text-[11px]">Enter</kbd></span>
+        <div className="px-4 py-2.5 bg-[var(--site-surface)] border-t border-[var(--site-border)] flex items-center justify-between text-xs text-[var(--site-muted)]">
+          <span>Navigate with <kbd className="px-1.5 py-0.5 bg-[var(--site-surface-raised)] border border-[var(--site-border)] rounded text-[11px]">↑</kbd> <kbd className="px-1.5 py-0.5 bg-[var(--site-surface-raised)] border border-[var(--site-border)] rounded text-[11px]">↓</kbd></span>
+          <span>Select with <kbd className="px-1.5 py-0.5 bg-[var(--site-surface-raised)] border border-[var(--site-border)] rounded text-[11px]">Enter</kbd></span>
         </div>
       </div>
     </div>

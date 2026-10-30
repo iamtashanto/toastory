@@ -21,11 +21,11 @@ export interface Clock {
 export const defaultClock: Clock = {
   now: () => Date.now(),
   setTimeout: (fn, ms) => {
-    const id = setTimeout(fn, ms);
-    return () => clearTimeout(id);
+    const t = setTimeout(fn, ms);
+    return () => clearTimeout(t);
   },
   setInterval: (fn, ms) => {
-    const id = setInterval(fn, ms);
-    return () => clearInterval(id);
+    const t = setInterval(fn, ms);
+    return () => clearInterval(t);
   },
 };

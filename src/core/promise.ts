@@ -31,10 +31,10 @@ export function runPromiseToast<T>(
 
   const id: ToastId = store.add({
     ...base,
-    ...(requestedId === undefined ? {} : { id: requestedId }),
+    id: requestedId,
     ...loadingPatch,
     type: 'loading',
-    duration: 0, // persistent while pending
+    duration: 0,
   });
 
   const settle = (type: 'success' | 'error', raw: unknown, payload: unknown): void => {

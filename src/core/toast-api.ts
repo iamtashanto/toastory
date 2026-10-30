@@ -58,21 +58,18 @@ export interface ToastApi extends ToastFn {
 /** Builds the `ui.toast` API on top of a store/manager. */
 export function createToastApi(store: ToastStore): ToastApi {
   const make =
-    (type: ToastOptions['type']): ToastFn =>
+    (type?: ToastOptions['type']): ToastFn =>
     (message, options = {}) => {
-      const input: ToastOptions = { ...options };
-      if (type !== undefined && options.type === undefined) input.type = type;
+      const input: ToastOptions = { type, ...options };
+      if (options.type !== undefined) input.type = options.type;
       if (message !== undefined) {
-        if (options.title === undefined) {
-          input.title = message;
-        } else if (options.description === undefined) {
-          input.description = message;
-        }
+        if (options.title === undefined) input.title = message;
+        else if (options.description === undefined) input.description = message;
       }
       return store.add(input);
     };
 
-  const api = make(undefined) as ToastApi;
+  const api = make() as ToastApi;
   api.success = make('success');
   api.error = make('error');
   api.info = make('info');

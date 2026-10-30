@@ -134,18 +134,18 @@ export function ComparisonTable() {
   const renderCell = (val: string | boolean, isToastory = false) => {
     if (typeof val === 'boolean') {
       return val ? (
-        <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full ${isToastory ? 'bg-blue-500/20 text-blue-400 font-bold' : 'text-emerald-400'}`}>
+        <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full ${isToastory ? 'bg-blue-500/20 text-blue-500 font-bold' : 'text-emerald-500'}`}>
           ✓
         </span>
       ) : (
-        <span className="text-gray-500 text-sm">—</span>
+        <span className="text-[var(--site-muted)] text-sm opacity-50">—</span>
       );
     }
     if (val === 'not verified') {
-      return <span className="text-xs text-gray-400 italic">not verified</span>;
+      return <span className="text-xs text-[var(--site-muted)] italic">not verified</span>;
     }
     return (
-      <span className={isToastory ? 'font-semibold text-white' : 'text-gray-300'}>
+      <span className={isToastory ? 'font-semibold text-[var(--site-fg)]' : 'text-[var(--site-muted)]'}>
         {val}
       </span>
     );
@@ -154,31 +154,31 @@ export function ComparisonTable() {
   return (
     <div className="w-full my-16 text-left">
       <div className="text-center max-w-3xl mx-auto mb-8">
-        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-3">
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--site-fg)] mb-3">
           Honest, Verifiable Feature Comparison
         </h2>
-        <p className="text-gray-400 text-sm sm:text-base leading-relaxed">
+        <p className="text-[var(--site-muted)] text-sm sm:text-base leading-relaxed">
           Measured via automated build tests and repository analysis. Facts are checked against official documentation.
         </p>
       </div>
 
-      <div className="w-full overflow-x-auto rounded-2xl border border-white/10 bg-[#0e1017]">
+      <div className="w-full overflow-x-auto rounded-2xl border border-[var(--site-border)] bg-[var(--site-card-bg)] shadow-sm">
         <table className="w-full text-left text-xs sm:text-sm border-collapse min-w-[760px]">
           <thead>
-            <tr className="border-b border-white/10 bg-white/[0.03]">
-              <th className="py-4 px-4 font-semibold text-gray-300">Feature & Specification</th>
-              <th className="py-4 px-4 font-bold text-blue-400 bg-blue-500/10">toastory</th>
-              <th className="py-4 px-4 font-medium text-gray-400">Sonner</th>
-              <th className="py-4 px-4 font-medium text-gray-400">React-Toastify</th>
-              <th className="py-4 px-4 font-medium text-gray-400">react-hot-toast</th>
-              <th className="py-4 px-4 font-medium text-gray-400">Notyf</th>
-              <th className="py-4 px-4 font-medium text-gray-400">SweetAlert2</th>
+            <tr className="border-b border-[var(--site-border)] bg-[var(--site-surface-raised)]">
+              <th className="py-4 px-4 font-semibold text-[var(--site-fg)]">Feature & Specification</th>
+              <th className="py-4 px-4 font-bold text-blue-600 dark:text-blue-400 bg-blue-500/10">toastory</th>
+              <th className="py-4 px-4 font-medium text-[var(--site-muted)]">Sonner</th>
+              <th className="py-4 px-4 font-medium text-[var(--site-muted)]">React-Toastify</th>
+              <th className="py-4 px-4 font-medium text-[var(--site-muted)]">react-hot-toast</th>
+              <th className="py-4 px-4 font-medium text-[var(--site-muted)]">Notyf</th>
+              <th className="py-4 px-4 font-medium text-[var(--site-muted)]">SweetAlert2</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/5">
+          <tbody className="divide-y divide-[var(--site-border-subtle)]">
             {COMPARISON_DATA.map((row, idx) => (
-              <tr key={idx} className="hover:bg-white/[0.02] transition-colors">
-                <td className="py-3 px-4 font-medium text-gray-200">{row.feature}</td>
+              <tr key={idx} className="hover:bg-[var(--site-surface-raised)] transition-colors">
+                <td className="py-3 px-4 font-medium text-[var(--site-fg)]">{row.feature}</td>
                 <td className="py-3 px-4 bg-blue-500/[0.04]">{renderCell(row.toastory, true)}</td>
                 <td className="py-3 px-4">{renderCell(row.sonner)}</td>
                 <td className="py-3 px-4">{renderCell(row.reactToastify)}</td>
@@ -191,7 +191,7 @@ export function ComparisonTable() {
         </table>
       </div>
 
-      <div className="mt-4 p-4 rounded-xl bg-white/[0.02] border border-white/5 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-400 gap-2">
+      <div className="mt-4 p-4 rounded-xl bg-[var(--site-surface)] border border-[var(--site-border)] flex flex-col sm:flex-row items-center justify-between text-xs text-[var(--site-muted)] gap-2">
         <span>Method: Measured with gzipSync over esbuild standalone bundles. Script: `scripts/size.mjs`.</span>
         <span className="italic">Notice: toastory is not affiliated with any referenced open-source projects.</span>
       </div>

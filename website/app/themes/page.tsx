@@ -61,17 +61,17 @@ export default function ThemesPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-20 text-left">
       {/* Page Header */}
       <div className="max-w-3xl mb-10">
-        <span className="text-xs font-semibold text-blue-400 uppercase tracking-wider">Visual Design System</span>
-        <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mt-1 mb-4">
+        <span className="text-xs font-semibold text-blue-500 uppercase tracking-wider">Visual Design System</span>
+        <h1 className="text-3xl sm:text-5xl font-extrabold text-[var(--site-fg)] tracking-tight mt-1 mb-4">
           21 Theme Presets Studio
         </h1>
-        <p className="text-base sm:text-lg text-gray-400 leading-relaxed">
+        <p className="text-base sm:text-lg text-[var(--site-muted)] leading-relaxed">
           Exhaustive gallery of all 21 bundled themes across Light and Dark modes. Verified WCAG 2.2 AA contrast ratios, fluid spring animations, and solid fallback support.
         </p>
       </div>
 
       {/* Control Bar: Filters, Modes, and Backgrounds */}
-      <div className="p-4 rounded-2xl border border-white/10 bg-[#10121b] mb-10 flex flex-wrap items-center justify-between gap-4">
+      <div className="p-4 rounded-2xl border border-[var(--site-border)] bg-[var(--site-surface-raised)] mb-10 flex flex-wrap items-center justify-between gap-4 shadow-sm">
         {/* Categories */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
           {(['all', 'glass', 'modern', 'minimal', 'playful'] as const).map((cat) => (
@@ -82,7 +82,7 @@ export default function ThemesPage() {
               className={`px-3 py-1.5 rounded-xl text-xs font-medium capitalize transition-colors ${
                 filterCategory === cat
                   ? 'bg-blue-600 text-white shadow-md'
-                  : 'text-gray-400 hover:text-white hover:bg-white/5'
+                  : 'text-[var(--site-muted)] hover:text-[var(--site-fg)] hover:bg-[var(--site-surface)]'
               }`}
             >
               {cat}
@@ -93,12 +93,12 @@ export default function ThemesPage() {
         {/* Mode & Target Toggles */}
         <div className="flex flex-wrap items-center gap-3 text-xs">
           {/* Component Target */}
-          <div className="flex items-center bg-black/40 border border-white/10 rounded-xl p-0.5">
+          <div className="flex items-center bg-[var(--site-surface)] border border-[var(--site-border)] rounded-xl p-0.5">
             <button
               type="button"
               onClick={() => setTargetType('toast')}
               className={`px-2.5 py-1 rounded-lg transition-colors ${
-                targetType === 'toast' ? 'bg-white/20 text-white font-medium' : 'text-gray-400 hover:text-white'
+                targetType === 'toast' ? 'bg-blue-600 text-white font-medium' : 'text-[var(--site-muted)] hover:text-[var(--site-fg)]'
               }`}
             >
               Toasts
@@ -107,7 +107,7 @@ export default function ThemesPage() {
               type="button"
               onClick={() => setTargetType('dialog')}
               className={`px-2.5 py-1 rounded-lg transition-colors ${
-                targetType === 'dialog' ? 'bg-white/20 text-white font-medium' : 'text-gray-400 hover:text-white'
+                targetType === 'dialog' ? 'bg-blue-600 text-white font-medium' : 'text-[var(--site-muted)] hover:text-[var(--site-fg)]'
               }`}
             >
               Dialogs
@@ -115,12 +115,12 @@ export default function ThemesPage() {
           </div>
 
           {/* Mode Switcher */}
-          <div className="flex items-center bg-black/40 border border-white/10 rounded-xl p-0.5">
+          <div className="flex items-center bg-[var(--site-surface)] border border-[var(--site-border)] rounded-xl p-0.5">
             <button
               type="button"
               onClick={() => setMode('dark')}
               className={`px-2.5 py-1 rounded-lg transition-colors ${
-                mode === 'dark' ? 'bg-white/20 text-white font-medium' : 'text-gray-400 hover:text-white'
+                mode === 'dark' ? 'bg-blue-600 text-white font-medium' : 'text-[var(--site-muted)] hover:text-[var(--site-fg)]'
               }`}
             >
               Dark Mode
@@ -129,7 +129,7 @@ export default function ThemesPage() {
               type="button"
               onClick={() => setMode('light')}
               className={`px-2.5 py-1 rounded-lg transition-colors ${
-                mode === 'light' ? 'bg-white/20 text-white font-medium' : 'text-gray-400 hover:text-white'
+                mode === 'light' ? 'bg-blue-600 text-white font-medium' : 'text-[var(--site-muted)] hover:text-[var(--site-fg)]'
               }`}
             >
               Light Mode
@@ -138,14 +138,14 @@ export default function ThemesPage() {
 
           {/* Canvas Backdrop */}
           <div className="flex items-center gap-1.5">
-            <span className="text-gray-400">Backdrop:</span>
+            <span className="text-[var(--site-muted)]">Backdrop:</span>
             {(['mesh', 'slate', 'cyber', 'sunset'] as const).map((b) => (
               <button
                 key={b}
                 type="button"
                 onClick={() => setBgStyle(b)}
                 className={`w-5 h-5 rounded-full border transition-transform ${
-                  bgStyle === b ? 'border-white scale-110 ring-2 ring-blue-500' : 'border-white/20'
+                  bgStyle === b ? 'border-blue-500 scale-110 ring-2 ring-blue-500' : 'border-[var(--site-border)]'
                 }`}
                 style={{
                   background:
