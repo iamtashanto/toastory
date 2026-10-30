@@ -52,4 +52,11 @@ describe('Website Documentation Completeness', () => {
     expect(fallback.category).toBe('EXPERIMENTAL');
     expect(fallback.headings && fallback.headings.length).toBeGreaterThan(0);
   });
+
+  it('verifies package version consistency across package.json and website', async () => {
+    const { default: rootPkg } = await import('../package.json');
+    const { default: websitePkg } = await import('../website/package.json');
+    expect(rootPkg.version).toBe('0.1.2');
+    expect(websitePkg.dependencies.toastory).toContain('0.1.2');
+  });
 });

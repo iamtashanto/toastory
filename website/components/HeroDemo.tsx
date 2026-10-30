@@ -7,6 +7,9 @@ export function HeroDemo() {
   const [activeTheme, setActiveTheme] = useState('ios-glass');
   const [activePosition, setActivePosition] = useState<'top-right' | 'bottom-right' | 'top-center' | 'bottom-center'>('top-right');
   const [isStacked, setIsStacked] = useState(true);
+  const [selectedDemo, setSelectedDemo] = useState<'success' | 'error' | 'promise' | 'confirm' | 'prompt' | 'sheet'>('success');
+  const [showCode, setShowCode] = useState(false);
+  const [codeCopied, setCodeCopied] = useState(false);
 
   const themes = [
     { id: 'ios-glass', name: 'iOS Glass' },
@@ -19,6 +22,113 @@ export function HeroDemo() {
     { id: 'brutal', name: 'Neo-Brutal' },
   ];
 
+  const demoSnippets: Record<string, { label: string; code: string }> = {
+    success: {
+      label: 'Success Toast',
+      code: `import { toast } from 'toastory';
+import 'toastory/themes/${activeTheme}.css';
+
+toast.success('Changes saved successfully', {
+  description: 'Your configuration was synced to the cloud replica.',
+  theme: '${activeTheme}',
+  position: '${activePosition}',
+  action: {
+    label: 'View Logs',
+    onClick: () => console.log('Viewing logs...')
+  }
+});`,
+    },
+    error: {
+      label: 'Error Alert Toast',
+      code: `import { toast } from 'toastory';
+import 'toastory/themes/${activeTheme}.css';
+
+toast.error('Build compilation failed', {
+  description: 'Syntax error in src/worker.ts: unexpected token at line 42.',
+  theme: '${activeTheme}',
+  position: '${activePosition}',
+  action: {
+    label: 'Retry',
+    onClick: () => console.log('Retrying build...')
+  }
+});`,
+    },
+    promise: {
+      label: 'Async Promise Toast',
+      code: `import { toast } from 'toastory';
+import 'toastory/themes/${activeTheme}.css';
+
+toast.promise(
+  deployBuild(),
+  {
+    loading: 'Optimizing and tree-shaking bundle...',
+    success: (data) => \`Deployed build \${data.id} in 420ms!\`,
+    error: (err) => \`Failed: \${err.message}\`,
+    description: 'Compiling ESM + CJS subpaths with zero dependencies.'
+  },
+  { theme: '${activeTheme}', position: '${activePosition}' }
+);`,
+    },
+    confirm: {
+      label: 'Confirm Modal Dialog',
+      code: `import { ui } from 'toastory';
+import 'toastory/themes/${activeTheme}.css';
+
+const res = await ui.confirm({
+  title: 'Destroy Production Cluster?',
+  text: 'This operation will terminate 12 edge worker pods. This action cannot be undone.',
+  tone: 'danger',
+  theme: '${activeTheme}',
+  confirmButton: { label: 'Destroy Pods', color: '#dc2626' },
+  cancelButton: { label: 'Keep Running' }
+});
+
+if (res.isConfirmed) {
+  console.log('Confirmed');
+}`,
+    },
+    prompt: {
+      label: 'Interactive Prompt Input',
+      code: `import { ui } from 'toastory';
+import 'toastory/themes/${activeTheme}.css';
+
+const res = await ui.prompt({
+  title: 'Rename Project Workspace',
+  text: 'Enter a unique URL slug for your project repository:',
+  placeholder: 'my-toastory-app',
+  theme: '${activeTheme}',
+  validate: (val) => (!val || val.length < 3 ? 'Slug must be at least 3 characters' : undefined)
+});
+
+if (res.isConfirmed && res.value) {
+  console.log('Slug:', res.value);
+}`,
+    },
+    sheet: {
+      label: 'Mobile Bottom Sheet',
+      code: `import { ui } from 'toastory';
+import 'toastory/themes/${activeTheme}.css';
+
+ui.bottomSheet({
+  title: 'Select Deployment Region',
+  text: 'Choose an edge cluster nearest to your application users:',
+  theme: '${activeTheme}',
+  confirmButton: { label: 'Deploy to us-east' },
+  cancelButton: { label: 'Cancel' }
+});`,
+    },
+  };
+
+  const handleCopySnippet = async () => {
+    try {
+      await navigator.clipboard.writeText(demoSnippets[selectedDemo].code);
+      setCodeCopied(true);
+      setTimeout(() => setCodeCopied(false), 2000);
+    } catch {
+      // fallback
+    }
+  };
+
   const handleThemeChange = (themeId: string) => {
     setActiveTheme(themeId);
     ui.configure({ theme: themeId });
@@ -30,6 +140,7 @@ export function HeroDemo() {
   };
 
   const fireSuccessToast = () => {
+    setSelectedDemo('success');
     toast.success('Changes saved successfully', {
       description: 'Your configuration was synced to the cloud replica.',
       theme: activeTheme,
@@ -44,6 +155,7 @@ export function HeroDemo() {
   };
 
   const fireErrorToast = () => {
+    setSelectedDemo('error');
     toast.error('Build compilation failed', {
       description: 'Syntax error in src/worker.ts: unexpected token at line 42.',
       theme: activeTheme,
@@ -58,6 +170,7 @@ export function HeroDemo() {
   };
 
   const firePromiseToast = () => {
+    setSelectedDemo('promise');
     const fakeAsyncAction = new Promise<{ id: string }>((resolve, reject) => {
       setTimeout(() => {
         if (Math.random() > 0.15) {
@@ -84,6 +197,7 @@ export function HeroDemo() {
   };
 
   const fireConfirmDialog = async () => {
+    setSelectedDemo('confirm');
     const res = await ui.confirm({
       title: 'Destroy Production Cluster?',
       text: 'This operation will terminate 12 edge worker pods. This action cannot be undone.',
@@ -101,6 +215,7 @@ export function HeroDemo() {
   };
 
   const firePromptDialog = async () => {
+    setSelectedDemo('prompt');
     const res = await ui.prompt({
       title: 'Rename Project Workspace',
       text: 'Enter a unique URL slug for your project repository:',
@@ -118,6 +233,7 @@ export function HeroDemo() {
   };
 
   const fireBottomSheet = () => {
+    setSelectedDemo('sheet');
     ui.bottomSheet({
       title: 'Select Deployment Region',
       text: 'Choose an edge cluster nearest to your application users:',
@@ -238,6 +354,54 @@ export function HeroDemo() {
             <span className="text-base mb-1">⇡</span>
             Bottom Sheet
           </button>
+        </div>
+
+        {/* Code Preview & Copy Toolbar */}
+        <div className="pt-1">
+          <div className="flex flex-wrap items-center justify-between gap-2 text-xs py-2 px-3 rounded-xl bg-[var(--site-surface)] border border-[var(--site-border)] shadow-sm">
+            <div className="flex items-center gap-2">
+              <span className="font-semibold text-[var(--site-fg)]">
+                Selected: {demoSnippets[selectedDemo].label}
+              </span>
+              <button
+                type="button"
+                onClick={() => setShowCode(!showCode)}
+                className="text-blue-500 hover:underline font-medium ml-1"
+              >
+                {showCode ? 'Hide Code ▲' : 'View Code Snippet ▼'}
+              </button>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleCopySnippet}
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[var(--site-surface-raised)] border border-[var(--site-border)] hover:border-blue-500/40 text-[var(--site-fg)] text-xs font-medium transition-colors shadow-sm"
+              aria-label="Copy snippet"
+            >
+              {codeCopied ? (
+                <>
+                  <span className="text-emerald-500 font-bold">✓</span>
+                  <span className="text-emerald-500 font-semibold">Copied!</span>
+                </>
+              ) : (
+                <>
+                  <svg className="w-3.5 h-3.5 text-[var(--site-muted)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                  </svg>
+                  <span>Copy Snippet</span>
+                </>
+              )}
+            </button>
+          </div>
+
+          {showCode && (
+            <div className="mt-2 rounded-xl border border-[var(--site-border)] bg-[var(--site-card-bg)] overflow-hidden shadow-inner">
+              <pre className="p-3.5 text-xs font-mono overflow-x-auto text-[var(--site-fg)] leading-relaxed">
+                <code>{demoSnippets[selectedDemo].code}</code>
+              </pre>
+            </div>
+          )}
         </div>
 
         {/* Position pills */}

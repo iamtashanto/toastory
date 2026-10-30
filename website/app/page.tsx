@@ -8,7 +8,7 @@ import { FeatureDemos } from '@/components/FeatureDemos';
 import { ComparisonTable } from '@/components/ComparisonTable';
 
 export default function HomePage() {
-  const [pkgManager, setPkgManager] = useState<'npm' | 'pnpm' | 'yarn' | 'bun'>('npm');
+  const [pkgManager, setPkgManager] = useState<'npm' | 'pnpm' | 'yarn' | 'bun' | 'deno'>('npm');
   const [installCopied, setInstallCopied] = useState(false);
 
   const installCommands = {
@@ -16,6 +16,7 @@ export default function HomePage() {
     pnpm: 'pnpm add toastory',
     yarn: 'yarn add toastory',
     bun: 'bun add toastory',
+    deno: 'deno add npm:toastory',
   };
 
   const handleCopyInstall = async () => {
@@ -42,7 +43,7 @@ export default function HomePage() {
           {/* Badge row */}
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-xs text-[var(--site-muted)] shadow-sm">
             <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="font-semibold text-[var(--site-fg)]">toastory v0.1.1</span>
+            <span className="font-semibold text-[var(--site-fg)]">toastory v0.1.2</span>
             <span className="text-[var(--site-muted)]">•</span>
             <span>Zero Dependencies</span>
             <span className="text-[var(--site-muted)]">•</span>
@@ -82,7 +83,7 @@ export default function HomePage() {
             <div className="flex items-center justify-between p-1.5 rounded-xl bg-[var(--site-card-bg)] border border-[var(--site-border)] shadow-sm">
               {/* Package manager tabs */}
               <div className="flex items-center gap-1">
-                {(['npm', 'pnpm', 'yarn', 'bun'] as const).map((pm) => (
+                {(['npm', 'pnpm', 'yarn', 'bun', 'deno'] as const).map((pm) => (
                   <button
                     key={pm}
                     type="button"
