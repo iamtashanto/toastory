@@ -63,6 +63,11 @@ export const css = `
 .gk-toast& .gk-title{font-weight:600;letter-spacing:-0.015em;line-height:1.25}
 .gk-toast& .gk-desc{letter-spacing:-0.01em;line-height:1.35;opacity:0.88}
 .gk-toast&[data-rich="true"],.gk-toast&[data-rich]{background:color-mix(in srgb,var(--gk-bg) 88%,var(--gk-type,transparent) 12%)}
+.gk-toast& .gk-btn{border-radius:999px;transition:all .18s ease;background:color-mix(in srgb,var(--gk-fg) 8%,transparent);border-color:var(--gk-border)}
+.gk-toast& .gk-btn:hover{filter:brightness(1.12);background:color-mix(in srgb,var(--gk-fg) 14%,transparent)}
+.gk-toast& .gk-action{background:var(--gk-accent);color:var(--gk-accent-fg);border-color:transparent;box-shadow:0 2px 8px color-mix(in srgb,var(--gk-accent) 30%,transparent),inset 0 1px 0 rgba(255,255,255,.3)}
+.gk-toast& .gk-close{transition:all .15s ease}
+.gk-toast& .gk-close:hover{background:color-mix(in srgb,var(--gk-fg) 10%,transparent)}
 .gk-toast&[data-gk-variant="banner-light"]{background:rgba(255,255,255,.72);backdrop-filter:blur(22px) saturate(180%);border:.5px solid rgba(255,255,255,.55);border-radius:20px;color:#0a0a0c;box-shadow:0 10px 30px rgba(0,0,0,.14),inset 0 1px 0 rgba(255,255,255,.8)}
 .gk-toast&[data-gk-variant="banner-dark"]{background:rgba(28,28,32,.74);backdrop-filter:blur(22px) saturate(180%);border:.5px solid rgba(255,255,255,.18);color:#fff;border-radius:20px;box-shadow:0 12px 34px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.25)}
 .gk-toast&[data-gk-variant="capsule-success"]{border-radius:999px;padding:10px 20px 10px 12px;width:fit-content;max-width:100%}

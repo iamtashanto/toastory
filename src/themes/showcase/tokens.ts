@@ -82,6 +82,10 @@ export const css = `
 .gk-toast&[data-gk-variant="message-actions"]{border-radius:16px;padding:14px;flex-wrap:wrap;box-shadow:0 14px 34px rgba(0,0,0,.4)}
 .gk-toast&[data-gk-variant="message-actions"] .gk-av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#38bdf8,#6366f1);display:grid;place-items:center;font-weight:600;font-size:13px;flex:none;color:#fff}
 .gk-toast&[data-gk-variant="message-actions"] .gk-acts{display:flex;gap:8px;width:100%;padding-left:50px;margin-top:8px}
+.gk-toast& .gk-btn{border-radius:10px;transition:all .16s ease}
+.gk-toast& .gk-btn:hover{filter:brightness(1.08)}
+.gk-toast& .gk-action{background:var(--gk-accent);color:var(--gk-accent-fg);border-color:transparent;box-shadow:0 2px 8px color-mix(in srgb,var(--gk-accent) 28%,transparent)}
+.gk-toast& .gk-btn:not(.gk-action){background:color-mix(in srgb,var(--gk-fg) 7%,transparent);border-color:var(--gk-border)}
 @media (prefers-reduced-motion:reduce){.gk-toast&[data-gk-variant="neon-error"] .gk-icon,.gk-toast&[data-gk-variant="island"] .gk-eq i{animation:none}}
 `;
 

@@ -1013,6 +1013,7 @@ export default function NativeScreen() {
             <div
               className={`p-8 sm:p-12 min-h-[360px] flex items-center justify-center relative overflow-hidden transition-colors ${canvasBackgrounds[canvasBg]}`}
               data-gk-theme={theme}
+              data-gk-mode={mode}
             >
               {/* Simulated Live Toast Card */}
               {feedbackKind === 'toast' && (
@@ -1039,7 +1040,7 @@ export default function NativeScreen() {
                       {cancelLabel && (
                         <button
                           type="button"
-                          className="gk-btn gk-cancel text-xs font-medium px-2.5 py-1 rounded"
+                          className="gk-btn gk-cancel"
                         >
                           {cancelLabel}
                         </button>
@@ -1048,7 +1049,7 @@ export default function NativeScreen() {
                         <button
                           type="button"
                           onClick={handleFire}
-                          className="gk-btn gk-action text-xs font-medium px-2.5 py-1 rounded"
+                          className="gk-btn gk-action"
                         >
                           {actionLabel}
                         </button>
@@ -1056,8 +1057,11 @@ export default function NativeScreen() {
                     </div>
                   )}
                   {closeButton && (
-                    <button type="button" className="gk-close text-xs" aria-label="Close">
-                      ✕
+                    <button type="button" className="gk-close" aria-label="Close">
+                      <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                      </svg>
                     </button>
                   )}
                   {progress === 'bar' && (
@@ -1135,11 +1139,11 @@ export default function NativeScreen() {
 
                   <div className="gk-dialog-actions flex gap-2 justify-center">
                     {feedbackKind === 'confirm' && (
-                      <button type="button" className="gk-btn gk-cancel flex-1 text-xs py-2 rounded-lg font-medium">
+                      <button type="button" className="gk-btn gk-cancel flex-1">
                         {cancelLabel || 'Dismiss'}
                       </button>
                     )}
-                    <button type="button" onClick={handleFire} className="gk-btn gk-confirm flex-1 text-xs py-2 rounded-lg font-semibold bg-blue-600 text-white">
+                    <button type="button" onClick={handleFire} className="gk-btn gk-confirm flex-1">
                       {actionLabel || (feedbackKind === 'alert' ? 'Acknowledge' : 'Confirm')}
                     </button>
                   </div>

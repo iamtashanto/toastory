@@ -1,12 +1,12 @@
 /* toastory toast structure. Colors, radius, blur and motion come from the --gk-* tokens of a theme. */
-.gk-root {
-  box-sizing: border-box;
-  font-family: var(--gk-font, system-ui, sans-serif);
-  --gk-ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --gk-duration: 380ms;
-}
+.gk-root,
 .gk-root * {
   box-sizing: border-box;
+}
+.gk-root {
+  font-family: var(--gk-font, system-ui, sans-serif);
+  --gk-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --gk-duration: .38s;
 }
 .gk-root [hidden] {
   display: none !important;
@@ -308,10 +308,10 @@
 @media (prefers-reduced-motion: reduce) {
   .gk-toast,
   .gk-region {
-    transition: opacity 150ms ease !important;
+    transition: opacity .15s ease !important;
   }
   .gk-toast {
-    animation: gk-fade 150ms ease !important;
+    animation: gk-fade .15s ease !important;
   }
   .gk-spin {
     animation: none;

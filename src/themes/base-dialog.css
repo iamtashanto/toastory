@@ -251,16 +251,33 @@
   flex: 1;
   min-height: 44px;
   font-size: 15px;
+  font-weight: 600;
   border-radius: calc(var(--gk-radius) / 1.6);
+  transition: all .16s ease;
 }
 .gk-confirm {
   color: var(--gk-accent-fg);
   background: var(--gk-button, var(--gk-accent));
   border-color: transparent;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--gk-button, var(--gk-accent)) 30%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+.gk-confirm:hover {
+  filter: brightness(1.08);
 }
 .gk-dialog[data-tone='danger'] .gk-confirm {
   background: var(--gk-button, var(--gk-danger, var(--gk-error)));
   color: var(--gk-danger-fg, #fff);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--gk-danger, var(--gk-error)) 35%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+.gk-cancel,
+.gk-deny {
+  background: color-mix(in srgb, var(--gk-fg) 8%, transparent);
+  border: 1px solid var(--gk-border);
+  color: var(--gk-fg);
+}
+.gk-cancel:hover,
+.gk-deny:hover {
+  background: color-mix(in srgb, var(--gk-fg) 14%, transparent);
 }
 .gk-btn[data-loading='true'] {
   position: relative;

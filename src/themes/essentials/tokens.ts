@@ -58,6 +58,10 @@ export const css = `
 .gk-toast&[data-gk-variant="undo-bar"] .gk-action{font-weight:600;color:var(--gk-accent)}
 .gk-toast&[data-gk-variant="inline-confirm"] .gk-actions{display:flex;gap:8px;margin-top:10px}
 .gk-toast&[data-gk-variant="avatar"] .gk-avatar{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:600;font-size:13px;flex:none}
+.gk-toast& .gk-btn{border-radius:8px;transition:all .16s ease}
+.gk-toast& .gk-btn:hover{filter:brightness(1.08)}
+.gk-toast& .gk-action{background:var(--gk-accent);color:var(--gk-accent-fg);border-color:transparent;box-shadow:0 2px 6px color-mix(in srgb,var(--gk-accent) 25%,transparent)}
+.gk-toast& .gk-btn:not(.gk-action){background:color-mix(in srgb,var(--gk-fg) 6%,transparent);border-color:var(--gk-border)}
 `;
 
 export const essentialsTheme: ThemeDefinition = {
