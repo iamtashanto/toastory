@@ -14,6 +14,8 @@ Complete UI feedback toolkit: toast notifications, confirm / prompt / alert dial
 
 [Documentation](https://toastory.tashanto.com) · [Playground](https://toastory.tashanto.com/playground) · [Issues](https://github.com/iamtashanto/toastory/issues)
 
+![toastory interactive glass toasts](https://raw.githubusercontent.com/iamtashanto/toastory/main/design-refs/toasts-demo.gif)
+
 ---
 
 ## Why
@@ -180,11 +182,23 @@ export default function App() {
 
 ## Themes
 
-![toastory showcase themes](https://raw.githubusercontent.com/iamtashanto/toastory/main/design-refs/toasts-showcase-1.png)
+![toastory theme presets](https://raw.githubusercontent.com/iamtashanto/toastory/main/design-refs/themes-demo.gif)
 
 Ships with 21 handcrafted themes supporting light, dark, and auto modes: `ios-glass`, `liquid-glass`, `aurora`, `classic-stack`, `classic-bar`, `pill`, `ripple`, `gradient-strip`, `sweet`, `material`, `basic`, `minimal`, `flat`, `outline`, `neon`, `gradient`, `brutal`, `pastel`, `essentials`, `showcase`, `dialogs`.
 
 [Explore all themes in the Interactive Gallery](https://toastory.tashanto.com/themes)
+
+---
+
+## Dialogs and alerts
+
+![toastory interactive dialogs and alerts](https://raw.githubusercontent.com/iamtashanto/toastory/main/design-refs/dialogs-demo.gif)
+
+---
+
+## Sheets and overlays
+
+![toastory action sheets and bottom sheets](https://raw.githubusercontent.com/iamtashanto/toastory/main/design-refs/sheets-demo.gif)
 
 ---
 
