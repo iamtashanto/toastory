@@ -14,15 +14,42 @@ export default function ChangelogPage() {
       </div>
 
       <div className="space-y-12">
-        {/* Release v0.1.2 */}
+        {/* Release v0.1.3 */}
         <section className="relative pl-6 sm:pl-8 border-l-2 border-blue-500 space-y-4">
           <div className="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-blue-600 border-4 border-[var(--site-bg)]" />
 
           <div className="flex flex-wrap items-center gap-3">
-            <h2 className="text-2xl font-bold text-[var(--site-fg)]">v0.1.2 — Production Verification & Interactive Demos</h2>
+            <h2 className="text-2xl font-bold text-[var(--site-fg)]">v0.1.3 — Premium Glass Aesthetics & Button Micro-Interactions</h2>
             <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-semibold bg-blue-500/20 text-blue-500 border border-blue-500/30">
               Latest
             </span>
+            <span className="text-xs text-[var(--site-muted)] font-mono">October 2026</span>
+          </div>
+
+          <p className="text-sm text-[var(--site-muted)] leading-relaxed">
+            Elevated specular glass aesthetics across all 21 themes, refined action & cancel buttons with micro-interactions, authentic Neo-Brutal typography & hard shadows, dialog elevation, and light mode hydration fixes.
+          </p>
+
+          <div className="space-y-4 pt-2 text-sm text-[var(--site-muted)]">
+            <div>
+              <h3 className="font-semibold text-[var(--site-fg)] mb-2">Key Highlights:</h3>
+              <ul className="list-disc list-inside space-y-1 text-[var(--site-muted)] text-xs sm:text-sm pl-2">
+                <li><strong className="text-[var(--site-fg)]">Apple-Style Glass Pill Buttons</strong>: Specular highlights, translucent frosted backgrounds, and hover micro-interactions for `ios-glass`, `liquid-glass`, `showcase`, and `aurora`.</li>
+                <li><strong className="text-[var(--site-fg)]">Authentic Neo-Brutal Theme</strong>: Monospace font, uppercase actions, 3px solid borders, and sharp offset drop shadows with press-down animations.</li>
+                <li><strong className="text-[var(--site-fg)]">Dialog Button Depth</strong>: Confirm, deny, and cancel buttons now feature smooth transitions, specular highlight borders, and tone-specific elevation.</li>
+                <li><strong className="text-[var(--site-fg)]">Strict Size Budget Maintained</strong>: Streamlined CSS structure to keep Core + Toast + 1 Theme under 6.00 KB.</li>
+                <li><strong className="text-[var(--site-fg)]">Website Light Mode & Themes Integration</strong>: Direct npm theme imports and synchronized theme switching without static CSS dependencies.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* Release v0.1.2 */}
+        <section className="relative pl-6 sm:pl-8 border-l-2 border-[var(--site-border)] space-y-4">
+          <div className="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-[var(--site-border)] border-4 border-[var(--site-bg)]" />
+
+          <div className="flex flex-wrap items-center gap-3">
+            <h2 className="text-2xl font-bold text-[var(--site-fg)]">v0.1.2 — Production Verification & Interactive Demos</h2>
             <span className="text-xs text-[var(--site-muted)] font-mono">October 2026</span>
           </div>
 
