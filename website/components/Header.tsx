@@ -36,6 +36,9 @@ export function Header() {
 
   useEffect(() => {
     ui.configure({ mode: themeMode });
+    document.documentElement.setAttribute('data-theme', themeMode);
+    document.documentElement.classList.remove('light', 'dark');
+    document.documentElement.classList.add(themeMode);
   }, [themeMode]);
 
   useEffect(() => {

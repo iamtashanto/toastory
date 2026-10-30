@@ -59,7 +59,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="h-full antialiased dark" suppressHydrationWarning>
+    <html lang="en" className="h-full antialiased" suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -69,13 +69,8 @@ export default function RootLayout({
                 var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
                 var mode = saved === 'light' || saved === 'dark' ? saved : (prefersDark ? 'dark' : 'light');
                 document.documentElement.setAttribute('data-theme', mode);
-                if (mode === 'light') {
-                  document.documentElement.classList.remove('dark');
-                  document.documentElement.classList.add('light');
-                } else {
-                  document.documentElement.classList.remove('light');
-                  document.documentElement.classList.add('dark');
-                }
+                document.documentElement.classList.remove('light', 'dark');
+                document.documentElement.classList.add(mode);
               } catch (e) {}
             })()`,
           }}

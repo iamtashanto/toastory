@@ -59,4 +59,19 @@ describe('Website Documentation Completeness', () => {
     expect(rootPkg.version).toBe('0.1.2');
     expect(websitePkg.dependencies.toastory).toContain('0.1.2');
   });
+
+  it('ensures no static theme css files are dumped in website/public', async () => {
+    const { existsSync } = await import('node:fs');
+    const { resolve } = await import('node:path');
+    const publicThemesDir = resolve(__dirname, '../website/public/themes');
+    const toastoryCssFile = resolve(__dirname, '../website/public/toastory.css');
+    expect(
+      existsSync(publicThemesDir),
+      'website/public/themes must not exist (must use npm package)',
+    ).toBe(false);
+    expect(
+      existsSync(toastoryCssFile),
+      'website/public/toastory.css must not exist (must use npm package)',
+    ).toBe(false);
+  });
 });

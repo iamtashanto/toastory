@@ -545,10 +545,10 @@ export default function NativeScreen() {
   };
 
   const canvasBackgrounds = {
-    mesh: 'bg-gradient-to-br from-[#0c0d16] via-[#121424] to-[#0a0a12]',
-    slate: 'bg-[#18181b]',
+    mesh: 'bg-gradient-to-br from-slate-100 via-indigo-50/60 to-slate-200 dark:from-[#0c0d16] dark:via-[#121424] dark:to-[#0a0a12]',
+    slate: 'bg-slate-200 dark:bg-[#18181b]',
     cyber: 'bg-gradient-to-tr from-[#020b14] via-[#0b192e] to-[#002233]',
-    light: 'bg-slate-100 text-slate-900',
+    light: 'bg-slate-50 text-slate-900 border border-[var(--site-border)]',
   };
 
   return (
