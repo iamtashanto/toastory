@@ -91,7 +91,7 @@ import 'toastory/themes/ios-glass.css';
     title: 'Verifiable Performance Benchmarks',
     description: 'Rigorous benchmarks measuring bundle sizes, cold render latency, memory footprint, and paint times.',
     category: 'Meta & Reference',
-    lastUpdated: 'October 2026',
+    lastUpdated: 'November 2026',
     headings: [
       { id: 'bundle-comparison', title: 'Gzip Bundle Size Comparison' },
       { id: 'render-latency', title: 'Mount & Render Latency' },
@@ -104,7 +104,7 @@ import 'toastory/themes/ios-glass.css';
 
 | Library | Toast Gzip Size | Dialog Gzip Size | Total Combined Size |
 | :--- | :--- | :--- | :--- |
-| **toastory** | **5.97 KB** | **Included** | **21.98 KB (Full Kit)** |
+| **toastory (v0.3.0)** | **5.97 KB** | **Included** | **21.98 KB (Full Kit)** |
 | Sonner + SweetAlert2 | 5.2 KB | 42.1 KB | 47.3 KB |
 | React-Toastify + Swal2 | 31.4 KB | 42.1 KB | 73.5 KB |
 | react-hot-toast + Swal2 | 5.1 KB | 42.1 KB | 47.2 KB |

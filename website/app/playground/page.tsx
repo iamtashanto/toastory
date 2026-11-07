@@ -2,9 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { ui, toast } from 'toastory';
-import type { ToastPosition, ToastOptions } from 'toastory';
+import type { ToastPosition, ToastOptions, RobotCharacter } from 'toastory';
 import { THEME_REGISTRY } from '@/lib/theme-generator';
 import { CodeSnippet } from '@/components/CodeSnippet';
+
+const SAMPLE_BANNER_SVG = `data:image/svg+xml,${encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 160"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#2563eb"/><stop offset="50%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#ec4899"/></linearGradient></defs><rect width="600" height="160" fill="url(#bg)"/><circle cx="520" cy="30" r="80" fill="rgba(255,255,255,0.14)"/><text x="28" y="88" font-family="-apple-system,system-ui,sans-serif" font-size="24" font-weight="800" fill="#fff">toastory v0.3.0 Studio</text><text x="28" y="120" font-family="monospace" font-size="13" fill="rgba(255,255,255,0.85)">Spring Physics · Dynamic Island · 10 SVG Robots</text></svg>`
+)}`;
 
 export default function PlaygroundPage() {
   const [theme, setTheme] = useState('ios-glass');
@@ -21,6 +25,17 @@ export default function PlaygroundPage() {
   const [dir, setDir] = useState<'ltr' | 'rtl'>('ltr');
   const [feedbackKind, setFeedbackKind] = useState<'toast' | 'promise' | 'confirm' | 'prompt' | 'alert' | 'steps' | 'sheet' | 'bottomSheet' | 'loading'>('toast');
   const [toastType, setToastType] = useState<'success' | 'error' | 'info' | 'warning' | 'loading'>('success');
+  const [character, setCharacter] = useState<'none' | RobotCharacter>('none');
+  const [island, setIsland] = useState(false);
+  const [hud, setHud] = useState(false);
+  const [shake, setShake] = useState(false);
+  const [glow, setGlow] = useState(false);
+  const [gradientBorder, setGradientBorder] = useState(false);
+  const [showBannerImage, setShowBannerImage] = useState(false);
+  const [discardText, setDiscardText] = useState('');
+  const [kbdBadge, setKbdBadge] = useState('');
+  const [showTimestamp, setShowTimestamp] = useState(false);
+  const [showToggle, setShowToggle] = useState(false);
   const [dialogTone, setDialogTone] = useState<'info' | 'warning' | 'danger'>('danger');
   const [promptInputType, setPromptInputType] = useState<'text' | 'email' | 'password' | 'number' | 'range' | 'select' | 'date' | 'otp'>('text');
   const [backdrop, setBackdrop] = useState<'blur' | 'dim' | 'none'>('blur');
@@ -86,7 +101,32 @@ export default function PlaygroundPage() {
     setTimeout(() => setShareFeedback(false), 2500);
   };
 
-  const applyPreset = (preset: 'deployment' | 'promise' | 'danger' | 'otp' | 'wizard' | 'sheet' | 'bottomSheet' | 'loading') => {
+  const applyPreset = (
+    preset:
+      | 'deployment'
+      | 'robot'
+      | 'island'
+      | 'banner'
+      | 'promise'
+      | 'danger'
+      | 'otp'
+      | 'wizard'
+      | 'sheet'
+      | 'bottomSheet'
+      | 'loading',
+  ) => {
+    setCharacter('none');
+    setIsland(false);
+    setHud(false);
+    setShake(false);
+    setGlow(false);
+    setGradientBorder(false);
+    setShowBannerImage(false);
+    setDiscardText('');
+    setKbdBadge('');
+    setShowTimestamp(false);
+    setShowToggle(false);
+
     if (preset === 'deployment') {
       setFeedbackKind('toast');
       setToastType('success');
@@ -97,6 +137,42 @@ export default function PlaygroundPage() {
       setTheme('ios-glass');
       setRichColors(true);
       setProgress('bar');
+    } else if (preset === 'robot') {
+      setFeedbackKind('toast');
+      setToastType('success');
+      setCharacter('wave');
+      setTitle('AI Build Agent Ready');
+      setDescription('Animated SVG robot mascot with spring entrance physics.');
+      setActionLabel('Inspect');
+      setCancelLabel('Later');
+      setTheme('ios-glass');
+      setSoundCue('crystal');
+      setGlow(true);
+    } else if (preset === 'island') {
+      setFeedbackKind('toast');
+      setToastType('info');
+      setIsland(true);
+      setPosition('top-center');
+      setTitle('Incoming Call · Elena');
+      setDescription('iPhone 16 Pro · FaceTime Audio');
+      setActionLabel('Accept');
+      setCancelLabel('Decline');
+      setTheme('ios-glass');
+      setSoundCue('marimba');
+    } else if (preset === 'banner') {
+      setFeedbackKind('toast');
+      setToastType('info');
+      setShowBannerImage(true);
+      setDiscardText('Discard');
+      setKbdBadge('⌘B');
+      setShowTimestamp(true);
+      setShowToggle(true);
+      setTitle('toastory v0.3.0 Engine');
+      setDescription('Full-bleed header banner, custom discard label, and inline switch.');
+      setActionLabel('Explore');
+      setCancelLabel('');
+      setTheme('liquid-glass');
+      setSoundCue('harp');
     } else if (preset === 'promise') {
       setFeedbackKind('promise');
       setTitle('Database Migration');
@@ -170,6 +246,17 @@ export default function PlaygroundPage() {
     setActionLabel('View Telemetry');
     setCancelLabel('Dismiss');
     setProgress('bar');
+    setCharacter('none');
+    setIsland(false);
+    setHud(false);
+    setShake(false);
+    setGlow(false);
+    setGradientBorder(false);
+    setShowBannerImage(false);
+    setDiscardText('');
+    setKbdBadge('');
+    setShowTimestamp(false);
+    setShowToggle(false);
     window.location.hash = '';
     toast.info('Playground reset to defaults.');
   };
@@ -229,6 +316,23 @@ export default function PlaygroundPage() {
         invert,
         closeButton,
         dir,
+        character: character !== 'none' ? character : undefined,
+        island: island || undefined,
+        hud: hud || undefined,
+        shake: shake || undefined,
+        glow: glow || undefined,
+        gradientBorder: gradientBorder || undefined,
+        image: showBannerImage ? SAMPLE_BANNER_SVG : undefined,
+        discardText: discardText.trim() ? discardText.trim() : undefined,
+        kbd: kbdBadge.trim() ? kbdBadge.trim() : undefined,
+        timestamp: showTimestamp ? new Date() : undefined,
+        toggle: showToggle
+          ? {
+              label: 'Live Sync',
+              checked: true,
+              onChange: (next) => toast.info(`Live Sync ${next ? 'enabled' : 'disabled'}`, { theme }),
+            }
+          : undefined,
         swipeDirections: swipeEnabled ? ['left', 'right', 'up', 'down'] : [],
         action: actionLabel
           ? {
@@ -371,6 +475,22 @@ export default function PlaygroundPage() {
   const getGeneratedSnippet = () => {
     if (activeCodeTab === 'react') {
       if (feedbackKind === 'toast') {
+        const extraLines: string[] = [];
+        if (character !== 'none') extraLines.push(`      character: '${character}',`);
+        if (island) extraLines.push(`      island: true,`);
+        if (hud) extraLines.push(`      hud: true,`);
+        if (shake) extraLines.push(`      shake: true,`);
+        if (glow) extraLines.push(`      glow: true,`);
+        if (gradientBorder) extraLines.push(`      gradientBorder: true,`);
+        if (showBannerImage) extraLines.push(`      image: '/assets/banner.png',`);
+        if (discardText.trim()) extraLines.push(`      discardText: '${discardText.trim()}',`);
+        if (kbdBadge.trim()) extraLines.push(`      kbd: '${kbdBadge.trim()}',`);
+        if (showTimestamp) extraLines.push(`      timestamp: new Date(),`);
+        if (showToggle) extraLines.push(`      toggle: { label: 'Live Sync', checked: true, onChange: (v) => console.log(v) },`);
+        if (progress !== 'none') extraLines.push(`      progress: ${progress === 'bar'},`);
+        if (actionLabel) extraLines.push(`      action: { label: '${actionLabel}', onClick: () => console.log('Action triggered') },`);
+        if (cancelLabel) extraLines.push(`      cancel: { label: '${cancelLabel}' },`);
+
         return `import { Toaster, toast } from 'toastory/react';
 import 'toastory/themes/${theme}.css';
 
@@ -383,9 +503,7 @@ export default function App() {
       invert: ${invert},
       closeButton: ${closeButton},
       position: '${position}',
-      ${progress !== 'none' ? `progress: ${progress === 'bar'},` : ''}
-      ${actionLabel ? `action: { label: '${actionLabel}', onClick: () => console.log('Action triggered') },` : ''}
-      ${cancelLabel ? `cancel: { label: '${cancelLabel}' },` : ''}
+${extraLines.join('\n')}
     });
   };
 
@@ -611,6 +729,27 @@ export default function NativeScreen() {
             className="px-3 py-1.5 rounded-lg text-xs font-medium bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors"
           >
             ✓ Success Notification
+          </button>
+          <button
+            type="button"
+            onClick={() => applyPreset('robot')}
+            className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-purple-500/15 text-purple-400 border border-purple-500/30 hover:bg-purple-500/25 transition-colors"
+          >
+            ❖ Robot Mascot (v0.3)
+          </button>
+          <button
+            type="button"
+            onClick={() => applyPreset('island')}
+            className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-pink-500/15 text-pink-400 border border-pink-500/30 hover:bg-pink-500/25 transition-colors"
+          >
+            ◉ Dynamic Island (v0.3)
+          </button>
+          <button
+            type="button"
+            onClick={() => applyPreset('banner')}
+            className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-sky-500/15 text-sky-400 border border-sky-500/30 hover:bg-sky-500/25 transition-colors"
+          >
+            ▤ Banner + Discard (v0.3)
           </button>
           <button
             type="button"
@@ -1163,6 +1302,139 @@ export default function NativeScreen() {
                   <span>Swipe Physics</span>
                 </label>
               </div>
+
+              {/* v0.3.0 Showcase Controls: Robot Mascot, Dynamic Island, Banner, Custom Discard */}
+              <div className="pt-3 border-t border-[var(--site-border-subtle)] space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-purple-500 uppercase tracking-wider">v0.3.0 Showcase Controls</span>
+                  <span className="text-[10px] font-mono text-[var(--site-muted)]">Spring + Island + Robot</span>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-[var(--site-muted)] mb-1.5">
+                    Animated SVG Robot Mascot (`character`)
+                  </label>
+                  <select
+                    value={character}
+                    onChange={(e) => setCharacter(e.target.value as 'none' | RobotCharacter)}
+                    className="w-full bg-[var(--site-input-bg)] border border-[var(--site-border)] rounded-xl px-3 py-2 text-xs text-[var(--site-fg)] font-mono"
+                  >
+                    <option value="none">none (Standard Icon)</option>
+                    <option value="wave">wave (Friendly Wave)</option>
+                    <option value="idle">idle (Breathing Bot)</option>
+                    <option value="success">success (Happy Celebration)</option>
+                    <option value="error">error (System Alert)</option>
+                    <option value="think">think (Thinking Dots)</option>
+                    <option value="loading">loading (Processing Spin)</option>
+                    <option value="sleep">sleep (Zzz Standby)</option>
+                    <option value="shock">shock (High Voltage Shock)</option>
+                    <option value="search">search (Scanning Radar)</option>
+                    <option value="headPalm">headPalm (Facepalm Oops)</option>
+                  </select>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+                  <label className="flex items-center gap-1.5 cursor-pointer p-2 rounded-lg bg-[var(--site-surface-raised)] border border-[var(--site-border-subtle)]">
+                    <input
+                      type="checkbox"
+                      checked={island}
+                      onChange={(e) => setIsland(e.target.checked)}
+                      className="rounded accent-purple-500"
+                    />
+                    <span>Dynamic Island</span>
+                  </label>
+                  <label className="flex items-center gap-1.5 cursor-pointer p-2 rounded-lg bg-[var(--site-surface-raised)] border border-[var(--site-border-subtle)]">
+                    <input
+                      type="checkbox"
+                      checked={hud}
+                      onChange={(e) => setHud(e.target.checked)}
+                      className="rounded accent-purple-500"
+                    />
+                    <span>Silent HUD</span>
+                  </label>
+                  <label className="flex items-center gap-1.5 cursor-pointer p-2 rounded-lg bg-[var(--site-surface-raised)] border border-[var(--site-border-subtle)]">
+                    <input
+                      type="checkbox"
+                      checked={shake}
+                      onChange={(e) => setShake(e.target.checked)}
+                      className="rounded accent-purple-500"
+                    />
+                    <span>Error Shake</span>
+                  </label>
+                  <label className="flex items-center gap-1.5 cursor-pointer p-2 rounded-lg bg-[var(--site-surface-raised)] border border-[var(--site-border-subtle)]">
+                    <input
+                      type="checkbox"
+                      checked={glow}
+                      onChange={(e) => setGlow(e.target.checked)}
+                      className="rounded accent-purple-500"
+                    />
+                    <span>Ambient Glow</span>
+                  </label>
+                  <label className="flex items-center gap-1.5 cursor-pointer p-2 rounded-lg bg-[var(--site-surface-raised)] border border-[var(--site-border-subtle)]">
+                    <input
+                      type="checkbox"
+                      checked={gradientBorder}
+                      onChange={(e) => setGradientBorder(e.target.checked)}
+                      className="rounded accent-purple-500"
+                    />
+                    <span>Gradient Border</span>
+                  </label>
+                  <label className="flex items-center gap-1.5 cursor-pointer p-2 rounded-lg bg-[var(--site-surface-raised)] border border-[var(--site-border-subtle)]">
+                    <input
+                      type="checkbox"
+                      checked={showBannerImage}
+                      onChange={(e) => setShowBannerImage(e.target.checked)}
+                      className="rounded accent-purple-500"
+                    />
+                    <span>Header Image</span>
+                  </label>
+                  <label className="flex items-center gap-1.5 cursor-pointer p-2 rounded-lg bg-[var(--site-surface-raised)] border border-[var(--site-border-subtle)]">
+                    <input
+                      type="checkbox"
+                      checked={showTimestamp}
+                      onChange={(e) => setShowTimestamp(e.target.checked)}
+                      className="rounded accent-purple-500"
+                    />
+                    <span>Timestamp</span>
+                  </label>
+                  <label className="flex items-center gap-1.5 cursor-pointer p-2 rounded-lg bg-[var(--site-surface-raised)] border border-[var(--site-border-subtle)]">
+                    <input
+                      type="checkbox"
+                      checked={showToggle}
+                      onChange={(e) => setShowToggle(e.target.checked)}
+                      className="rounded accent-purple-500"
+                    />
+                    <span>Inline Switch</span>
+                  </label>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-[var(--site-muted)] mb-1">
+                      Discard Label (`discardText`)
+                    </label>
+                    <input
+                      type="text"
+                      value={discardText}
+                      onChange={(e) => setDiscardText(e.target.value)}
+                      placeholder="e.g. Discard, Close"
+                      className="w-full bg-[var(--site-input-bg)] border border-[var(--site-border)] rounded-xl px-3 py-1.5 text-xs text-[var(--site-fg)]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-[var(--site-muted)] mb-1">
+                      Shortcut Badge (`kbd`)
+                    </label>
+                    <input
+                      type="text"
+                      value={kbdBadge}
+                      onChange={(e) => setKbdBadge(e.target.value)}
+                      placeholder="e.g. ⌘K, Esc"
+                      className="w-full bg-[var(--site-input-bg)] border border-[var(--site-border)] rounded-xl px-3 py-1.5 text-xs text-[var(--site-fg)] font-mono"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 
@@ -1256,19 +1528,54 @@ export default function NativeScreen() {
                   className="gk-toast relative w-full max-w-md pointer-events-auto shadow-2xl transition-all"
                   data-type={toastType}
                   data-rich={richColors ? 'true' : undefined}
-                  data-wrap={(description || (actionLabel && cancelLabel)) ? '' : undefined}
+                  data-island={island ? 'expanded' : undefined}
+                  data-hud={hud ? '' : undefined}
+                  data-glow={glow ? '' : undefined}
+                  data-gradient-border={gradientBorder ? '' : undefined}
+                  data-has-image={showBannerImage ? '' : undefined}
+                  data-wrap={(description || (actionLabel && cancelLabel) || showBannerImage || showToggle) ? '' : undefined}
                   data-has-close={closeButton ? '' : undefined}
                 >
+                  {showBannerImage && (
+                    <div className="gk-image">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={SAMPLE_BANNER_SVG} alt="Toast header preview" />
+                    </div>
+                  )}
                   <div className="gk-icon text-lg">
-                    {toastType === 'success' && '✓'}
-                    {toastType === 'error' && '✕'}
-                    {toastType === 'warning' && '⚠'}
-                    {toastType === 'info' && 'ℹ'}
-                    {toastType === 'loading' && '↻'}
+                    {character !== 'none' ? (
+                      <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-xs font-mono font-bold" title={`Robot: ${character}`}>
+                        ❖
+                      </span>
+                    ) : (
+                      <>
+                        {toastType === 'success' && '✓'}
+                        {toastType === 'error' && '✕'}
+                        {toastType === 'warning' && '⚠'}
+                        {toastType === 'info' && 'ℹ'}
+                        {toastType === 'loading' && '↻'}
+                      </>
+                    )}
                   </div>
                   <div className="gk-content">
-                    <div className="gk-title font-semibold">{title}</div>
+                    <div className="gk-title font-semibold flex items-center gap-2 flex-wrap">
+                      <span>{title}</span>
+                      {character !== 'none' && (
+                        <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-purple-500/20 text-purple-400">
+                          bot:{character}
+                        </span>
+                      )}
+                      {kbdBadge.trim() && <kbd className="gk-kbd">{kbdBadge.trim()}</kbd>}
+                      {showTimestamp && <span className="gk-timestamp">just now</span>}
+                    </div>
                     {description && <div className="gk-desc text-xs mt-0.5">{description}</div>}
+                    {showToggle && (
+                      <label className="gk-toggle mt-2 inline-flex items-center gap-2 text-xs">
+                        <input type="checkbox" defaultChecked readOnly />
+                        <span className="gk-toggle-track" />
+                        <span className="gk-toggle-label">Live Sync</span>
+                      </label>
+                    )}
                   </div>
                   {(actionLabel || cancelLabel) && (
                     <div className="gk-actions">
@@ -1292,11 +1599,16 @@ export default function NativeScreen() {
                     </div>
                   )}
                   {closeButton && (
-                    <button type="button" className="gk-close" aria-label="Close">
+                    <button
+                      type="button"
+                      className={`gk-close ${discardText.trim() ? 'gk-close-with-text' : ''}`}
+                      aria-label={discardText.trim() || 'Close'}
+                    >
                       <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18" />
                         <line x1="6" y1="6" x2="18" y2="18" />
                       </svg>
+                      {discardText.trim() && <span className="gk-close-text">{discardText.trim()}</span>}
                     </button>
                   )}
                   {progress === 'bar' && (

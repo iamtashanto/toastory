@@ -249,6 +249,141 @@ export function FeatureDemos() {
         </div>
       </section>
 
+      {/* 1B. v0.3.0 Showcase: Spring Physics, Dynamic Island & Robot Mascots */}
+      <section className="space-y-6">
+        <div className="border-b border-[var(--site-border)] pb-4 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <span className="text-xs font-semibold text-purple-500 uppercase tracking-wider">New in v0.3.0</span>
+            <h3 className="text-2xl sm:text-3xl font-bold text-[var(--site-fg)] mt-1">
+              Spring Physics, Dynamic Island &amp; 10 Animated Robot Mascots
+            </h3>
+            <p className="text-[var(--site-muted)] text-sm sm:text-base mt-2">
+              Real damped harmonic oscillator physics, 4-direction velocity fling dismissal, Apple Dynamic Island morphing, custom discard controls, and 10 zero-asset animated SVG robot characters.
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="p-5 rounded-2xl border border-[var(--site-border)] bg-[var(--site-surface)] flex flex-col justify-between shadow-sm">
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-base font-semibold text-[var(--site-fg)]">Dynamic Island &amp; HUD</span>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-purple-500/15 text-purple-400">island: true</span>
+              </div>
+              <p className="text-xs text-[var(--site-muted)] mb-4">
+                Morphs from a compact top-center capsule into an interactive call, media, or live activity island.
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  ui.sound('marimba');
+                  toast.info('AirPods Pro Connected', {
+                    description: 'Battery 94% · Spatial Audio Active',
+                    island: true,
+                    position: 'top-center',
+                  });
+                }}
+                className="py-2.5 px-3 rounded-xl bg-purple-500/10 border border-purple-500/30 hover:bg-purple-500/20 text-purple-700 dark:text-purple-300 font-medium text-xs transition-colors"
+              >
+                Dynamic Island ↵
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  ui.sound('subtle');
+                  toast.message('Silent Mode · On', {
+                    hud: true,
+                    position: 'top-center',
+                    duration: 2000,
+                  });
+                }}
+                className="py-2.5 px-3 rounded-xl bg-[var(--site-surface-raised)] border border-[var(--site-border)] hover:border-purple-500/40 text-[var(--site-fg)] font-medium text-xs transition-colors"
+              >
+                Silent HUD Pill ↵
+              </button>
+            </div>
+          </div>
+
+          <div className="p-5 rounded-2xl border border-[var(--site-border)] bg-[var(--site-surface)] flex flex-col justify-between shadow-sm">
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-base font-semibold text-[var(--site-fg)]">10 SVG Robot Mascots</span>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-blue-500/15 text-blue-400">character</span>
+              </div>
+              <p className="text-xs text-[var(--site-muted)] mb-3">
+                Click any robot variant to spawn an animated SVG mascot notification:
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {(['wave', 'idle', 'success', 'error', 'think', 'loading', 'sleep', 'shock', 'search', 'headPalm'] as const).map((robot) => (
+                <button
+                  key={robot}
+                  type="button"
+                  onClick={() => {
+                    ui.sound('crystal');
+                    toast(`Robot mascot: ${robot}`, {
+                      description: `Animated SVG character="${robot}" with spring entrance.`,
+                      character: robot,
+                      shake: robot === 'error' || robot === 'shock',
+                    });
+                  }}
+                  className="px-2.5 py-1 rounded-lg text-[11px] font-mono font-medium bg-[var(--site-surface-raised)] border border-[var(--site-border)] hover:border-blue-500/50 text-[var(--site-fg)] transition-all active:scale-95"
+                >
+                  {robot}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="p-5 rounded-2xl border border-[var(--site-border)] bg-[var(--site-surface)] flex flex-col justify-between shadow-sm">
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-base font-semibold text-[var(--site-fg)]">Discard Text, Switch &amp; RN API</span>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/15 text-emerald-400">discardText</span>
+              </div>
+              <p className="text-xs text-[var(--site-muted)] mb-4">
+                Customize close/discard labels (`discardText`, `discardIcon`), inline switches (`toggle`), and `Toast.show` compatibility.
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  ui.sound('harp');
+                  toast.warning('Draft unsaved', {
+                    description: 'Custom discard button label + shortcut badge.',
+                    closeButton: true,
+                    discardText: 'Discard',
+                    kbd: '⌘D',
+                    timestamp: new Date(),
+                  });
+                }}
+                className="py-2.5 px-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-medium text-xs transition-colors"
+              >
+                Custom Discard ↵
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  ui.sound('bell');
+                  toast(undefined, {
+                    type: 'success',
+                    text1: 'RN Toast Message v2.5.2',
+                    text2: 'Drop-in text1, text2 & visibilityTime work out of the box!',
+                    visibilityTime: 4000,
+                  });
+                }}
+                className="py-2.5 px-3 rounded-xl bg-[var(--site-surface-raised)] border border-[var(--site-border)] hover:border-emerald-500/40 text-[var(--site-fg)] font-medium text-xs transition-colors"
+              >
+                RN text1/text2 API ↵
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* 2. Dialogs & Prompts Feature Section */}
       <section className="space-y-6">
         <div className="border-b border-[var(--site-border)] pb-4">
@@ -501,15 +636,15 @@ export function FeatureDemos() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30">
-                New in v0.2.0
+                Updated in v0.3.0
               </span>
-              <h4 className="text-lg font-bold text-[var(--site-fg)]">7 Screen Placements & Web Audio Synthesizer</h4>
+              <h4 className="text-lg font-bold text-[var(--site-fg)]">7 Screen Placements &amp; 14 Web Audio Synthesizer Cues</h4>
             </div>
-            <span className="text-xs text-[var(--site-muted)]">Zero external mp3 files · Pure Web Audio harmonic synthesis</span>
+            <span className="text-xs text-[var(--site-muted)]">Zero external mp3 files · Pure Web Audio harmonic mallet synthesis</span>
           </div>
 
           <p className="text-sm text-[var(--site-muted)] leading-relaxed">
-            Position toasts precisely across 7 screen locations with auto-responsive mobile scaling and natural multi-direction gesture dismissal. Trigger musical, organic feedback cues with adjustable volume and graceful SSR degradation.
+            Position toasts precisely across 7 screen locations with auto-responsive mobile scaling and natural 4-direction spring velocity gesture dismissal. Trigger 14 musical, organic feedback cues with adjustable volume and graceful SSR degradation.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
@@ -537,9 +672,9 @@ export function FeatureDemos() {
             </div>
 
             <div className="space-y-2 p-3.5 rounded-xl bg-[var(--site-surface)] border border-[var(--site-border)]">
-              <span className="text-xs font-semibold text-[var(--site-fg)] block">Play Synthesized Sound Cues:</span>
+              <span className="text-xs font-semibold text-[var(--site-fg)] block">Play All 14 Synthesized Sound Cues:</span>
               <div className="flex flex-wrap gap-1.5">
-                {(['success', 'error', 'warning', 'info', 'ding', 'pop', 'chime', 'bell', 'message', 'bubble'] as const).map((cue) => (
+                {(['success', 'error', 'warning', 'info', 'ding', 'pop', 'chime', 'bell', 'message', 'bubble', 'marimba', 'crystal', 'subtle', 'harp'] as const).map((cue) => (
                   <button
                     key={cue}
                     type="button"
@@ -552,7 +687,7 @@ export function FeatureDemos() {
                     }}
                     className="px-2.5 py-1 rounded-lg text-xs font-medium bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 hover:bg-blue-500/20 transition-all active:scale-95"
                   >
-                    🔊 {cue}
+                    {cue} ♫
                   </button>
                 ))}
               </div>

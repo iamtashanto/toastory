@@ -15,7 +15,7 @@ export function Footer() {
             <span className="font-bold text-lg text-[var(--site-fg)]">toastory</span>
           </Link>
           <p className="text-sm text-[var(--site-muted)] max-w-sm leading-relaxed">
-            Complete UI feedback toolkit for modern web and mobile. Toasts, dialogs, bottom sheets, and loading overlays with an Apple-style frosted glass aesthetic.
+            Complete UI feedback toolkit for modern web and mobile. Toasts with real spring physics, Dynamic Island &amp; robot mascots, dialogs, bottom sheets, and loading overlays with an Apple-style frosted glass aesthetic.
           </p>
           <div className="flex flex-wrap items-center gap-2 pt-2 text-xs">
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-emerald-500">
@@ -26,7 +26,7 @@ export function Footer() {
               WCAG 2.2 AA Verified
             </span>
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-purple-500">
-              MIT License
+              v0.3.0 · MIT License
             </span>
           </div>
         </div>
@@ -111,7 +111,7 @@ export function Footer() {
           <ul className="space-y-2 text-sm">
             <li>
               <Link href="/changelog" className="hover:text-[var(--site-fg)] transition-colors">
-                Changelog (v0.1.1)
+                Changelog (v0.3.0)
               </Link>
             </li>
             <li>

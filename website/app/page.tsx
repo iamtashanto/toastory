@@ -20,24 +20,26 @@ export default function HomePage() {
         {/* 1. HERO SECTION */}
         <div className="text-center max-w-4xl mx-auto space-y-6">
           {/* Badge row */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-xs text-[var(--site-muted)] shadow-sm">
+          <div className="inline-flex flex-wrap items-center justify-center gap-2 px-4 py-1.5 rounded-full bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-xs text-[var(--site-muted)] shadow-sm backdrop-blur-md">
             <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="font-semibold text-[var(--site-fg)]">toastory v0.2.0</span>
+            <span className="font-semibold text-[var(--site-fg)]">toastory v0.3.0</span>
+            <span className="text-[var(--site-muted)]">•</span>
+            <span className="text-purple-500 font-medium">Real Spring Physics &amp; Dynamic Island</span>
             <span className="text-[var(--site-muted)]">•</span>
             <span>Zero Dependencies</span>
             <span className="text-[var(--site-muted)]">•</span>
-            <span className="text-blue-500 font-mono font-medium">5.2 KB gzip</span>
+            <span className="text-blue-500 font-mono font-semibold">&lt; 6 KB gzip</span>
           </div>
 
           {/* Headline */}
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-[var(--site-fg)] leading-[1.1]">
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-[var(--site-fg)] leading-[1.08]">
             All UI feedback in one package.{' '}
             <span className="text-gradient-accent">Apple-style glass.</span>
           </h1>
 
           {/* Subline */}
           <p className="text-base sm:text-xl text-[var(--site-muted)] max-w-2xl mx-auto leading-relaxed">
-            Toasts, confirm / alert / prompt dialogs, bottom sheets, and loading overlays. One identical API across plain JS, React, Next.js, Vue, Nuxt, Angular, Svelte, and React Native.
+            Toasts with real spring physics &amp; 4-way velocity swipe, Dynamic Island morphing, animated SVG robot mascots, confirm / prompt dialogs, and bottom sheets across React, Next.js, Vue, Svelte, Angular, Vanilla JS, and React Native.
           </p>
 
           {/* CTA Buttons */}
@@ -53,27 +55,45 @@ export default function HomePage() {
               href="/playground"
               className="px-6 py-3.5 rounded-xl bg-[var(--site-surface-raised)] hover:bg-[var(--site-surface)] border border-[var(--site-border)] text-[var(--site-fg)] font-semibold text-sm transition-all hover:-translate-y-0.5 active:translate-y-0 backdrop-blur-md shadow-sm"
             >
-              Open Live Playground ↵
+              Open Live Studio Playground ↵
+            </Link>
+
+            <Link
+              href="/themes"
+              className="px-5 py-3.5 rounded-xl bg-[var(--site-surface)] hover:bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-[var(--site-muted)] hover:text-[var(--site-fg)] font-semibold text-sm transition-all"
+            >
+              Explore 21 Glass Themes
             </Link>
           </div>
 
-          {/* Trust badges */}
-          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-xs text-[var(--site-muted)] pt-3">
-            <span className="flex items-center gap-1.5 font-medium">
-              <span className="text-emerald-500 font-bold">✓</span> WCAG 2.2 AA (0 axe errors)
-            </span>
-            <span className="text-[var(--site-muted)] opacity-40">•</span>
-            <span className="flex items-center gap-1.5 font-medium">
-              <span className="text-blue-500 font-bold">✓</span> TypeScript Strict
-            </span>
-            <span className="text-[var(--site-muted)] opacity-40">•</span>
-            <span className="flex items-center gap-1.5 font-medium">
-              <span className="text-purple-500 font-bold">✓</span> npm Provenance
-            </span>
-            <span className="text-[var(--site-muted)] opacity-40">•</span>
-            <span className="flex items-center gap-1.5 font-medium">
-              <span className="text-cyan-500 font-bold">✓</span> Tree-shakable CSS & JS
-            </span>
+          {/* Trust & Ecosystem Metrics Strip */}
+          <div className="pt-4">
+            <div className="inline-grid grid-cols-2 sm:grid-cols-6 gap-2 sm:gap-3 p-2 rounded-2xl bg-[var(--site-surface)] border border-[var(--site-border)] shadow-sm text-left">
+              <div className="px-3 py-2 rounded-xl bg-[var(--site-surface-raised)]/60">
+                <div className="text-sm font-extrabold text-[var(--site-fg)] font-mono">5.97 KB</div>
+                <div className="text-[11px] text-[var(--site-muted)]">Core + Toast Gzip</div>
+              </div>
+              <div className="px-3 py-2 rounded-xl bg-[var(--site-surface-raised)]/60">
+                <div className="text-sm font-extrabold text-emerald-500 font-mono">WCAG 2.2 AA</div>
+                <div className="text-[11px] text-[var(--site-muted)]">0 axe-core violations</div>
+              </div>
+              <div className="px-3 py-2 rounded-xl bg-[var(--site-surface-raised)]/60">
+                <div className="text-sm font-extrabold text-blue-500 font-mono">14 Cues</div>
+                <div className="text-[11px] text-[var(--site-muted)]">Web Audio Synth</div>
+              </div>
+              <div className="px-3 py-2 rounded-xl bg-[var(--site-surface-raised)]/60">
+                <div className="text-sm font-extrabold text-purple-500 font-mono">46 Releases</div>
+                <div className="text-[11px] text-[var(--site-muted)]">v2.5.2 RN Compat</div>
+              </div>
+              <div className="px-3 py-2 rounded-xl bg-[var(--site-surface-raised)]/60">
+                <div className="text-sm font-extrabold text-amber-500 font-mono">33K+ Used By</div>
+                <div className="text-[11px] text-[var(--site-muted)]">Ecosystem API Parity</div>
+              </div>
+              <div className="px-3 py-2 rounded-xl bg-[var(--site-surface-raised)]/60">
+                <div className="text-sm font-extrabold text-cyan-500 font-mono">45 Contributors</div>
+                <div className="text-[11px] text-[var(--site-muted)]">Community Patterns</div>
+              </div>
+            </div>
           </div>
         </div>
 

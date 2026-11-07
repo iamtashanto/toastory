@@ -154,16 +154,108 @@ export default function FeaturesPage() {
     {
       id: 'toast-harmonic-sound',
       group: 'Toasts & Promises',
-      title: 'Zero-Dependency Web Audio Harmonic Synthesizer',
-      description: 'Pure synthesized tones from sine partials (zero audio files needed). 10 built-in cues: success, error, warning, info, ding, pop, chime, bell, message, bubble.',
+      title: 'Zero-Dependency Web Audio Harmonic Synthesizer (14 Cues)',
+      description: 'Pure synthesized tones from acoustic mallet & sine partials (zero audio files needed). 14 built-in cues: success, error, warning, info, ding, pop, chime, bell, message, bubble, marimba, crystal, subtle, harp.',
       docUrl: '/docs/guides/stacking-positioning',
-      snippet: `// Global or per-toast audio cues:\nui.sound('ding');\ntoast.success('Saved to cloud', {\n  sound: 'chime',\n  soundVolume: 0.6\n});`,
-      actionLabel: 'Play Synthesizer Chime',
+      snippet: `// Global or per-toast audio cues:\nui.sound('marimba');\ntoast.success('Saved to cloud', {\n  sound: 'crystal',\n  soundVolume: 0.6\n});`,
+      actionLabel: 'Play Synthesizer Crystal',
       onTrigger: () => {
-        ui.sound('chime');
-        toast.info('Synthesized Harmonic Chime ♫', {
+        ui.sound('crystal');
+        toast.info('Synthesized Crystal Mallet ♫', {
           description: 'Warm organic chime generated with Web Audio API partials.',
-          sound: 'chime',
+          sound: 'crystal',
+        });
+      },
+    },
+    {
+      id: 'toast-dynamic-island',
+      group: 'Toasts & Promises',
+      title: 'Apple Dynamic Island Morphing & Silent HUD Mode',
+      description: 'Morph top-center notifications from a compact black pill into an interactive call, media, or live activity island, or render compact non-intrusive HUD pills.',
+      docUrl: '/docs/guides/toasts',
+      snippet: `toast.info('Incoming FaceTime Audio', {\n  description: 'Elena Rostova · iPhone 16 Pro',\n  island: true,\n  position: 'top-center',\n  action: { label: 'Accept', onClick: () => accept() }\n});`,
+      actionLabel: 'Trigger Dynamic Island',
+      onTrigger: () => {
+        ui.sound('marimba');
+        toast.info('Incoming FaceTime Audio', {
+          description: 'Elena Rostova · iPhone 16 Pro',
+          island: true,
+          position: 'top-center',
+          action: { label: 'Accept', onClick: () => toast.success('Call connected', { island: true, position: 'top-center' }) },
+          cancel: { label: 'Decline', onClick: () => {} },
+        });
+      },
+    },
+    {
+      id: 'toast-robot-mascots',
+      group: 'Toasts & Promises',
+      title: '10 Animated SVG Robot Mascots (character)',
+      description: 'Zero-dependency inline SVG robot characters with CSS keyframe animations: idle, wave, success, error, think, loading, sleep, shock, search, and headPalm.',
+      docUrl: '/docs/guides/toasts',
+      snippet: `toast.success('Build agent online!', {\n  description: 'All 12 test suites passed in 1.4s.',\n  character: 'wave'\n});`,
+      actionLabel: 'Spawn Robot Mascot',
+      onTrigger: () => {
+        ui.sound('crystal');
+        toast.success('Build agent online!', {
+          description: 'Animated SVG robot character="wave" with zero external assets.',
+          character: 'wave',
+        });
+      },
+    },
+    {
+      id: 'toast-custom-discard',
+      group: 'Toasts & Promises',
+      title: 'Custom Close / Discard Text & Icons',
+      description: 'Customize the close/discard button with explicit labels (closeText / discardText) and custom SVG/HTML icons (closeIcon / discardIcon) globally or per toast.',
+      docUrl: '/docs/guides/updating-dismissing',
+      snippet: `toast.warning('Unsaved schema changes', {\n  description: 'Click Discard or swipe in any direction.',\n  closeButton: true,\n  discardText: 'Discard'\n});`,
+      actionLabel: 'Trigger Custom Discard',
+      onTrigger: () => {
+        ui.sound('subtle');
+        toast.warning('Unsaved schema changes', {
+          description: 'Click the custom Discard button or swipe away in any direction.',
+          closeButton: true,
+          discardText: 'Discard',
+        });
+      },
+    },
+    {
+      id: 'toast-rich-banner-switch',
+      group: 'Toasts & Promises',
+      title: 'Rich Image Banners, Shortcut Badges & Inline Switches',
+      description: 'Embed full-bleed header images (image), keyboard shortcut badges (kbd), relative timestamps (timestamp), and interactive toggle switches (toggle).',
+      docUrl: '/docs/guides/toasts',
+      snippet: `toast.info('Edge Cache Turbo Mode', {\n  kbd: '⌘E',\n  timestamp: new Date(),\n  toggle: { label: 'Turbo CDN', checked: true, onChange: (v) => setTurbo(v) }\n});`,
+      actionLabel: 'Trigger Inline Switch',
+      onTrigger: () => {
+        ui.sound('harp');
+        toast.info('Edge Cache Turbo Mode', {
+          description: 'Automatically purge stale CDN nodes on git push.',
+          kbd: '⌘E',
+          timestamp: new Date(),
+          toggle: {
+            label: 'Turbo CDN',
+            checked: true,
+            onChange: (v) => toast.message(`Turbo CDN ${v ? 'enabled' : 'disabled'}`),
+          },
+        });
+      },
+    },
+    {
+      id: 'toast-rn-compat',
+      group: 'Toasts & Promises',
+      title: 'RN Toast Message v2.5.2 Drop-In API (Toast.show / text1)',
+      description: '100% compatible with react-native-toast-message v2.5.2 (46 releases, 33K+ dependents): Toast.show({ type, text1, text2, visibilityTime, autoHide }) on Native and text1/text2 options everywhere.',
+      docUrl: '/docs/guides/toasts',
+      snippet: `import { Toast } from 'toastory/native';\n\nToast.show({\n  type: 'success',\n  text1: 'Hello from RN Toast Message API',\n  text2: 'Drop-in compatible across Web & React Native'\n});`,
+      actionLabel: 'Run text1/text2 Toast',
+      onTrigger: () => {
+        ui.sound('bell');
+        toast(undefined, {
+          type: 'success',
+          text1: 'RN Toast Message v2.5.2 Compatible',
+          text2: 'text1, text2 & visibilityTime work identically on Web & Native!',
+          visibilityTime: 4000,
         });
       },
     },

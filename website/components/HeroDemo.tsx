@@ -570,6 +570,8 @@ export function HeroDemo() {
       | 'chime'
       | 'ding'
       | 'pop'
+      | 'bell'
+      | 'message'
       | 'bubble'
       | 'marimba'
       | 'crystal'
@@ -582,6 +584,118 @@ export function HeroDemo() {
     toast.message(`Audio Cue: ${cue}`, {
       description: 'Zero-dependency Web Audio acoustic mallet synthesizer',
       duration: 1800,
+      position: activePosition,
+      theme: activeTheme,
+    });
+  };
+
+  // v0.3.0 Showcase triggers (Dynamic Island, Robot Mascots, Rich Banner, Custom Discard, Toggle)
+  const fireDynamicIsland = () => {
+    triggerAnimation('Dynamic Island');
+    setSelectedDemoCode('Dynamic Island');
+    if (soundEnabled) ui.sound('marimba');
+    toast.info('Incoming FaceTime Audio', {
+      description: 'Elena Rostova · iPhone 16 Pro',
+      island: true,
+      position: 'top-center',
+      theme: activeTheme,
+      avatar: avatarSvg('ER', '#10b981'),
+      duration: 6000,
+      action: {
+        label: 'Accept',
+        onClick: () => toast.success('Call connected · 00:01', { island: true, position: 'top-center' }),
+      },
+      cancel: {
+        label: 'Decline',
+        onClick: () => toast.message('Call declined', { island: true, position: 'top-center' }),
+      },
+    });
+  };
+
+  const fireRobotWave = () => {
+    triggerAnimation('Robot Wave');
+    setSelectedDemoCode('Robot Wave');
+    if (soundEnabled) ui.sound('crystal');
+    toast.success('Welcome aboard, Commander!', {
+      description: 'Animated SVG robot mascot with zero external image assets.',
+      character: 'wave',
+      position: activePosition,
+      theme: activeTheme,
+    });
+  };
+
+  const fireRobotThink = () => {
+    triggerAnimation('Robot Think');
+    setSelectedDemoCode('Robot Think');
+    if (soundEnabled) ui.sound('bubble');
+    toast.info('Analyzing repository graph…', {
+      description: 'Evaluating 24workspace dependencies for tree-shaking.',
+      character: 'think',
+      position: activePosition,
+      theme: activeTheme,
+    });
+  };
+
+  const fireRobotShock = () => {
+    triggerAnimation('Robot Shock');
+    setSelectedDemoCode('Robot Shock');
+    if (soundEnabled) ui.sound('error');
+    toast.error('Rate limit threshold reached!', {
+      description: ' Edge gateway throttled at 10,000 req/min.',
+      character: 'shock',
+      shake: true,
+      position: activePosition,
+      theme: activeTheme,
+    });
+  };
+
+  const fireRichBanner = () => {
+    triggerAnimation('Rich Banner');
+    setSelectedDemoCode('Rich Banner');
+    if (soundEnabled) ui.sound('harp');
+    const bannerSvg = `data:image/svg+xml,${encodeURIComponent(
+      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 180"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#2563eb"/><stop offset="50%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#ec4899"/></linearGradient></defs><rect width="600" height="180" fill="url(#g)"/><circle cx="510" cy="40" r="90" fill="rgba(255,255,255,0.12)"/><text x="32" y="98" font-family="-apple-system,system-ui,sans-serif" font-size="28" font-weight="800" fill="#fff">toastory v0.3.0 Engine</text><text x="32" y="132" font-family="monospace" font-size="15" fill="rgba(255,255,255,0.85)">Real Spring Physics · 14 Sound Cues · Dynamic Island</text></svg>`
+    )}`;
+    toast.success('Release v0.3.0 Published', {
+      description: 'Full spring physics + velocity fling dismissal is now live.',
+      image: bannerSvg,
+      kbd: '⌘B',
+      timestamp: new Date(),
+      position: activePosition,
+      theme: activeTheme,
+    });
+  };
+
+  const fireCustomDiscard = () => {
+    triggerAnimation('Custom Discard');
+    setSelectedDemoCode('Custom Discard');
+    if (soundEnabled) ui.sound('subtle');
+    toast.warning('Unsaved schema migration', {
+      description: 'Click the custom discard pill or swipe in any direction to dismiss.',
+      closeButton: true,
+      discardText: 'Discard',
+      position: activePosition,
+      theme: activeTheme,
+    });
+  };
+
+  const fireInlineSwitch = () => {
+    triggerAnimation('Inline Switch');
+    setSelectedDemoCode('Inline Switch');
+    if (soundEnabled) ui.sound('pop');
+    toast.info('Edge Cache Turbo Mode', {
+      description: 'Automatically purge stale CDN nodes on git push.',
+      kbd: '⌘E',
+      toggle: {
+        label: 'Turbo CDN',
+        checked: true,
+        onChange: (next: boolean) => {
+          toast.message(`Turbo CDN ${next ? 'enabled' : 'disabled'}`, {
+            duration: 1800,
+            position: activePosition,
+          });
+        },
+      },
       position: activePosition,
       theme: activeTheme,
     });
@@ -638,6 +752,36 @@ export function HeroDemo() {
     });
   };
 
+  const fireStepsModal = async () => {
+    triggerAnimation('Dialog:Steps');
+    setSelectedDemoCode('Dialog:Steps');
+    const res = await ui.steps([
+      {
+        title: 'Step 1: Project Name',
+        text: 'Choose a workspace identifier for your deployment:',
+        input: 'text',
+        placeholder: 'acme-cloud-prod',
+      },
+      {
+        title: 'Step 2: Select Region',
+        text: 'Pick your primary low-latency edge cluster:',
+        input: 'select',
+        options: [
+          { value: 'us-east-1', label: 'US East (N. Virginia)' },
+          { value: 'eu-central-1', label: 'EU Central (Frankfurt)' },
+          { value: 'ap-southeast-1', label: 'Asia Pacific (Singapore)' },
+        ],
+      },
+    ]);
+    if (res.isConfirmed) {
+      toast.success('Workspace provisioned!', {
+        description: `Configured ${ JSON.stringify(res.values) }`,
+        position: activePosition,
+        theme: activeTheme,
+      });
+    }
+  };
+
   const codeSnippets: Record<string, string> = {
     Save: `import { toast } from 'toastory';
 
@@ -689,6 +833,73 @@ const res = await ui.confirm({
   confirmButton: { label: 'Destroy Pods', color: '#dc2626' },
   cancelButton: { label: 'Keep Running' }
 });`,
+    'Dynamic Island': `import { toast } from 'toastory';
+
+toast.info('Incoming FaceTime Audio', {
+  description: 'Elena Rostova · iPhone 16 Pro',
+  island: true,
+  position: 'top-center',
+  action: { label: 'Accept', onClick: () => connectCall() },
+  cancel: { label: 'Decline', onClick: () => endCall() }
+});`,
+    'Robot Wave': `import { toast } from 'toastory';
+
+toast.success('Welcome aboard, Commander!', {
+  description: 'Animated SVG robot mascot with zero external image assets.',
+  character: 'wave',
+  position: '${activePosition}',
+  theme: '${activeTheme}'
+});`,
+    'Robot Think': `import { toast } from 'toastory';
+
+toast.info('Analyzing repository graph…', {
+  description: 'Evaluating 24 workspace dependencies for tree-shaking.',
+  character: 'think',
+  position: '${activePosition}'
+});`,
+    'Robot Shock': `import { toast } from 'toastory';
+
+toast.error('Rate limit threshold reached!', {
+  description: 'Edge gateway throttled at 10,000 req/min.',
+  character: 'shock',
+  shake: true,
+  position: '${activePosition}'
+});`,
+    'Rich Banner': `import { toast } from 'toastory';
+
+toast.success('Release v0.3.0 Published', {
+  description: 'Full spring physics + velocity fling dismissal is now live.',
+  image: '/assets/release-banner.png',
+  kbd: '⌘B',
+  timestamp: new Date()
+});`,
+    'Custom Discard': `import { toast } from 'toastory';
+
+toast.warning('Unsaved schema migration', {
+  description: 'Click the custom discard pill or swipe in any direction.',
+  closeButton: true,
+  discardText: 'Discard'
+});`,
+    'Inline Switch': `import { toast } from 'toastory';
+
+toast.info('Edge Cache Turbo Mode', {
+  description: 'Automatically purge stale CDN nodes on git push.',
+  kbd: '⌘E',
+  toggle: {
+    label: 'Turbo CDN',
+    checked: true,
+    onChange: (enabled) => setTurboCdn(enabled)
+  }
+});`,
+    'Dialog:Steps': `import { ui } from 'toastory';
+
+const res = await ui.steps([
+  { title: 'Step 1: Project Name', input: 'text', placeholder: 'acme-cloud-prod' },
+  { title: 'Step 2: Select Region', input: 'select', options: [
+    { value: 'us-east-1', label: 'US East (N. Virginia)' },
+    { value: 'eu-central-1', label: 'EU Central (Frankfurt)' }
+  ]}
+]);`,
   };
 
   const handleCopySnippet = async () => {
@@ -954,9 +1165,44 @@ const res = await ui.confirm({
       </div>
 
       {/* 3. CATEGORIZED INTERACTIVE DEMO ROWS */}
-      <div className="space-y-3.5 pt-1 text-left">
+      <div className="glass-panel rounded-3xl p-5 sm:p-7 space-y-4 text-left">
+        {/* ROW 0: v0.3.0 SHOWCASE (Dynamic Island, Robot Mascots, Rich Banner, Custom Discard, Switch) */}
+        <div className="grid grid-cols-1 sm:grid-cols-[96px_1fr] items-center gap-3 pb-3.5 border-b border-[var(--site-border)]">
+          <div className="flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-full bg-purple-500 animate-pulse" aria-hidden="true" />
+            <span className="text-xs font-bold text-purple-500 uppercase tracking-wider">v0.3.0 New</span>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            {[
+              { label: 'Dynamic Island', fn: fireDynamicIsland, badge: 'Morph' },
+              { label: 'Robot Wave', fn: fireRobotWave, badge: 'SVG' },
+              { label: 'Robot Think', fn: fireRobotThink },
+              { label: 'Robot Shock', fn: fireRobotShock },
+              { label: 'Rich Banner', fn: fireRichBanner },
+              { label: 'Custom Discard', fn: fireCustomDiscard },
+              { label: 'Inline Switch', fn: fireInlineSwitch },
+            ].map(({ label, fn, badge }) => (
+              <button
+                key={label}
+                type="button"
+                onClick={fn}
+                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-purple-500/10 border border-purple-500/30 text-[var(--site-fg)] hover:bg-purple-500/20 hover:border-purple-500/50 active:scale-95 transition-all shadow-sm ${
+                  lastClickedDemo === label ? 'ring-2 ring-purple-500/60 scale-95' : ''
+                }`}
+              >
+                <span>{label}</span>
+                {badge && (
+                  <span className="px-1.5 py-0.2 rounded-full text-[9px] font-mono uppercase bg-purple-500/25 text-purple-400">
+                    {badge}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* ROW 1: STATUS */}
-        <div className="grid grid-cols-1 sm:grid-cols-[88px_1fr] items-center gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-[96px_1fr] items-center gap-3">
           <span className="text-xs font-semibold text-[var(--site-muted)] uppercase tracking-wider">Status</span>
           <div className="flex flex-wrap items-center gap-2">
             {[
@@ -981,7 +1227,7 @@ const res = await ui.confirm({
         </div>
 
         {/* ROW 2: PROGRESS */}
-        <div className="grid grid-cols-1 sm:grid-cols-[88px_1fr] items-center gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-[96px_1fr] items-center gap-3">
           <span className="text-xs font-semibold text-[var(--site-muted)] uppercase tracking-wider">Progress</span>
           <div className="flex flex-wrap items-center gap-2">
             {[
@@ -1007,7 +1253,7 @@ const res = await ui.confirm({
         </div>
 
         {/* ROW 3: CONTENT */}
-        <div className="grid grid-cols-1 sm:grid-cols-[88px_1fr] items-center gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-[96px_1fr] items-center gap-3">
           <span className="text-xs font-semibold text-[var(--site-muted)] uppercase tracking-wider">Content</span>
           <div className="flex flex-wrap items-center gap-2">
             {[
@@ -1032,7 +1278,7 @@ const res = await ui.confirm({
         </div>
 
         {/* ROW 4: ACTIONS */}
-        <div className="grid grid-cols-1 sm:grid-cols-[88px_1fr] items-center gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-[96px_1fr] items-center gap-3">
           <span className="text-xs font-semibold text-[var(--site-muted)] uppercase tracking-wider">Actions</span>
           <div className="flex flex-wrap items-center gap-2">
             {[
@@ -1055,9 +1301,9 @@ const res = await ui.confirm({
           </div>
         </div>
 
-        {/* ROW 5: SOUND */}
-        <div className="grid grid-cols-1 sm:grid-cols-[88px_1fr] items-center gap-3">
-          <span className="text-xs font-semibold text-[var(--site-muted)] uppercase tracking-wider">Sound</span>
+        {/* ROW 5: SOUND (14 Web Audio Synth Cues) */}
+        <div className="grid grid-cols-1 sm:grid-cols-[96px_1fr] items-center gap-3">
+          <span className="text-xs font-semibold text-[var(--site-muted)] uppercase tracking-wider">14 Sounds</span>
           <div className="flex flex-wrap items-center gap-2">
             {(
               [
@@ -1068,6 +1314,8 @@ const res = await ui.confirm({
                 'chime',
                 'ding',
                 'pop',
+                'bell',
+                'message',
                 'bubble',
                 'marimba',
                 'crystal',
@@ -1079,7 +1327,7 @@ const res = await ui.confirm({
                 key={cue}
                 type="button"
                 onClick={() => fireSoundCue(cue)}
-                className={`px-4 py-1.5 rounded-full text-xs font-medium bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-[var(--site-fg)] hover:bg-blue-500/10 hover:border-blue-500/40 active:scale-95 transition-all shadow-sm capitalize ${
+                className={`px-3.5 py-1.5 rounded-full text-xs font-medium bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-[var(--site-fg)] hover:bg-blue-500/10 hover:border-blue-500/40 active:scale-95 transition-all shadow-sm capitalize ${
                   lastClickedDemo === `Sound:${cue}` ? 'ring-2 ring-blue-500/50 scale-95' : ''
                 }`}
               >
@@ -1090,7 +1338,7 @@ const res = await ui.confirm({
         </div>
 
         {/* ROW 6: DIALOGS & SHEETS */}
-        <div className="grid grid-cols-1 sm:grid-cols-[88px_1fr] items-center gap-3 pt-2 border-t border-[var(--site-border)]">
+        <div className="grid grid-cols-1 sm:grid-cols-[96px_1fr] items-center gap-3 pt-3 border-t border-[var(--site-border)]">
           <span className="text-xs font-semibold text-blue-500 uppercase tracking-wider">Dialogs</span>
           <div className="flex flex-wrap items-center gap-2">
             <button
@@ -1114,58 +1362,65 @@ const res = await ui.confirm({
             >
               Bottom Sheet ⇡
             </button>
+            <button
+              type="button"
+              onClick={fireStepsModal}
+              className="px-4 py-1.5 rounded-full text-xs font-medium bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/20 active:scale-95 transition-all shadow-sm"
+            >
+              Multi-Step Wizard ❖
+            </button>
           </div>
         </div>
-      </div>
 
-      {/* 4. THEME PRESETS & CODE SNIPPET TOOLBAR */}
-      <div className="pt-3 border-t border-[var(--site-border)] space-y-3">
-        <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
-          {/* Glass themes */}
-          <div className="flex flex-wrap items-center gap-1.5">
-            <span className="text-[var(--site-muted)] font-semibold mr-1">Glass Presets:</span>
-            {THEMES.map((t) => (
-              <button
-                key={t.id}
-                type="button"
-                onClick={() => handleThemePreset(t.id)}
-                className={`px-2.5 py-1 rounded-full text-[11px] font-medium transition-all ${
-                  activeTheme === t.id
-                    ? 'bg-blue-600 text-white shadow-sm font-semibold'
-                    : 'bg-[var(--site-surface)] text-[var(--site-muted)] hover:text-[var(--site-fg)] border border-[var(--site-border)]'
-                }`}
-              >
-                {t.name}
-              </button>
-            ))}
-          </div>
-
-          <button
-            type="button"
-            onClick={() => setShowCode(!showCode)}
-            className="text-blue-500 hover:underline font-semibold"
-          >
-            {showCode ? 'Hide Code Snippet ▲' : 'View Code Snippet ▼'}
-          </button>
-        </div>
-
-        {showCode && (
-          <div className="rounded-xl border border-[var(--site-border)] bg-[var(--site-card-bg)] overflow-hidden shadow-inner text-left">
-            <div className="flex items-center justify-between px-4 py-2 border-b border-[var(--site-border)] bg-[var(--site-surface)] text-xs text-[var(--site-muted)]">
-              <span>Code Snippet ({selectedDemoCode})</span>
-              <button
-                type="button"
-                onClick={handleCopySnippet}
-                className="hover:text-[var(--site-fg)] transition-colors font-medium"
-              >
-                {codeCopied ? 'Copied ✓' : 'Copy'}
-              </button>
+        {/* 4. THEME PRESETS & CODE SNIPPET TOOLBAR */}
+        <div className="pt-3.5 border-t border-[var(--site-border)] space-y-3">
+          <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
+            {/* Glass themes */}
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="text-[var(--site-muted)] font-semibold mr-1">Glass Presets:</span>
+              {THEMES.map((t) => (
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => handleThemePreset(t.id)}
+                  className={`px-2.5 py-1 rounded-full text-[11px] font-medium transition-all ${
+                    activeTheme === t.id
+                      ? 'bg-blue-600 text-white shadow-sm font-semibold'
+                      : 'bg-[var(--site-surface)] text-[var(--site-muted)] hover:text-[var(--site-fg)] border border-[var(--site-border)]'
+                  }`}
+                >
+                  {t.name}
+                </button>
+              ))}
             </div>
-            <pre className="p-4 text-xs font-mono overflow-x-auto text-[var(--site-fg)] leading-relaxed">
-              <code>{codeSnippets[selectedDemoCode] || codeSnippets.Save}</code>
-            </pre>
+
+            <button
+              type="button"
+              onClick={() => setShowCode(!showCode)}
+              className="text-blue-500 hover:underline font-semibold"
+            >
+              {showCode ? 'Hide Code Snippet ▲' : 'Inspect Live Code ▼'}
+            </button>
           </div>
-        )}
+
+          {showCode && (
+            <div className="rounded-xl border border-[var(--site-border)] bg-[var(--site-card-bg)] overflow-hidden shadow-inner text-left">
+              <div className="flex items-center justify-between px-4 py-2 border-b border-[var(--site-border)] bg-[var(--site-surface)] text-xs text-[var(--site-muted)]">
+                <span>Code Snippet ({selectedDemoCode})</span>
+                <button
+                  type="button"
+                  onClick={handleCopySnippet}
+                  className="hover:text-[var(--site-fg)] transition-colors font-medium"
+                >
+                  {codeCopied ? 'Copied ✓' : 'Copy'}
+                </button>
+              </div>
+              <pre className="p-4 text-xs font-mono overflow-x-auto text-[var(--site-fg)] leading-relaxed">
+                <code>{codeSnippets[selectedDemoCode] || codeSnippets.Save}</code>
+              </pre>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

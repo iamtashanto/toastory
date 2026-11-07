@@ -14,15 +14,47 @@ export default function ChangelogPage() {
       </div>
 
       <div className="space-y-12">
+        {/* Release v0.3.0 */}
+        <section className="relative pl-6 sm:pl-8 border-l-2 border-purple-500 space-y-4">
+          <div className="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-purple-600 border-4 border-[var(--site-bg)]" />
+
+          <div className="flex flex-wrap items-center gap-3">
+            <h2 className="text-2xl font-bold text-[var(--site-fg)]">
+              v0.3.0 — Real Spring Physics, Dynamic Island, 10 SVG Robot Mascots &amp; Full Lifecycle Audit
+            </h2>
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-semibold bg-purple-500/20 text-purple-400 border border-purple-500/30">
+              Latest
+            </span>
+            <span className="text-xs text-[var(--site-muted)] font-mono">November 2026</span>
+          </div>
+
+          <p className="text-sm text-[var(--site-muted)] leading-relaxed">
+            Unified showcase release combining real analytical damped harmonic oscillator spring physics, 4-way velocity fling swipe dismissal, Apple Dynamic Island morphing, 10 animated SVG robot mascots, 14 acoustic mallet Web Audio cues, custom close/discard controls, and drop-in <code>react-native-toast-message</code> v2.5.2 compatibility.
+          </p>
+
+          <div className="space-y-4 pt-2 text-sm text-[var(--site-muted)]">
+            <div>
+              <h3 className="font-semibold text-[var(--site-fg)] mb-2">Key Highlights:</h3>
+              <ul className="list-disc list-inside space-y-1.5 text-[var(--site-muted)] text-xs sm:text-sm pl-2">
+                <li><strong className="text-[var(--site-fg)]">Real Spring Physics &amp; Velocity Fling</strong>: Analytical damped harmonic oscillator solver (<code>springPosition</code>, <code>springEasing</code>, <code>Spring.snappy | bouncy | gentle | smooth | default</code>) with 4-direction pointer velocity tracking and momentum fling dismissal.</li>
+                <li><strong className="text-[var(--site-fg)]">10 Animated SVG Robot Mascots</strong>: Built-in <code>character</code> / <code>robotVariant</code> prop with 10 animated SVG mascots (<code>idle</code>, <code>wave</code>, <code>success</code>, <code>error</code>, <code>think</code>, <code>loading</code>, <code>sleep</code>, <code>shock</code>, <code>search</code>, <code>headPalm</code>).</li>
+                <li><strong className="text-[var(--site-fg)]">Dynamic Island Morphing &amp; Silent HUD</strong>: <code>island: true</code> morphs from a compact capsule into a full interactive card; <code>hud: true</code> renders compact non-intrusive HUD pills.</li>
+                <li><strong className="text-[var(--site-fg)]">Custom Discard / Close Text &amp; Icons</strong>: Full control over close button labels and icons via <code>closeText</code>, <code>discardText</code>, <code>closeIcon</code>, and <code>discardIcon</code>.</li>
+                <li><strong className="text-[var(--site-fg)]">Rich Banners, Badges, Timestamps &amp; Switches</strong>: Added <code>image</code> header banners, <code>kbd</code> shortcut badges, relative <code>timestamp</code>, and interactive <code>toggle</code> switches.</li>
+                <li><strong className="text-[var(--site-fg)]">14 Web Audio Synthesizer Cues</strong>: Added acoustic mallet and ambient cues (<code>marimba</code>, <code>crystal</code>, <code>subtle</code>, <code>harp</code>) with automatic filter node cleanup.</li>
+                <li><strong className="text-[var(--site-fg)]">RN Toast Message v2.5.2 Compatibility</strong>: Added <code>Toast.show(&#123; type, text1, text2, visibilityTime, autoHide &#125;)</code> and <code>Toast.hide()</code> across Core, Web, and React Native.</li>
+                <li><strong className="text-[var(--site-fg)]">Zero-Leak Memory &amp; SSR Hardening</strong>: Audited and hardened listener cleanup, modal scroll restoration, OTP timer guards, and React <code>useSyncExternalStore</code> SSR snapshots while keeping Core + Toast + 1 Theme at <code>5.97 KB</code> gzip.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
         {/* Release v0.2.0 */}
         <section className="relative pl-6 sm:pl-8 border-l-2 border-blue-500 space-y-4">
           <div className="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-blue-600 border-4 border-[var(--site-bg)]" />
 
           <div className="flex flex-wrap items-center gap-3">
             <h2 className="text-2xl font-bold text-[var(--site-fg)]">v0.2.0 — 7 Placement Positions, Synthesized Sound Engine & Native Presets</h2>
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-semibold bg-blue-500/20 text-blue-500 border border-blue-500/30">
-              Latest
-            </span>
             <span className="text-xs text-[var(--site-muted)] font-mono">November 2026</span>
           </div>
 
