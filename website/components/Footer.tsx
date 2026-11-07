@@ -185,7 +185,7 @@ export function Footer() {
       <div className="max-w-7xl mx-auto mt-12 pt-8 border-t border-[var(--site-border)] flex flex-col sm:flex-row items-center justify-between text-xs text-[var(--site-muted)] gap-4">
         <p>© 2026 toastory maintainers. Released under the MIT License.</p>
         <p className="text-center sm:text-right">
-          toastory is an independent open-source project and is not affiliated with Sonner, React-Toastify, or SweetAlert2.
+
         </p>
       </div>
     </footer>

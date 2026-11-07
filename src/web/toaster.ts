@@ -266,6 +266,7 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
     region.el.dataset.stackMode = stackMode;
     region.el.dataset.expanded = String(isExpanded);
     region.el.style.height = `${isExpanded ? total : front}px`;
+    region.list.style.pointerEvents = isExpanded ? 'auto' : '';
   };
 
   // Max one ResizeObserver per container
