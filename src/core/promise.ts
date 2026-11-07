@@ -1,13 +1,10 @@
 import type { PromiseHandle, PromiseMessages, ToastId, ToastOptions, ToastPatch } from './types';
 import type { ToastStore } from './toast-manager';
 
-function toPatch(message: string | ToastPatch): ToastPatch {
-  return typeof message === 'string' ? { title: message } : message;
-}
+const toPatch = (m: string | ToastPatch): ToastPatch =>
+  typeof m === 'string' ? { title: m } : m;
 
-function errorText(error: unknown): string {
-  return error instanceof Error ? error.message : String(error);
-}
+const errorText = (e: unknown): string => (e instanceof Error ? e.message : String(e));
 
 /**
  * Handles async promise toasts: displays loading state, resolves to success or error,

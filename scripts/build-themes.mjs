@@ -22,8 +22,14 @@ async function loadTs(filePath) {
 const { themeCss } = await loadTs(join(root, 'src/themes/css.ts'));
 const { THEMES } = await loadTs(join(root, 'src/themes/themes.ts'));
 
-const minify = async (css) =>
-  (await transform(css, { loader: 'css', minify: true, legalComments: 'none' })).code;
+import { transform as lightningTransform } from 'lightningcss';
+
+const minify = (css) =>
+  lightningTransform({
+    filename: 'theme.css',
+    code: Buffer.from(css),
+    minify: true,
+  }).code.toString();
 
 const baseToast = await readFile(join(root, 'src/themes/base-toast.css'), 'utf8');
 const baseDialog = await readFile(join(root, 'src/themes/base-dialog.css'), 'utf8');

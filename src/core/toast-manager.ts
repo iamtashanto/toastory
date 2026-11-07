@@ -19,14 +19,11 @@ import type {
 } from './types';
 
 /** Reasons that originate from a person and are blocked on non-dismissible toasts. */
-const isUserReason = (r: CloseReason): boolean => r === 'user' || r === 'swipe' || r === 'click';
+const isUser = (r: CloseReason): boolean => r === 'user' || r === 'swipe' || r === 'click';
 
-const safeCall = <A extends unknown[]>(
-  fn: ((...args: A) => void) | undefined,
-  ...args: A
-): void => {
+const safeCall = (fn?: (...args: any[]) => void, a?: unknown, b?: unknown): void => {
   try {
-    fn?.(...args);
+    fn?.(a, b);
   } catch (err) {
     console.error(err);
   }
@@ -58,15 +55,8 @@ interface Entry {
   dedupeKey: string | undefined;
   exitHandle: (() => void) | undefined;
   reason: CloseReason | undefined;
-  openedFired: boolean;
-  closedFired: boolean;
-  dismissFired: boolean;
-  autoCloseFired: boolean;
+  flags: number;
 }
-
-const BUILTIN_DEFAULTS: Readonly<Record<string, ToastOptions>> = {
-  loading: { duration: 0 },
-};
 
 /** State container for toasts. Pure logic: no DOM, no framework. */
 export interface ToastManager {
@@ -106,8 +96,6 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
     listeners.forEach((listener) => listener());
   };
 
-  const regionOf = (record: ToastRecord): string => `${record.container ?? ''}|${record.position}`;
-
   const build = (
     id: ToastId,
     opts: ToastOptions,
@@ -117,11 +105,27 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
     const cfg = config.get();
     const type = opts.type ?? 'default';
     const merged: ToastOptions = {
-      ...BUILTIN_DEFAULTS[type],
       ...types.get(type)?.defaults,
       ...opts,
     };
-    const rawDuration = merged.duration ?? cfg.duration;
+    merged.title ??= merged.text1;
+    merged.description ??= merged.text2;
+    merged.onOpen ??= merged.onShow;
+    merged.onClose ??= merged.onHide;
+    if (!merged.actions && merged.buttons) {
+      merged.actions = merged.buttons.map((b) => ({
+        label: b.label,
+        onClick: (e: MouseEvent) =>
+          (b.onClick ?? b.onPress)?.({
+            preventDefault: () => e.preventDefault(),
+            defaultPrevented: e.defaultPrevented,
+          }),
+        autoDismiss: b.autoDismiss,
+        kind: b.kind,
+      }));
+    }
+    const rawDuration =
+      merged.autoHide === false ? 0 : (merged.duration ?? merged.visibilityTime ?? cfg.duration);
     const duration = Number.isFinite(rawDuration) && rawDuration > 0 ? rawDuration : 0;
     const urgent = merged.important || type === 'error';
     const stamp = now();
@@ -142,7 +146,7 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
       visible: previous?.visible ?? false,
       dismissed: false,
       pausedBy: previous?.pausedBy ?? (cfg.startPaused ? [MANUAL_PAUSE] : []),
-      remaining: previous?.remaining ?? (duration ? duration : Infinity),
+      remaining: previous?.remaining ?? (duration || Infinity),
       custom,
     };
     return record;
@@ -155,8 +159,10 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
   const dedupeKeyOf = (opts: ToastOptions): string | undefined => {
     if (opts.dedupe === false) return;
     if (typeof opts.dedupe === 'string') return opts.dedupe;
-    const t = typeof opts.title === 'string' ? opts.title : '';
-    const d = typeof opts.description === 'string' ? opts.description : '';
+    const titleVal = opts.title ?? opts.text1;
+    const descVal = opts.description ?? opts.text2;
+    const t = typeof titleVal === 'string' ? titleVal : '';
+    const d = typeof descVal === 'string' ? descVal : '';
     return t || d ? `${opts.type ?? 'default'}|${t}|${d}` : undefined;
   };
 
@@ -166,7 +172,7 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
     for (const id of order) {
       const entry = entries.get(id);
       if (!entry || entry.record.dismissed) continue;
-      const key = regionOf(entry.record);
+      const key = `${entry.record.container ?? ''}|${entry.record.position}`;
       const used = counts.get(key) ?? 0;
       const isImportant = !!entry.record.important;
       if (used < cfg.maxVisible || isImportant) {
@@ -196,15 +202,15 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
     promote();
     flushOpened();
     emit();
-    if (!entry.closedFired) {
-      entry.closedFired = true;
+    if (!(entry.flags & 2)) {
+      entry.flags |= 2;
       safeCall(entry.record.onClose, entry.record, entry.reason ?? 'api');
     }
   };
 
   const dismissEntry = (entry: Entry, reason: CloseReason): void => {
     if (entry.record.dismissed) return;
-    if (entry.record.dismissible === false && isUserReason(reason)) return;
+    if (entry.record.dismissible === false && isUser(reason)) return;
     entry.reason = reason;
     entry.record = {
       ...entry.record,
@@ -214,8 +220,8 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
     };
     entry.timer.cancel();
 
-    if (!entry.dismissFired && reason !== 'auto') {
-      entry.dismissFired = true;
+    if (!(entry.flags & 4) && reason !== 'auto') {
+      entry.flags |= 4;
       safeCall(entry.record.onDismiss, entry.record, reason);
     }
 
@@ -242,16 +248,13 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
       dedupeKey: dedupeKeyOf(opts),
       exitHandle: undefined,
       reason: undefined,
-      openedFired: false,
-      closedFired: false,
-      dismissFired: false,
-      autoCloseFired: false,
+      flags: 0,
     };
     entry.timer = createTimer(
       record.duration,
       () => {
-        if (!entry.autoCloseFired) {
-          entry.autoCloseFired = true;
+        if (!(entry.flags & 8)) {
+          entry.flags |= 8;
           safeCall(entry.record.onAutoClose, entry.record);
         }
         dismissEntry(entry, 'auto');
@@ -278,8 +281,8 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
   const flushOpened = (): void => {
     for (const id of order) {
       const entry = entries.get(id);
-      if (entry && entry.record.visible && !entry.openedFired && !entry.record.dismissed) {
-        entry.openedFired = true;
+      if (entry && entry.record.visible && !(entry.flags & 1) && !entry.record.dismissed) {
+        entry.flags |= 1;
         safeCall(entry.record.onOpen, entry.record);
       }
     }
@@ -382,12 +385,9 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
     },
 
     pause(id, reason) {
-      const list =
-        id === undefined
-          ? [...entries.values()]
-          : [entries.get(id)].filter((e): e is Entry => Boolean(e));
-      for (const entry of list) {
-        if (entry.record.pausedBy.includes(reason)) continue;
+      const targets = id !== undefined ? [entries.get(id)] : entries.values();
+      for (const entry of targets) {
+        if (!entry || entry.record.pausedBy.includes(reason)) continue;
         entry.timer.pause(reason);
         entry.record = {
           ...entry.record,
@@ -399,12 +399,9 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
     },
 
     resume(id, reason) {
-      const list =
-        id === undefined
-          ? [...entries.values()]
-          : [entries.get(id)].filter((e): e is Entry => Boolean(e));
-      for (const entry of list) {
-        if (!entry.record.pausedBy.includes(reason)) continue;
+      const targets = id !== undefined ? [entries.get(id)] : entries.values();
+      for (const entry of targets) {
+        if (!entry || !entry.record.pausedBy.includes(reason)) continue;
         entry.timer.resume(reason);
         const nextPausedBy = entry.record.pausedBy.filter((value) => value !== reason);
         entry.record = {

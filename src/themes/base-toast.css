@@ -1,8 +1,8 @@
-.gk-root,
 .gk-root * {
   box-sizing: border-box;
 }
 .gk-root {
+  box-sizing: border-box;
   font-family: var(--gk-font, system-ui, sans-serif);
   --gk-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --gk-duration: .38s;
@@ -10,13 +10,16 @@
 .gk-root [hidden] {
   display: none !important;
 }
+.gk-region,
+.gk-toast-list {
+  margin: 0;
+  padding: 0;
+}
 .gk-region {
   position: fixed;
   z-index: var(--gk-z, 2147483000);
   width: var(--gk-width, 360px);
   max-width: calc(100vw - 32px);
-  margin: 0;
-  padding: 0;
   pointer-events: none;
   transition: height var(--gk-duration) var(--gk-ease);
 }
@@ -35,7 +38,7 @@
 .gk-region[data-position$=right] {
   right: max(var(--gk-offset-right, 16px), env(safe-area-inset-right, 0));
 }
-.gk-region[data-position$=center],.gk-region[data-position=middle]{left:50%;transform:translate(-50%)}
+.gk-region:is([data-position$=center],[data-position=middle]){left:50%;transform:translate(-50%)}
 .gk-region:is([data-position=center],[data-position=middle]){top:50%;transform:translate(-50%,-50%)}
 
 @media (max-width:600px){
@@ -47,15 +50,12 @@
 .gk-toast-list {
   position: relative;
   height: 100%;
-  margin: 0;
-  padding: 0;
   list-style: none;
 }
 .gk-toast {
   --gk-y: calc(var(--gk-dir, 1) * var(--gk-offset, 0px));
   position: absolute;
-  left: 0;
-  right: 0;
+  inset: 0 0 auto 0;
   display: flex;
   align-items: flex-start;
   flex-wrap: wrap;
@@ -74,15 +74,13 @@
   user-select: none;
   transform-origin: top;
   transform: translate(var(--gk-sx, 0px), calc(var(--gk-y) + var(--gk-sy, 0px)));
-  top: 0;
-  transition: all var(--gk-duration) var(--gk-ease);
+  transition: var(--gk-duration) var(--gk-ease);
 }
 .gk-toast[data-has-close] {
   padding-inline-end: 38px;
 }
 .gk-region[data-position^=bottom] .gk-toast {
-  top: auto;
-  bottom: 0;
+  inset: auto 0 0 0;
   transform-origin: bottom;
 }
 .gk-region[data-shadow=false] .gk-toast {
@@ -244,11 +242,11 @@
     transform: rotate(360deg);
   }
 }
-@keyframes gk-bounce{0%{opacity:0;transform:scale(.8)}to{transform:none}}
-@keyframes gk-zoom{0%{opacity:0;transform:scale(.85)}}
-@keyframes gk-flip{0%{opacity:0;transform:perspective(600px) rotateX(80deg)}}
-@keyframes gk-spring{0%{opacity:0;transform:translateY(-35px)}to{transform:none}}
-@keyframes gk-fade{0%{opacity:0}}
+@keyframes gk-bounce{from{opacity:0;transform:scale(.8)}}
+@keyframes gk-zoom{from{opacity:0;transform:scale(.85)}}
+@keyframes gk-flip{from{opacity:0;transform:perspective(600px) rotateX(80deg)}}
+@keyframes gk-spring{from{opacity:0;transform:translateY(-35px)}}
+@keyframes gk-fade{from{opacity:0}}
 .gk-toast[data-animation]{animation:var(--gk-duration) var(--gk-ease)}
 .gk-toast[data-animation=bounce]{animation-name:gk-bounce}
 .gk-toast[data-animation=zoom]{animation-name:gk-zoom}
@@ -267,10 +265,6 @@
   opacity: 0;
   pointer-events: none;
 }
-.gk-toast[data-swipe-out=left]{transform:translate(-120%,var(--gk-y))}
-.gk-toast[data-swipe-out=right]{transform:translate(120%,var(--gk-y))}
-.gk-toast[data-swipe-out=up]{transform:translate(0,calc(var(--gk-y) - 120%))}
-.gk-toast[data-swipe-out=down]{transform:translate(0,calc(var(--gk-y) + 120%))}
 @supports not (backdrop-filter: blur(1px)) {
   .gk-toast {
     background: var(--gk-bg-solid);
@@ -290,11 +284,11 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .gk-toast,
   .gk-region {
     transition: opacity .15s ease !important;
   }
   .gk-toast {
+    transition: opacity .15s ease !important;
     animation: gk-fade .15s ease !important;
   }
   .gk-spin {

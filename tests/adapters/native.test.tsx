@@ -7,6 +7,7 @@ import {
   GlazeProvider,
   resetNativeEngine,
   toast,
+  Toast,
   Toaster,
   ui,
   useNativeToast,
@@ -151,6 +152,72 @@ describe('toastory/native adapter', () => {
     expect(container.textContent).toContain('Centered Mobile Toast');
     const toastContainer = container.querySelector('div[style*="translateY(-50%)"]');
     expect(toastContainer).not.toBeNull();
+
+    await act(async () => {
+      root.unmount();
+    });
+  });
+
+  it('provides 100% react-native-toast-message v2.5.2 drop-in compatibility via Toast.show/hide/setRef', async () => {
+    let pressed = false;
+    let shown = false;
+    const refObj = { current: 'mockRef' };
+    Toast.setRef(refObj);
+    expect(Toast.getRef()).toBe(refObj);
+
+    const id = Toast.show({
+      type: 'success',
+      text1: 'Hello React Native',
+      text2: 'Drop-in compatible with 33K apps',
+      position: 'top',
+      visibilityTime: 3500,
+      autoHide: true,
+      topOffset: 45,
+      bottomOffset: 45,
+      onPress: () => {
+        pressed = true;
+      },
+      onShow: () => {
+        shown = true;
+      },
+    });
+
+    const items = toast.getToasts();
+    expect(items).toHaveLength(1);
+    expect(items[0]?.title).toBe('Hello React Native');
+    expect(items[0]?.description).toBe('Drop-in compatible with 33K apps');
+    expect(items[0]?.duration).toBe(3500);
+    expect(items[0]?.position).toBe('top-center');
+
+    const first = items[0];
+    first?.onOpen?.(first);
+    expect(shown).toBe(true);
+    first?.onPress?.(first);
+    expect(pressed).toBe(true);
+
+    Toast.hide(id);
+    expect(toast.getToasts().find((t) => t.id === id)?.dismissed).toBe(true);
+  });
+
+  it('renders image banner, character mascot, and discard/close text in Toaster', async () => {
+    const container = document.getElementById('root') as HTMLElement;
+    const root = createRoot(container);
+
+    await act(async () => {
+      root.render(<Toaster topOffset={50} bottomOffset={40} />);
+    });
+
+    await act(async () => {
+      toast('Welcome', {
+        image: 'https://example.com/banner.jpg',
+        character: 'wave',
+        discardText: 'Dismiss',
+      });
+    });
+
+    expect(container.querySelector('img[src="https://example.com/banner.jpg"]')).not.toBeNull();
+    expect(container.textContent).toContain('🤖');
+    expect(container.textContent).toContain('Dismiss');
 
     await act(async () => {
       root.unmount();

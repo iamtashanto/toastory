@@ -9,19 +9,19 @@ let audioCtx: AudioContext | undefined;
 const CUES: Record<string, SoundNote[]> = {
   success: [
     [392, 0, 1],
-    [523.3, 0.1, 1],
+    [523, 0.1, 1],
   ],
   error: [
-    [233.1, 0, 1],
+    [233, 0, 1],
     [185, 0.13, 1],
   ],
   warning: [
-    [349.2, 0, 0.8],
-    [349.2, 0.16, 0.6],
+    [349, 0, 0.8],
+    [349, 0.16, 0.6],
   ],
-  info: [[466.2, 0, 0.9]],
+  info: [[466, 0, 0.9]],
   ding: [
-    [659.3, 0, 0.9],
+    [659, 0, 0.9],
     [880, 0.08, 1],
   ],
   pop: [
@@ -29,49 +29,50 @@ const CUES: Record<string, SoundNote[]> = {
     [880, 0.03, 0.9],
   ],
   chime: [
-    [523.3, 0, 0.8],
-    [659.3, 0.09, 0.85],
+    [523, 0, 0.8],
+    [659, 0.09, 0.85],
     [784, 0.18, 1],
   ],
   bell: [
-    [587.3, 0, 1],
-    [1174.6, 0.04, 0.5],
+    [587, 0, 1],
+    [1175, 0.04, 0.5],
   ],
   message: [
     [440, 0, 0.8],
-    [659.3, 0.12, 0.9],
+    [659, 0.12, 0.9],
   ],
   bubble: [
     [330, 0, 0.6],
-    [493.9, 0.06, 0.8],
+    [494, 0.06, 0.8],
   ],
   marimba: [
-    [523.3, 0, 1],
-    [659.3, 0.06, 0.9],
+    [523, 0, 1],
+    [659, 0.06, 0.9],
     [784, 0.12, 1],
-    [1046.5, 0.18, 0.8],
+    [1047, 0.18, 0.8],
   ],
   crystal: [
     [880, 0, 0.8],
-    [1318.5, 0.08, 0.9],
+    [1319, 0.08, 0.9],
     [1760, 0.16, 0.7],
   ],
   subtle: [[440, 0, 0.6]],
   harp: [
     [392, 0, 0.7],
-    [493.9, 0.05, 0.8],
-    [587.3, 0.1, 0.9],
+    [494, 0.05, 0.8],
+    [587, 0.1, 0.9],
     [784, 0.15, 1],
   ],
 };
 
+const getAudioCtxClass = () =>
+  typeof window !== 'undefined'
+    ? window.AudioContext ||
+      (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
+    : undefined;
+
 /** Returns whether Web Audio is available in the current environment. */
-export const isAudioSupported = (): boolean =>
-  typeof window !== 'undefined' &&
-  Boolean(
-    window.AudioContext ||
-    (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext,
-  );
+export const isAudioSupported = (): boolean => Boolean(getAudioCtxClass());
 
 /** Returns the list of registered sound cue names. */
 export const getSoundCues = (): readonly string[] => Object.keys(CUES);
@@ -130,9 +131,7 @@ export function playSound(cueOrType?: SoundCue | ToastType | boolean | string, v
   if (!notes) return;
 
   try {
-    const Ctx =
-      window.AudioContext ||
-      (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    const Ctx = getAudioCtxClass();
     if (!Ctx) return;
 
     audioCtx ??= new Ctx();
@@ -142,17 +141,9 @@ export function playSound(cueOrType?: SoundCue | ToastType | boolean | string, v
     const master = audioCtx.createGain();
     master.gain.value = Math.min(1, Math.max(0, volume)) * 0.45;
 
-    // Filter rounded highs via lowpass biquad filter and add faint room echo delay
     const soften = audioCtx.createBiquadFilter();
-    soften.type = 'lowpass';
     soften.frequency.value = 1300;
-    const echo = audioCtx.createDelay();
-    echo.delayTime.value = 0.11;
-    const wet = audioCtx.createGain();
-    wet.gain.value = 0.1;
-    master.connect(soften);
-    soften.connect(audioCtx.destination);
-    soften.connect(echo).connect(wet).connect(audioCtx.destination);
+    master.connect(soften).connect(audioCtx.destination);
 
     for (const [freq, offset, level] of notes) {
       playTone(audioCtx, master, freq, offset, level);

@@ -63,7 +63,7 @@ export function createTimer(
   const isLive = (): boolean => Number.isFinite(remainingMs) && remainingMs > 0;
 
   const notifyTick = (): void => {
-    if (tickListeners.size === 0) return;
+    if (!tickListeners.size) return;
     const rem = getRemaining();
     const frac = totalDuration > 0 ? Math.max(0, Math.min(1, rem / totalDuration)) : 0;
     for (const listener of tickListeners) {
@@ -77,7 +77,7 @@ export function createTimer(
 
   const getRemaining = (): number => {
     if (done) return 0;
-    if (started && pauseReasons.size === 0) {
+    if (started && !pauseReasons.size) {
       return Math.max(0, remainingMs - (clock.now() - startedAt));
     }
     return remainingMs;
@@ -92,7 +92,7 @@ export function createTimer(
 
   const arm = (): void => {
     stopTimers();
-    if (!isLive() || pauseReasons.size > 0 || done) return;
+    if (!isLive() || pauseReasons.size || done) return;
 
     startedAt = clock.now();
     cancelTimeout = clock.setTimeout(() => {
@@ -104,7 +104,7 @@ export function createTimer(
       onDone();
     }, remainingMs);
 
-    if (tickListeners.size > 0) {
+    if (tickListeners.size) {
       cancelInterval = clock.setInterval(() => {
         notifyTick();
       }, 50);
@@ -130,7 +130,7 @@ export function createTimer(
     if (count <= 1) pauseReasons.delete(reason);
     else pauseReasons.set(reason, count - 1);
 
-    if (started && pauseReasons.size === 0 && isLive()) {
+    if (started && !pauseReasons.size && isLive()) {
       arm();
       notifyTick();
     }
@@ -152,7 +152,7 @@ export function createTimer(
     },
     add(ms: number) {
       if (done || !Number.isFinite(remainingMs)) return;
-      const live = started && pauseReasons.size === 0;
+      const live = started && !pauseReasons.size;
       remainingMs = Math.max(
         1,
         (live ? remainingMs - (clock.now() - startedAt) : remainingMs) + ms,
@@ -164,7 +164,7 @@ export function createTimer(
     reset(ms?: number) {
       done = false;
       remainingMs = totalDuration = ms !== undefined ? ms : totalDuration;
-      if (started && pauseReasons.size === 0) {
+      if (started && !pauseReasons.size) {
         if (isLive()) arm();
         else stopTimers();
       }
@@ -185,12 +185,12 @@ export function createTimer(
     pausedReasons: () => [...pauseReasons.keys()],
     onTick(callback) {
       tickListeners.add(callback);
-      if (started && pauseReasons.size === 0 && !cancelInterval) {
+      if (started && !pauseReasons.size && !cancelInterval) {
         cancelInterval = clock.setInterval(notifyTick, 50);
       }
       return () => {
         tickListeners.delete(callback);
-        if (tickListeners.size === 0 && cancelInterval) {
+        if (!tickListeners.size && cancelInterval) {
           cancelInterval();
           cancelInterval = undefined;
         }

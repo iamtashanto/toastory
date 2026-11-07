@@ -69,22 +69,25 @@ export function createToastApi(store: ToastStore): ToastApi {
       return store.add(input);
     };
 
-  const api = make() as ToastApi;
-  api.success = make('success');
-  api.error = make('error');
-  api.info = make('info');
-  api.warning = make('warning');
-  api.loading = make('loading');
-  api.message = make('message');
-
-  api.custom = (renderer, options) => store.add({ ...options, custom: renderer });
-  api.update = store.update;
-  api.dismiss = store.dismiss;
-  api.dismissAll = store.dismissAll;
-  api.getToasts = store.getToasts;
-  api.getHistory = store.getHistory;
-  (api as unknown as { types: TypeRegistry }).types = store.types;
-  api.promise = (input, messages, options) => runPromiseToast(store, input, messages, options);
-
-  return api;
+  return Object.assign(make() as ToastApi, {
+    success: make('success'),
+    error: make('error'),
+    info: make('info'),
+    warning: make('warning'),
+    loading: make('loading'),
+    message: make('message'),
+    custom: (renderer: ToastCustomRenderer, options?: ToastOptions) =>
+      store.add({ ...options, custom: renderer }),
+    update: store.update,
+    dismiss: store.dismiss,
+    dismissAll: store.dismissAll,
+    getToasts: store.getToasts,
+    getHistory: store.getHistory,
+    types: store.types,
+    promise: <T>(
+      input: Promise<T> | (() => Promise<T>),
+      messages: PromiseMessages<T>,
+      options?: ToastOptions,
+    ) => runPromiseToast(store, input, messages, options),
+  });
 }

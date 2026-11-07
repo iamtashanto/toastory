@@ -202,9 +202,6 @@ export interface ToastAction {
   ariaLabel?: string;
 }
 
-/** Alias for ToastAction. */
-export type ToastButton = ToastAction;
-
 /** Slot class names a consumer can override. */
 export interface ToastClassNames {
   toast?: string;
@@ -212,6 +209,8 @@ export interface ToastClassNames {
   description?: string;
   icon?: string;
   avatar?: string;
+  image?: string;
+  character?: string;
   actionButton?: string;
   cancelButton?: string;
   closeButton?: string;
@@ -274,6 +273,37 @@ export type BuiltInSoundCue =
 /** Audio feedback sound cue name or custom string. */
 export type SoundCue = BuiltInSoundCue | (string & {});
 
+/** CTA Button definition inside toast notification. */
+export interface ToastButton {
+  /** Visible button text. */
+  label: string;
+  /** Click/press handler. */
+  onClick?: (event: { preventDefault(): void; defaultPrevented: boolean }) => void;
+  /** React Native press handler alias. */
+  onPress?: (event: { preventDefault(): void; defaultPrevented: boolean }) => void;
+  /** Optional CSS class. */
+  className?: string;
+  /** Optional inline styles. */
+  style?: Record<string, string | number>;
+  /** Visual button kind. */
+  kind?: 'primary' | 'secondary' | 'danger';
+  /** Whether clicking automatically dismisses the toast. Defaults to true. */
+  autoDismiss?: boolean;
+}
+
+/** Mascot character / robot avatar preset names. */
+export type RobotCharacter =
+  | 'wave'
+  | 'success'
+  | 'error'
+  | 'think'
+  | 'loading'
+  | 'sleep'
+  | 'shock'
+  | 'search'
+  | 'headPalm'
+  | 'base';
+
 /**
  * Options accepted by every toast creation call.
  */
@@ -284,8 +314,12 @@ export interface ToastOptions {
   type?: ToastType;
   /** Heading text or renderable node. */
   title?: Renderable;
+  /** react-native-toast-message title alias. */
+  text1?: Renderable;
   /** Secondary subtitle or body text. */
   description?: Renderable;
+  /** react-native-toast-message description alias. */
+  text2?: Renderable;
   /** Theme-declared variant preset. */
   variant?: ToastVariant;
   /** Tone icon chip badge or custom badge description. */
@@ -304,6 +338,8 @@ export interface ToastOptions {
   progressLabel?: string;
   /** Action buttons array. */
   actions?: ToastActionItem[];
+  /** Multiple CTA buttons list (robot-toast & react-native compatible). */
+  buttons?: ToastButton[];
   /** Interactive toggle switch. */
   toggle?: ToastToggleOption;
   /** Group key for grouped notifications stack. */
@@ -322,10 +358,26 @@ export interface ToastOptions {
   icon?: Renderable | false;
   /** Avatar URL, initials object, or node shown before text. */
   avatar?: Renderable | ToastAvatarOption;
+  /** Hero image banner or image URL. */
+  image?: string | ToastAvatarOption;
+  /** Mascot robot/character avatar variant. */
+  character?: RobotCharacter | (string & {});
+  /** Mascot robot variant alias. */
+  robotVariant?: RobotCharacter | (string & {});
   /** Duration in ms. `0` or `Infinity` makes it persistent. */
   duration?: number;
+  /** react-native-toast-message duration alias. */
+  visibilityTime?: number;
+  /** react-native-toast-message autoHide control: false makes it persistent. */
+  autoHide?: boolean;
   /** Screen region placement. */
   position?: ToastPosition;
+  /** Optional top offset in pixels (react-native-toast-message compatible). */
+  topOffset?: number;
+  /** Optional bottom offset in pixels (react-native-toast-message compatible). */
+  bottomOffset?: number;
+  /** Optional keyboard offset in pixels (react-native-toast-message compatible). */
+  keyboardOffset?: number;
   /** Play audio feedback cue, sound url, or custom generator. */
   sound?: boolean | SoundCue | string | ((type: ToastType) => void);
   /** Audio playback volume (0.0 to 1.0). Defaults to 0.5. */
@@ -338,6 +390,16 @@ export interface ToastOptions {
   closeButton?: boolean;
   /** Accessible label for the close button. */
   closeButtonLabel?: string;
+  /** Custom close / discard button icon. */
+  closeIcon?: Renderable;
+  /** Custom text for close / discard button (e.g., 'Dismiss', 'Close'). */
+  closeText?: string;
+  /** Discard button text alias. */
+  discardText?: string;
+  /** Discard button icon alias. */
+  discardIcon?: Renderable;
+  /** Toast body press/click handler. */
+  onPress?: (toast?: ToastRecord) => void;
   /** Enter/exit animation preset. */
   animation?: AnimationType;
   /** Allow user dismissal. */
@@ -382,8 +444,12 @@ export interface ToastOptions {
   important?: boolean;
   /** Lifecycle hook: fired when toast mounts/opens. Exactly once. */
   onOpen?: (toast: ToastRecord) => void;
+  /** react-native-toast-message open callback alias. */
+  onShow?: () => void;
   /** Lifecycle hook: fired when toast closes/exits. Exactly once. */
   onClose?: (toast: ToastRecord, reason: CloseReason) => void;
+  /** react-native-toast-message close callback alias. */
+  onHide?: () => void;
   /** Lifecycle hook: fired on user dismissal. Exactly once. */
   onDismiss?: (toast: ToastRecord, reason: CloseReason) => void;
   /** Lifecycle hook: fired when auto-close timer elapses. Exactly once. */

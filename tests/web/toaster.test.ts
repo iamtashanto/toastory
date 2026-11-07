@@ -644,4 +644,41 @@ describe('advanced web renderer features', () => {
     expect(engine.store).toBeDefined();
     expect(engine.toast).toBeDefined();
   });
+
+  it('renders custom discard/close text, custom icon, image banner, and robot character mascot', () => {
+    ui.toast('Hello mascot', {
+      character: 'wave',
+      image: 'https://example.com/banner.png',
+      discardText: 'Dismiss Now',
+      id: 'mascot-test',
+    });
+    const el = last();
+    expect(el.querySelector('img[src="https://example.com/banner.png"]')).not.toBeNull();
+    expect(el.querySelector('.gk-avatar svg')).not.toBeNull();
+    const closeBtn = el.querySelector('.gk-close');
+    expect(closeBtn?.textContent).toBe('Dismiss Now');
+  });
+
+  it('supports text1 and text2 aliases and buttons array from external libraries', () => {
+    let clicked = false;
+    ui.toast(undefined, {
+      text1: 'Migrated Title',
+      text2: 'Migrated Description',
+      buttons: [
+        {
+          label: 'Retry Action',
+          onClick: () => {
+            clicked = true;
+          },
+        },
+      ],
+    });
+    const el = last();
+    expect(el.textContent).toContain('Migrated Title');
+    expect(el.textContent).toContain('Migrated Description');
+    const btn = el.querySelector('.gk-action') as HTMLButtonElement;
+    expect(btn?.textContent).toBe('Retry Action');
+    btn?.click();
+    expect(clicked).toBe(true);
+  });
 });

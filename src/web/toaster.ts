@@ -29,12 +29,16 @@ function deterministicColor(str: string): string {
 function formatRelativeTime(ts: number | Date | string | boolean, locale = 'en'): string {
   if (typeof ts === 'string') return ts;
   if (ts === true) return 'now';
-  const d = ts instanceof Date ? ts.getTime() : Number(ts) || Date.now();
-  const min = Math.round((Date.now() - d) / 60000);
+  const min = Math.round(
+    (Date.now() - (ts instanceof Date ? ts.getTime() : Number(ts) || Date.now())) / 60000,
+  );
   if (!min) return 'now';
-  const hr = Math.round(min / 60),
-    day = Math.round(hr / 24);
-  const [val, unit] = hr < 1 ? [min, 'minute'] : day < 1 ? [hr, 'hour'] : [day, 'day'];
+  const [val, unit] =
+    min < 60
+      ? [min, 'minute']
+      : min < 1440
+        ? [Math.round(min / 60), 'hour']
+        : [Math.round(min / 1440), 'day'];
   try {
     return new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(
       -val,
@@ -86,6 +90,28 @@ const stampOf = (record: ToastRecord): string =>
 const INTERACTIVE = 'button,a,input,select,textarea,[role=button]';
 
 /** Default swipe directions for a position: toward the nearest screen edge. */
+function getRobotSvg(char: string): string {
+  const dot = (x: number, y: number) => `<circle cx="${x}" cy="${y}" r="2" fill="currentColor"/>`;
+  const eyes = dot(12, 18) + dot(20, 18);
+  const ant = '<path d="M16 4v6M12 4h8"/>';
+  let inner = eyes + ant;
+  let cls = '';
+  if (char === 'wave') inner = `${eyes}<path d="M16 4v6M12 4h8M2 14l4 4M30 10l-4 4"/>`;
+  else if (char === 'success') inner = '<path d="M11 18l3 3 7-7M16 4v6M12 4h8"/>';
+  else if (char === 'error') inner = '<path d="M12 16l8 8M20 16l-8 8M16 4v6M12 4h8"/>';
+  else if (char === 'think') inner = `${eyes}<path d="M12 22h8M16 4v6"/>`;
+  else if (char === 'loading') {
+    inner =
+      '<circle cx="16" cy="18" r="4" stroke-dasharray="16" stroke-linecap="round"/><path d="M16 4v6"/>';
+    cls = ' class="gk-spin"';
+  } else if (char === 'sleep') inner = '<path d="M10 18h4M18 18h4M16 4v6"/>';
+  else if (char === 'shock')
+    inner = `${dot(12, 16)}${dot(20, 16)}${dot(16, 22)}<path d="M16 4v6"/>`;
+  else if (char === 'search') inner = '<circle cx="14" cy="18" r="4"/><path d="M17 21l4 4M16 4v6"/>';
+  else if (char === 'headPalm') inner = `${dot(12, 18)}<path d="M18 16h6v6M16 4v6"/>`;
+  return `<svg viewBox="0 0 32 32" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"${cls}><rect x="6" y="10" width="20" height="16" rx="4"/>${inner}</svg>`;
+}
+
 export function defaultSwipe(position: ToastPosition): SwipeDirection[] {
   if (position === 'center' || position === 'middle') return ['up', 'down', 'left', 'right'];
   if (position.endsWith('left')) return ['left'];
@@ -116,14 +142,11 @@ export function parseHotkey(
 /** Detects whether the host document has an explicit dark mode via .dark class or data attribute. */
 export function isDocumentDark(): boolean {
   if (!hasDom()) return false;
-  const doc = document.documentElement;
-  return (
-    doc.classList.contains('dark') ||
-    document.body?.classList.contains('dark') ||
-    doc.getAttribute('data-theme') === 'dark' ||
-    doc.getAttribute('data-gk-mode') === 'dark' ||
-    document.body?.getAttribute('data-theme') === 'dark' ||
-    document.body?.getAttribute('data-gk-mode') === 'dark'
+  return [document.documentElement, document.body].some(
+    (el) =>
+      el?.classList.contains('dark') ||
+      el?.getAttribute('data-theme') === 'dark' ||
+      el?.getAttribute('data-gk-mode') === 'dark',
   );
 }
 
@@ -419,6 +442,27 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
         }
       }
 
+      const char = record.character ?? record.robotVariant;
+      if (char) {
+        const holder = el(
+          'div',
+          `${k('avatar', names.avatar)}${unstyled ? '' : ' gk-character'}`.trim(),
+        );
+        holder.innerHTML = getRobotSvg(char);
+        node.append(holder);
+      }
+
+      if (record.image) {
+        const imgSrc = typeof record.image === 'string' ? record.image : record.image.src;
+        if (imgSrc && safeUrl(imgSrc)) {
+          const imgEl = el('img', k('image', names.image, 'image'), {
+            src: imgSrc,
+            alt: typeof record.image === 'object' ? (record.image.alt ?? '') : '',
+          });
+          node.prepend(imgEl);
+        }
+      }
+
       if (record.avatar !== undefined) {
         const holder = el('div', k('avatar', names.avatar));
         const av = record.avatar;
@@ -548,7 +592,8 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
         (record.duration > 0 ? store.getRemaining(record.id) / record.duration : 1);
       const dash = 100.5 * (1 - val);
       const div = document.createElement('div');
-      div.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" class="gk-ring-svg"><circle cx="18" cy="18" r="16" fill="none" stroke="currentColor" stroke-width="3" opacity="0.2"/><circle cx="18" cy="18" r="16" fill="none" stroke="currentColor" stroke-width="3" stroke-dasharray="100.5" stroke-linecap="round" stroke-dashoffset="${dash}"/></svg>`;
+      const c = '<circle cx="18" cy="18" r="16" fill="none" stroke="currentColor" stroke-width="3"';
+      div.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" class="gk-ring-svg">${c} opacity="0.2"/>${c} stroke-dasharray="100.5" stroke-linecap="round" stroke-dashoffset="${dash}"/></svg>`;
       node.append(div.firstElementChild as Element);
     }
 
@@ -596,16 +641,23 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       }
       node.append(actions);
     }
-    if (flag(record.closeButton, c.closeButton) && record.dismissible !== false) {
-      const closeBtn = el(
-        'button',
-        k('close', names.closeButton),
-        {
-          type: 'button',
-          'aria-label': record.closeButtonLabel ?? c.closeLabel ?? 'Close notification',
-        },
-        icon('close'),
-      );
+    const cText = record.closeText ?? record.discardText;
+    const cIcon = record.closeIcon ?? record.discardIcon;
+    const showClose =
+      (flag(record.closeButton, c.closeButton) || Boolean(cText || cIcon)) &&
+      record.dismissible !== false;
+
+    if (showClose) {
+      const closeBtn = el('button', k('close', names.closeButton), {
+        type: 'button',
+        'aria-label': record.closeButtonLabel ?? cText ?? c.closeLabel ?? 'Close notification',
+      });
+      if (cText) {
+        closeBtn.textContent = cText;
+        closeBtn.className += ' gk-close--text';
+      } else if (cIcon) fill(closeBtn, cIcon);
+      else closeBtn.append(icon('close'));
+
       closeBtn.addEventListener('click', (event) => {
         event.stopPropagation();
         close(record.id, 'user');
@@ -639,8 +691,7 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       else node.setAttribute(name, value);
     };
     const toggle = (name: string, condition: unknown): void => {
-      if (condition) node.setAttribute(name, typeof condition === 'string' ? condition : '');
-      else node.removeAttribute(name);
+      node.toggleAttribute(name, Boolean(condition));
     };
 
     const hostEl =
@@ -650,14 +701,10 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
     const activeVariant = resolveVariant(themeName, record.variant);
     set('data-gk-variant', activeVariant);
 
-    if (record.hud || activeVariant === 'hud-silent') {
-      set('role', 'status');
-      set('aria-live', 'polite');
-      set('data-hud', '');
-    } else {
-      set('role', record.role);
-      set('aria-live', record.ariaLive);
-    }
+    const isHud = record.hud || activeVariant === 'hud-silent';
+    set('role', isHud ? 'status' : record.role);
+    set('aria-live', isHud ? 'polite' : record.ariaLive);
+    toggle('data-hud', isHud);
     set('aria-atomic', 'true');
     set('data-type', record.type);
     set('data-gk-theme', themeName);
@@ -707,11 +754,24 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
     let start: { x: number; y: number; time: number } | undefined;
     let hasDragged = false;
 
+    const setS = (x: number | string, y: number | string): void => {
+      node.style.setProperty('--gk-sx', typeof x === 'number' ? `${x}px` : x);
+      node.style.setProperty('--gk-sy', typeof y === 'number' ? `${y}px` : y);
+    };
+
     const settings = (): { dirs: SwipeDirection[]; threshold: number; on: boolean } => ({
       dirs: item.record.swipeDirections ?? defaultSwipe(item.record.position),
       threshold: item.record.dragThreshold ?? cfg().dragThreshold,
       on: flag(item.record.swipe, cfg().swipe) && item.record.dismissible !== false,
     });
+
+    const delta = (e: PointerEvent) => {
+      const dx = e.clientX - (start?.x ?? 0);
+      const rawDy = e.clientY - (start?.y ?? 0);
+      let dy = rawDy;
+      if (dy * (item.record.position.startsWith('top') ? -1 : 1) < 0) dy *= 0.25;
+      return { dx, rawDy, dy };
+    };
 
     node.addEventListener('pointerenter', () => {
       item.hover = true;
@@ -724,6 +784,7 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
     });
     node.addEventListener('click', (event) => {
       if (hasDragged || item.swiping || (event.target as Element).closest(INTERACTIVE)) return;
+      if (item.record.onPress) item.record.onPress(item.record);
       if (flag(item.record.closeOnClick, cfg().closeOnClick)) close(item.record.id, 'click');
     });
     node.addEventListener('pointerdown', (event) => {
@@ -735,13 +796,7 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
     node.addEventListener('pointermove', (event) => {
       if (!start) return;
       const { dirs } = settings();
-      const dx = event.clientX - start.x;
-      const rawDy = event.clientY - start.y;
-      const isTop = item.record.position.startsWith('top');
-      const edgeDir = isTop ? -1 : 1;
-      let dy = rawDy;
-      // Inward drag resistance toward screen center
-      if (dy * edgeDir < 0) dy *= 0.25;
+      const { dx, dy } = delta(event);
 
       if (!item.swiping) {
         if (Math.hypot(dx, dy) < 4) return;
@@ -754,21 +809,12 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
 
       const canX = dirs.includes('left') || dirs.includes('right');
       const canY = dirs.includes('up') || dirs.includes('down');
-
-      const sx = canX ? dx : dx * 0.15;
-      const sy = canY ? dy : dy * 0.15;
-      node.style.setProperty('--gk-sx', `${sx}px`);
-      node.style.setProperty('--gk-sy', `${sy}px`);
+      setS(canX ? dx : dx * 0.15, canY ? dy : dy * 0.15);
     });
     const finish = (event: PointerEvent): void => {
       if (!start) return;
       const { dirs, threshold } = settings();
-      const dx = event.clientX - start.x;
-      const rawDy = event.clientY - start.y;
-      const isTop = item.record.position.startsWith('top');
-      const edgeDir = isTop ? -1 : 1;
-      let dy = rawDy;
-      if (dy * edgeDir < 0) dy *= 0.25;
+      const { dx, rawDy, dy } = delta(event);
 
       const duration = Math.max(1, performance.now() - start.time);
       const wasSwiping = item.swiping;
@@ -789,17 +835,15 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
         (travelled >= limit || (duration >= 40 && speed > 0.45 && travelled > 15));
 
       if (isDismissible) {
+        node.dataset.swipeOut = out;
         const len = Math.hypot(dx, rawDy) || 1;
         const reach = Math.max(160, speed * 320);
         node.setAttribute('data-flung', '');
         node.style.transition = 'transform .32s var(--gk-ease),opacity .22s ease-out';
-        node.style.setProperty('--gk-sx', `${(dx / len) * reach}px`);
-        node.style.setProperty('--gk-sy', `${(rawDy / len) * reach}px`);
-        node.dataset.swipeOut = out;
+        setS((dx / len) * reach, (rawDy / len) * reach);
         close(item.record.id, 'swipe');
       } else {
-        node.style.setProperty('--gk-sx', '0px');
-        node.style.setProperty('--gk-sy', '0px');
+        setS('0px', '0px');
       }
       setTimeout(() => {
         item.swiping = false;

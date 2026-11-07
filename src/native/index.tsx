@@ -78,6 +78,90 @@ function createNativeToastApi(): ToastApi {
 /** Native toast API. */
 export const toast: ToastApi = createNativeToastApi();
 
+export interface ToastShowParams {
+  type?: 'success' | 'error' | 'info' | 'warning' | 'loading' | string;
+  text1?: string | React.ReactNode;
+  text2?: string | React.ReactNode;
+  position?: 'top' | 'bottom' | 'center' | string;
+  autoHide?: boolean;
+  visibilityTime?: number;
+  topOffset?: number;
+  bottomOffset?: number;
+  keyboardOffset?: number;
+  onShow?: () => void;
+  onHide?: () => void;
+  onPress?: () => void;
+  props?: Record<string, unknown>;
+  id?: string | number;
+  swipeable?: boolean;
+  image?: string;
+  closeButton?: boolean;
+  closeText?: string;
+  discardText?: string;
+  [key: string]: unknown;
+}
+
+let toastRef: unknown = null;
+
+/**
+ * Full react-native-toast-message v2.5.2 drop-in compatible interface.
+ * Allows instant migration from react-native-toast-message with zero code changes.
+ */
+export const Toast = Object.assign(toast, {
+  show(params: ToastShowParams | string): string | number {
+    if (typeof params === 'string') {
+      return toast(params);
+    }
+    const {
+      type = 'success',
+      text1,
+      text2,
+      position = 'top',
+      autoHide = true,
+      visibilityTime,
+      topOffset,
+      bottomOffset,
+      keyboardOffset,
+      onShow,
+      onHide,
+      onPress,
+      ...rest
+    } = params;
+
+    const restOpts = rest as ToastOptions;
+    const duration: number = autoHide === false ? 0 : (visibilityTime ?? restOpts.duration ?? 4000);
+    const nativePos =
+      position === 'top' ? 'top-center' : position === 'bottom' ? 'bottom-center' : position;
+
+    return toast(text1 ?? (restOpts.title as string | undefined), {
+      ...restOpts,
+      type: type as ToastOptions['type'],
+      title: text1 ?? restOpts.title,
+      description: text2 ?? restOpts.description,
+      duration,
+      position: nativePos as ToastOptions['position'],
+      topOffset,
+      bottomOffset,
+      keyboardOffset,
+      onOpen: onShow ? () => onShow() : restOpts.onOpen,
+      onClose: onHide ? () => onHide() : restOpts.onClose,
+      onPress: onPress ? () => onPress() : restOpts.onPress,
+    });
+  },
+  hide(id?: string | number): void {
+    if (id !== undefined) toast.dismiss(id);
+    else toast.dismissAll();
+  },
+  setRef(ref: unknown): void {
+    toastRef = ref;
+  },
+  getRef(): unknown {
+    return toastRef;
+  },
+});
+
+export default Toast;
+
 /** Configuration function for React Native. */
 export function configure(patch: Partial<GlazeConfig>): Readonly<GlazeConfig> {
   return getNativeEngine().store.config.set(patch);
@@ -126,6 +210,12 @@ export interface NativeToasterProps {
     | 'bottom-right';
   /** Optional top/bottom inset offset. */
   offset?: number;
+  /** Distance in pixels from top screen boundary (react-native-toast-message compatible). */
+  topOffset?: number;
+  /** Distance in pixels from bottom screen boundary (react-native-toast-message compatible). */
+  bottomOffset?: number;
+  /** Distance in pixels above soft keyboard (react-native-toast-message compatible). */
+  keyboardOffset?: number;
   /** Gap between stacked toasts in pixels. Defaults to 8. */
   gap?: number;
   /** Maximum number of visible toasts. Defaults to 4. */
@@ -179,11 +269,14 @@ export function Toaster(props: NativeToasterProps): React.JSX.Element | null {
   const isLeft = position.endsWith('left');
   const isRight = position.endsWith('right');
 
+  const topOffset = props.topOffset ?? props.offset ?? 50;
+  const bottomOffset = props.bottomOffset ?? props.offset ?? 50;
+
   const posStyle: React.CSSProperties = isBottom
-    ? { bottom: props.offset ?? 50 }
+    ? { bottom: bottomOffset }
     : isCenter
       ? { top: '50%', transform: 'translateY(-50%)' }
-      : { top: props.offset ?? 50 };
+      : { top: topOffset };
 
   const alignStyle: React.CSSProperties = isLeft
     ? { alignItems: 'flex-start' }
@@ -214,6 +307,9 @@ export function Toaster(props: NativeToasterProps): React.JSX.Element | null {
       {displayed.map((item) => (
         <div
           key={String(item.id)}
+          onClick={() => {
+            if (item.onPress) item.onPress(item);
+          }}
           style={
             {
               backgroundColor: 'rgba(28, 28, 30, 0.88)',
@@ -226,15 +322,28 @@ export function Toaster(props: NativeToasterProps): React.JSX.Element | null {
               flexDirection: 'column',
               gap: 4,
               position: 'relative',
+              cursor: item.onPress ? 'pointer' : undefined,
               ...props.toastStyle,
             } as React.CSSProperties
           }
         >
-          {props.closeButton || item.closeButton ? (
+          {item.image ? (
+            <div style={{ borderRadius: 10, overflow: 'hidden', marginBottom: 4 }}>
+              <img
+                src={typeof item.image === 'string' ? item.image : item.image.src}
+                alt=""
+                style={{ width: '100%', maxHeight: 120, objectFit: 'cover' }}
+              />
+            </div>
+          ) : null}
+          {props.closeButton || item.closeButton || item.closeText || item.discardText ? (
             <button
               type="button"
-              onClick={() => getNativeEngine().toast.dismiss(item.id)}
-              aria-label="Close notification"
+              onClick={(e) => {
+                e.stopPropagation();
+                getNativeEngine().toast.dismiss(item.id);
+              }}
+              aria-label={item.closeButtonLabel ?? 'Close notification'}
               style={
                 {
                   position: 'absolute',
@@ -244,14 +353,18 @@ export function Toaster(props: NativeToasterProps): React.JSX.Element | null {
                   border: 'none',
                   color: 'rgba(255,255,255,0.6)',
                   cursor: 'pointer',
-                  fontSize: 16,
-                  padding: 2,
+                  fontSize: item.closeText || item.discardText ? 12 : 16,
+                  fontWeight: item.closeText || item.discardText ? '600' : 'normal',
+                  padding: '2px 6px',
                   lineHeight: 1,
                 } as React.CSSProperties
               }
             >
-              ×
+              {item.closeText ?? item.discardText ?? '×'}
             </button>
+          ) : null}
+          {item.character || item.robotVariant ? (
+            <div style={{ fontSize: 18, lineHeight: 1, marginBottom: 2 }}>🤖</div>
           ) : null}
           {item.badge ? (
             <div

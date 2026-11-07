@@ -86,8 +86,8 @@ let raf = 0;
 let last = 0;
 
 function getRaf(): ((cb: (time: number) => void) => number) | undefined {
-  return typeof globalThis !== 'undefined'
-    ? (globalThis as { requestAnimationFrame?: (cb: (time: number) => void) => number })
+  return typeof globalThis !== 'undefined' && 'requestAnimationFrame' in globalThis
+    ? (globalThis as unknown as { requestAnimationFrame: (cb: (time: number) => void) => number })
         .requestAnimationFrame
     : undefined;
 }
