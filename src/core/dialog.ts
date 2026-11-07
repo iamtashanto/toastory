@@ -79,7 +79,13 @@ export function createDialogController(initial: DialogOptions): DialogController
   const emit = (): void => {
     revision += 1;
     state = { options, loading, error, open, revision };
-    for (const listener of [...listeners]) listener();
+    for (const listener of [...listeners]) {
+      try {
+        listener();
+      } catch (err) {
+        console.error(err);
+      }
+    }
   };
 
   const finish = (partial: Partial<DialogResult>): void => {
@@ -92,7 +98,11 @@ export function createDialogController(initial: DialogOptions): DialogController
       dismiss: undefined,
       ...partial,
     };
-    options.willClose?.(handle, final);
+    try {
+      options.willClose?.(handle, final);
+    } catch (err) {
+      console.error(err);
+    }
     open = false;
     timer?.cancel();
     emit();
@@ -166,7 +176,11 @@ export function createDialogController(initial: DialogOptions): DialogController
       if (!open) return;
       if (options.timer !== undefined) startTimer(options.timer);
       emit();
-      options.didOpen?.(handle);
+      try {
+        options.didOpen?.(handle);
+      } catch (err) {
+        console.error(err);
+      }
     },
     async submit(kind) {
       if (!open || loading) return;
