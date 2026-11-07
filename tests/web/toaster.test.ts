@@ -386,6 +386,22 @@ describe('swipe', () => {
     expect(defaultSwipe('middle')).toEqual(['up', 'down', 'left', 'right']);
   });
 
+  it('supports omnidirectional swipe discard and fling along 2D momentum vector', () => {
+    ui.toast('Omni fling', {
+      id: 'omni',
+      swipeDirections: ['left', 'right', 'up', 'down'],
+      dragThreshold: 40,
+    });
+    const t = last();
+    pointer(t, 'pointerdown', { x: 0, y: 0 });
+    pointer(t, 'pointermove', { x: 25, y: -45 });
+    expect(t.hasAttribute('data-swiping')).toBe(true);
+    pointer(t, 'pointerup', { x: 50, y: -90 });
+    expect(t.hasAttribute('data-flung')).toBe(true);
+    expect(t.dataset.swipeOut).toBe('up');
+    expect(ui.toast.getToasts().find((x) => x.id === 'omni')?.dismissed).toBe(true);
+  });
+
   it('mounts toast in the center position', () => {
     ui.toast('Centered message', { position: 'center' });
     const r = document.querySelector('.gk-region[data-position="center"]');

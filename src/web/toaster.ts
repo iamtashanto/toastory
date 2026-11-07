@@ -705,7 +705,6 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
   const attachGestures = (item: Item): void => {
     const node = item.el;
     let start: { x: number; y: number; time: number } | undefined;
-    let axis: 'x' | 'y' | undefined;
     let hasDragged = false;
 
     const settings = (): { dirs: SwipeDirection[]; threshold: number; on: boolean } => ({
@@ -731,51 +730,71 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       if (!settings().on || event.button !== 0 || (event.target as Element).closest(INTERACTIVE))
         return;
       start = { x: event.clientX, y: event.clientY, time: performance.now() };
-      axis = undefined;
       hasDragged = false;
     });
     node.addEventListener('pointermove', (event) => {
       if (!start) return;
       const { dirs } = settings();
       const dx = event.clientX - start.x;
-      const dy = event.clientY - start.y;
-      if (!axis) {
-        if (Math.max(Math.abs(dx), Math.abs(dy)) < 4) return;
-        axis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+      const rawDy = event.clientY - start.y;
+      const isTop = item.record.position.startsWith('top');
+      const edgeDir = isTop ? -1 : 1;
+      let dy = rawDy;
+      // Inward drag resistance toward screen center
+      if (dy * edgeDir < 0) dy *= 0.25;
+
+      if (!item.swiping) {
+        if (Math.hypot(dx, dy) < 4) return;
         item.swiping = true;
         hasDragged = true;
         node.setPointerCapture?.(event.pointerId);
         node.dataset.swiping = '';
         store.pause(item.record.id, 'swipe');
       }
-      const allowed = (
-        axis === 'x' ? (dx > 0 ? 'right' : 'left') : dy > 0 ? 'down' : 'up'
-      ) as SwipeDirection;
-      const val = dirs.includes(allowed) ? (axis === 'x' ? dx : dy) : 0;
-      node.style.setProperty('--gk-sx', axis === 'x' ? `${val}px` : '0px');
-      node.style.setProperty('--gk-sy', axis === 'y' ? `${val}px` : '0px');
+
+      const canX = dirs.includes('left') || dirs.includes('right');
+      const canY = dirs.includes('up') || dirs.includes('down');
+
+      const sx = canX ? dx : dx * 0.15;
+      const sy = canY ? dy : dy * 0.15;
+      node.style.setProperty('--gk-sx', `${sx}px`);
+      node.style.setProperty('--gk-sy', `${sy}px`);
     });
     const finish = (event: PointerEvent): void => {
       if (!start) return;
       const { dirs, threshold } = settings();
       const dx = event.clientX - start.x;
-      const dy = event.clientY - start.y;
+      const rawDy = event.clientY - start.y;
+      const isTop = item.record.position.startsWith('top');
+      const edgeDir = isTop ? -1 : 1;
+      let dy = rawDy;
+      if (dy * edgeDir < 0) dy *= 0.25;
+
       const duration = Math.max(1, performance.now() - start.time);
-      const out = axis === 'x' ? (dx > 0 ? 'right' : 'left') : dy > 0 ? 'down' : 'up';
-      const travelled = Math.abs(axis === 'x' ? dx : dy);
-      const velocity = travelled / duration;
       const wasSwiping = item.swiping;
       start = undefined;
       delete node.dataset.swiping;
       store.resume(item.record.id, 'swipe');
 
-      const dim = axis === 'x' ? node.offsetWidth || 350 : node.offsetHeight || 60;
+      const horiz = Math.abs(dx) >= Math.abs(dy);
+      const out = horiz ? (dx > 0 ? 'right' : 'left') : dy > 0 ? 'down' : 'up';
+      const travelled = horiz ? Math.abs(dx) : Math.abs(dy);
+      const speed = Math.hypot(dx, dy) / duration;
+      const dim = horiz ? node.offsetWidth || 350 : node.offsetHeight || 60;
       const limit = threshold <= 1 && threshold > 0 ? threshold * dim : threshold;
-      if (
+
+      const isDismissible =
         wasSwiping &&
         dirs.includes(out as SwipeDirection) &&
-        (travelled >= limit || (duration >= 40 && velocity > 0.6 && travelled > 20))
-      ) {
+        (travelled >= limit || (duration >= 40 && speed > 0.45 && travelled > 15));
+
+      if (isDismissible) {
+        const len = Math.hypot(dx, rawDy) || 1;
+        const reach = Math.max(160, speed * 320);
+        node.setAttribute('data-flung', '');
+        node.style.transition = 'transform .32s var(--gk-ease),opacity .22s ease-out';
+        node.style.setProperty('--gk-sx', `${(dx / len) * reach}px`);
+        node.style.setProperty('--gk-sy', `${(rawDy / len) * reach}px`);
         node.dataset.swipeOut = out;
         close(item.record.id, 'swipe');
       } else {

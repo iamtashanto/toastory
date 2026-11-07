@@ -24,11 +24,5 @@ export const THEME_VARIANTS: Record<string, readonly string[]> = {
 export function resolveVariant(themeName: string, variant: string | undefined): string | undefined {
   if (!variant) return undefined;
   const supported = THEME_VARIANTS[themeName];
-  if (supported && !supported.includes(variant)) {
-    if (typeof process !== 'undefined' && process.env?.NODE_ENV !== 'production') {
-      console.warn(`[toastory] Unknown variant "${variant}" for "${themeName}".`);
-    }
-    return undefined;
-  }
-  return variant;
+  return !supported || supported.includes(variant) ? variant : undefined;
 }

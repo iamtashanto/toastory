@@ -44,7 +44,7 @@ export type {
   ToastFn,
 } from './toast-api';
 
-export { springEasing } from './spring';
+export { springEasing, Spring, springPosition, runSpringTask } from './spring';
 export type { SpringConfig } from './spring';
 
 export type * from './types';

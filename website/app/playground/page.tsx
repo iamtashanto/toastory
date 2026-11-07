@@ -923,7 +923,24 @@ export default function NativeScreen() {
                   </button>
                 </div>
                 <div className="grid grid-cols-2 gap-1.5 text-xs">
-                  {(['success', 'error', 'warning', 'info', 'ding', 'pop', 'chime', 'bell', 'message', 'bubble'] as const).map((cue) => (
+                  {(
+                    [
+                      'success',
+                      'error',
+                      'warning',
+                      'info',
+                      'ding',
+                      'pop',
+                      'chime',
+                      'bell',
+                      'message',
+                      'bubble',
+                      'marimba',
+                      'crystal',
+                      'subtle',
+                      'harp',
+                    ] as const
+                  ).map((cue) => (
                     <button
                       key={cue}
                       type="button"
@@ -932,7 +949,9 @@ export default function NativeScreen() {
                         ui.sound(cue, soundVolume);
                       }}
                       className={`py-1 px-2 rounded-lg text-left capitalize transition-colors text-xs font-medium ${
-                        soundCue === cue ? 'bg-blue-600 text-white font-semibold' : 'bg-[var(--site-surface-raised)] text-[var(--site-muted)] hover:text-[var(--site-fg)]'
+                        soundCue === cue
+                          ? 'bg-blue-600 text-white font-semibold'
+                          : 'bg-[var(--site-surface-raised)] text-[var(--site-muted)] hover:text-[var(--site-fg)]'
                       }`}
                     >
                       {cue}

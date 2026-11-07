@@ -265,7 +265,11 @@ export type BuiltInSoundCue =
   | 'chime'
   | 'bell'
   | 'message'
-  | 'bubble';
+  | 'bubble'
+  | 'marimba'
+  | 'crystal'
+  | 'subtle'
+  | 'harp';
 
 /** Audio feedback sound cue name or custom string. */
 export type SoundCue = BuiltInSoundCue | (string & {});

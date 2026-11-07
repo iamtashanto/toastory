@@ -45,6 +45,24 @@ const CUES: Record<string, SoundNote[]> = {
     [330, 0, 0.6],
     [493.9, 0.06, 0.8],
   ],
+  marimba: [
+    [523.3, 0, 1],
+    [659.3, 0.06, 0.9],
+    [784, 0.12, 1],
+    [1046.5, 0.18, 0.8],
+  ],
+  crystal: [
+    [880, 0, 0.8],
+    [1318.5, 0.08, 0.9],
+    [1760, 0.16, 0.7],
+  ],
+  subtle: [[440, 0, 0.6]],
+  harp: [
+    [392, 0, 0.7],
+    [493.9, 0.05, 0.8],
+    [587.3, 0.1, 0.9],
+    [784, 0.15, 1],
+  ],
 };
 
 /** Returns whether Web Audio is available in the current environment. */
@@ -63,18 +81,29 @@ export const registerSoundCue = (name: string, notes: SoundNote[]): void => {
   CUES[name] = notes;
 };
 
-/** Synthesizes a soft tone. */
+const MALLET_PARTIALS = [
+  [1, 0.6, 0.5],
+  [2, 0.06, 0.15],
+] as const;
+
+/**
+ * Synthesizes an acoustic mallet tone: a warm fundamental with faint octave partial,
+ * subtle micro-detuning for physical authenticity, and smooth exponential decay.
+ */
 function playTone(c: AudioContext, out: AudioNode, freq: number, at: number, level: number): void {
   const t = c.currentTime + at;
-  const osc = c.createOscillator();
-  const g = c.createGain();
-  osc.frequency.value = freq;
-  g.gain.setValueAtTime(0.001, t);
-  g.gain.exponentialRampToValueAtTime(Math.max(0.001, level * 0.3), t + 0.02);
-  g.gain.exponentialRampToValueAtTime(0.0001, t + 0.35);
-  osc.connect(g).connect(out);
-  osc.start(t);
-  osc.stop(t + 0.4);
+  const f = freq * (1 + (Math.random() - 0.5) * 0.008);
+  for (const [mult, gain, decay] of MALLET_PARTIALS) {
+    const osc = c.createOscillator();
+    const g = c.createGain();
+    osc.frequency.value = f * mult;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(gain * level, t + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + decay);
+    osc.connect(g).connect(out);
+    osc.start(t);
+    osc.stop(t + decay + 0.05);
+  }
 }
 
 /**
@@ -112,7 +141,18 @@ export function playSound(cueOrType?: SoundCue | ToastType | boolean | string, v
 
     const master = audioCtx.createGain();
     master.gain.value = Math.min(1, Math.max(0, volume)) * 0.45;
-    master.connect(audioCtx.destination);
+
+    // Filter rounded highs via lowpass biquad filter and add faint room echo delay
+    const soften = audioCtx.createBiquadFilter();
+    soften.type = 'lowpass';
+    soften.frequency.value = 1300;
+    const echo = audioCtx.createDelay();
+    echo.delayTime.value = 0.11;
+    const wet = audioCtx.createGain();
+    wet.gain.value = 0.1;
+    master.connect(soften);
+    soften.connect(audioCtx.destination);
+    soften.connect(echo).connect(wet).connect(audioCtx.destination);
 
     for (const [freq, offset, level] of notes) {
       playTone(audioCtx, master, freq, offset, level);

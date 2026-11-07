@@ -76,7 +76,7 @@ describe('toastory Web Audio Sound System', () => {
     vi.restoreAllMocks();
   });
 
-  it('lists all 10 built-in sound cues', () => {
+  it('lists all built-in sound cues including acoustic harmonic mallet cues', () => {
     const cues = getSoundCues();
     expect(cues).toContain('success');
     expect(cues).toContain('error');
@@ -88,7 +88,11 @@ describe('toastory Web Audio Sound System', () => {
     expect(cues).toContain('bell');
     expect(cues).toContain('message');
     expect(cues).toContain('bubble');
-    expect(cues.length).toBeGreaterThanOrEqual(10);
+    expect(cues).toContain('marimba');
+    expect(cues).toContain('crystal');
+    expect(cues).toContain('subtle');
+    expect(cues).toContain('harp');
+    expect(cues.length).toBeGreaterThanOrEqual(14);
   });
 
   it('detects audio support in window environment', () => {

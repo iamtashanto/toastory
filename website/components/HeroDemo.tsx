@@ -54,6 +54,7 @@ export function HeroDemo() {
   const [activeFw, setActiveFw] = useState<FrameworkTab>('React');
   const [activePosition, setActivePosition] = useState<ToastPosition>('top-center');
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [soundVolume, setSoundVolume] = useState(0.5);
   const themeMode = useSyncExternalStore(subscribeToTheme, getThemeSnapshot, getThemeServerSnapshot);
   const [activeTheme, setActiveTheme] = useState('ios-glass');
   const [isStacked, setIsStacked] = useState(true);
@@ -560,14 +561,29 @@ export function HeroDemo() {
   };
 
   // Sound triggers
-  const fireSoundCue = (cue: 'success' | 'error' | 'warning' | 'info' | 'chime' | 'ding' | 'pop' | 'bubble') => {
+  const fireSoundCue = (
+    cue:
+      | 'success'
+      | 'error'
+      | 'warning'
+      | 'info'
+      | 'chime'
+      | 'ding'
+      | 'pop'
+      | 'bubble'
+      | 'marimba'
+      | 'crystal'
+      | 'subtle'
+      | 'harp',
+  ) => {
     triggerAnimation(`Sound:${cue}`);
     setSelectedDemoCode(`Sound:${cue}`);
     ui.sound(cue);
     toast.message(`Audio Cue: ${cue}`, {
-      description: 'Zero-dependency Web Audio synthesizer',
+      description: 'Zero-dependency Web Audio acoustic mallet synthesizer',
       duration: 1800,
       position: activePosition,
+      theme: activeTheme,
     });
   };
 
@@ -861,6 +877,23 @@ const res = await ui.confirm({
               On
             </button>
           </div>
+          {soundEnabled && (
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.05"
+              value={soundVolume}
+              onChange={(e) => {
+                const vol = parseFloat(e.target.value);
+                setSoundVolume(vol);
+                ui.configure({ soundVolume: vol });
+              }}
+              title={`Volume: ${Math.round(soundVolume * 100)}%`}
+              aria-label="Sound volume"
+              className="w-16 h-1.5 accent-blue-500 bg-[var(--site-border)] rounded-lg cursor-pointer"
+            />
+          )}
         </div>
 
         {/* Theme Mode Toggle */}
@@ -1026,7 +1059,22 @@ const res = await ui.confirm({
         <div className="grid grid-cols-1 sm:grid-cols-[88px_1fr] items-center gap-3">
           <span className="text-xs font-semibold text-[var(--site-muted)] uppercase tracking-wider">Sound</span>
           <div className="flex flex-wrap items-center gap-2">
-            {(['success', 'error', 'warning', 'info', 'chime', 'ding', 'pop', 'bubble'] as const).map((cue) => (
+            {(
+              [
+                'success',
+                'error',
+                'warning',
+                'info',
+                'chime',
+                'ding',
+                'pop',
+                'bubble',
+                'marimba',
+                'crystal',
+                'subtle',
+                'harp',
+              ] as const
+            ).map((cue) => (
               <button
                 key={cue}
                 type="button"

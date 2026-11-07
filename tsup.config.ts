@@ -14,6 +14,16 @@ export default defineConfig({
   dts: true,
   clean: true,
   minify: 'terser',
+  terserOptions: {
+    compress: {
+      passes: 3,
+      pure_funcs: ['console.log'],
+      booleans_as_integers: true,
+    },
+    mangle: {
+      toplevel: true,
+    },
+  },
   sourcemap: true,
   treeshake: true,
   splitting: false,
