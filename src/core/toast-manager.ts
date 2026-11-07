@@ -156,33 +156,31 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
     return entry.record.duration === 0 ? Infinity : entry.timer.remaining();
   };
 
-  const dedupeKeyOf = (opts: ToastOptions): string | undefined => {
-    if (opts.dedupe === false) return;
-    if (typeof opts.dedupe === 'string') return opts.dedupe;
-    const titleVal = opts.title ?? opts.text1;
-    const descVal = opts.description ?? opts.text2;
-    const t = typeof titleVal === 'string' ? titleVal : '';
-    const d = typeof descVal === 'string' ? descVal : '';
-    return t || d ? `${opts.type ?? 'default'}|${t}|${d}` : undefined;
+  const dedupeKeyOf = (o: ToastOptions): string | undefined => {
+    if (o.dedupe === false) return;
+    if (typeof o.dedupe === 'string') return o.dedupe;
+    const t = o.title ?? o.text1;
+    const d = o.description ?? o.text2;
+    const ts = typeof t === 'string' ? t : '';
+    const ds = typeof d === 'string' ? d : '';
+    return ts || ds ? `${o.type ?? 'default'}|${ts}|${ds}` : undefined;
   };
 
   const promote = (): void => {
-    const cfg = config.get();
+    const { maxVisible } = config.get();
     const counts = new Map<string, number>();
     for (const id of order) {
       const entry = entries.get(id);
       if (!entry || entry.record.dismissed) continue;
       const key = `${entry.record.container ?? ''}|${entry.record.position}`;
       const used = counts.get(key) ?? 0;
-      const isImportant = !!entry.record.important;
-      if (used < cfg.maxVisible || isImportant) {
+      const imp = !!entry.record.important;
+      if (used < maxVisible || imp) {
         if (!entry.record.visible) {
           entry.record = { ...entry.record, visible: true };
-          if (!entry.record.pausedBy.length && entry.record.duration > 0) {
-            entry.timer.start();
-          }
+          if (!entry.record.pausedBy.length && entry.record.duration > 0) entry.timer.start();
         }
-        if (!isImportant) counts.set(key, used + 1);
+        if (!imp) counts.set(key, used + 1);
       } else if (entry.record.visible) {
         entry.record = { ...entry.record, visible: false };
         entry.timer.pause();
@@ -385,33 +383,25 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
     },
 
     pause(id, reason) {
-      const targets = id !== undefined ? [entries.get(id)] : entries.values();
-      for (const entry of targets) {
-        if (!entry || entry.record.pausedBy.includes(reason)) continue;
-        entry.timer.pause(reason);
-        entry.record = {
-          ...entry.record,
-          pausedBy: [...entry.record.pausedBy, reason],
-          remaining: remainingOf(entry),
+      for (const e of id !== undefined ? [entries.get(id)] : entries.values()) {
+        if (!e || e.record.pausedBy.includes(reason)) continue;
+        e.timer.pause(reason);
+        e.record = {
+          ...e.record,
+          pausedBy: [...e.record.pausedBy, reason],
+          remaining: remainingOf(e),
         };
       }
       emit();
     },
 
     resume(id, reason) {
-      const targets = id !== undefined ? [entries.get(id)] : entries.values();
-      for (const entry of targets) {
-        if (!entry || !entry.record.pausedBy.includes(reason)) continue;
-        entry.timer.resume(reason);
-        const nextPausedBy = entry.record.pausedBy.filter((value) => value !== reason);
-        entry.record = {
-          ...entry.record,
-          pausedBy: nextPausedBy,
-          remaining: remainingOf(entry),
-        };
-        if (!nextPausedBy.length && entry.record.visible && entry.record.duration > 0) {
-          entry.timer.start();
-        }
+      for (const e of id !== undefined ? [entries.get(id)] : entries.values()) {
+        if (!e || !e.record.pausedBy.includes(reason)) continue;
+        e.timer.resume(reason);
+        const pausedBy = e.record.pausedBy.filter((v) => v !== reason);
+        e.record = { ...e.record, pausedBy, remaining: remainingOf(e) };
+        if (!pausedBy.length && e.record.visible && e.record.duration > 0) e.timer.start();
       }
       emit();
     },

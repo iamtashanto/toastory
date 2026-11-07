@@ -335,7 +335,7 @@ describe('swipe', () => {
   });
 
   it('snaps back below the threshold and ignores disallowed directions', () => {
-    ui.toast('x', { dragThreshold: 100 });
+    ui.toast('x', { dragThreshold: 100, swipeDirections: ['right'] });
     const t = last();
     pointer(t, 'pointerdown', { x: 0 });
     pointer(t, 'pointermove', { x: 60 });
@@ -378,12 +378,23 @@ describe('swipe', () => {
   });
 
   it('computes default swipe directions by position', () => {
-    expect(defaultSwipe('top-left')).toEqual(['left']);
-    expect(defaultSwipe('bottom-right')).toEqual(['right']);
-    expect(defaultSwipe('top-center')).toEqual(['up']);
-    expect(defaultSwipe('bottom-center')).toEqual(['down']);
+    expect(defaultSwipe('top-left')).toEqual(['up', 'down', 'left', 'right']);
+    expect(defaultSwipe('bottom-right')).toEqual(['up', 'down', 'left', 'right']);
+    expect(defaultSwipe('top-center')).toEqual(['up', 'down', 'left', 'right']);
+    expect(defaultSwipe('bottom-center')).toEqual(['up', 'down', 'left', 'right']);
     expect(defaultSwipe('center')).toEqual(['up', 'down', 'left', 'right']);
     expect(defaultSwipe('middle')).toEqual(['up', 'down', 'left', 'right']);
+  });
+
+  it('allows swiping any toast left, right, up, or down by default regardless of position', () => {
+    ui.toast('Top center sideways', { id: 'tc-left', position: 'top-center' });
+    const t = last();
+    pointer(t, 'pointerdown', { x: 100, y: 100 });
+    pointer(t, 'pointermove', { x: 40, y: 100 });
+    pointer(t, 'pointerup', { x: 10, y: 100 });
+    expect(t.hasAttribute('data-flung')).toBe(true);
+    expect(t.dataset.swipeOut).toBe('left');
+    expect(ui.toast.getToasts().find((x) => x.id === 'tc-left')?.dismissed).toBe(true);
   });
 
   it('supports omnidirectional swipe discard and fling along 2D momentum vector', () => {

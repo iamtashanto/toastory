@@ -90,34 +90,28 @@ const stampOf = (record: ToastRecord): string =>
 const INTERACTIVE = 'button,a,input,select,textarea,[role=button]';
 
 /** Default swipe directions for a position: toward the nearest screen edge. */
-function getRobotSvg(char: string): string {
-  const dot = (x: number, y: number) => `<circle cx="${x}" cy="${y}" r="2" fill="currentColor"/>`;
-  const eyes = dot(12, 18) + dot(20, 18);
+function getRobotSvg(c: string): string {
+  const dot = (x: number, y = 18) => `<circle cx="${x}" cy="${y}" r="2" fill="currentColor"/>`;
+  const eyes = dot(12) + dot(20);
   const ant = '<path d="M16 4v6M12 4h8"/>';
-  let inner = eyes + ant;
-  let cls = '';
-  if (char === 'wave') inner = `${eyes}<path d="M16 4v6M12 4h8M2 14l4 4M30 10l-4 4"/>`;
-  else if (char === 'success') inner = '<path d="M11 18l3 3 7-7M16 4v6M12 4h8"/>';
-  else if (char === 'error') inner = '<path d="M12 16l8 8M20 16l-8 8M16 4v6M12 4h8"/>';
-  else if (char === 'think') inner = `${eyes}<path d="M12 22h8M16 4v6"/>`;
-  else if (char === 'loading') {
-    inner =
-      '<circle cx="16" cy="18" r="4" stroke-dasharray="16" stroke-linecap="round"/><path d="M16 4v6"/>';
-    cls = ' class="gk-spin"';
-  } else if (char === 'sleep') inner = '<path d="M10 18h4M18 18h4M16 4v6"/>';
-  else if (char === 'shock')
-    inner = `${dot(12, 16)}${dot(20, 16)}${dot(16, 22)}<path d="M16 4v6"/>`;
-  else if (char === 'search')
-    inner = '<circle cx="14" cy="18" r="4"/><path d="M17 21l4 4M16 4v6"/>';
-  else if (char === 'headPalm') inner = `${dot(12, 18)}<path d="M18 16h6v6M16 4v6"/>`;
-  return `<svg viewBox="0 0 32 32" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"${cls}><rect x="6" y="10" width="20" height="16" rx="4"/>${inner}</svg>`;
+  const map: Record<string, string> = {
+    wave: `${eyes}${ant}<path d="M2 14l4 4M30 10l-4 4"/>`,
+    success: `<path d="M11 18l3 3 7-7"/>${ant}`,
+    error: `<path d="M12 16l8 8M20 16l-8 8"/>${ant}`,
+    think: `${eyes}<path d="M12 22h8M16 4v6"/>`,
+    loading:
+      '<circle cx="16" cy="18" r="4" stroke-dasharray="16" stroke-linecap="round"/><path d="M16 4v6"/>',
+    sleep: '<path d="M10 18h4M18 18h4M16 4v6"/>',
+    shock: `${dot(12, 16)}${dot(20, 16)}${dot(16, 22)}<path d="M16 4v6"/>`,
+    search: '<circle cx="14" cy="18" r="4"/><path d="M17 21l4 4M16 4v6"/>',
+    headPalm: `${dot(12)}<path d="M18 16h6v6M16 4v6"/>`,
+  };
+  return `<svg viewBox="0 0 32 32" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"${c === 'loading' ? ' class="gk-spin"' : ''}><rect x="6" y="10" width="20" height="16" rx="4"/>${map[c] ?? eyes + ant}</svg>`;
 }
 
-export function defaultSwipe(position: ToastPosition): SwipeDirection[] {
-  if (position === 'center' || position === 'middle') return ['up', 'down', 'left', 'right'];
-  if (position.endsWith('left')) return ['left'];
-  if (position.endsWith('right')) return ['right'];
-  return position.startsWith('top') ? ['up'] : ['down'];
+export function defaultSwipe(position?: ToastPosition): SwipeDirection[] {
+  void position;
+  return ['up', 'down', 'left', 'right'];
 }
 
 /** Parses `alt+t` style hotkeys. Returns `undefined` for an empty or invalid string. */
@@ -244,9 +238,12 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       region.key.endsWith('|middle');
     let offset = 0;
     let front = 0;
+    let activeIdx = 0;
 
-    list.forEach((item, index) => {
+    list.forEach((item) => {
       const height = item.measured && item.height > 0 ? item.height : item.el.offsetHeight || 50;
+      if (item.record.dismissed) return;
+      const index = activeIdx++;
       if (index === 0) front = height;
       item.el.style.setProperty('--gk-index', String(index));
       item.el.style.setProperty('--gk-offset', `${offset}px`);
@@ -752,26 +749,31 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
 
   const attachGestures = (item: Item): void => {
     const node = item.el;
-    let start: { x: number; y: number; time: number } | undefined;
-    let hasDragged = false;
+    let start:
+      | { x: number; y: number; t: number; v: number; lt: number; lx: number; ly: number }
+      | undefined;
 
-    const setS = (x: number | string, y: number | string): void => {
-      node.style.setProperty('--gk-sx', typeof x === 'number' ? `${x}px` : x);
-      node.style.setProperty('--gk-sy', typeof y === 'number' ? `${y}px` : y);
+    const setS = (x: number, y: number, r = 0): void => {
+      node.style.setProperty('--gk-sx', `${Math.round(x)}px`);
+      node.style.setProperty('--gk-sy', `${Math.round(y)}px`);
+      node.style.setProperty('--gk-rot', `${r.toFixed(1)}deg`);
     };
 
-    const settings = (): { dirs: SwipeDirection[]; threshold: number; on: boolean } => ({
+    const settings = () => ({
       dirs: item.record.swipeDirections ?? defaultSwipe(item.record.position),
       threshold: item.record.dragThreshold ?? cfg().dragThreshold,
       on: flag(item.record.swipe, cfg().swipe) && item.record.dismissible !== false,
     });
 
-    const delta = (e: PointerEvent) => {
-      const dx = e.clientX - (start?.x ?? 0);
-      const rawDy = e.clientY - (start?.y ?? 0);
-      let dy = rawDy;
-      if (dy * (item.record.position.startsWith('top') ? -1 : 1) < 0) dy *= 0.25;
-      return { dx, rawDy, dy };
+    const delta = (e: PointerEvent, dirs: SwipeDirection[]) => {
+      const rx = e.clientX - (start?.x ?? 0);
+      const ry = e.clientY - (start?.y ?? 0);
+      return {
+        dx: dirs.includes(rx >= 0 ? 'right' : 'left') ? rx : rx * 0.18,
+        dy: dirs.includes(ry >= 0 ? 'down' : 'up') ? ry : ry * 0.18,
+        rx,
+        ry,
+      };
     };
 
     node.addEventListener('pointerenter', () => {
@@ -784,71 +786,63 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       if (!cfg().stack) store.resume(item.record.id, 'hover');
     });
     node.addEventListener('click', (event) => {
-      if (hasDragged || item.swiping || (event.target as Element).closest(INTERACTIVE)) return;
-      if (item.record.onPress) item.record.onPress(item.record);
+      if (item.swiping || (event.target as Element).closest(INTERACTIVE)) return;
+      item.record.onPress?.(item.record);
       if (flag(item.record.closeOnClick, cfg().closeOnClick)) close(item.record.id, 'click');
     });
-    node.addEventListener('pointerdown', (event) => {
-      if (!settings().on || event.button !== 0 || (event.target as Element).closest(INTERACTIVE))
-        return;
-      start = { x: event.clientX, y: event.clientY, time: performance.now() };
-      hasDragged = false;
+    node.addEventListener('pointerdown', (e) => {
+      if (!settings().on || e.button !== 0 || (e.target as Element).closest(INTERACTIVE)) return;
+      const t = performance.now();
+      start = { x: e.clientX, y: e.clientY, t, v: 0, lt: t, lx: e.clientX, ly: e.clientY };
     });
-    node.addEventListener('pointermove', (event) => {
+    node.addEventListener('pointermove', (e) => {
       if (!start) return;
-      const { dirs } = settings();
-      const { dx, dy } = delta(event);
-
+      const { dx, dy } = delta(e, settings().dirs);
+      const t = performance.now();
+      const dt = t - start.lt;
+      if (dt > 8) {
+        start.v = Math.hypot(e.clientX - start.lx, e.clientY - start.ly) / dt;
+        start.lx = e.clientX;
+        start.ly = e.clientY;
+        start.lt = t;
+      }
       if (!item.swiping) {
-        if (Math.hypot(dx, dy) < 4) return;
+        if (Math.hypot(dx, dy) < 3) return;
         item.swiping = true;
-        hasDragged = true;
-        node.setPointerCapture?.(event.pointerId);
+        node.setPointerCapture?.(e.pointerId);
         node.dataset.swiping = '';
         store.pause(item.record.id, 'swipe');
       }
-
-      const canX = dirs.includes('left') || dirs.includes('right');
-      const canY = dirs.includes('up') || dirs.includes('down');
-      setS(canX ? dx : dx * 0.15, canY ? dy : dy * 0.15);
+      setS(dx, dy, Math.max(-5, Math.min(5, dx * 0.028)));
     });
-    const finish = (event: PointerEvent): void => {
+    const finish = (e: PointerEvent): void => {
       if (!start) return;
       const { dirs, threshold } = settings();
-      const { dx, rawDy, dy } = delta(event);
-
-      const duration = Math.max(1, performance.now() - start.time);
+      const { dx, dy, rx, ry } = delta(e, dirs);
+      const dt = performance.now() - start.t;
+      const dist = Math.hypot(dx, dy);
+      const speed = Math.max(start.v, dt >= 8 ? dist / dt : 0);
       const wasSwiping = item.swiping;
       start = undefined;
       delete node.dataset.swiping;
       store.resume(item.record.id, 'swipe');
 
-      const horiz = Math.abs(dx) >= Math.abs(dy);
-      const out = horiz ? (dx > 0 ? 'right' : 'left') : dy > 0 ? 'down' : 'up';
-      const travelled = horiz ? Math.abs(dx) : Math.abs(dy);
-      const speed = Math.hypot(dx, dy) / duration;
+      const horiz = Math.abs(rx) >= Math.abs(ry);
+      const out: SwipeDirection = horiz ? (rx >= 0 ? 'right' : 'left') : ry >= 0 ? 'down' : 'up';
       const dim = horiz ? node.offsetWidth || 350 : node.offsetHeight || 60;
       const limit = threshold <= 1 && threshold > 0 ? threshold * dim : threshold;
 
-      const isDismissible =
-        wasSwiping &&
-        dirs.includes(out as SwipeDirection) &&
-        (travelled >= limit || (duration >= 40 && speed > 0.45 && travelled > 15));
-
-      if (isDismissible) {
+      if (wasSwiping && dirs.includes(out) && (dist >= limit || (speed > 0.32 && dist > 12))) {
         node.dataset.swipeOut = out;
-        const len = Math.hypot(dx, rawDy) || 1;
-        const reach = Math.max(160, speed * 320);
-        node.setAttribute('data-flung', '');
-        node.style.transition = 'transform .32s var(--gk-ease),opacity .22s ease-out';
-        setS((dx / len) * reach, (rawDy / len) * reach);
+        node.dataset.flung = '';
+        const reach = Math.max(240, dist + Math.max(speed, 0.6) * 320) / (dist || 1);
+        setS(dx * reach, dy * reach, Math.max(-8, Math.min(8, dx * reach * 0.025)));
         close(item.record.id, 'swipe');
       } else {
-        setS('0px', '0px');
+        setS(0, 0, 0);
       }
       setTimeout(() => {
         item.swiping = false;
-        hasDragged = false;
       }, 50);
     };
     node.addEventListener('pointerup', finish);
