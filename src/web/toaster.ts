@@ -470,12 +470,14 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
           const opt = av as ToastAvatarOption;
           const src = opt.src && safeUrl(opt.src) ? opt.src : '';
           if (src) {
-            holder.append(
-              el('img', '', {
-                src,
-                alt: opt.alt ?? opt.name ?? '',
-              }),
-            );
+            const imgEl = el('img', '', {
+              src,
+              alt: opt.alt ?? opt.name ?? '',
+            });
+            imgEl.addEventListener('error', () => {
+              imgEl.style.display = 'none';
+            });
+            holder.append(imgEl);
           } else {
             const init =
               opt.initials ??
@@ -491,7 +493,11 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
             holder.style.cssText = `background:${opt.color ?? deterministicColor(opt.name ?? init)};color:#fff`;
           }
         } else if (typeof av === 'string') {
-          holder.append(el('img', '', { src: safeUrl(av) ? av : '', alt: '' }));
+          const imgEl = el('img', '', { src: safeUrl(av) ? av : '', alt: '' });
+          imgEl.addEventListener('error', () => {
+            imgEl.style.display = 'none';
+          });
+          holder.append(imgEl);
         } else fill(holder, av as Renderable);
         node.append(holder);
       }
@@ -499,7 +505,16 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       if (record.title) {
         const title = el('div', k('title', names.title));
         fill(title, record.title);
+        if (record.count > 1) {
+          title.append(
+            el('span', k('count', names.count), { 'aria-hidden': 'true' }, `${record.count}`),
+          );
+        }
         content.append(title);
+      } else if (record.count > 1) {
+        content.append(
+          el('span', k('count', names.count), { 'aria-hidden': 'true' }, `${record.count}`),
+        );
       }
       if (record.description || record.html) {
         const desc = el('div', k('description', names.description, 'desc'));
@@ -529,12 +544,6 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
           fillEl,
         );
         content.append(track);
-      }
-
-      if (record.count > 1) {
-        content.append(
-          el('span', k('count', names.count), { 'aria-hidden': 'true' }, `${record.count}`),
-        );
       }
     }
     const body =
@@ -825,7 +834,8 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       if (!start) return;
       const { dirs, threshold } = settings();
       const { dx, dy, rx, ry } = delta(e, dirs);
-      const duration = Math.max(1, (e.timeStamp || performance.now()) - start.t);
+      const startT = start.t;
+      const duration = Math.max(1, (e.timeStamp || performance.now()) - startT);
       const speed = Math.hypot(dx, dy) / duration;
       const wasSwiping = item.swiping;
       start = undefined;
@@ -838,15 +848,17 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       const limit = threshold <= 1 && threshold > 0 ? threshold * dim : threshold;
       const dist = Math.hypot(dx, dy);
 
-      if (
-        wasSwiping &&
-        dirs.includes(out) &&
-        (dist >= limit || (duration >= 40 && speed > 0.45 && dist > 15))
-      ) {
+      const isFlick = duration >= 40 && speed > 0.45 && dist > 15;
+      if (wasSwiping && dirs.includes(out) && (dist >= limit || isFlick)) {
         node.dataset.swipeOut = out;
         node.dataset.flung = '';
-        const r = Math.max(240, dist + Math.max(speed, 0.6) * 320) / (dist || 1);
-        setS(dx * r, dy * r, Math.max(-8, Math.min(8, dx * r * 0.025)));
+        const len = dist || 1;
+        const reach = Math.max(280, speed * 360);
+        setS(
+          (dx / len) * reach,
+          (dy / len) * reach,
+          Math.max(-10, Math.min(10, (dx / len) * reach * 0.02)),
+        );
         close(item.record.id, 'swipe');
       } else setS(0, 0);
       setTimeout(() => {

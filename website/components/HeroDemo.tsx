@@ -138,11 +138,8 @@ export function HeroDemo() {
     setTimeout(() => setLastClickedDemo(''), 400);
   };
 
-  // Helper avatar SVG
-  const avatarSvg = (initials: string, bg: string) =>
-    `data:image/svg+xml,${encodeURIComponent(
-      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 56"><rect width="56" height="56" rx="28" fill="${bg}"/><text x="28" y="35" font-family="-apple-system,system-ui,sans-serif" font-size="20" font-weight="700" text-anchor="middle" fill="#fff">${initials}</text></svg>`
-    )}`;
+  // Helper avatar
+  const avatarInitials = (initials: string, color: string) => ({ initials, color });
 
   // --- DEMO ACTIONS ---
   const fireSave = () => {
@@ -270,7 +267,7 @@ export function HeroDemo() {
       description: 'Downloading · 0%',
       position: activePosition,
       theme: activeTheme,
-      avatar: avatarSvg('ZIP', '#3b82f6'),
+      avatar: avatarInitials('ZIP', '#3b82f6'),
       cancel: {
         label: 'Cancel',
         onClick: () => {
@@ -352,7 +349,7 @@ export function HeroDemo() {
       description: 'Can you review the PR before standup?',
       position: activePosition,
       theme: activeTheme,
-      avatar: avatarSvg('SC', '#6366f1'),
+      avatar: avatarInitials('SC', '#6366f1'),
       action: {
         label: 'Reply',
         onClick: () => {
@@ -378,7 +375,7 @@ export function HeroDemo() {
       description: 'Room 4 · 6 attendees',
       position: activePosition,
       theme: activeTheme,
-      avatar: avatarSvg('DS', '#10b981'),
+      avatar: avatarInitials('DS', '#10b981'),
       action: {
         label: 'Join',
         onClick: () => {
@@ -401,7 +398,7 @@ export function HeroDemo() {
       description: 'Product design workspace · 12 members',
       position: activePosition,
       theme: activeTheme,
-      avatar: avatarSvg('AL', '#f43f5e'),
+      avatar: avatarInitials('AL', '#f43f5e'),
       action: {
         label: 'Accept',
         onClick: () => {
@@ -427,14 +424,14 @@ export function HeroDemo() {
       description: 'M83 · Hurry Up, We’re Dreaming',
       position: activePosition,
       theme: activeTheme,
-      avatar: avatarSvg('♫', '#8b5cf6'),
+      avatar: avatarInitials('♫', '#8b5cf6'),
       action: {
         label: 'Next Track',
         onClick: () => {
           toast.info('Intro — The xx', {
             description: 'Playing next in queue',
             position: activePosition,
-            avatar: avatarSvg('♪', '#3b82f6'),
+            avatar: avatarInitials('♪', '#3b82f6'),
           });
         },
       },
@@ -599,7 +596,7 @@ export function HeroDemo() {
       island: true,
       position: 'top-center',
       theme: activeTheme,
-      avatar: avatarSvg('ER', '#10b981'),
+      avatar: avatarInitials('ER', '#10b981'),
       duration: 6000,
       action: {
         label: 'Accept',
