@@ -14,4 +14,3 @@
   - Cached SSR server snapshot in `toastory/react` (`useToast`, `useToastory`) for React 18/19 SSR hydration safety.
   - Proper top-level `onUnmounted` registration in `toastory/vue`.
   - Complete listener, timer, `inert`/`aria-hidden`, scroll-lock, OTP interval, and Web Audio node cleanup on teardown.
-
