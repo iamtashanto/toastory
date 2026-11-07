@@ -21,7 +21,7 @@ export default defineConfig({
       sequences: true,
       pure_funcs: ['console.log'],
       pure_getters: true,
-      booleans_as_integers: true,
+      booleans_as_integers: false,
       unsafe: true,
       unsafe_arrows: true,
       unsafe_methods: true,
@@ -43,6 +43,7 @@ export default defineConfig({
     },
     mangle: {
       toplevel: true,
+      module: true,
     },
   },
   sourcemap: true,

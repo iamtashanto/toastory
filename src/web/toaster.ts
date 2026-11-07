@@ -466,6 +466,8 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
             src: imgSrc,
             alt: typeof record.image === 'object' ? (record.image.alt ?? '') : '',
           });
+          imgEl.style.cssText =
+            'width:calc(100% + 2em);height:96px;margin:-14px -1em 8px;object-fit:cover;display:block';
           node.prepend(imgEl);
         }
       }
@@ -497,26 +499,36 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
               src,
               alt: opt.alt ?? opt.name ?? '',
             });
-            imgEl.addEventListener('error', () => {
+            imgEl.style.opacity = '0';
+            imgEl.onload = () => (imgEl.style.opacity = '1');
+            imgEl.onerror = () => {
               imgEl.remove();
               renderInitials();
-            });
+            };
             holder.append(imgEl);
           } else {
             renderInitials();
           }
         } else if (typeof av === 'string') {
-          const imgEl = el('img', '', { src: safeUrl(av) ? av : '', alt: '' });
-          imgEl.addEventListener('error', () => {
-            imgEl.style.display = 'none';
-            if (!holder.textContent) {
-              const init =
-                typeof record.title === 'string' ? record.title.slice(0, 2).toUpperCase() : '?';
-              holder.textContent = init;
-              holder.style.cssText = 'background:var(--gk-accent);color:#fff';
-            }
-          });
-          holder.append(imgEl);
+          if (/^(\w+:|\/)/.test(av)) {
+            const imgEl = el('img', '', { src: safeUrl(av) ? av : '', alt: '' });
+            imgEl.style.opacity = '0';
+            imgEl.onload = () => (imgEl.style.opacity = '1');
+            imgEl.onerror = () => {
+              imgEl.remove();
+              if (!holder.textContent) {
+                const init =
+                  typeof record.title === 'string' ? record.title.slice(0, 2).toUpperCase() : '?';
+                holder.textContent = init;
+                holder.style.cssText = 'background:var(--gk-accent);color:#fff';
+              }
+            };
+            holder.append(imgEl);
+          } else {
+            const init = av.slice(0, 3).toUpperCase();
+            holder.textContent = init;
+            holder.style.cssText = `background:${deterministicColor(init)};color:#fff`;
+          }
         } else fill(holder, av as Renderable);
         node.append(holder);
       }
