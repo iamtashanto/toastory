@@ -36,7 +36,7 @@ export default function ChangelogPage() {
               <ul className="list-disc list-inside space-y-1 text-[var(--site-muted)] text-xs sm:text-sm pl-2">
                 <li><strong className="text-[var(--site-fg)]">7 Toast Positions</strong>: Complete support for `top-left`, `top-center`, `top-right`, `center` / `middle`, `bottom-left`, `bottom-center`, and `bottom-right`.</li>
                 <li><strong className="text-[var(--site-fg)]">Harmonic Sound Engine</strong>: Zero-dependency Web Audio API synthesizer with 10 built-in cues (`success`, `error`, `warning`, `info`, `ding`, `pop`, `chime`, `bell`, `message`, `bubble`) + custom notes and audio URLs.</li>
-                <li><strong className="text-[var(--site-fg)]">Closed-Form CSS Spring Easing</strong>: `springEasing({ stiffness, damping, mass })` in `toastory/core` baking physics into GPU-accelerated CSS `linear(...)` curves.</li>
+                <li><strong className="text-[var(--site-fg)]">Closed-Form CSS Spring Easing</strong>: <code>springEasing(&#123; stiffness, damping, mass &#125;)</code> in <code>toastory/core</code> baking physics into GPU-accelerated CSS <code>linear(...)</code> curves.</li>
                 <li><strong className="text-[var(--site-fg)]">4-Direction Swipe Dismissal</strong>: Center toasts support natural 4-way gesture flick (`up`, `down`, `left`, `right`).</li>
                 <li><strong className="text-[var(--site-fg)]">React Native & Expo Floating Island</strong>: `nativeSpring` (`glide`, `snappy`), `nativeTiming` (`normal`, `exit`), `gap`, `closeButton`, `visibleToasts`, and non-blocking `expo-haptics`.</li>
               </ul>

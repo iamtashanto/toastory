@@ -29,6 +29,7 @@ export default function ThemesPage() {
       toast.success(`${themeName} Theme Active`, {
         description: `Rendered in ${mode} mode with Apple glass styling.`,
         theme: themeName,
+        sound: 'chime',
       });
     } else {
       ui.confirm({

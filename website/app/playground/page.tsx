@@ -9,7 +9,10 @@ import { CodeSnippet } from '@/components/CodeSnippet';
 export default function PlaygroundPage() {
   const [theme, setTheme] = useState('ios-glass');
   const [mode, setMode] = useState<'dark' | 'light'>('dark');
-  const [position, setPosition] = useState<ToastPosition>('top-right');
+  const [position, setPosition] = useState<ToastPosition>('top-center');
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [soundCue, setSoundCue] = useState<string>('success');
+  const [soundVolume, setSoundVolume] = useState(0.5);
   const [stack, setStack] = useState<'stacked' | 'expanded'>('stacked');
   const [duration, setDuration] = useState(4000);
   const [richColors, setRichColors] = useState(false);
@@ -241,6 +244,12 @@ export default function PlaygroundPage() {
           : undefined,
       };
       if (progress !== 'none') opts.progress = progress === 'bar';
+      if (soundEnabled) {
+        opts.sound = soundCue;
+        opts.soundVolume = soundVolume;
+      } else {
+        opts.sound = false;
+      }
 
       if (toastType === 'success') toast.success(title, opts);
       else if (toastType === 'error') toast.error(title, opts);
@@ -725,21 +734,182 @@ export default function NativeScreen() {
             </div>
           </div>
 
-          {/* Position */}
+          {/* Position - 7 Placements */}
           <div>
-            <label className="block text-xs font-semibold text-[var(--site-muted)] mb-1.5">Screen Placement (6 Positions)</label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-xs font-semibold text-[var(--site-muted)]">Placement (7 Positions)</label>
+              <span className="text-[11px] font-mono font-medium text-blue-500 bg-blue-500/10 px-2 py-0.5 rounded-md">
+                {position}
+              </span>
+            </div>
+
+            {/* Visual 7-Position Grid Picker */}
+            <div className="bg-[var(--site-input-bg)] border border-[var(--site-border)] rounded-2xl p-3 flex flex-col items-center gap-2 mb-3">
+              <div className="text-[10px] uppercase tracking-wider font-semibold text-[var(--site-muted)]">Interactive Screen Matrix</div>
+              <div className="grid grid-cols-3 gap-2 w-48 p-2 rounded-xl bg-[var(--site-surface-raised)] border border-[var(--site-border-subtle)]">
+                {/* Top Row */}
+                <button
+                  type="button"
+                  onClick={() => setPosition('top-left')}
+                  title="top-left"
+                  className={`h-7 rounded-lg transition-all text-[11px] font-medium ${
+                    position === 'top-left' ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30' : 'bg-[var(--site-input-bg)] hover:bg-blue-500/20 text-[var(--site-muted)]'
+                  }`}
+                >
+                  TL
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPosition('top-center')}
+                  title="top-center"
+                  className={`h-7 rounded-lg transition-all text-[11px] font-medium ${
+                    position === 'top-center' ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30' : 'bg-[var(--site-input-bg)] hover:bg-blue-500/20 text-[var(--site-muted)]'
+                  }`}
+                >
+                  TC
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPosition('top-right')}
+                  title="top-right"
+                  className={`h-7 rounded-lg transition-all text-[11px] font-medium ${
+                    position === 'top-right' ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30' : 'bg-[var(--site-input-bg)] hover:bg-blue-500/20 text-[var(--site-muted)]'
+                  }`}
+                >
+                  TR
+                </button>
+
+                {/* Center Row */}
+                <div className="h-7 opacity-0 pointer-events-none" />
+                <button
+                  type="button"
+                  onClick={() => setPosition('center')}
+                  title="center"
+                  className={`h-7 rounded-lg transition-all text-[11px] font-medium ${
+                    position === 'center' || position === 'middle' ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30' : 'bg-[var(--site-input-bg)] hover:bg-blue-500/20 text-[var(--site-muted)]'
+                  }`}
+                >
+                  CTR
+                </button>
+                <div className="h-7 opacity-0 pointer-events-none" />
+
+                {/* Bottom Row */}
+                <button
+                  type="button"
+                  onClick={() => setPosition('bottom-left')}
+                  title="bottom-left"
+                  className={`h-7 rounded-lg transition-all text-[11px] font-medium ${
+                    position === 'bottom-left' ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30' : 'bg-[var(--site-input-bg)] hover:bg-blue-500/20 text-[var(--site-muted)]'
+                  }`}
+                >
+                  BL
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPosition('bottom-center')}
+                  title="bottom-center"
+                  className={`h-7 rounded-lg transition-all text-[11px] font-medium ${
+                    position === 'bottom-center' ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30' : 'bg-[var(--site-input-bg)] hover:bg-blue-500/20 text-[var(--site-muted)]'
+                  }`}
+                >
+                  BC
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPosition('bottom-right')}
+                  title="bottom-right"
+                  className={`h-7 rounded-lg transition-all text-[11px] font-medium ${
+                    position === 'bottom-right' ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30' : 'bg-[var(--site-input-bg)] hover:bg-blue-500/20 text-[var(--site-muted)]'
+                  }`}
+                >
+                  BR
+                </button>
+              </div>
+            </div>
+
             <select
               value={position}
               onChange={(e) => setPosition(e.target.value as ToastPosition)}
               className="w-full bg-[var(--site-input-bg)] border border-[var(--site-border)] rounded-xl px-3 py-2 text-sm text-[var(--site-fg)] focus:outline-none font-mono text-xs"
             >
-              <option value="top-right">top-right</option>
-              <option value="top-center">top-center</option>
               <option value="top-left">top-left</option>
-              <option value="bottom-right">bottom-right</option>
-              <option value="bottom-center">bottom-center</option>
+              <option value="top-center">top-center (Dynamic Island)</option>
+              <option value="top-right">top-right</option>
+              <option value="center">center / middle (Focal Center)</option>
               <option value="bottom-left">bottom-left</option>
+              <option value="bottom-center">bottom-center</option>
+              <option value="bottom-right">bottom-right</option>
             </select>
+          </div>
+
+          {/* Sound Synthesizer Controls */}
+          <div className="space-y-3 pt-3 border-t border-[var(--site-border-subtle)]">
+            <div className="flex items-center justify-between">
+              <div>
+                <label className="text-xs font-semibold text-[var(--site-fg)] block">Harmonic Audio Feedback</label>
+                <span className="text-[11px] text-[var(--site-muted)]">Web Audio synthesizer (zero audio files)</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSoundEnabled(!soundEnabled)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
+                  soundEnabled ? 'bg-blue-600' : 'bg-gray-700'
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    soundEnabled ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </button>
+            </div>
+
+            {soundEnabled && (
+              <div className="space-y-2 bg-[var(--site-input-bg)] p-3 rounded-xl border border-[var(--site-border)]">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-[var(--site-muted)] font-medium">Sound Cue</span>
+                  <button
+                    type="button"
+                    onClick={() => ui.sound(soundCue, soundVolume)}
+                    className="text-xs font-semibold text-blue-500 hover:text-blue-400 flex items-center gap-1"
+                  >
+                    Play Sample 🔊
+                  </button>
+                </div>
+                <div className="grid grid-cols-2 gap-1.5 text-xs">
+                  {(['success', 'error', 'warning', 'info', 'ding', 'pop', 'chime', 'bell', 'message', 'bubble'] as const).map((cue) => (
+                    <button
+                      key={cue}
+                      type="button"
+                      onClick={() => {
+                        setSoundCue(cue);
+                        ui.sound(cue, soundVolume);
+                      }}
+                      className={`py-1 px-2 rounded-lg text-left capitalize transition-colors text-xs font-medium ${
+                        soundCue === cue ? 'bg-blue-600 text-white font-semibold' : 'bg-[var(--site-surface-raised)] text-[var(--site-muted)] hover:text-[var(--site-fg)]'
+                      }`}
+                    >
+                      {cue}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Volume slider */}
+                <div className="pt-2 border-t border-[var(--site-border)] flex items-center justify-between gap-2 text-xs">
+                  <span className="text-[var(--site-muted)] font-medium">Volume: {Math.round(soundVolume * 100)}%</span>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.05"
+                    value={soundVolume}
+                    onChange={(e) => setSoundVolume(parseFloat(e.target.value))}
+                    className="w-24 accent-blue-600"
+                    aria-label="Sound volume"
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Dialog Specific Options */}

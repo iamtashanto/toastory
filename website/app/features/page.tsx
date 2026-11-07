@@ -134,6 +134,40 @@ export default function FeaturesPage() {
       },
     },
 
+    {
+      id: 'toast-7-positions',
+      group: 'Toasts & Promises',
+      title: '7 Screen Placements with Dynamic Center',
+      description: 'Anchor toasts in 7 positions: top-left, top-center, top-right, center/middle, bottom-left, bottom-center, and bottom-right with 4-way gesture flick.',
+      docUrl: '/docs/guides/stacking-positioning',
+      snippet: `ui.configure({\n  position: 'center',\n  swipe: true\n});\ntoast.success('Anchored at screen center!', {\n  position: 'center'\n});`,
+      actionLabel: 'Trigger Center Placement',
+      onTrigger: () => {
+        ui.configure({ position: 'center' });
+        toast.success('Anchored at focal center!', {
+          description: 'Center placement supports 4-way swipe dismissal (up, down, left, right).',
+          position: 'center',
+          sound: 'pop',
+        });
+      },
+    },
+    {
+      id: 'toast-harmonic-sound',
+      group: 'Toasts & Promises',
+      title: 'Zero-Dependency Web Audio Harmonic Synthesizer',
+      description: 'Pure synthesized tones from sine partials (zero audio files needed). 10 built-in cues: success, error, warning, info, ding, pop, chime, bell, message, bubble.',
+      docUrl: '/docs/guides/stacking-positioning',
+      snippet: `// Global or per-toast audio cues:\nui.sound('ding');\ntoast.success('Saved to cloud', {\n  sound: 'chime',\n  soundVolume: 0.6\n});`,
+      actionLabel: 'Play Synthesizer Chime',
+      onTrigger: () => {
+        ui.sound('chime');
+        toast.info('Synthesized Harmonic Chime ♫', {
+          description: 'Warm organic chime generated with Web Audio API partials.',
+          sound: 'chime',
+        });
+      },
+    },
+
     // --- Group 2: Dialogs & Modals ---
     {
       id: 'dlg-confirm',

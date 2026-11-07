@@ -73,7 +73,7 @@ Every Sonner option maps cleanly to toastory:
 | \`cancel\` | \`cancel: { label, onClick }\` | Secondary cancel button. |
 | \`closeButton\` | \`closeButton\` | Adds accessible close button with hover state. |
 | \`richColors\` | \`richColors\` | Injects semantic background tint mixed with solid surface. |
-| \`position\` | \`position\` | 6 screen placements (\`top-right\`, \`top-center\`, \`top-left\`, \`bottom-right\`, \`bottom-center\`, \`bottom-left\`). |
+| \`position\` | \`position\` | 7 screen placements (\`top-left\`, \`top-center\`, \`top-right\`, \`center\`, \`bottom-left\`, \`bottom-center\`, \`bottom-right\`). |
 | \`expand\` | \`stack: 'expanded'\` | Expands notifications into a list instead of stacked deck. |
 | \`theme="system"\` | \`mode: 'auto'\` | Supports \`'light'\`, \`'dark'\`, and \`'auto'\`. |
 

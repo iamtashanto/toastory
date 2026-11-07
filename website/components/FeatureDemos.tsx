@@ -496,6 +496,70 @@ export function FeatureDemos() {
           </div>
         </div>
 
+        {/* 7 Placements & Web Audio Sound Cues */}
+        <div className="p-6 rounded-2xl border border-[var(--site-border)] bg-[var(--site-card-bg)] space-y-4 shadow-sm md:col-span-2">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30">
+                New in v0.2.0
+              </span>
+              <h4 className="text-lg font-bold text-[var(--site-fg)]">7 Screen Placements & Web Audio Synthesizer</h4>
+            </div>
+            <span className="text-xs text-[var(--site-muted)]">Zero external mp3 files · Pure Web Audio harmonic synthesis</span>
+          </div>
+
+          <p className="text-sm text-[var(--site-muted)] leading-relaxed">
+            Position toasts precisely across 7 screen locations with auto-responsive mobile scaling and natural multi-direction gesture dismissal. Trigger musical, organic feedback cues with adjustable volume and graceful SSR degradation.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+            <div className="space-y-2 p-3.5 rounded-xl bg-[var(--site-surface)] border border-[var(--site-border)]">
+              <span className="text-xs font-semibold text-[var(--site-fg)] block">Try All 7 Positions:</span>
+              <div className="flex flex-wrap gap-1.5">
+                {(['top-left', 'top-center', 'top-right', 'center', 'bottom-left', 'bottom-center', 'bottom-right'] as const).map((pos) => (
+                  <button
+                    key={pos}
+                    type="button"
+                    onClick={() => {
+                      ui.configure({ position: pos });
+                      toast.success(`Position: ${pos}`, {
+                        description: `Notification anchored at ${pos}.`,
+                        position: pos,
+                        sound: 'pop',
+                      });
+                    }}
+                    className="px-2.5 py-1 rounded-lg text-xs font-mono font-medium bg-[var(--site-surface-raised)] border border-[var(--site-border)] hover:border-blue-500/40 text-[var(--site-fg)] transition-all hover:scale-105"
+                  >
+                    {pos}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-2 p-3.5 rounded-xl bg-[var(--site-surface)] border border-[var(--site-border)]">
+              <span className="text-xs font-semibold text-[var(--site-fg)] block">Play Synthesized Sound Cues:</span>
+              <div className="flex flex-wrap gap-1.5">
+                {(['success', 'error', 'warning', 'info', 'ding', 'pop', 'chime', 'bell', 'message', 'bubble'] as const).map((cue) => (
+                  <button
+                    key={cue}
+                    type="button"
+                    onClick={() => {
+                      ui.sound(cue);
+                      toast.info(`Cue: ${cue}`, {
+                        description: `Synthesized with pure harmonic partials.`,
+                        sound: cue,
+                      });
+                    }}
+                    className="px-2.5 py-1 rounded-lg text-xs font-medium bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 hover:bg-blue-500/20 transition-all active:scale-95"
+                  >
+                    🔊 {cue}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="p-6 rounded-2xl border border-[var(--site-border)] bg-[var(--site-card-bg)] space-y-4 shadow-sm">
           <div className="flex items-center gap-2">
             <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/30">

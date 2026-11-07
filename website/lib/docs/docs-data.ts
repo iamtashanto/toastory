@@ -33,7 +33,7 @@ export const DOC_NAVIGATION: DocSection[] = [
       { slug: 'guides/promise-toasts', title: 'Promise Toasts', summary: 'ui.toast.promise() with async states and unwrap()' },
       { slug: 'guides/updating-dismissing', title: 'Updating & Dismissal', summary: 'Dynamic mutations, programmatic close, and history' },
       { slug: 'guides/custom-content', title: 'Custom Content', summary: 'Custom JSX renderers, HTML sanitization, and badges' },
-      { slug: 'guides/stacking-positioning', title: 'Stacking & Positioning', summary: '6 screen placements, 3D deck stacking, and hover expand' },
+      { slug: 'guides/stacking-positioning', title: 'Stacking & Positioning', summary: '7 screen placements, 3D deck stacking, harmonic audio cues, and hover expand' },
       { slug: 'guides/swipe-gestures', title: 'Swipe & Gestures', summary: '4-direction velocity snap, drag thresholds, touch actions' },
       { slug: 'guides/progress-timers', title: 'Progress & Timers', summary: 'Determinate tracks, circular rings, pausable timers' },
       { slug: 'guides/dialogs', title: 'Dialogs & Modals', summary: 'ui.confirm(), ui.alert(), tones, and focus trapping' },

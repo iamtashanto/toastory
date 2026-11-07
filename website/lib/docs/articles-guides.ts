@@ -221,29 +221,31 @@ toast.info('Invoice generated', {
   'guides/stacking-positioning': {
     slug: 'guides/stacking-positioning',
     title: 'Stacking & Screen Positioning',
-    description: 'Configure 6 screen anchor points, 3D stacked decks, expanded list mode, and mobile responsive adaptation.',
+    description: 'Configure 7 screen anchor points, 3D stacked decks, expanded list mode, and mobile responsive adaptation.',
     category: 'Guides',
-    lastUpdated: 'October 2026',
+    lastUpdated: 'November 2026',
     headings: [
-      { id: 'positions', title: 'Screen Placements' },
+      { id: 'positions', title: 'Screen Placements (7 Anchors)' },
       { id: 'stacking-modes', title: 'Deck Stacking vs Expanded List' },
+      { id: 'sound-engine', title: 'Harmonic Audio Synthesizer' },
       { id: 'mobile-behavior', title: 'Automatic Mobile Adaptation' },
     ],
     content: `
 # Stacking & Screen Positioning
 
-toastory features an Apple-inspired 3D card deck stack that gracefully expands when the user hovers or focuses into notifications.
+toastory features an Apple-inspired 3D card deck stack that gracefully expands when the user hovers or focuses into notifications, with full support for 7 screen placements and zero-dependency harmonic audio synthesis.
 
-### Screen Placements
+### Screen Placements (7 Anchors)
 
 Configure the default container position via \`ui.configure()\` or override on individual calls:
 
-- \`top-right\` (Default on desktop)
-- \`top-center\`
 - \`top-left\`
-- \`bottom-right\`
-- \`bottom-center\`
+- \`top-center\` (Apple Dynamic Island placement)
+- \`top-right\` (Classic desktop default)
+- \`center\` / \`middle\` (Focal center screen placement with 4-way swipe)
 - \`bottom-left\`
+- \`bottom-center\`
+- \`bottom-right\`
 
 \`\`\`typescript
 import { ui } from 'toastory';
@@ -253,7 +255,21 @@ ui.configure({
   stack: true, // 3D card deck stacking
   maxVisible: 5,
   gap: 12,
+  sound: true, // Enable Web Audio harmonic synthesizer
+  soundVolume: 0.5,
 });
+\`\`\`
+
+### Harmonic Audio Feedback
+
+toastory includes a synthesized Web Audio engine (zero external mp3 files, zero dependencies) with 10 organic sound cues:
+
+\`\`\`typescript
+// Trigger specific cues or global feedback
+ui.sound('chime'); // 'success' | 'error' | 'warning' | 'info' | 'ding' | 'pop' | 'chime' | 'bell' | 'message' | 'bubble'
+
+// Or per-toast:
+ui.toast.success('Deployed to production!', { sound: 'ding' });
 \`\`\`
 `,
   },
