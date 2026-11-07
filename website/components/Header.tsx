@@ -158,6 +158,20 @@ export function Header() {
               )}
             </button>
 
+            {/* Support / Sponsor Link */}
+            <a
+              href="https://www.supportkori.com/iamtashanto"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500/20 hover:border-rose-500/40 transition-all shadow-sm group"
+              title="Support the creator on SupportKori"
+            >
+              <svg className="w-3.5 h-3.5 text-rose-400 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+              </svg>
+              <span>Support</span>
+            </a>
+
             {/* GitHub Link */}
             <a
               href="https://github.com/iamtashanto/toastory"
@@ -204,6 +218,14 @@ export function Header() {
             ))}
             <div className="pt-2 border-t border-white/10 flex items-center justify-between text-xs text-gray-400 px-3">
               <span>Version: v0.3.1 (MIT)</span>
+              <a
+                href="https://www.supportkori.com/iamtashanto"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-rose-400 font-medium hover:underline flex items-center gap-1"
+              >
+                <span>Support</span> ♥
+              </a>
               <Link href="/changelog" onClick={() => setIsMobileMenuOpen(false)} className="text-blue-400">
                 Changelog →
               </Link>

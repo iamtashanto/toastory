@@ -14,6 +14,39 @@ export default function ChangelogPage() {
       </div>
 
       <div className="space-y-12">
+        {/* Release v0.3.1 */}
+        <section className="relative pl-6 sm:pl-8 border-l-2 border-emerald-500 space-y-4">
+          <div className="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-emerald-500 border-4 border-[var(--site-bg)]" />
+
+          <div className="flex flex-wrap items-center gap-3">
+            <h2 className="text-2xl font-bold text-[var(--site-fg)]">
+              v0.3.1 — Visual Defect Remediation, Spring Fling Polish &amp; Multi-Framework Studio
+            </h2>
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+              Latest Release
+            </span>
+            <span className="text-xs text-[var(--site-muted)] font-mono">November 2026</span>
+          </div>
+
+          <p className="text-sm text-[var(--site-muted)] leading-relaxed">
+            Polish and maintenance release addressing avatar data URIs, header element collisions, redundant status icon suppression with character avatars, ding-style 1:1 spring physics and velocity-based release discard, and expanded playground code generation.
+          </p>
+
+          <div className="space-y-4 pt-2 text-sm text-[var(--site-muted)]">
+            <div>
+              <h3 className="font-semibold text-[var(--site-fg)] mb-2">Key Highlights:</h3>
+              <ul className="list-disc list-inside space-y-1.5 text-[var(--site-muted)] text-xs sm:text-sm pl-2">
+                <li><strong className="text-[var(--site-fg)]">Avatar Data URI Support</strong>: Allowed <code>data:image/(?:png|jpe?g|webp|gif|svg\+xml)</code> URIs in the URL sanitizer, preventing broken image placeholders when using inline SVG avatars or base64 assets.</li>
+                <li><strong className="text-[var(--site-fg)]">Header Meta Collision Fix</strong>: Introduced dedicated <code>.gk-meta</code> container grouping timestamp, keyboard badges, and close/discard text cleanly with <code>margin-inline-start: auto</code>.</li>
+                <li><strong className="text-[var(--site-fg)]">Redundant Icon Suppression</strong>: Automatically hides the default status icon when a robot mascot or custom avatar is specified, avoiding dual side-by-side icons.</li>
+                <li><strong className="text-[var(--site-fg)]">Ding-Style Physics &amp; Fling Polish</strong>: Added 1:1 pointer tracking, velocity threshold detection for momentum flinging, and <code>cubic-bezier(0.18, 1.25, 0.35, 1)</code> entrance curve.</li>
+                <li><strong className="text-[var(--site-fg)]">Acoustic Mallet Filter</strong>: Added 1300Hz Biquad lowpass filter to the Web Audio synthesizer for mellow, warm room resonance.</li>
+                <li><strong className="text-[var(--site-fg)]">Multi-Framework Playground</strong>: Completely revamped interactive studio supporting full, idiomatic code generation for 9 frameworks.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
         {/* Release v0.3.0 */}
         <section className="relative pl-6 sm:pl-8 border-l-2 border-purple-500 space-y-4">
           <div className="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-purple-600 border-4 border-[var(--site-bg)]" />
@@ -22,9 +55,6 @@ export default function ChangelogPage() {
             <h2 className="text-2xl font-bold text-[var(--site-fg)]">
               v0.3.0 — Real Spring Physics, Dynamic Island, 10 SVG Robot Mascots &amp; Full Lifecycle Audit
             </h2>
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-semibold bg-purple-500/20 text-purple-400 border border-purple-500/30">
-              Latest
-            </span>
             <span className="text-xs text-[var(--site-muted)] font-mono">November 2026</span>
           </div>
 

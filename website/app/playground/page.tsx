@@ -2,28 +2,30 @@
 
 import React, { useState, useEffect } from 'react';
 import { ui, toast } from 'toastory';
-import type { ToastPosition, ToastOptions, RobotCharacter } from 'toastory';
+import type { ToastPosition, RobotCharacter } from 'toastory';
 import { THEME_REGISTRY } from '@/lib/theme-generator';
 import { CodeSnippet } from '@/components/CodeSnippet';
 
 const SAMPLE_BANNER_SVG = `data:image/svg+xml,${encodeURIComponent(
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 160"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#2563eb"/><stop offset="50%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#ec4899"/></linearGradient></defs><rect width="600" height="160" fill="url(#bg)"/><circle cx="520" cy="30" r="80" fill="rgba(255,255,255,0.14)"/><text x="28" y="88" font-family="-apple-system,system-ui,sans-serif" font-size="24" font-weight="800" fill="#fff">toastory v0.3.0 Studio</text><text x="28" y="120" font-family="monospace" font-size="13" fill="rgba(255,255,255,0.85)">Spring Physics · Dynamic Island · 10 SVG Robots</text></svg>`
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 160"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#2563eb"/><stop offset="50%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#ec4899"/></linearGradient></defs><rect width="600" height="160" fill="url(#bg)"/><circle cx="520" cy="30" r="80" fill="rgba(255,255,255,0.14)"/><text x="28" y="88" font-family="-apple-system,system-ui,sans-serif" font-size="24" font-weight="800" fill="#fff">toastory v0.3.1 Studio</text><text x="28" y="120" font-family="monospace" font-size="13" fill="rgba(255,255,255,0.85)">Spring Physics · Dynamic Island · 10 SVG Robots</text></svg>`
 )}`;
+
+type FrameworkTab = 'react' | 'nextjs' | 'js' | 'vue' | 'nuxt' | 'angular' | 'svelte' | 'electron' | 'native';
 
 export default function PlaygroundPage() {
   const [theme, setTheme] = useState('ios-glass');
   const [mode, setMode] = useState<'dark' | 'light'>('dark');
   const [position, setPosition] = useState<ToastPosition>('top-center');
   const [soundEnabled, setSoundEnabled] = useState(true);
-  const [soundCue, setSoundCue] = useState<string>('success');
+  const [soundCue, setSoundCue] = useState<string>('crystal');
   const [soundVolume, setSoundVolume] = useState(0.5);
-  const [stack, setStack] = useState<'stacked' | 'expanded'>('stacked');
   const [duration, setDuration] = useState(4000);
   const [richColors, setRichColors] = useState(false);
   const [invert, setInvert] = useState(false);
   const [closeButton, setCloseButton] = useState(true);
-  const [dir, setDir] = useState<'ltr' | 'rtl'>('ltr');
-  const [feedbackKind, setFeedbackKind] = useState<'toast' | 'promise' | 'confirm' | 'prompt' | 'alert' | 'steps' | 'sheet' | 'bottomSheet' | 'loading'>('toast');
+  const [feedbackKind, setFeedbackKind] = useState<
+    'toast' | 'promise' | 'confirm' | 'prompt' | 'alert' | 'steps' | 'sheet' | 'bottomSheet' | 'loading'
+  >('toast');
   const [toastType, setToastType] = useState<'success' | 'error' | 'info' | 'warning' | 'loading'>('success');
   const [character, setCharacter] = useState<'none' | RobotCharacter>('none');
   const [island, setIsland] = useState(false);
@@ -37,7 +39,9 @@ export default function PlaygroundPage() {
   const [showTimestamp, setShowTimestamp] = useState(false);
   const [showToggle, setShowToggle] = useState(false);
   const [dialogTone, setDialogTone] = useState<'info' | 'warning' | 'danger'>('danger');
-  const [promptInputType, setPromptInputType] = useState<'text' | 'email' | 'password' | 'number' | 'range' | 'select' | 'date' | 'otp'>('text');
+  const [promptInputType, setPromptInputType] = useState<
+    'text' | 'email' | 'password' | 'number' | 'range' | 'select' | 'date' | 'otp'
+  >('text');
   const [backdrop, setBackdrop] = useState<'blur' | 'dim' | 'none'>('blur');
   const [allowOutsideClick, setAllowOutsideClick] = useState(true);
   const [allowEscape, setAllowEscape] = useState(true);
@@ -49,10 +53,8 @@ export default function PlaygroundPage() {
   const [actionLabel, setActionLabel] = useState('View Telemetry');
   const [cancelLabel, setCancelLabel] = useState('Dismiss');
   const [progress, setProgress] = useState<'none' | 'bar' | 'ring'>('bar');
-  const [canvasBg, setCanvasBg] = useState<'mesh' | 'slate' | 'cyber' | 'light'>('mesh');
-  const [activeCodeTab, setActiveCodeTab] = useState<'react' | 'js' | 'nextjs' | 'vue' | 'svelte' | 'native'>('react');
+  const [activeCodeTab, setActiveCodeTab] = useState<FrameworkTab>('react');
   const [shareFeedback, setShareFeedback] = useState(false);
-  const [isPromiseLoading, setIsPromiseLoading] = useState(false);
 
   // Sync state from URL hash on mount
   useEffect(() => {
@@ -97,7 +99,7 @@ export default function PlaygroundPage() {
     window.location.hash = hash;
     navigator.clipboard.writeText(window.location.href);
     setShareFeedback(true);
-    toast.success('Playground link copied to clipboard!');
+    toast.success('Playground configuration URL copied to clipboard!', { theme });
     setTimeout(() => setShareFeedback(false), 2500);
   };
 
@@ -137,6 +139,7 @@ export default function PlaygroundPage() {
       setTheme('ios-glass');
       setRichColors(true);
       setProgress('bar');
+      setSoundCue('success');
     } else if (preset === 'robot') {
       setFeedbackKind('toast');
       setToastType('success');
@@ -152,145 +155,95 @@ export default function PlaygroundPage() {
       setFeedbackKind('toast');
       setToastType('info');
       setIsland(true);
-      setPosition('top-center');
-      setTitle('Incoming Call · Elena');
-      setDescription('iPhone 16 Pro · FaceTime Audio');
-      setActionLabel('Accept');
-      setCancelLabel('Decline');
+      setTitle('FaceTime Audio Connected');
+      setDescription('Elena Rostova · 02:45 duration');
+      setActionLabel('End Call');
+      setCancelLabel('Mute');
       setTheme('ios-glass');
-      setSoundCue('marimba');
+      setSoundCue('chime');
     } else if (preset === 'banner') {
       setFeedbackKind('toast');
-      setToastType('info');
+      setToastType('success');
       setShowBannerImage(true);
-      setDiscardText('Discard');
       setKbdBadge('⌘B');
+      setDiscardText('Discard');
       setShowTimestamp(true);
       setShowToggle(true);
-      setTitle('toastory v0.3.0 Engine');
+      setTitle('toastory v0.3.1 Engine');
       setDescription('Full-bleed header banner, custom discard label, and inline switch.');
       setActionLabel('Explore');
       setCancelLabel('');
-      setTheme('liquid-glass');
-      setSoundCue('harp');
+      setTheme('ios-glass');
+      setSoundCue('mallet');
     } else if (preset === 'promise') {
       setFeedbackKind('promise');
-      setTitle('Database Migration');
-      setDescription('Executing schema migration for postgresql v16 cluster.');
-      setTheme('liquid-glass');
+      setTitle('Syncing cloud database...');
+      setDescription('Streaming latest database snapshot to edge clusters.');
+      setTheme('ios-glass');
+      setSoundCue('pop');
     } else if (preset === 'danger') {
       setFeedbackKind('confirm');
       setDialogTone('danger');
-      setTitle('Terminate Worker Cluster?');
-      setDescription('This will permanently destroy 16 active worker containers.');
-      setActionLabel('Destroy Cluster');
+      setTitle('Delete Production Cluster?');
+      setDescription('This operation permanently terminates 48 database instances and cannot be undone.');
+      setActionLabel('Delete Cluster');
       setCancelLabel('Cancel');
-      setTheme('dialogs');
       setBackdrop('blur');
+      setTheme('ios-glass');
     } else if (preset === 'otp') {
       setFeedbackKind('prompt');
       setPromptInputType('otp');
-      setTitle('Two-Factor Verification');
-      setDescription('Enter the 6-digit authentication token generated by your app:');
-      setActionLabel('Verify Token');
+      setTitle('Two-Factor Authentication');
+      setDescription('Enter the 6-digit security code sent to your registered authenticator app:');
+      setActionLabel('Verify Code');
+      setCancelLabel('Cancel');
       setTheme('ios-glass');
-      setBackdrop('blur');
     } else if (preset === 'wizard') {
       setFeedbackKind('steps');
-      setTitle('Workspace Setup');
-      setDescription('3-stage guided onboarding flow.');
-      setTheme('aurora');
+      setTitle('Project Setup Wizard');
+      setDescription('Configure environment and initialize cloud workspace:');
+      setActionLabel('Next Step');
+      setCancelLabel('Back');
+      setTheme('ios-glass');
     } else if (preset === 'sheet') {
       setFeedbackKind('sheet');
-      setTitle('Project Actions');
-      setDescription('Choose operation for repository toastory.');
+      setTitle('Export Format Options');
+      setDescription('Choose artifact output compression:');
+      setActionLabel('Export');
+      setCancelLabel('Cancel');
       setTheme('ios-glass');
     } else if (preset === 'bottomSheet') {
       setFeedbackKind('bottomSheet');
-      setTitle('Search Filters & Sorting');
-      setDescription('Refine metrics by telemetry zone, status code, and latency distribution.');
-      setActionLabel('Apply Filters');
+      setTitle('Deployment Region Settings');
+      setDescription('Select primary routing data center and failover policy:');
+      setActionLabel('Save Region');
+      setCancelLabel('Close');
       setTheme('ios-glass');
-      setBackdrop('blur');
     } else if (preset === 'loading') {
       setFeedbackKind('loading');
-      setTitle('Building Project Bundle');
-      setDescription('Optimizing 124 chunks with tree-shaking...');
+      setTitle('Compiling Next.js static pages...');
+      setDescription('Analyzing production bundle traces and assets:');
       setTheme('ios-glass');
     }
-    toast.info(`Loaded preset: ${preset}`);
   };
 
   const handleReset = () => {
-    setTheme('ios-glass');
+    applyPreset('deployment');
+    setPosition('top-center');
     setMode('dark');
-    setPosition('top-right');
-    setStack('stacked');
+    setSoundEnabled(true);
+    setSoundVolume(0.5);
     setDuration(4000);
-    setRichColors(false);
-    setInvert(false);
-    setCloseButton(true);
-    setDir('ltr');
-    setFeedbackKind('toast');
-    setToastType('success');
-    setDialogTone('danger');
-    setPromptInputType('text');
-    setBackdrop('blur');
-    setAllowOutsideClick(true);
-    setAllowEscape(true);
-    setDraggable(false);
-    setReverseButtons(false);
-    setSwipeEnabled(true);
-    setTitle('Deployment Finished');
-    setDescription('All 24 microservices updated in us-east-1.');
-    setActionLabel('View Telemetry');
-    setCancelLabel('Dismiss');
-    setProgress('bar');
-    setCharacter('none');
-    setIsland(false);
-    setHud(false);
-    setShake(false);
-    setGlow(false);
-    setGradientBorder(false);
-    setShowBannerImage(false);
-    setDiscardText('');
-    setKbdBadge('');
-    setShowTimestamp(false);
-    setShowToggle(false);
-    window.location.hash = '';
-    toast.info('Playground reset to defaults.');
+    toast.info('Playground reset to default configuration.');
   };
 
-  const handleExportJson = () => {
-    const json = JSON.stringify(
-      {
-        theme,
-        mode,
-        position,
-        stack,
-        duration,
-        richColors,
-        invert,
-        closeButton,
-        dir,
-        title,
-        description,
-        actionLabel,
-        cancelLabel,
-        feedbackKind,
-        promptInputType,
-        backdrop,
-        allowOutsideClick,
-        allowEscape,
-        draggable,
-        reverseButtons,
-        progress,
-      },
-      null,
-      2
-    );
-    navigator.clipboard.writeText(json);
-    toast.success('Configuration JSON copied to clipboard!');
+  const playSynthesizerSound = (cue: string) => {
+    if (!soundEnabled) return;
+    try {
+      ui.sound(cue as Parameters<typeof ui.sound>[0], soundVolume);
+    } catch {
+      // AudioContext unavailable in non-interactive state
+    }
   };
 
   const handleFire = async () => {
@@ -298,155 +251,168 @@ export default function PlaygroundPage() {
       theme,
       mode,
       position,
-      stack,
-      dir,
-      richColors,
       duration,
+      richColors,
+      invert,
       closeButton,
     });
 
     if (feedbackKind === 'toast') {
-      const opts: ToastOptions = {
-        title,
-        description,
-        theme,
-        position,
+      playSynthesizerSound(soundCue);
+
+      const toastOptions: Record<string, unknown> = {
+        description: description || undefined,
         duration,
+        position,
+        theme,
         richColors,
         invert,
         closeButton,
-        dir,
-        character: character !== 'none' ? character : undefined,
-        island: island || undefined,
-        hud: hud || undefined,
-        shake: shake || undefined,
-        glow: glow || undefined,
-        gradientBorder: gradientBorder || undefined,
-        image: showBannerImage ? SAMPLE_BANNER_SVG : undefined,
-        discardText: discardText.trim() ? discardText.trim() : undefined,
-        kbd: kbdBadge.trim() ? kbdBadge.trim() : undefined,
-        timestamp: showTimestamp ? new Date() : undefined,
-        toggle: showToggle
-          ? {
-              label: 'Live Sync',
-              checked: true,
-              onChange: (next) => toast.info(`Live Sync ${next ? 'enabled' : 'disabled'}`, { theme }),
-            }
-          : undefined,
-        swipeDirections: swipeEnabled ? ['left', 'right', 'up', 'down'] : [],
-        action: actionLabel
-          ? {
-              label: actionLabel,
-              onClick: () => toast.info(`Action clicked: ${actionLabel}`, { theme }),
-            }
-          : undefined,
-        cancel: cancelLabel
-          ? {
-              label: cancelLabel,
-              onClick: () => toast.info('Dismissed by user', { theme }),
-            }
-          : undefined,
+        progress: progress === 'bar' ? true : progress === 'ring' ? 'ring' : false,
+        swipe: swipeEnabled,
       };
-      if (progress !== 'none') opts.progress = progress === 'bar';
-      if (soundEnabled) {
-        opts.sound = soundCue;
-        opts.soundVolume = soundVolume;
-      } else {
-        opts.sound = false;
+
+      if (character !== 'none') toastOptions.character = character;
+      if (island) toastOptions.island = true;
+      if (hud) toastOptions.hud = true;
+      if (shake) toastOptions.shake = true;
+      if (glow) toastOptions.glow = true;
+      if (gradientBorder) toastOptions.gradientBorder = true;
+      if (showBannerImage) toastOptions.image = SAMPLE_BANNER_SVG;
+      if (discardText.trim()) toastOptions.discardText = discardText.trim();
+      if (kbdBadge.trim()) toastOptions.kbd = kbdBadge.trim();
+      if (showTimestamp) toastOptions.timestamp = new Date();
+      if (showToggle) {
+        toastOptions.toggle = {
+          label: 'Live Sync',
+          checked: true,
+          onChange: (v: boolean) => {
+            toast.info(`Live Sync toggled: ${v ? 'ON' : 'OFF'}`, { theme });
+          },
+        };
+      }
+      if (actionLabel.trim()) {
+        toastOptions.action = {
+          label: actionLabel.trim(),
+          onClick: () => {
+            toast.success(`Action "${actionLabel.trim()}" completed!`, { theme });
+          },
+        };
+      }
+      if (cancelLabel.trim()) {
+        toastOptions.cancel = {
+          label: cancelLabel.trim(),
+          onClick: () => {
+            toast.info(`Dismissed via "${cancelLabel.trim()}"`, { theme });
+          },
+        };
       }
 
-      if (toastType === 'success') toast.success(title, opts);
-      else if (toastType === 'error') toast.error(title, opts);
-      else if (toastType === 'warning') toast.warning(title, opts);
-      else if (toastType === 'info') toast.info(title, opts);
-      else toast.loading(title, opts);
+      toast[toastType](title, toastOptions);
     } else if (feedbackKind === 'promise') {
-      setIsPromiseLoading(true);
-      const fakePromise = new Promise<{ id: string }>((resolve, reject) => {
+      const asyncTask = new Promise<{ items: number }>((resolve, reject) => {
         setTimeout(() => {
-          setIsPromiseLoading(false);
-          if (toastType === 'error') reject(new Error('Process terminated with error code 1'));
-          else resolve({ id: 'tx_98412' });
-        }, 2200);
+          if (Math.random() > 0.15) {
+            resolve({ items: 24 });
+          } else {
+            reject(new Error('Network gateway timeout after 2000ms'));
+          }
+        }, 2000);
       });
 
       toast.promise(
-        fakePromise,
+        asyncTask,
         {
-          loading: 'Executing async operation...',
-          success: (data) => `Completed successfully! (Ref: ${data.id})`,
-          error: (err) => `Failed: ${(err as Error).message}`,
-          description,
+          loading: 'Syncing cloud database...',
+          success: (data) => `Synchronized ${data.items} database records successfully!`,
+          error: (err) => `Sync failed: ${err instanceof Error ? err.message : String(err)}`,
         },
-        { theme, position, duration, richColors }
+        { theme, position },
       );
     } else if (feedbackKind === 'confirm') {
       const res = await ui.confirm({
         title,
         text: description,
-        theme,
         tone: dialogTone,
         backdrop,
-        allowOutsideClick,
-        allowEscape,
         draggable,
         reverseButtons,
+        allowOutsideClick,
+        allowEscape,
+        theme,
         confirmButton: { label: actionLabel || 'Confirm Action' },
-        cancelButton: { label: cancelLabel || 'Dismiss' },
+        cancelButton: { label: cancelLabel || 'Cancel' },
       });
-      if (res.isConfirmed) toast.success('Confirmed by user!', { theme });
-      else toast.info('Action was dismissed.', { theme });
+      if (res.isConfirmed) {
+        toast.success('Confirmed by user!', { theme });
+      } else {
+        toast.info(`Dismissed via: ${res.dismiss || 'cancel'}`, { theme });
+      }
     } else if (feedbackKind === 'alert') {
       await ui.alert({
         title,
         text: description,
-        theme,
         tone: dialogTone,
         backdrop,
-        allowOutsideClick,
-        allowEscape,
-        draggable,
+        theme,
         confirmButton: { label: actionLabel || 'Acknowledge' },
       });
+      toast.info('Alert acknowledged', { theme });
     } else if (feedbackKind === 'prompt') {
       const res = await ui.prompt({
         title,
         text: description,
         input: promptInputType,
-        placeholder: 'Type value here...',
-        theme,
         backdrop,
-        allowOutsideClick,
-        allowEscape,
-        draggable,
-        options: promptInputType === 'select' ? { standard: 'Standard Tier', pro: 'Pro ($29/mo)', enterprise: 'Enterprise' } : undefined,
-        validate: (val) => (!val ? 'Input cannot be empty' : undefined),
+        theme,
+        inputValue: promptInputType === 'email' ? 'dev@toastory.dev' : '',
+        placeholder: 'Enter requested value...',
+        validate: (v) => (!v ? 'This field cannot be left blank' : undefined),
+        confirmButton: { label: actionLabel || 'Submit Value' },
+        cancelButton: { label: cancelLabel || 'Cancel' },
       });
       if (res.isConfirmed) {
-        toast.success(`Received input: "${res.value}"`, { theme });
+        toast.success(`Prompt submitted: "${res.value}"`, { theme });
       }
     } else if (feedbackKind === 'steps') {
-      const res = await ui.steps([
-        { title: 'Step 1 of 3: Workspace', text: 'Enter team workspace name:', input: 'text', placeholder: 'Acme Inc' },
-        { title: 'Step 2 of 3: Plan', text: 'Select team billing tier:', input: 'select', options: { pro: 'Pro ($20/mo)', enterprise: 'Enterprise ($80/mo)' } },
-        { title: 'Step 3 of 3: Confirmation', text: 'Review parameters and provision infrastructure.' },
-      ]);
+      const steps = [
+        {
+          title: 'Step 1: Workspace Identifier',
+          text: 'Name your development team workspace:',
+          input: 'text' as const,
+          placeholder: 'e.g. acme-corp',
+          validate: (v: unknown) => (!v ? 'Identifier required' : undefined),
+        },
+        {
+          title: 'Step 2: Region Selection',
+          text: 'Choose primary datacenter region:',
+          input: 'select' as const,
+          options: ['us-east-1 (N. Virginia)', 'eu-central-1 (Frankfurt)', 'ap-southeast-1 (Singapore)'],
+        },
+        {
+          title: 'Step 3: Access Level',
+          text: 'Select your team authorization tier:',
+          input: 'radio' as const,
+          options: ['Standard Developer', 'Security Lead', 'Organization Admin'],
+        },
+      ];
+      const res = await ui.steps(steps);
       if (res.isConfirmed) {
-        toast.success('Wizard completed successfully!', { theme });
+        toast.success(`Completed 3-step wizard! Workspace: "${res.value}"`, { theme });
       }
     } else if (feedbackKind === 'sheet') {
       const res = await ui.sheet({
         title,
-        message: description,
         theme,
+        backdrop,
         actions: [
-          { label: 'Primary Operation', value: 'primary' },
-          { label: 'Secondary Operation', value: 'secondary' },
-          { label: 'Destructive Action', value: 'delete', style: 'destructive' },
+          { label: 'Download JSON Artifact', value: 'json' },
+          { label: 'Export Compressed TAR.GZ', value: 'tar' },
+          { label: 'Delete Cached Bundle', value: 'delete', tone: 'danger' },
         ],
-        cancelLabel: 'Cancel',
+        cancel: { label: cancelLabel || 'Cancel' },
       });
-      if (res.value) {
+      if (res.isConfirmed) {
         toast.info(`Selected action: "${res.value}"`, { theme });
       }
     } else if (feedbackKind === 'bottomSheet') {
@@ -471,56 +437,94 @@ export default function PlaygroundPage() {
     }
   };
 
-  // Generate dynamic code for the active tab
-  const getGeneratedSnippet = () => {
+  // Keyboard shortcut: Press Enter or Cmd+Enter to fire feedback
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+        e.preventDefault();
+        document.getElementById('playground-fire-btn')?.click();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Generate dynamic, idiomatic code for all 9 frameworks
+  const getGeneratedSnippet = (): string => {
+    const extraOpts: string[] = [];
+    if (duration !== 4000) extraOpts.push(`      duration: ${duration},`);
+    if (richColors) extraOpts.push(`      richColors: true,`);
+    if (invert) extraOpts.push(`      invert: true,`);
+    if (!closeButton) extraOpts.push(`      closeButton: false,`);
+    if (character !== 'none') extraOpts.push(`      character: '${character}',`);
+    if (island) extraOpts.push(`      island: true,`);
+    if (hud) extraOpts.push(`      hud: true,`);
+    if (shake) extraOpts.push(`      shake: true,`);
+    if (glow) extraOpts.push(`      glow: true,`);
+    if (gradientBorder) extraOpts.push(`      gradientBorder: true,`);
+    if (showBannerImage) extraOpts.push(`      image: '/assets/banner.png',`);
+    if (discardText.trim()) extraOpts.push(`      discardText: '${discardText.trim()}',`);
+    if (kbdBadge.trim()) extraOpts.push(`      kbd: '${kbdBadge.trim()}',`);
+    if (showTimestamp) extraOpts.push(`      timestamp: new Date(),`);
+    if (showToggle) extraOpts.push(`      toggle: { label: 'Live Sync', checked: true, onChange: (v) => console.log(v) },`);
+    if (progress !== 'none') extraOpts.push(`      progress: ${progress === 'bar'},`);
+    if (actionLabel.trim()) extraOpts.push(`      action: { label: '${actionLabel.trim()}', onClick: () => console.log('Action triggered') },`);
+    if (cancelLabel.trim()) extraOpts.push(`      cancel: { label: '${cancelLabel.trim()}' },`);
+
+    const optionsBody = extraOpts.length > 0 ? `,\n${extraOpts.join('\n')}` : '';
+
+    // 1. REACT
     if (activeCodeTab === 'react') {
       if (feedbackKind === 'toast') {
-        const extraLines: string[] = [];
-        if (character !== 'none') extraLines.push(`      character: '${character}',`);
-        if (island) extraLines.push(`      island: true,`);
-        if (hud) extraLines.push(`      hud: true,`);
-        if (shake) extraLines.push(`      shake: true,`);
-        if (glow) extraLines.push(`      glow: true,`);
-        if (gradientBorder) extraLines.push(`      gradientBorder: true,`);
-        if (showBannerImage) extraLines.push(`      image: '/assets/banner.png',`);
-        if (discardText.trim()) extraLines.push(`      discardText: '${discardText.trim()}',`);
-        if (kbdBadge.trim()) extraLines.push(`      kbd: '${kbdBadge.trim()}',`);
-        if (showTimestamp) extraLines.push(`      timestamp: new Date(),`);
-        if (showToggle) extraLines.push(`      toggle: { label: 'Live Sync', checked: true, onChange: (v) => console.log(v) },`);
-        if (progress !== 'none') extraLines.push(`      progress: ${progress === 'bar'},`);
-        if (actionLabel) extraLines.push(`      action: { label: '${actionLabel}', onClick: () => console.log('Action triggered') },`);
-        if (cancelLabel) extraLines.push(`      cancel: { label: '${cancelLabel}' },`);
-
         return `import { Toaster, toast } from 'toastory/react';
 import 'toastory/themes/${theme}.css';
 
 export default function App() {
-  const showFeedback = () => {
+  const triggerNotification = () => {
     toast.${toastType}('${title}', {
       description: '${description}',
-      duration: ${duration},
-      richColors: ${richColors},
-      invert: ${invert},
-      closeButton: ${closeButton},
-      position: '${position}',
-${extraLines.join('\n')}
+      position: '${position}'${optionsBody}
     });
   };
 
   return (
-    <>
+    <div>
       <Toaster theme="${theme}" mode="${mode}" position="${position}" />
-      <button onClick={showFeedback}>Trigger Notification</button>
+      <button onClick={triggerNotification}>Trigger Notification</button>
+    </div>
+  );
+}`;
+      }
+      if (feedbackKind === 'promise') {
+        return `import { Toaster, toast } from 'toastory/react';
+import 'toastory/themes/${theme}.css';
+
+export default function AsyncSync() {
+  const syncData = () => {
+    toast.promise(
+      fetch('/api/sync').then(res => res.json()),
+      {
+        loading: 'Syncing database snapshot...',
+        success: (data) => \`Synced \${data.count} records successfully!\`,
+        error: 'Failed to synchronize with edge clusters.'
+      },
+      { theme: '${theme}', position: '${position}' }
+    );
+  };
+
+  return (
+    <>
+      <Toaster theme="${theme}" position="${position}" />
+      <button onClick={syncData}>Start Async Operation</button>
     </>
   );
 }`;
       }
-
       if (feedbackKind === 'confirm' || feedbackKind === 'alert') {
         return `import { ui } from 'toastory';
 import 'toastory/themes/${theme}.css';
 
-export default function Confirmation() {
+export default function DialogModal() {
   const handleAction = async () => {
     const res = await ui.${feedbackKind === 'confirm' ? 'confirm' : 'alert'}({
       title: '${title}',
@@ -532,684 +536,405 @@ export default function Confirmation() {
       confirmButton: { label: '${actionLabel || 'Confirm'}' }
     });
     if (res.isConfirmed) {
-      console.log('Confirmed');
+      console.log('Action confirmed');
     }
   };
 
   return <button onClick={handleAction}>Open Modal</button>;
 }`;
       }
-
       if (feedbackKind === 'prompt') {
         return `import { ui } from 'toastory';
 import 'toastory/themes/${theme}.css';
 
-export default function PromptExample() {
+export default function PromptDialog() {
   const askInput = async () => {
     const res = await ui.prompt({
       title: '${title}',
       text: '${description}',
       input: '${promptInputType}',
       backdrop: '${backdrop}',
+      theme: '${theme}',
       validate: (val) => (!val ? 'Input required' : undefined)
     });
     if (res.isConfirmed) {
-      console.log('Input value:', res.value);
+      console.log('Submitted value:', res.value);
     }
   };
 
   return <button onClick={askInput}>Open Prompt</button>;
 }`;
       }
-
-      if (feedbackKind === 'bottomSheet') {
+      if (feedbackKind === 'bottomSheet' || feedbackKind === 'sheet') {
         return `import { ui } from 'toastory';
 import 'toastory/themes/${theme}.css';
 
-export default function SheetExample() {
+export default function SheetTrigger() {
   const openSheet = () => {
-    ui.bottomSheet({
+    ui.${feedbackKind === 'bottomSheet' ? 'bottomSheet' : 'sheet'}({
       title: '${title}',
       text: '${description}',
       backdrop: '${backdrop}',
-      snapPoints: [0.4, 0.85],
-      confirmButton: { label: '${actionLabel || 'Done'}' }
+      theme: '${theme}',
+      confirmButton: { label: '${actionLabel || 'Apply'}' }
     });
   };
 
-  return <button onClick={openSheet}>Open Bottom Sheet</button>;
+  return <button onClick={openSheet}>Open Sheet</button>;
 }`;
       }
+      return `import { ui } from 'toastory';
+import 'toastory/themes/${theme}.css';
+
+export default function LoadingDemo() {
+  const runTask = () => {
+    const handle = ui.loading({ text: 'Processing data bundle...', progress: 0.3 });
+    setTimeout(() => handle.update({ progress: 0.8, text: 'Finalizing modules...' }), 1000);
+    setTimeout(() => handle.close(), 2000);
+  };
+
+  return <button onClick={runTask}>Execute Operation</button>;
+}`;
     }
 
+    // 2. NEXT.JS
+    if (activeCodeTab === 'nextjs') {
+      return `'use client';
+
+import { Toaster, toast } from 'toastory/react';
+import 'toastory/themes/${theme}.css';
+
+export default function NotificationButton() {
+  const showFeedback = () => {
+    toast.${toastType}('${title}', {
+      description: '${description}',
+      position: '${position}'${optionsBody}
+    });
+  };
+
+  return (
+    <>
+      <Toaster theme="${theme}" mode="${mode}" position="${position}" />
+      <button onClick={showFeedback} className="px-4 py-2 rounded-lg bg-blue-600 text-white">
+        Trigger Feedback
+      </button>
+    </>
+  );
+}`;
+    }
+
+    // 3. PLAIN JS
     if (activeCodeTab === 'js') {
       if (feedbackKind === 'toast') {
         return `import { toast, ui } from 'toastory';
 import 'toastory/themes/${theme}.css';
 
-ui.configure({ theme: '${theme}', mode: '${mode}', position: '${position}' });
+ui.configure({
+  theme: '${theme}',
+  mode: '${mode}',
+  position: '${position}',
+  duration: ${duration}
+});
 
-toast.${toastType}('${title}', {
-  description: '${description}',
-  duration: ${duration},
-  richColors: ${richColors},
-  closeButton: ${closeButton}
+document.getElementById('notify-btn')?.addEventListener('click', () => {
+  toast.${toastType}('${title}', {
+    description: '${description}'${optionsBody}
+  });
 });`;
       }
       return `import { ui } from 'toastory';
 import 'toastory/themes/${theme}.css';
 
-const res = await ui.${feedbackKind === 'bottomSheet' ? 'bottomSheet' : feedbackKind === 'steps' ? 'steps' : feedbackKind === 'prompt' ? 'prompt' : 'confirm'}({
-  title: '${title}',
-  text: '${description}',
-  theme: '${theme}'
+ui.configure({ theme: '${theme}', mode: '${mode}' });
+
+document.getElementById('modal-btn')?.addEventListener('click', async () => {
+  const res = await ui.confirm({
+    title: '${title}',
+    text: '${description}',
+    tone: '${dialogTone}',
+    backdrop: '${backdrop}'
+  });
+  if (res.isConfirmed) {
+    console.log('User confirmed');
+  }
 });`;
     }
 
-    if (activeCodeTab === 'nextjs') {
-      return `// app/layout.tsx (Server or Client)
-import { Toaster } from 'toastory/react';
-import 'toastory/themes/${theme}.css';
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en">
-      <body>
-        <Toaster theme="${theme}" mode="${mode}" position="${position}" richColors={${richColors}} />
-        {children}
-      </body>
-    </html>
-  );
-}`;
-    }
-
+    // 4. VUE
     if (activeCodeTab === 'vue') {
-      return `<script setup>
-import { ui, toast } from 'toastory';
+      return `<script setup lang="ts">
+import { Toaster, toast } from 'toastory/vue';
 import 'toastory/themes/${theme}.css';
 
-const notify = () => {
+function triggerNotification() {
   toast.${toastType}('${title}', {
     description: '${description}',
-    duration: ${duration},
-    richColors: ${richColors}
+    position: '${position}'${optionsBody}
+  });
+}
+</script>
+
+<template>
+  <div>
+    <Toaster theme="${theme}" mode="${mode}" position="${position}" />
+    <button @click="triggerNotification">Trigger Notification</button>
+  </div>
+</template>`;
+    }
+
+    // 5. NUXT
+    if (activeCodeTab === 'nuxt') {
+      return `<!-- components/FeedbackTrigger.vue -->
+<script setup lang="ts">
+import { Toaster, toast } from 'toastory/vue';
+import 'toastory/themes/${theme}.css';
+
+const showNotice = () => {
+  toast.${toastType}('${title}', {
+    description: '${description}',
+    position: '${position}'${optionsBody}
   });
 };
 </script>
 
 <template>
-  <button @click="notify">Show Toast</button>
+  <div>
+    <ClientOnly>
+      <Toaster theme="${theme}" mode="${mode}" position="${position}" />
+    </ClientOnly>
+    <button @click="showNotice">Show Notification</button>
+  </div>
 </template>`;
     }
 
-    if (activeCodeTab === 'svelte') {
-      return `<script>
-  import { ui, toast } from 'toastory';
-  import 'toastory/themes/${theme}.css';
+    // 6. ANGULAR
+    if (activeCodeTab === 'angular') {
+      return `import { Component, OnInit } from '@angular/core';
+import { toast, ui } from 'toastory';
+import 'toastory/themes/${theme}.css';
 
-  const trigger = () => toast.${toastType}('${title}', {
-    description: '${description}',
-    duration: ${duration}
-  });
-</script>
+@Component({
+  selector: 'app-feedback-trigger',
+  standalone: true,
+  template: \`
+    <button (click)="triggerFeedback()">Trigger Notification</button>
+  \`
+})
+export class FeedbackTriggerComponent implements OnInit {
+  ngOnInit() {
+    ui.configure({
+      theme: '${theme}',
+      mode: '${mode}',
+      position: '${position}'
+    });
+  }
 
-<button on:click={trigger}>Notify</button>`;
+  triggerFeedback() {
+    toast.${toastType}('${title}', {
+      description: '${description}'${optionsBody}
+    });
+  }
+}`;
     }
 
-    return `import { Toaster, toast } from 'toastory/native';
+    // 7. SVELTE
+    if (activeCodeTab === 'svelte') {
+      return `<script lang="ts">
+  import { Toaster, toast } from 'toastory/svelte';
+  import 'toastory/themes/${theme}.css';
 
-export default function NativeScreen() {
+  function trigger() {
+    toast.${toastType}('${title}', {
+      description: '${description}',
+      position: '${position}'${optionsBody}
+    });
+  }
+</script>
+
+<Toaster theme="${theme}" mode="${mode}" position="${position}" />
+<button on:click={trigger}>Trigger Notification</button>`;
+    }
+
+    // 8. ELECTRON
+    if (activeCodeTab === 'electron') {
+      return `// Renderer process
+import { toast, ui } from 'toastory';
+import 'toastory/themes/${theme}.css';
+
+ui.configure({
+  theme: '${theme}',
+  mode: '${mode}',
+  position: '${position}'
+});
+
+export function notifyNativeWindow() {
+  toast.${toastType}('${title}', {
+    description: '${description}',
+    sound: 'crystal'${optionsBody}
+  });
+}`;
+    }
+
+    // 9. REACT NATIVE
+    return `import React from 'react';
+import { View, Button } from 'react-native';
+import { Toaster, toast } from 'toastory/native';
+
+export default function MobileScreen() {
+  const triggerNativeToast = () => {
+    toast.${toastType}('${title}', {
+      description: '${description}',
+      position: 'top'${character !== 'none' ? `,\n      character: '${character}'` : ''}
+    });
+  };
+
   return (
-    <View>
-      <Toaster theme="${theme}" />
-      <Button
-        title="Notify"
-        onPress={() => toast.${toastType}('${title}', { description: '${description}' })}
-      />
+    <View style={{ flex: 1, justifyContent: 'center', padding: 20 }}>
+      <Toaster position="top" />
+      <Button title="Trigger Native Toast" onPress={triggerNativeToast} />
     </View>
   );
 }`;
   };
 
-  const canvasBackgrounds = {
-    mesh: 'bg-gradient-to-br from-slate-100 via-indigo-50/60 to-slate-200 dark:from-[#0c0d16] dark:via-[#121424] dark:to-[#0a0a12]',
-    slate: 'bg-slate-200 dark:bg-[#18181b]',
-    cyber: 'bg-gradient-to-tr from-[#020b14] via-[#0b192e] to-[#002233]',
-    light: 'bg-slate-50 text-slate-900 border border-[var(--site-border)]',
-  };
-
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-20 text-left transition-colors">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 border-b border-[var(--site-border)] pb-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-8 text-left">
+      {/* Studio Header */}
+      <div className="border-b border-[var(--site-border)] pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <span className="text-xs font-semibold text-blue-500 uppercase tracking-wider">Interactive Studio</span>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-[var(--site-fg)] tracking-tight mt-1">
-            Live Playground & Studio
+          <div className="flex items-center gap-2 mb-1.5">
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+              v0.3.1 Active Engine
+            </span>
+            <span className="text-xs text-[var(--site-muted)]">Real Spring Physics · 21 Themes · 9 Frameworks</span>
+          </div>
+          <h1 className="text-3xl sm:text-5xl font-extrabold text-[var(--site-fg)] tracking-tight">
+            toastory Studio Playground
           </h1>
-          <p className="text-sm text-[var(--site-muted)] mt-1">
-            Configure every parameter live, dogfood the real package, and generate copyable multi-framework snippets.
+          <p className="text-sm sm:text-base text-[var(--site-muted)] mt-1 max-w-2xl">
+            Trigger live spring animations, dynamic island morphing, and glass dialogs directly in your browser, then export copy-ready code.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        {/* Global Studio Controls */}
+        <div className="flex flex-wrap items-center gap-2.5">
           <button
             type="button"
             onClick={handleShareUrl}
-            className="px-3.5 py-2 rounded-xl bg-[var(--site-surface-raised)] border border-[var(--site-border)] hover:bg-[var(--site-surface)] text-[var(--site-fg)] font-medium text-xs transition-colors flex items-center gap-1.5"
+            className="px-3.5 py-2 rounded-xl border border-[var(--site-border)] bg-[var(--site-surface-raised)] hover:bg-[var(--site-surface)] text-xs font-semibold text-[var(--site-fg)] transition-all shadow-sm flex items-center gap-1.5"
+            title="Share configuration link"
           >
-            <span>{shareFeedback ? '✓ Copied URL' : 'Share State'}</span>
+            <span>{shareFeedback ? 'Copied Link!' : 'Share Preset URL'}</span>
+            <span className="text-[10px]">🔗</span>
           </button>
-          <button
-            type="button"
-            onClick={handleExportJson}
-            className="px-3.5 py-2 rounded-xl bg-[var(--site-surface-raised)] border border-[var(--site-border)] hover:bg-[var(--site-surface)] text-[var(--site-fg)] font-medium text-xs transition-colors"
-          >
-            Export JSON
-          </button>
+
           <button
             type="button"
             onClick={handleReset}
-            className="px-3.5 py-2 rounded-xl text-[var(--site-muted)] hover:text-[var(--site-fg)] hover:bg-[var(--site-surface-raised)] text-xs transition-colors"
+            className="px-3 py-2 rounded-xl border border-[var(--site-border)] bg-[var(--site-surface)] hover:bg-[var(--site-surface-raised)] text-xs font-semibold text-[var(--site-muted)] hover:text-[var(--site-fg)] transition-colors"
           >
-            Reset
+            Reset Defaults
           </button>
+
+          <a
+            href="https://www.supportkori.com/iamtashanto"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-3 py-2 rounded-xl border border-rose-500/30 bg-rose-500/10 hover:bg-rose-500/20 text-xs font-semibold text-rose-400 transition-colors flex items-center gap-1"
+          >
+            <span>Support</span> ♥
+          </a>
         </div>
       </div>
 
-      {/* Quick Scenario Presets */}
-      <div className="mb-8 p-4 rounded-2xl border border-[var(--site-border)] bg-[var(--site-surface-raised)]">
-        <span className="text-xs font-semibold uppercase tracking-wider text-[var(--site-muted)] block mb-3">
-          Quick Scenario Presets:
+      {/* Quick Presets Strip */}
+      <div className="space-y-2">
+        <span className="text-xs font-semibold text-[var(--site-muted)] uppercase tracking-wider">
+          Instant Showcase Presets:
         </span>
-        <div className="flex flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={() => applyPreset('deployment')}
-            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors"
-          >
-            ✓ Success Notification
-          </button>
-          <button
-            type="button"
-            onClick={() => applyPreset('robot')}
-            className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-purple-500/15 text-purple-400 border border-purple-500/30 hover:bg-purple-500/25 transition-colors"
-          >
-            ❖ Robot Mascot (v0.3)
-          </button>
-          <button
-            type="button"
-            onClick={() => applyPreset('island')}
-            className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-pink-500/15 text-pink-400 border border-pink-500/30 hover:bg-pink-500/25 transition-colors"
-          >
-            ◉ Dynamic Island (v0.3)
-          </button>
-          <button
-            type="button"
-            onClick={() => applyPreset('banner')}
-            className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-sky-500/15 text-sky-400 border border-sky-500/30 hover:bg-sky-500/25 transition-colors"
-          >
-            ▤ Banner + Discard (v0.3)
-          </button>
-          <button
-            type="button"
-            onClick={() => applyPreset('promise')}
-            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-blue-500/10 text-blue-500 border border-blue-500/20 hover:bg-blue-500/20 transition-colors"
-          >
-            ↻ Async Promise Flow
-          </button>
-          <button
-            type="button"
-            onClick={() => applyPreset('danger')}
-            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500/20 transition-colors"
-          >
-            ⚠ Destructive Confirm
-          </button>
-          <button
-            type="button"
-            onClick={() => applyPreset('otp')}
-            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-purple-500/10 text-purple-500 border border-purple-500/20 hover:bg-purple-500/20 transition-colors"
-          >
-            # 2FA OTP Prompt
-          </button>
-          <button
-            type="button"
-            onClick={() => applyPreset('wizard')}
-            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-amber-500/10 text-amber-500 border border-amber-500/20 hover:bg-amber-500/20 transition-colors"
-          >
-            ⤹ 3-Step Wizard
-          </button>
-          <button
-            type="button"
-            onClick={() => applyPreset('sheet')}
-            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-cyan-500/10 text-cyan-500 border border-cyan-500/20 hover:bg-cyan-500/20 transition-colors"
-          >
-            ☰ Action Sheet
-          </button>
-          <button
-            type="button"
-            onClick={() => applyPreset('bottomSheet')}
-            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-indigo-500/10 text-indigo-500 border border-indigo-500/20 hover:bg-indigo-500/20 transition-colors"
-          >
-            ⌃ Bottom Sheet
-          </button>
-          <button
-            type="button"
-            onClick={() => applyPreset('loading')}
-            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-teal-500/10 text-teal-500 border border-teal-500/20 hover:bg-teal-500/20 transition-colors"
-          >
-            ⚙ Loading Overlay
-          </button>
+        <div className="flex flex-wrap items-center gap-2">
+          {[
+            { id: 'deployment', label: 'Deployment', icon: '🚀' },
+            { id: 'robot', label: 'Robot Mascot', icon: '🤖' },
+            { id: 'island', label: 'Dynamic Island', icon: '🏝' },
+            { id: 'banner', label: 'Header Banner', icon: '🎨' },
+            { id: 'promise', label: 'Async Promise', icon: '⏳' },
+            { id: 'danger', label: 'Danger Dialog', icon: '⚠️' },
+            { id: 'otp', label: 'OTP Verification', icon: '🔢' },
+            { id: 'wizard', label: 'Wizard Steps', icon: '📋' },
+            { id: 'sheet', label: 'Action Sheet', icon: '📱' },
+            { id: 'bottomSheet', label: 'Bottom Sheet', icon: '📑' },
+            { id: 'loading', label: 'Loading Overlay', icon: '↻' },
+          ].map((p) => (
+            <button
+              key={p.id}
+              type="button"
+              onClick={() => applyPreset(p.id as Parameters<typeof applyPreset>[0])}
+              className="px-3 py-1.5 rounded-xl border border-[var(--site-border)] bg-[var(--site-surface-raised)] hover:bg-blue-600/10 hover:border-blue-500/40 hover:text-blue-400 text-xs font-medium text-[var(--site-fg)] transition-all shadow-sm flex items-center gap-1.5"
+            >
+              <span>{p.icon}</span>
+              <span>{p.label}</span>
+            </button>
+          ))}
         </div>
       </div>
 
+      {/* Main Studio Two-Column Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* LEFT COLUMN: Controls Panel (5 cols) */}
-        <div className="lg:col-span-5 p-6 rounded-2xl border border-[var(--site-border)] bg-[var(--site-card-bg)] space-y-6">
-          <div className="text-sm font-bold text-[var(--site-fg)] border-b border-[var(--site-border)] pb-3 flex items-center justify-between">
-            <span>Feedback Configuration</span>
-            <span className="text-xs font-normal text-blue-500 font-mono">21 themes loaded</span>
-          </div>
+        {/* LEFT COLUMN: Customization Controls (6 cols) */}
+        <div className="lg:col-span-6 space-y-6">
+          {/* Card 1: Feedback Kind & Preset Type */}
+          <div className="p-5 rounded-2xl border border-[var(--site-border)] bg-[var(--site-card-bg)] space-y-4 shadow-sm">
+            <div className="flex items-center justify-between border-b border-[var(--site-border)] pb-3">
+              <span className="text-xs font-bold uppercase tracking-wider text-[var(--site-fg)]">
+                1. Feedback Component Kind
+              </span>
+              <span className="text-xs text-blue-500 font-mono font-medium">ui.{feedbackKind}</span>
+            </div>
 
-          {/* Feedback Kind */}
-          <div>
-            <label className="block text-xs font-semibold text-[var(--site-muted)] mb-2">Component Kind (9 Available)</label>
-            <div className="grid grid-cols-3 gap-1.5 bg-[var(--site-surface-raised)] p-1.5 rounded-xl border border-[var(--site-border)] text-xs">
-              {(['toast', 'promise', 'confirm', 'prompt', 'alert', 'steps', 'sheet', 'bottomSheet', 'loading'] as const).map((k) => (
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+              {[
+                { id: 'toast', label: 'Toast' },
+                { id: 'promise', label: 'Promise' },
+                { id: 'confirm', label: 'Confirm' },
+                { id: 'prompt', label: 'Prompt' },
+                { id: 'alert', label: 'Alert' },
+                { id: 'steps', label: 'Steps' },
+                { id: 'sheet', label: 'Action Sheet' },
+                { id: 'bottomSheet', label: 'Bottom Sheet' },
+                { id: 'loading', label: 'Loading' },
+              ].map((k) => (
                 <button
-                  key={k}
+                  key={k.id}
                   type="button"
-                  onClick={() => setFeedbackKind(k)}
-                  className={`py-1.5 rounded-lg capitalize transition-colors font-medium text-[11px] ${
-                    feedbackKind === k ? 'bg-blue-600 text-white font-semibold shadow-sm' : 'text-[var(--site-muted)] hover:text-[var(--site-fg)]'
+                  onClick={() => setFeedbackKind(k.id as typeof feedbackKind)}
+                  className={`px-3 py-2 rounded-xl text-xs font-medium transition-all text-center ${
+                    feedbackKind === k.id
+                      ? 'bg-blue-600 text-white font-semibold shadow-md shadow-blue-500/20'
+                      : 'border border-[var(--site-border)] bg-[var(--site-surface-raised)] text-[var(--site-muted)] hover:text-[var(--site-fg)]'
                   }`}
                 >
-                  {k === 'bottomSheet' ? 'Bottom Sheet' : k}
+                  {k.label}
                 </button>
               ))}
             </div>
-          </div>
 
-          {/* Theme Selector */}
-          <div>
-            <label className="block text-xs font-semibold text-[var(--site-muted)] mb-1.5">Theme Preset (21)</label>
-            <select
-              value={theme}
-              onChange={(e) => setTheme(e.target.value)}
-              className="w-full bg-[var(--site-input-bg)] border border-[var(--site-border)] rounded-xl px-3 py-2 text-sm text-[var(--site-fg)] focus:outline-none"
-            >
-              {THEME_REGISTRY.map((t) => (
-                <option key={t.name} value={t.name}>
-                  {t.name} ({t.category})
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Mode & Stacking */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-[var(--site-muted)] mb-1.5">Color Mode</label>
-              <select
-                value={mode}
-                onChange={(e) => setMode(e.target.value as 'dark' | 'light')}
-                className="w-full bg-[var(--site-input-bg)] border border-[var(--site-border)] rounded-xl px-3 py-2 text-sm text-[var(--site-fg)] focus:outline-none"
-              >
-                <option value="dark">Dark</option>
-                <option value="light">Light</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-[var(--site-muted)] mb-1.5">Stack Mode</label>
-              <select
-                value={stack}
-                onChange={(e) => setStack(e.target.value as 'stacked' | 'expanded')}
-                className="w-full bg-[var(--site-input-bg)] border border-[var(--site-border)] rounded-xl px-3 py-2 text-sm text-[var(--site-fg)] focus:outline-none"
-              >
-                <option value="stacked">Stacked Deck</option>
-                <option value="expanded">Expanded List</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Position - 7 Placements */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="block text-xs font-semibold text-[var(--site-muted)]">Placement (7 Positions)</label>
-              <span className="text-[11px] font-mono font-medium text-blue-500 bg-blue-500/10 px-2 py-0.5 rounded-md">
-                {position}
-              </span>
-            </div>
-
-            {/* Visual 7-Position Grid Picker */}
-            <div className="bg-[var(--site-input-bg)] border border-[var(--site-border)] rounded-2xl p-3.5 flex flex-col items-center gap-2 mb-3 shadow-inner">
-              <div className="flex items-center justify-between w-full px-2 text-[11px] text-[var(--site-muted)]">
-                <span className="font-semibold uppercase tracking-wider">Device Viewport Matrix</span>
-                <span className="font-mono text-blue-500 font-medium">{position}</span>
-              </div>
-              <div className="w-56 p-2 rounded-xl bg-[var(--site-surface-raised)] border border-[var(--site-border)] shadow-md">
-                {/* Mini browser topbar */}
-                <div className="flex items-center gap-1 mb-2 px-1 pb-1.5 border-b border-[var(--site-border-subtle)]">
-                  <span className="w-1.5 h-1.5 rounded-full bg-red-500/60" />
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500/60" />
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500/60" />
-                </div>
-                <div className="grid grid-cols-3 gap-1.5">
-                  {/* Top Row */}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setPosition('top-left');
-                      if (soundEnabled) ui.sound('pop');
-                    }}
-                    title="top-left"
-                    className={`h-8 rounded-lg transition-all text-xs font-semibold flex items-center justify-center ${
-                      position === 'top-left'
-                        ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30 scale-105'
-                        : 'bg-[var(--site-surface)] hover:bg-blue-500/20 text-[var(--site-muted)] border border-[var(--site-border-subtle)]'
-                    }`}
-                  >
-                    TL
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setPosition('top-center');
-                      if (soundEnabled) ui.sound('pop');
-                    }}
-                    title="top-center"
-                    className={`h-8 rounded-lg transition-all text-xs font-semibold flex items-center justify-center ${
-                      position === 'top-center'
-                        ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30 scale-105'
-                        : 'bg-[var(--site-surface)] hover:bg-blue-500/20 text-[var(--site-muted)] border border-[var(--site-border-subtle)]'
-                    }`}
-                  >
-                    TC
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setPosition('top-right');
-                      if (soundEnabled) ui.sound('pop');
-                    }}
-                    title="top-right"
-                    className={`h-8 rounded-lg transition-all text-xs font-semibold flex items-center justify-center ${
-                      position === 'top-right'
-                        ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30 scale-105'
-                        : 'bg-[var(--site-surface)] hover:bg-blue-500/20 text-[var(--site-muted)] border border-[var(--site-border-subtle)]'
-                    }`}
-                  >
-                    TR
-                  </button>
-
-                  {/* Center Row */}
-                  <div className="h-8 opacity-0 pointer-events-none" />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setPosition('center');
-                      if (soundEnabled) ui.sound('pop');
-                    }}
-                    title="center (middle screen)"
-                    className={`h-8 rounded-lg transition-all text-xs font-semibold flex items-center justify-center ${
-                      position === 'center' || (position as string) === 'middle'
-                        ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30 scale-105'
-                        : 'bg-[var(--site-surface)] hover:bg-blue-500/20 text-[var(--site-muted)] border border-[var(--site-border-subtle)]'
-                    }`}
-                  >
-                    CTR
-                  </button>
-                  <div className="h-8 opacity-0 pointer-events-none" />
-
-                  {/* Bottom Row */}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setPosition('bottom-left');
-                      if (soundEnabled) ui.sound('pop');
-                    }}
-                    title="bottom-left"
-                    className={`h-8 rounded-lg transition-all text-xs font-semibold flex items-center justify-center ${
-                      position === 'bottom-left'
-                        ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30 scale-105'
-                        : 'bg-[var(--site-surface)] hover:bg-blue-500/20 text-[var(--site-muted)] border border-[var(--site-border-subtle)]'
-                    }`}
-                  >
-                    BL
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setPosition('bottom-center');
-                      if (soundEnabled) ui.sound('pop');
-                    }}
-                    title="bottom-center"
-                    className={`h-8 rounded-lg transition-all text-xs font-semibold flex items-center justify-center ${
-                      position === 'bottom-center'
-                        ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30 scale-105'
-                        : 'bg-[var(--site-surface)] hover:bg-blue-500/20 text-[var(--site-muted)] border border-[var(--site-border-subtle)]'
-                    }`}
-                  >
-                    BC
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setPosition('bottom-right');
-                      if (soundEnabled) ui.sound('pop');
-                    }}
-                    title="bottom-right"
-                    className={`h-8 rounded-lg transition-all text-xs font-semibold flex items-center justify-center ${
-                      position === 'bottom-right'
-                        ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30 scale-105'
-                        : 'bg-[var(--site-surface)] hover:bg-blue-500/20 text-[var(--site-muted)] border border-[var(--site-border-subtle)]'
-                    }`}
-                  >
-                    BR
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <select
-              value={position}
-              onChange={(e) => setPosition(e.target.value as ToastPosition)}
-              className="w-full bg-[var(--site-input-bg)] border border-[var(--site-border)] rounded-xl px-3 py-2 text-sm text-[var(--site-fg)] focus:outline-none font-mono text-xs"
-            >
-              <option value="top-left">top-left</option>
-              <option value="top-center">top-center (Dynamic Island)</option>
-              <option value="top-right">top-right</option>
-              <option value="center">center / middle (Focal Center)</option>
-              <option value="bottom-left">bottom-left</option>
-              <option value="bottom-center">bottom-center</option>
-              <option value="bottom-right">bottom-right</option>
-            </select>
-          </div>
-
-          {/* Sound Synthesizer Controls */}
-          <div className="space-y-3 pt-3 border-t border-[var(--site-border-subtle)]">
-            <div className="flex items-center justify-between">
-              <div>
-                <label className="text-xs font-semibold text-[var(--site-fg)] block">Harmonic Audio Feedback</label>
-                <span className="text-[11px] text-[var(--site-muted)]">Web Audio synthesizer (zero audio files)</span>
-              </div>
-              <button
-                type="button"
-                onClick={() => setSoundEnabled(!soundEnabled)}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
-                  soundEnabled ? 'bg-blue-600' : 'bg-gray-700'
-                }`}
-              >
-                <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                    soundEnabled ? 'translate-x-6' : 'translate-x-1'
-                  }`}
-                />
-              </button>
-            </div>
-
-            {soundEnabled && (
-              <div className="space-y-2 bg-[var(--site-input-bg)] p-3 rounded-xl border border-[var(--site-border)]">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-[var(--site-muted)] font-medium">Sound Cue</span>
-                  <button
-                    type="button"
-                    onClick={() => ui.sound(soundCue, soundVolume)}
-                    className="text-xs font-semibold text-blue-500 hover:text-blue-400 flex items-center gap-1"
-                  >
-                    Play Sample 🔊
-                  </button>
-                </div>
-                <div className="grid grid-cols-2 gap-1.5 text-xs">
-                  {(
-                    [
-                      'success',
-                      'error',
-                      'warning',
-                      'info',
-                      'ding',
-                      'pop',
-                      'chime',
-                      'bell',
-                      'message',
-                      'bubble',
-                      'marimba',
-                      'crystal',
-                      'subtle',
-                      'harp',
-                    ] as const
-                  ).map((cue) => (
-                    <button
-                      key={cue}
-                      type="button"
-                      onClick={() => {
-                        setSoundCue(cue);
-                        ui.sound(cue, soundVolume);
-                      }}
-                      className={`py-1 px-2 rounded-lg text-left capitalize transition-colors text-xs font-medium ${
-                        soundCue === cue
-                          ? 'bg-blue-600 text-white font-semibold'
-                          : 'bg-[var(--site-surface-raised)] text-[var(--site-muted)] hover:text-[var(--site-fg)]'
-                      }`}
-                    >
-                      {cue}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Volume slider */}
-                <div className="pt-2 border-t border-[var(--site-border)] flex items-center justify-between gap-2 text-xs">
-                  <span className="text-[var(--site-muted)] font-medium">Volume: {Math.round(soundVolume * 100)}%</span>
-                  <input
-                    type="range"
-                    min="0"
-                    max="1"
-                    step="0.05"
-                    value={soundVolume}
-                    onChange={(e) => setSoundVolume(parseFloat(e.target.value))}
-                    className="w-24 accent-blue-600"
-                    aria-label="Sound volume"
-                  />
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Dialog Specific Options */}
-          {(feedbackKind === 'confirm' || feedbackKind === 'alert' || feedbackKind === 'prompt' || feedbackKind === 'bottomSheet') && (
-            <div className="space-y-4 pt-2 border-t border-[var(--site-border-subtle)]">
-              {(feedbackKind === 'confirm' || feedbackKind === 'alert') && (
-                <div>
-                  <label className="block text-xs font-semibold text-[var(--site-muted)] mb-1.5">Dialog Tone</label>
-                  <div className="grid grid-cols-3 gap-2 text-xs">
-                    {(['danger', 'warning', 'info'] as const).map((t) => (
-                      <button
-                        key={t}
-                        type="button"
-                        onClick={() => setDialogTone(t)}
-                        className={`py-1.5 rounded-lg capitalize transition-colors font-medium ${
-                          dialogTone === t ? 'bg-blue-600 text-white font-semibold' : 'bg-[var(--site-surface-raised)] text-[var(--site-muted)]'
-                        }`}
-                      >
-                        {t}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {feedbackKind === 'prompt' && (
-                <div>
-                  <label className="block text-xs font-semibold text-[var(--site-muted)] mb-1.5">Prompt Input Type</label>
-                  <select
-                    value={promptInputType}
-                    onChange={(e) => setPromptInputType(e.target.value as typeof promptInputType)}
-                    className="w-full bg-[var(--site-input-bg)] border border-[var(--site-border)] rounded-xl px-3 py-2 text-sm text-[var(--site-fg)]"
-                  >
-                    <option value="text">Text Input</option>
-                    <option value="email">Email Address</option>
-                    <option value="password">Password (Masked)</option>
-                    <option value="number">Numeric Input</option>
-                    <option value="range">Range Slider</option>
-                    <option value="select">Dropdown Select</option>
-                    <option value="date">Date Picker</option>
-                    <option value="otp">6-Cell Discrete OTP</option>
-                  </select>
-                </div>
-              )}
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-[var(--site-muted)] mb-1.5">Backdrop Style</label>
-                  <select
-                    value={backdrop}
-                    onChange={(e) => setBackdrop(e.target.value as 'blur' | 'dim' | 'none')}
-                    className="w-full bg-[var(--site-input-bg)] border border-[var(--site-border)] rounded-xl px-3 py-2 text-xs text-[var(--site-fg)]"
-                  >
-                    <option value="blur">Blur Backdrop</option>
-                    <option value="dim">Dim Overlay</option>
-                    <option value="none">No Backdrop</option>
-                  </select>
-                </div>
-
-                <div className="flex flex-col gap-2 pt-1 text-xs">
-                  <label className="flex items-center gap-1.5 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={allowOutsideClick}
-                      onChange={(e) => setAllowOutsideClick(e.target.checked)}
-                      className="rounded accent-blue-500"
-                    />
-                    <span>Outside Click</span>
-                  </label>
-                  <label className="flex items-center gap-1.5 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={draggable}
-                      onChange={(e) => setDraggable(e.target.checked)}
-                      className="rounded accent-blue-500"
-                    />
-                    <span>Draggable Modal</span>
-                  </label>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Toast Specific Options */}
-          {(feedbackKind === 'toast' || feedbackKind === 'promise') && (
-            <div className="space-y-4 pt-2 border-t border-[var(--site-border-subtle)]">
-              <div>
-                <label className="block text-xs font-semibold text-[var(--site-muted)] mb-1.5">Toast Semantic Variant</label>
-                <div className="grid grid-cols-5 gap-1 text-xs">
-                  {(['success', 'error', 'warning', 'info', 'loading'] as const).map((t) => (
+            {/* Toast Specific Status Type */}
+            {feedbackKind === 'toast' && (
+              <div className="pt-2 border-t border-[var(--site-border)]">
+                <label className="block text-xs font-semibold text-[var(--site-muted)] mb-2">
+                  Notification Status Tone:
+                </label>
+                <div className="grid grid-cols-5 gap-2">
+                  {(['success', 'error', 'info', 'warning', 'loading'] as const).map((t) => (
                     <button
                       key={t}
                       type="button"
                       onClick={() => setToastType(t)}
-                      className={`py-1.5 rounded-lg capitalize transition-colors font-medium text-[11px] ${
-                        toastType === t ? 'bg-blue-600 text-white font-semibold' : 'bg-[var(--site-surface-raised)] text-[var(--site-muted)] hover:text-[var(--site-fg)]'
+                      className={`px-2 py-1.5 rounded-lg text-xs capitalize transition-all text-center ${
+                        toastType === t
+                          ? 'bg-[var(--site-surface)] border border-blue-500 text-blue-400 font-bold'
+                          : 'border border-[var(--site-border)] text-[var(--site-muted)] hover:text-[var(--site-fg)]'
                       }`}
                     >
                       {t}
@@ -1217,12 +942,329 @@ export default function NativeScreen() {
                   ))}
                 </div>
               </div>
+            )}
+          </div>
+
+          {/* Card 2: Content & Copywriting */}
+          <div className="p-5 rounded-2xl border border-[var(--site-border)] bg-[var(--site-card-bg)] space-y-4 shadow-sm">
+            <span className="text-xs font-bold uppercase tracking-wider text-[var(--site-fg)] block border-b border-[var(--site-border)] pb-3">
+              2. Notification Content &amp; Actions
+            </span>
+
+            <div className="space-y-3">
+              <div>
+                <label className="block text-xs font-medium text-[var(--site-muted)] mb-1">Title / Headline</label>
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-[var(--site-border)] bg-[var(--site-surface-raised)] text-sm text-[var(--site-fg)] focus:outline-none focus:border-blue-500"
+                  placeholder="Notification title..."
+                />
+              </div>
 
               <div>
-                <div className="flex justify-between text-xs text-[var(--site-muted)] mb-1">
-                  <span>Auto-dismiss Duration</span>
-                  <span className="font-mono">{duration ? `${duration} ms` : 'Persistent (0)'}</span>
+                <label className="block text-xs font-medium text-[var(--site-muted)] mb-1">Description / Subtext</label>
+                <textarea
+                  rows={2}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-[var(--site-border)] bg-[var(--site-surface-raised)] text-xs text-[var(--site-fg)] focus:outline-none focus:border-blue-500 resize-none"
+                  placeholder="Detailed notification description..."
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 pt-1">
+                <div>
+                  <label className="block text-xs font-medium text-[var(--site-muted)] mb-1">Primary Action Label</label>
+                  <input
+                    type="text"
+                    value={actionLabel}
+                    onChange={(e) => setActionLabel(e.target.value)}
+                    className="w-full px-3 py-1.5 rounded-xl border border-[var(--site-border)] bg-[var(--site-surface-raised)] text-xs text-[var(--site-fg)] focus:outline-none focus:border-blue-500"
+                    placeholder="e.g. View Details"
+                  />
                 </div>
+                <div>
+                  <label className="block text-xs font-medium text-[var(--site-muted)] mb-1">Cancel / Dismiss Label</label>
+                  <input
+                    type="text"
+                    value={cancelLabel}
+                    onChange={(e) => setCancelLabel(e.target.value)}
+                    className="w-full px-3 py-1.5 rounded-xl border border-[var(--site-border)] bg-[var(--site-surface-raised)] text-xs text-[var(--site-fg)] focus:outline-none focus:border-blue-500"
+                    placeholder="e.g. Dismiss"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Card 3: Theme, Mode & Glass Surface */}
+          <div className="p-5 rounded-2xl border border-[var(--site-border)] bg-[var(--site-card-bg)] space-y-4 shadow-sm">
+            <span className="text-xs font-bold uppercase tracking-wider text-[var(--site-fg)] block border-b border-[var(--site-border)] pb-3">
+              3. Visual Styling &amp; Glass Theme (21 Presets)
+            </span>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label className="block text-xs font-medium text-[var(--site-muted)] mb-1">CSS Theme Preset</label>
+                <select
+                  value={theme}
+                  onChange={(e) => setTheme(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-[var(--site-border)] bg-[var(--site-surface-raised)] text-xs text-[var(--site-fg)] focus:outline-none focus:border-blue-500"
+                >
+                  {THEME_REGISTRY.map((t) => (
+                    <option key={t.name} value={t.name}>
+                      {t.name} ({t.category})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-[var(--site-muted)] mb-1">Mode</label>
+                <select
+                  value={mode}
+                  onChange={(e) => setMode(e.target.value as 'dark' | 'light')}
+                  className="w-full px-3 py-2 rounded-xl border border-[var(--site-border)] bg-[var(--site-surface-raised)] text-xs text-[var(--site-fg)] focus:outline-none focus:border-blue-500"
+                >
+                  <option value="dark">Dark Glass</option>
+                  <option value="light">Light Glass</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-[var(--site-muted)] mb-1">Screen Position</label>
+                <select
+                  value={position}
+                  onChange={(e) => setPosition(e.target.value as ToastPosition)}
+                  className="w-full px-3 py-2 rounded-xl border border-[var(--site-border)] bg-[var(--site-surface-raised)] text-xs text-[var(--site-fg)] focus:outline-none focus:border-blue-500"
+                >
+                  <option value="top-center">top-center</option>
+                  <option value="top-right">top-right</option>
+                  <option value="top-left">top-left</option>
+                  <option value="bottom-center">bottom-center</option>
+                  <option value="bottom-right">bottom-right</option>
+                  <option value="bottom-left">bottom-left</option>
+                  <option value="center-center">center-center (HUD)</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Visual Flags Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 pt-2">
+              <label className="flex items-center gap-2 text-xs text-[var(--site-fg)] cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={richColors}
+                  onChange={(e) => setRichColors(e.target.checked)}
+                  className="rounded accent-blue-600"
+                />
+                <span>Rich Colors</span>
+              </label>
+
+              <label className="flex items-center gap-2 text-xs text-[var(--site-fg)] cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={invert}
+                  onChange={(e) => setInvert(e.target.checked)}
+                  className="rounded accent-blue-600"
+                />
+                <span>Invert Contrast</span>
+              </label>
+
+              <label className="flex items-center gap-2 text-xs text-[var(--site-fg)] cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={closeButton}
+                  onChange={(e) => setCloseButton(e.target.checked)}
+                  className="rounded accent-blue-600"
+                />
+                <span>Close Button</span>
+              </label>
+
+              <label className="flex items-center gap-2 text-xs text-[var(--site-fg)] cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={glow}
+                  onChange={(e) => setGlow(e.target.checked)}
+                  className="rounded accent-blue-600"
+                />
+                <span>Ambient Glow</span>
+              </label>
+
+              <label className="flex items-center gap-2 text-xs text-[var(--site-fg)] cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={gradientBorder}
+                  onChange={(e) => setGradientBorder(e.target.checked)}
+                  className="rounded accent-blue-600"
+                />
+                <span>Gradient Border</span>
+              </label>
+
+              <label className="flex items-center gap-2 text-xs text-[var(--site-fg)] cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={showBannerImage}
+                  onChange={(e) => setShowBannerImage(e.target.checked)}
+                  className="rounded accent-blue-600"
+                />
+                <span>Header Banner</span>
+              </label>
+            </div>
+          </div>
+
+          {/* Card 4: Mascots & Dynamic Island */}
+          <div className="p-5 rounded-2xl border border-[var(--site-border)] bg-[var(--site-card-bg)] space-y-4 shadow-sm">
+            <span className="text-xs font-bold uppercase tracking-wider text-purple-400 block border-b border-[var(--site-border)] pb-3">
+              4. Mascots, Dynamic Island &amp; Micro-Interactions
+            </span>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-medium text-[var(--site-muted)] mb-1">
+                  Robot Mascot Character (10 SVG)
+                </label>
+                <select
+                  value={character}
+                  onChange={(e) => setCharacter(e.target.value as 'none' | RobotCharacter)}
+                  className="w-full px-3 py-2 rounded-xl border border-[var(--site-border)] bg-[var(--site-surface-raised)] text-xs text-[var(--site-fg)] focus:outline-none focus:border-purple-500"
+                >
+                  <option value="none">No Mascot (Standard Status Icon)</option>
+                  <option value="wave">wave (Welcome / Friendly)</option>
+                  <option value="wink">wink (Success / Playful)</option>
+                  <option value="cheer">cheer (Celebration)</option>
+                  <option value="love">love (Heart / Favorited)</option>
+                  <option value="curious">curious (Question / Tip)</option>
+                  <option value="working">working (Processing Tasks)</option>
+                  <option value="surprised">surprised (Alert / Attention)</option>
+                  <option value="sleep">sleep (Idle / Paused)</option>
+                  <option value="cool">cool (Sunglasses / Done)</option>
+                  <option value="alert">alert (Warning / Notice)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-[var(--site-muted)] mb-1">Custom Discard Label</label>
+                <input
+                  type="text"
+                  value={discardText}
+                  onChange={(e) => setDiscardText(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-[var(--site-border)] bg-[var(--site-surface-raised)] text-xs text-[var(--site-fg)] focus:outline-none focus:border-purple-500"
+                  placeholder="e.g. Discard, Snooze"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
+              <label className="flex items-center gap-2 text-xs text-[var(--site-fg)] cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={island}
+                  onChange={(e) => setIsland(e.target.checked)}
+                  className="rounded accent-purple-600"
+                />
+                <span>Dynamic Island</span>
+              </label>
+
+              <label className="flex items-center gap-2 text-xs text-[var(--site-fg)] cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={hud}
+                  onChange={(e) => setHud(e.target.checked)}
+                  className="rounded accent-purple-600"
+                />
+                <span>Silent HUD</span>
+              </label>
+
+              <label className="flex items-center gap-2 text-xs text-[var(--site-fg)] cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={shake}
+                  onChange={(e) => setShake(e.target.checked)}
+                  className="rounded accent-purple-600"
+                />
+                <span>Shake Mount</span>
+              </label>
+
+              <label className="flex items-center gap-2 text-xs text-[var(--site-fg)] cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={showTimestamp}
+                  onChange={(e) => setShowTimestamp(e.target.checked)}
+                  className="rounded accent-purple-600"
+                />
+                <span>Timestamp</span>
+              </label>
+            </div>
+          </div>
+
+          {/* Card 5: Spring Physics & Audio Synthesizer */}
+          <div className="p-5 rounded-2xl border border-[var(--site-border)] bg-[var(--site-card-bg)] space-y-4 shadow-sm">
+            <span className="text-xs font-bold uppercase tracking-wider text-blue-400 block border-b border-[var(--site-border)] pb-3">
+              5. Real Spring Physics &amp; Web Audio Synth
+            </span>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-xs font-medium text-[var(--site-muted)]">Web Audio Synthesizer</label>
+                  <button
+                    type="button"
+                    onClick={() => setSoundEnabled(!soundEnabled)}
+                    className={`text-[11px] font-semibold ${soundEnabled ? 'text-emerald-400' : 'text-gray-500'}`}
+                  >
+                    {soundEnabled ? 'Active (ON)' : 'Muted (OFF)'}
+                  </button>
+                </div>
+                <div className="flex gap-2">
+                  <select
+                    value={soundCue}
+                    disabled={!soundEnabled}
+                    onChange={(e) => {
+                      setSoundCue(e.target.value);
+                      playSynthesizerSound(e.target.value);
+                    }}
+                    className="w-full px-3 py-2 rounded-xl border border-[var(--site-border)] bg-[var(--site-surface-raised)] text-xs text-[var(--site-fg)] disabled:opacity-50"
+                  >
+                    {[
+                      'crystal',
+                      'ding',
+                      'mallet',
+                      'bell',
+                      'bubble',
+                      'chime',
+                      'pop',
+                      'subtle',
+                      'success',
+                      'warning',
+                      'error',
+                      'snap',
+                      'whoosh',
+                      'ping',
+                    ].map((c) => (
+                      <option key={c} value={c}>
+                        cue: {c}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    type="button"
+                    onClick={() => playSynthesizerSound(soundCue)}
+                    disabled={!soundEnabled}
+                    className="px-3 py-1.5 rounded-xl border border-[var(--site-border)] bg-[var(--site-surface)] text-xs font-semibold text-[var(--site-fg)] hover:bg-[var(--site-surface-raised)] disabled:opacity-40"
+                    title="Audition synthesized sound cue"
+                  >
+                    ▶
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-[var(--site-muted)] mb-1">
+                  Duration (ms): {duration === 0 ? 'Persistent (0ms)' : `${duration}ms`}
+                </label>
                 <input
                   type="range"
                   min="0"
@@ -1230,584 +1272,377 @@ export default function NativeScreen() {
                   step="500"
                   value={duration}
                   onChange={(e) => setDuration(Number(e.target.value))}
-                  className="w-full accent-blue-500"
+                  className="w-full accent-blue-500 mt-2"
                 />
               </div>
+            </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-[var(--site-muted)] mb-1.5">Progress Track</label>
-                  <select
-                    value={progress}
-                    onChange={(e) => setProgress(e.target.value as 'none' | 'bar' | 'ring')}
-                    className="w-full bg-[var(--site-input-bg)] border border-[var(--site-border)] rounded-xl px-3 py-2 text-xs text-[var(--site-fg)]"
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 pt-1">
+              <label className="flex items-center gap-2 text-xs text-[var(--site-fg)] cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={swipeEnabled}
+                  onChange={(e) => setSwipeEnabled(e.target.checked)}
+                  className="rounded accent-blue-600"
+                />
+                <span>1:1 Spring Gesture Swipe</span>
+              </label>
+
+              <div className="flex items-center gap-2 text-xs">
+                <span className="text-[var(--site-muted)]">Progress:</span>
+                {(['none', 'bar', 'ring'] as const).map((p) => (
+                  <button
+                    key={p}
+                    type="button"
+                    onClick={() => setProgress(p)}
+                    className={`px-2 py-0.5 rounded text-[11px] capitalize ${
+                      progress === p ? 'bg-blue-600 text-white font-medium' : 'text-[var(--site-muted)] hover:text-[var(--site-fg)]'
+                    }`}
                   >
-                    <option value="none">none</option>
-                    <option value="bar">linear bar</option>
-                    <option value="ring">radial ring</option>
+                    {p}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Card 6: Dialog, Prompt & Sheet Controls */}
+          {(feedbackKind === 'confirm' ||
+            feedbackKind === 'alert' ||
+            feedbackKind === 'prompt' ||
+            feedbackKind === 'sheet' ||
+            feedbackKind === 'bottomSheet') && (
+            <div className="p-5 rounded-2xl border border-[var(--site-border)] bg-[var(--site-card-bg)] space-y-4 shadow-sm">
+              <span className="text-xs font-bold uppercase tracking-wider text-amber-400 block border-b border-[var(--site-border)] pb-3">
+                6. Dialog, Prompt &amp; Sheet Configuration
+              </span>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-xs font-medium text-[var(--site-muted)] mb-1">Dialog Tone</label>
+                  <select
+                    value={dialogTone}
+                    onChange={(e) => setDialogTone(e.target.value as 'info' | 'warning' | 'danger')}
+                    className="w-full px-3 py-2 rounded-xl border border-[var(--site-border)] bg-[var(--site-surface-raised)] text-xs text-[var(--site-fg)] focus:outline-none focus:border-amber-500"
+                  >
+                    <option value="info">info (Standard Notice)</option>
+                    <option value="warning">warning (Cautionary)</option>
+                    <option value="danger">danger (Destructive / Red)</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-[var(--site-muted)] mb-1.5">Text Direction</label>
+                  <label className="block text-xs font-medium text-[var(--site-muted)] mb-1">Modal Backdrop</label>
                   <select
-                    value={dir}
-                    onChange={(e) => setDir(e.target.value as 'ltr' | 'rtl')}
-                    className="w-full bg-[var(--site-input-bg)] border border-[var(--site-border)] rounded-xl px-3 py-2 text-xs text-[var(--site-fg)]"
+                    value={backdrop}
+                    onChange={(e) => setBackdrop(e.target.value as 'blur' | 'dim' | 'none')}
+                    className="w-full px-3 py-2 rounded-xl border border-[var(--site-border)] bg-[var(--site-surface-raised)] text-xs text-[var(--site-fg)] focus:outline-none focus:border-amber-500"
                   >
-                    <option value="ltr">LTR (Left to Right)</option>
-                    <option value="rtl">RTL (Right to Left)</option>
+                    <option value="blur">blur (Frosted Glass)</option>
+                    <option value="dim">dim (Dimmed Solid)</option>
+                    <option value="none">none (Transparent)</option>
                   </select>
                 </div>
+
+                {feedbackKind === 'prompt' && (
+                  <div>
+                    <label className="block text-xs font-medium text-[var(--site-muted)] mb-1">Prompt Input Type</label>
+                    <select
+                      value={promptInputType}
+                      onChange={(e) => setPromptInputType(e.target.value as typeof promptInputType)}
+                      className="w-full px-3 py-2 rounded-xl border border-[var(--site-border)] bg-[var(--site-surface-raised)] text-xs text-[var(--site-fg)] focus:outline-none focus:border-amber-500"
+                    >
+                      <option value="text">text</option>
+                      <option value="email">email</option>
+                      <option value="password">password</option>
+                      <option value="number">number</option>
+                      <option value="range">range</option>
+                      <option value="select">select</option>
+                      <option value="date">date</option>
+                      <option value="otp">otp (6-digit)</option>
+                    </select>
+                  </div>
+                )}
               </div>
 
-              <div className="flex flex-wrap items-center gap-4 pt-1 text-xs">
-                <label className="flex items-center gap-1.5 cursor-pointer">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
+                <label className="flex items-center gap-2 text-xs text-[var(--site-fg)] cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={richColors}
-                    onChange={(e) => setRichColors(e.target.checked)}
-                    className="rounded accent-blue-500"
+                    checked={draggable}
+                    onChange={(e) => setDraggable(e.target.checked)}
+                    className="rounded accent-amber-600"
                   />
-                  <span>Rich Colors</span>
+                  <span>Draggable</span>
                 </label>
 
-                <label className="flex items-center gap-1.5 cursor-pointer">
+                <label className="flex items-center gap-2 text-xs text-[var(--site-fg)] cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={invert}
-                    onChange={(e) => setInvert(e.target.checked)}
-                    className="rounded accent-blue-500"
+                    checked={allowOutsideClick}
+                    onChange={(e) => setAllowOutsideClick(e.target.checked)}
+                    className="rounded accent-amber-600"
                   />
-                  <span>Invert Colors</span>
+                  <span>Outside Click</span>
                 </label>
 
-                <label className="flex items-center gap-1.5 cursor-pointer">
+                <label className="flex items-center gap-2 text-xs text-[var(--site-fg)] cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={closeButton}
-                    onChange={(e) => setCloseButton(e.target.checked)}
-                    className="rounded accent-blue-500"
+                    checked={allowEscape}
+                    onChange={(e) => setAllowEscape(e.target.checked)}
+                    className="rounded accent-amber-600"
                   />
-                  <span>Close &apos;X&apos;</span>
+                  <span>ESC Key</span>
                 </label>
 
-                <label className="flex items-center gap-1.5 cursor-pointer">
+                <label className="flex items-center gap-2 text-xs text-[var(--site-fg)] cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={swipeEnabled}
-                    onChange={(e) => setSwipeEnabled(e.target.checked)}
-                    className="rounded accent-blue-500"
+                    checked={reverseButtons}
+                    onChange={(e) => setReverseButtons(e.target.checked)}
+                    className="rounded accent-amber-600"
                   />
-                  <span>Swipe Physics</span>
+                  <span>Reverse Buttons</span>
                 </label>
-              </div>
-
-              {/* v0.3.0 Showcase Controls: Robot Mascot, Dynamic Island, Banner, Custom Discard */}
-              <div className="pt-3 border-t border-[var(--site-border-subtle)] space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-purple-500 uppercase tracking-wider">v0.3.0 Showcase Controls</span>
-                  <span className="text-[10px] font-mono text-[var(--site-muted)]">Spring + Island + Robot</span>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-[var(--site-muted)] mb-1.5">
-                    Animated SVG Robot Mascot (`character`)
-                  </label>
-                  <select
-                    value={character}
-                    onChange={(e) => setCharacter(e.target.value as 'none' | RobotCharacter)}
-                    className="w-full bg-[var(--site-input-bg)] border border-[var(--site-border)] rounded-xl px-3 py-2 text-xs text-[var(--site-fg)] font-mono"
-                  >
-                    <option value="none">none (Standard Icon)</option>
-                    <option value="wave">wave (Friendly Wave)</option>
-                    <option value="idle">idle (Breathing Bot)</option>
-                    <option value="success">success (Happy Celebration)</option>
-                    <option value="error">error (System Alert)</option>
-                    <option value="think">think (Thinking Dots)</option>
-                    <option value="loading">loading (Processing Spin)</option>
-                    <option value="sleep">sleep (Zzz Standby)</option>
-                    <option value="shock">shock (High Voltage Shock)</option>
-                    <option value="search">search (Scanning Radar)</option>
-                    <option value="headPalm">headPalm (Facepalm Oops)</option>
-                  </select>
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
-                  <label className="flex items-center gap-1.5 cursor-pointer p-2 rounded-lg bg-[var(--site-surface-raised)] border border-[var(--site-border-subtle)]">
-                    <input
-                      type="checkbox"
-                      checked={island}
-                      onChange={(e) => setIsland(e.target.checked)}
-                      className="rounded accent-purple-500"
-                    />
-                    <span>Dynamic Island</span>
-                  </label>
-                  <label className="flex items-center gap-1.5 cursor-pointer p-2 rounded-lg bg-[var(--site-surface-raised)] border border-[var(--site-border-subtle)]">
-                    <input
-                      type="checkbox"
-                      checked={hud}
-                      onChange={(e) => setHud(e.target.checked)}
-                      className="rounded accent-purple-500"
-                    />
-                    <span>Silent HUD</span>
-                  </label>
-                  <label className="flex items-center gap-1.5 cursor-pointer p-2 rounded-lg bg-[var(--site-surface-raised)] border border-[var(--site-border-subtle)]">
-                    <input
-                      type="checkbox"
-                      checked={shake}
-                      onChange={(e) => setShake(e.target.checked)}
-                      className="rounded accent-purple-500"
-                    />
-                    <span>Error Shake</span>
-                  </label>
-                  <label className="flex items-center gap-1.5 cursor-pointer p-2 rounded-lg bg-[var(--site-surface-raised)] border border-[var(--site-border-subtle)]">
-                    <input
-                      type="checkbox"
-                      checked={glow}
-                      onChange={(e) => setGlow(e.target.checked)}
-                      className="rounded accent-purple-500"
-                    />
-                    <span>Ambient Glow</span>
-                  </label>
-                  <label className="flex items-center gap-1.5 cursor-pointer p-2 rounded-lg bg-[var(--site-surface-raised)] border border-[var(--site-border-subtle)]">
-                    <input
-                      type="checkbox"
-                      checked={gradientBorder}
-                      onChange={(e) => setGradientBorder(e.target.checked)}
-                      className="rounded accent-purple-500"
-                    />
-                    <span>Gradient Border</span>
-                  </label>
-                  <label className="flex items-center gap-1.5 cursor-pointer p-2 rounded-lg bg-[var(--site-surface-raised)] border border-[var(--site-border-subtle)]">
-                    <input
-                      type="checkbox"
-                      checked={showBannerImage}
-                      onChange={(e) => setShowBannerImage(e.target.checked)}
-                      className="rounded accent-purple-500"
-                    />
-                    <span>Header Image</span>
-                  </label>
-                  <label className="flex items-center gap-1.5 cursor-pointer p-2 rounded-lg bg-[var(--site-surface-raised)] border border-[var(--site-border-subtle)]">
-                    <input
-                      type="checkbox"
-                      checked={showTimestamp}
-                      onChange={(e) => setShowTimestamp(e.target.checked)}
-                      className="rounded accent-purple-500"
-                    />
-                    <span>Timestamp</span>
-                  </label>
-                  <label className="flex items-center gap-1.5 cursor-pointer p-2 rounded-lg bg-[var(--site-surface-raised)] border border-[var(--site-border-subtle)]">
-                    <input
-                      type="checkbox"
-                      checked={showToggle}
-                      onChange={(e) => setShowToggle(e.target.checked)}
-                      className="rounded accent-purple-500"
-                    />
-                    <span>Inline Switch</span>
-                  </label>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-semibold text-[var(--site-muted)] mb-1">
-                      Discard Label (`discardText`)
-                    </label>
-                    <input
-                      type="text"
-                      value={discardText}
-                      onChange={(e) => setDiscardText(e.target.value)}
-                      placeholder="e.g. Discard, Close"
-                      className="w-full bg-[var(--site-input-bg)] border border-[var(--site-border)] rounded-xl px-3 py-1.5 text-xs text-[var(--site-fg)]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-[var(--site-muted)] mb-1">
-                      Shortcut Badge (`kbd`)
-                    </label>
-                    <input
-                      type="text"
-                      value={kbdBadge}
-                      onChange={(e) => setKbdBadge(e.target.value)}
-                      placeholder="e.g. ⌘K, Esc"
-                      className="w-full bg-[var(--site-input-bg)] border border-[var(--site-border)] rounded-xl px-3 py-1.5 text-xs text-[var(--site-fg)] font-mono"
-                    />
-                  </div>
-                </div>
               </div>
             </div>
           )}
-
-          {/* Title & Description text */}
-          <div className="space-y-3 pt-2 border-t border-[var(--site-border-subtle)]">
-            <div>
-              <label className="block text-xs font-semibold text-[var(--site-muted)] mb-1">Title</label>
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="w-full bg-[var(--site-input-bg)] border border-[var(--site-border)] rounded-xl px-3 py-2 text-sm text-[var(--site-fg)]"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-[var(--site-muted)] mb-1">Description / Body Text</label>
-              <input
-                type="text"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="w-full bg-[var(--site-input-bg)] border border-[var(--site-border)] rounded-xl px-3 py-2 text-sm text-[var(--site-fg)]"
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-xs font-semibold text-[var(--site-muted)] mb-1">Action Button</label>
-                <input
-                  type="text"
-                  value={actionLabel}
-                  onChange={(e) => setActionLabel(e.target.value)}
-                  placeholder="e.g. Confirm, Undo"
-                  className="w-full bg-[var(--site-input-bg)] border border-[var(--site-border)] rounded-xl px-3 py-2 text-sm text-[var(--site-fg)]"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-[var(--site-muted)] mb-1">Cancel Button</label>
-                <input
-                  type="text"
-                  value={cancelLabel}
-                  onChange={(e) => setCancelLabel(e.target.value)}
-                  placeholder="e.g. Dismiss, Cancel"
-                  className="w-full bg-[var(--site-input-bg)] border border-[var(--site-border)] rounded-xl px-3 py-2 text-sm text-[var(--site-fg)]"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Fire Feedback Button */}
-          <button
-            type="button"
-            onClick={handleFire}
-            className="w-full py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm transition-all shadow-lg shadow-blue-500/25 active:scale-[0.99] flex items-center justify-center gap-2"
-          >
-            <span>Trigger Feedback in Browser</span>
-            <span>↵</span>
-          </button>
         </div>
 
-        {/* RIGHT COLUMN: Live In-Canvas Render & Code Preview (7 cols) */}
-        <div className="lg:col-span-7 space-y-6">
-          {/* Live In-Canvas Preview */}
-          <div className="rounded-2xl border border-[var(--site-border)] overflow-hidden shadow-2xl bg-[var(--site-card-bg)]">
-            <div className="px-4 py-3 bg-[var(--site-surface-raised)] border-b border-[var(--site-border)] flex items-center justify-between text-xs text-[var(--site-muted)]">
-              <span className="font-semibold text-[var(--site-fg)]">Live In-Canvas Simulation</span>
-              <div className="flex items-center gap-1.5">
-                <span>Backdrop:</span>
-                {(['mesh', 'slate', 'cyber', 'light'] as const).map((b) => (
-                  <button
-                    key={b}
-                    type="button"
-                    onClick={() => setCanvasBg(b)}
-                    className={`px-2 py-0.5 rounded text-[11px] capitalize transition-colors ${
-                      canvasBg === b ? 'bg-blue-600 text-white font-medium' : 'text-[var(--site-muted)] hover:text-[var(--site-fg)]'
-                    }`}
-                  >
-                    {b}
-                  </button>
-                ))}
+        {/* RIGHT COLUMN: Interactive Trigger Deck, State Inspector & Code Export (6 cols) */}
+        <div className="lg:col-span-6 space-y-6">
+          {/* Card 1: Interactive Browser Action Station */}
+          <div className="p-6 rounded-3xl border border-blue-500/30 bg-gradient-to-br from-blue-600/10 via-[var(--site-card-bg)] to-purple-600/10 shadow-xl space-y-5">
+            <div className="flex items-center justify-between border-b border-[var(--site-border)] pb-3">
+              <span className="text-xs font-bold uppercase tracking-wider text-blue-400">
+                Live Browser Action Station
+              </span>
+              <span className="text-[11px] text-[var(--site-muted)] font-mono">Real DOM + Audio</span>
+            </div>
+
+            {/* Big Hero Trigger Button */}
+            <button
+              id="playground-fire-btn"
+              type="button"
+              onClick={handleFire}
+              className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:via-indigo-500 hover:to-purple-500 text-white font-bold text-base transition-all shadow-xl shadow-blue-500/25 active:scale-[0.99] flex items-center justify-center gap-3 group"
+            >
+              <span>Trigger Feedback in Browser</span>
+              <span className="px-2 py-0.5 rounded-lg bg-white/20 text-xs font-mono group-hover:bg-white/30 transition-colors">
+                ↵ Enter
+              </span>
+            </button>
+
+            {/* Quick Test Matrix */}
+            <div>
+              <span className="block text-xs font-semibold text-[var(--site-muted)] mb-2">
+                One-Click Live Test Matrix:
+              </span>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    playSynthesizerSound('success');
+                    toast.success('Telemetry Synchronized', {
+                      description: 'Edge clusters responding in 18ms.',
+                      theme,
+                    });
+                  }}
+                  className="px-3 py-2 rounded-xl border border-[var(--site-border)] bg-[var(--site-surface-raised)] hover:bg-[var(--site-surface)] text-xs text-[var(--site-fg)] font-medium text-left"
+                >
+                  ⚡ Quick Success
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    playSynthesizerSound('error');
+                    toast.error('Build Verification Failed', {
+                      description: '1 syntax error in src/core/stream.ts:42',
+                      theme,
+                      shake: true,
+                    });
+                  }}
+                  className="px-3 py-2 rounded-xl border border-[var(--site-border)] bg-[var(--site-surface-raised)] hover:bg-[var(--site-surface)] text-xs text-[var(--site-fg)] font-medium text-left"
+                >
+                  ✕ Shake Error
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    playSynthesizerSound('crystal');
+                    toast.success('Robot Wave Active', {
+                      description: 'Zero-asset animated SVG mascot with spring pop.',
+                      character: 'wave',
+                      theme,
+                    });
+                  }}
+                  className="px-3 py-2 rounded-xl border border-[var(--site-border)] bg-[var(--site-surface-raised)] hover:bg-[var(--site-surface)] text-xs text-[var(--site-fg)] font-medium text-left"
+                >
+                  🤖 Mascot Pop
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    playSynthesizerSound('chime');
+                    toast.info('Dynamic Island Call', {
+                      description: 'Incoming Audio from Team Lead',
+                      island: true,
+                      theme,
+                    });
+                  }}
+                  className="px-3 py-2 rounded-xl border border-[var(--site-border)] bg-[var(--site-surface-raised)] hover:bg-[var(--site-surface)] text-xs text-[var(--site-fg)] font-medium text-left"
+                >
+                  🏝 Dynamic Island
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    ui.confirm({
+                      title: 'Delete Production Database?',
+                      text: 'Cluster us-east-prod will be terminated.',
+                      tone: 'danger',
+                      theme,
+                    });
+                  }}
+                  className="px-3 py-2 rounded-xl border border-[var(--site-border)] bg-[var(--site-surface-raised)] hover:bg-[var(--site-surface)] text-xs text-[var(--site-fg)] font-medium text-left"
+                >
+                  ⚠️ Danger Dialog
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    ui.bottomSheet({
+                      title: 'Region Failover Policy',
+                      text: 'Primary node: us-east-1 (N. Virginia)',
+                      theme,
+                    });
+                  }}
+                  className="px-3 py-2 rounded-xl border border-[var(--site-border)] bg-[var(--site-surface-raised)] hover:bg-[var(--site-surface)] text-xs text-[var(--site-fg)] font-medium text-left"
+                >
+                  📱 Bottom Sheet
+                </button>
               </div>
             </div>
 
-            {/* Canvas Surface with Real Theme Container */}
-            <div
-              className={`p-8 sm:p-12 min-h-[360px] flex items-center justify-center relative overflow-hidden transition-colors ${canvasBackgrounds[canvasBg]}`}
-              data-gk-theme={theme}
-              data-gk-mode={mode}
-            >
-              {/* Simulated Live Toast Card */}
-              {feedbackKind === 'toast' && (
-                <div
-                  className="gk-toast relative w-full max-w-md pointer-events-auto shadow-2xl transition-all"
-                  data-type={toastType}
-                  data-rich={richColors ? 'true' : undefined}
-                  data-island={island ? 'expanded' : undefined}
-                  data-hud={hud ? '' : undefined}
-                  data-glow={glow ? '' : undefined}
-                  data-gradient-border={gradientBorder ? '' : undefined}
-                  data-has-image={showBannerImage ? '' : undefined}
-                  data-wrap={(description || (actionLabel && cancelLabel) || showBannerImage || showToggle) ? '' : undefined}
-                  data-has-close={closeButton ? '' : undefined}
-                >
-                  {showBannerImage && (
-                    <div className="gk-image">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={SAMPLE_BANNER_SVG} alt="Toast header preview" />
-                    </div>
-                  )}
-                  <div className="gk-icon text-lg">
-                    {character !== 'none' ? (
-                      <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-xs font-mono font-bold" title={`Robot: ${character}`}>
-                        ❖
-                      </span>
-                    ) : (
-                      <>
-                        {toastType === 'success' && '✓'}
-                        {toastType === 'error' && '✕'}
-                        {toastType === 'warning' && '⚠'}
-                        {toastType === 'info' && 'ℹ'}
-                        {toastType === 'loading' && '↻'}
-                      </>
-                    )}
-                  </div>
-                  <div className="gk-content">
-                    <div className="gk-title font-semibold flex items-center gap-2 flex-wrap">
-                      <span>{title}</span>
-                      {character !== 'none' && (
-                        <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-purple-500/20 text-purple-400">
-                          bot:{character}
-                        </span>
-                      )}
-                      {kbdBadge.trim() && <kbd className="gk-kbd">{kbdBadge.trim()}</kbd>}
-                      {showTimestamp && <span className="gk-timestamp">just now</span>}
-                    </div>
-                    {description && <div className="gk-desc text-xs mt-0.5">{description}</div>}
-                    {showToggle && (
-                      <label className="gk-toggle mt-2 inline-flex items-center gap-2 text-xs">
-                        <input type="checkbox" defaultChecked readOnly />
-                        <span className="gk-toggle-track" />
-                        <span className="gk-toggle-label">Live Sync</span>
-                      </label>
-                    )}
-                  </div>
-                  {(actionLabel || cancelLabel) && (
-                    <div className="gk-actions">
-                      {cancelLabel && (
-                        <button
-                          type="button"
-                          className="gk-btn gk-cancel"
-                        >
-                          {cancelLabel}
-                        </button>
-                      )}
-                      {actionLabel && (
-                        <button
-                          type="button"
-                          onClick={handleFire}
-                          className="gk-btn gk-action"
-                        >
-                          {actionLabel}
-                        </button>
-                      )}
-                    </div>
-                  )}
-                  {closeButton && (
-                    <button
-                      type="button"
-                      className={`gk-close ${discardText.trim() ? 'gk-close-with-text' : ''}`}
-                      aria-label={discardText.trim() || 'Close'}
-                    >
-                      <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                        <line x1="18" y1="6" x2="6" y2="18" />
-                        <line x1="6" y1="6" x2="18" y2="18" />
-                      </svg>
-                      {discardText.trim() && <span className="gk-close-text">{discardText.trim()}</span>}
-                    </button>
-                  )}
-                  {progress === 'bar' && (
-                    <div className="gk-progress">
-                      <i style={{ animationDuration: `${duration}ms` }} />
-                    </div>
-                  )}
-                </div>
+            {/* Utility Bar */}
+            <div className="pt-2 border-t border-[var(--site-border)] flex items-center justify-between">
+              <span className="text-xs text-[var(--site-muted)]">Active toasts rendered with spring damping</span>
+              <button
+                type="button"
+                onClick={() => toast.dismissAll()}
+                className="text-xs text-rose-400 hover:text-rose-300 font-semibold transition-colors"
+              >
+                Dismiss All Active
+              </button>
+            </div>
+          </div>
+
+          {/* Card 2: Active Configuration Inspector */}
+          <div className="p-4 rounded-2xl border border-[var(--site-border)] bg-[var(--site-surface-raised)] space-y-3">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[var(--site-muted)] block">
+              Active Inspector Matrix
+            </span>
+            <div className="flex flex-wrap gap-2 text-xs font-mono">
+              <span className="px-2.5 py-1 rounded-lg bg-[var(--site-surface)] border border-[var(--site-border)] text-[var(--site-fg)]">
+                kind: <strong>{feedbackKind}</strong>
+              </span>
+              <span className="px-2.5 py-1 rounded-lg bg-[var(--site-surface)] border border-[var(--site-border)] text-blue-400">
+                theme: <strong>{theme}</strong>
+              </span>
+              <span className="px-2.5 py-1 rounded-lg bg-[var(--site-surface)] border border-[var(--site-border)] text-purple-400">
+                pos: <strong>{position}</strong>
+              </span>
+              <span className="px-2.5 py-1 rounded-lg bg-[var(--site-surface)] border border-[var(--site-border)] text-emerald-400">
+                sound: <strong>{soundEnabled ? soundCue : 'off'}</strong>
+              </span>
+              <span className="px-2.5 py-1 rounded-lg bg-[var(--site-surface)] border border-[var(--site-border)] text-amber-400">
+                physics: <strong>{swipeEnabled ? '1:1 Spring (2D Fling)' : 'Static'}</strong>
+              </span>
+              {character !== 'none' && (
+                <span className="px-2.5 py-1 rounded-lg bg-[var(--site-surface)] border border-purple-500/40 text-purple-400">
+                  robot: <strong>{character}</strong>
+                </span>
               )}
-
-              {/* Simulated Live Promise Card */}
-              {feedbackKind === 'promise' && (
-                <div
-                  className="gk-toast relative w-full max-w-md shadow-2xl"
-                  data-type={isPromiseLoading ? 'loading' : 'success'}
-                  data-wrap={description ? '' : undefined}
-                >
-                  <div className="gk-icon text-lg">{isPromiseLoading ? '↻' : '✓'}</div>
-                  <div className="gk-content">
-                    <div className="gk-title font-semibold">{isPromiseLoading ? 'Executing async operation...' : title}</div>
-                    {description && <div className="gk-desc text-xs mt-0.5">{description}</div>}
-                  </div>
-                </div>
-              )}
-
-              {/* Simulated Live Dialog (Confirm / Alert / Prompt) */}
-              {(feedbackKind === 'confirm' || feedbackKind === 'alert' || feedbackKind === 'prompt') && (
-                <div className="gk-dialog relative w-full max-w-md p-6 shadow-2xl rounded-2xl" data-tone={dialogTone}>
-                  <div className="gk-dialog-icon text-center text-3xl mb-3">
-                    {dialogTone === 'danger' ? '⚠' : dialogTone === 'warning' ? '⚡' : 'ℹ'}
-                  </div>
-                  <h3 className="gk-dialog-title font-bold text-center text-base mb-1">{title}</h3>
-                  <p className="gk-dialog-text text-xs text-center mb-4">{description}</p>
-
-                  {feedbackKind === 'prompt' && (
-                    <div className="mb-4">
-                      {promptInputType === 'range' ? (
-                        <div className="space-y-1">
-                          <input type="range" className="w-full accent-blue-500" defaultValue="50" />
-                          <div className="flex justify-between text-[10px] text-[var(--site-muted)]">
-                            <span>0</span>
-                            <span>50</span>
-                            <span>100</span>
-                          </div>
-                        </div>
-                      ) : promptInputType === 'select' ? (
-                        <select className="w-full px-3 py-2 rounded-lg border border-[var(--site-border)] bg-[var(--site-surface-raised)] text-xs text-[var(--site-fg)]">
-                          <option>Standard Tier</option>
-                          <option>Pro ($29/mo)</option>
-                          <option>Enterprise</option>
-                        </select>
-                      ) : promptInputType === 'otp' ? (
-                        <div className="flex justify-center gap-2">
-                          {[1, 2, 3, 4, 5, 6].map((i) => (
-                            <input
-                              key={i}
-                              type="text"
-                              maxLength={1}
-                              defaultValue={i <= 2 ? `${i}` : ''}
-                              className="w-8 h-9 text-center font-mono font-bold text-sm rounded-lg border border-[var(--site-border)] bg-[var(--site-surface-raised)] text-[var(--site-fg)]"
-                            />
-                          ))}
-                        </div>
-                      ) : (
-                        <input
-                          type={promptInputType === 'password' ? 'password' : promptInputType === 'number' ? 'number' : promptInputType === 'date' ? 'date' : 'text'}
-                          placeholder="Type value here..."
-                          defaultValue={promptInputType === 'email' ? 'user@toastory.dev' : ''}
-                          className="w-full px-3 py-2 rounded-lg border border-[var(--site-border)] bg-[var(--site-surface-raised)] text-xs text-[var(--site-fg)]"
-                          readOnly
-                        />
-                      )}
-                    </div>
-                  )}
-
-                  <div className="gk-dialog-actions flex gap-2 justify-center">
-                    {feedbackKind === 'confirm' && (
-                      <button type="button" className="gk-btn gk-cancel flex-1">
-                        {cancelLabel || 'Dismiss'}
-                      </button>
-                    )}
-                    <button type="button" onClick={handleFire} className="gk-btn gk-confirm flex-1">
-                      {actionLabel || (feedbackKind === 'alert' ? 'Acknowledge' : 'Confirm')}
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Simulated Multi-Step Wizard */}
-              {feedbackKind === 'steps' && (
-                <div className="gk-dialog relative w-full max-w-md p-6 shadow-2xl rounded-2xl">
-                  <div className="flex justify-between items-center mb-4 text-xs font-semibold text-blue-500">
-                    <span>Step 1 of 3</span>
-                    <div className="flex gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-blue-600" />
-                      <span className="w-2 h-2 rounded-full bg-white/20" />
-                      <span className="w-2 h-2 rounded-full bg-white/20" />
-                    </div>
-                  </div>
-                  <h3 className="font-bold text-base mb-1">Workspace Setup</h3>
-                  <p className="text-xs text-[var(--site-muted)] mb-4">Enter team workspace name:</p>
-                  <input
-                    type="text"
-                    value="Acme Design Corp"
-                    readOnly
-                    className="w-full px-3 py-2 rounded-lg border border-[var(--site-border)] bg-[var(--site-surface-raised)] text-xs mb-4"
-                  />
-                  <div className="flex gap-2">
-                    <button type="button" className="gk-btn flex-1 text-xs py-2 rounded-lg" disabled>
-                      Back
-                    </button>
-                    <button type="button" onClick={handleFire} className="gk-btn gk-confirm flex-1 text-xs py-2 rounded-lg bg-blue-600 text-white font-semibold">
-                      Next Step →
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Simulated Action Sheet */}
-              {feedbackKind === 'sheet' && (
-                <div className="gk-sheet relative w-full max-w-sm p-4 shadow-2xl rounded-2xl flex flex-col gap-2">
-                  <div className="text-center font-semibold text-xs text-[var(--site-muted)]">{title}</div>
-                  <div className="gk-sheet-group flex flex-col rounded-xl overflow-hidden border border-[var(--site-border)]">
-                    <button type="button" className="gk-sheet-action py-2.5 text-xs text-blue-500 text-center border-b border-[var(--site-border)]">
-                      Primary Operation
-                    </button>
-                    <button type="button" className="gk-sheet-action py-2.5 text-xs text-blue-500 text-center border-b border-[var(--site-border)]">
-                      Secondary Operation
-                    </button>
-                    <button type="button" className="gk-sheet-action py-2.5 text-xs text-red-500 text-center font-medium">
-                      Destructive Action
-                    </button>
-                  </div>
-                  <button type="button" className="gk-sheet-cancel py-2 text-xs font-semibold text-center rounded-xl bg-[var(--site-surface-raised)]">
-                    Cancel
-                  </button>
-                </div>
-              )}
-
-              {/* Simulated Mobile Bottom Sheet */}
-              {feedbackKind === 'bottomSheet' && (
-                <div className="gk-sheet relative w-full max-w-md p-5 shadow-2xl rounded-t-3xl border-t border-[var(--site-border)] bg-[var(--site-surface)] flex flex-col gap-3">
-                  {/* Top Grab Handle */}
-                  <div className="w-10 h-1 bg-[var(--site-muted)] rounded-full mx-auto opacity-50 mb-1" />
-                  <div className="font-bold text-sm text-[var(--site-fg)]">{title}</div>
-                  <p className="text-xs text-[var(--site-muted)]">{description}</p>
-                  <div className="p-3 rounded-xl border border-[var(--site-border)] bg-[var(--site-surface-raised)] text-xs flex justify-between items-center">
-                    <span>Region: <strong>US East</strong></span>
-                    <span className="text-blue-500 font-medium">Change</span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={handleFire}
-                    className="w-full py-2.5 rounded-xl bg-blue-600 text-white font-semibold text-xs shadow-md"
-                  >
-                    {actionLabel || 'Apply Settings'}
-                  </button>
-                </div>
-              )}
-
-              {/* Simulated Loading Overlay */}
-              {feedbackKind === 'loading' && (
-                <div className="gk-loading relative p-6 shadow-2xl rounded-2xl flex flex-col items-center gap-3">
-                  <div className="text-2xl animate-spin">↻</div>
-                  <div className="text-xs font-medium">{title}</div>
-                  <div className="text-[11px] text-[var(--site-muted)]">{description}</div>
-                  <div className="gk-loading-bar w-48 h-1.5 bg-white/10 rounded-full overflow-hidden">
-                    <div className="h-full bg-blue-500 rounded-full w-2/3" />
-                  </div>
-                </div>
+              {island && (
+                <span className="px-2.5 py-1 rounded-lg bg-[var(--site-surface)] border border-blue-500/40 text-blue-400">
+                  island: <strong>active</strong>
+                </span>
               )}
             </div>
           </div>
 
-          {/* Generated Code Section */}
-          <div className="rounded-2xl border border-[var(--site-border)] bg-[var(--site-code-bg)] p-4">
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--site-border)] pb-3 mb-2">
-              <span className="text-xs font-semibold uppercase tracking-wider text-[var(--site-muted)]">
-                Generated Code Snippet
-              </span>
+          {/* Card 3: Multi-Framework Code Generator (9 Frameworks) */}
+          <div className="rounded-3xl border border-[var(--site-border)] bg-[var(--site-card-bg)] p-5 space-y-4 shadow-xl">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--site-border)] pb-3">
+              <div>
+                <span className="text-xs font-bold uppercase tracking-wider text-[var(--site-fg)]">
+                  Copy-Ready Code Generator
+                </span>
+                <span className="block text-[11px] text-[var(--site-muted)]">
+                  Instant integration snippet for your application
+                </span>
+              </div>
 
-              {/* Framework tabs */}
-              <div className="flex items-center gap-1 text-xs">
-                {(['react', 'js', 'nextjs', 'vue', 'svelte', 'native'] as const).map((tab) => (
+              {/* 9 Framework Select Tabs */}
+              <div className="flex flex-wrap items-center gap-1">
+                {[
+                  { id: 'react', label: 'React' },
+                  { id: 'nextjs', label: 'Next.js' },
+                  { id: 'js', label: 'Plain JS' },
+                  { id: 'vue', label: 'Vue' },
+                  { id: 'nuxt', label: 'Nuxt' },
+                  { id: 'angular', label: 'Angular' },
+                  { id: 'svelte', label: 'Svelte' },
+                  { id: 'electron', label: 'Electron' },
+                  { id: 'native', label: 'Native' },
+                ].map((tab) => (
                   <button
-                    key={tab}
+                    key={tab.id}
                     type="button"
-                    onClick={() => setActiveCodeTab(tab)}
-                    className={`px-2.5 py-1 rounded-lg capitalize transition-colors ${
-                      activeCodeTab === tab ? 'bg-blue-600 text-white font-medium' : 'text-[var(--site-muted)] hover:text-[var(--site-fg)]'
+                    onClick={() => setActiveCodeTab(tab.id as FrameworkTab)}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
+                      activeCodeTab === tab.id
+                        ? 'bg-blue-600 text-white font-semibold shadow-sm'
+                        : 'text-[var(--site-muted)] hover:text-[var(--site-fg)] hover:bg-[var(--site-surface-raised)]'
                     }`}
                   >
-                    {tab === 'nextjs' ? 'Next.js' : tab === 'native' ? 'React Native' : tab}
+                    {tab.label}
                   </button>
                 ))}
               </div>
             </div>
 
-            <CodeSnippet code={getGeneratedSnippet()} language={activeCodeTab === 'vue' || activeCodeTab === 'svelte' ? 'html' : 'typescript'} />
+            <CodeSnippet
+              code={getGeneratedSnippet()}
+              language={
+                activeCodeTab === 'vue' || activeCodeTab === 'nuxt' || activeCodeTab === 'svelte'
+                  ? 'html'
+                  : 'typescript'
+              }
+              filename={
+                activeCodeTab === 'react'
+                  ? 'App.tsx'
+                  : activeCodeTab === 'nextjs'
+                    ? 'app/components/Notice.tsx'
+                    : activeCodeTab === 'vue'
+                      ? 'Notification.vue'
+                      : activeCodeTab === 'nuxt'
+                        ? 'components/Notice.vue'
+                        : activeCodeTab === 'angular'
+                          ? 'feedback.component.ts'
+                          : activeCodeTab === 'svelte'
+                            ? 'App.svelte'
+                            : activeCodeTab === 'native'
+                              ? 'Screen.tsx'
+                              : 'main.ts'
+              }
+            />
           </div>
         </div>
       </div>

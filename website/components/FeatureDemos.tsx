@@ -253,7 +253,7 @@ export function FeatureDemos() {
       <section className="space-y-6">
         <div className="border-b border-[var(--site-border)] pb-4 flex flex-wrap items-end justify-between gap-4">
           <div>
-            <span className="text-xs font-semibold text-purple-500 uppercase tracking-wider">New in v0.3.0</span>
+            <span className="text-xs font-semibold text-purple-500 uppercase tracking-wider">New in v0.3.1</span>
             <h3 className="text-2xl sm:text-3xl font-bold text-[var(--site-fg)] mt-1">
               Spring Physics, Dynamic Island &amp; 10 Animated Robot Mascots
             </h3>
@@ -636,7 +636,7 @@ export function FeatureDemos() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30">
-                Updated in v0.3.0
+                Updated in v0.3.1
               </span>
               <h4 className="text-lg font-bold text-[var(--site-fg)]">7 Screen Placements &amp; 14 Web Audio Synthesizer Cues</h4>
             </div>

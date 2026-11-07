@@ -22,7 +22,7 @@ export default function HomePage() {
           {/* Badge row */}
           <div className="inline-flex flex-wrap items-center justify-center gap-2 px-4 py-1.5 rounded-full bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-xs text-[var(--site-muted)] shadow-sm backdrop-blur-md">
             <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="font-semibold text-[var(--site-fg)]">toastory v0.3.0</span>
+            <span className="font-semibold text-[var(--site-fg)]">toastory v0.3.1</span>
             <span className="text-[var(--site-muted)]">•</span>
             <span className="text-purple-500 font-medium">Real Spring Physics &amp; Dynamic Island</span>
             <span className="text-[var(--site-muted)]">•</span>

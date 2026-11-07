@@ -654,9 +654,9 @@ export function HeroDemo() {
     setSelectedDemoCode('Rich Banner');
     if (soundEnabled) ui.sound('harp');
     const bannerSvg = `data:image/svg+xml,${encodeURIComponent(
-      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 180"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#2563eb"/><stop offset="50%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#ec4899"/></linearGradient></defs><rect width="600" height="180" fill="url(#g)"/><circle cx="510" cy="40" r="90" fill="rgba(255,255,255,0.12)"/><text x="32" y="98" font-family="-apple-system,system-ui,sans-serif" font-size="28" font-weight="800" fill="#fff">toastory v0.3.0 Engine</text><text x="32" y="132" font-family="monospace" font-size="15" fill="rgba(255,255,255,0.85)">Real Spring Physics · 14 Sound Cues · Dynamic Island</text></svg>`
+      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 180"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#2563eb"/><stop offset="50%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#ec4899"/></linearGradient></defs><rect width="600" height="180" fill="url(#g)"/><circle cx="510" cy="40" r="90" fill="rgba(255,255,255,0.12)"/><text x="32" y="98" font-family="-apple-system,system-ui,sans-serif" font-size="28" font-weight="800" fill="#fff">toastory v0.3.1 Engine</text><text x="32" y="132" font-family="monospace" font-size="15" fill="rgba(255,255,255,0.85)">Real Spring Physics · 14 Sound Cues · Dynamic Island</text></svg>`
     )}`;
-    toast.success('Release v0.3.0 Published', {
+    toast.success('Release v0.3.1 Published', {
       description: 'Full spring physics + velocity fling dismissal is now live.',
       image: bannerSvg,
       kbd: '⌘B',
@@ -867,7 +867,7 @@ toast.error('Rate limit threshold reached!', {
 });`,
     'Rich Banner': `import { toast } from 'toastory';
 
-toast.success('Release v0.3.0 Published', {
+toast.success('Release v0.3.1 Published', {
   description: 'Full spring physics + velocity fling dismissal is now live.',
   image: '/assets/release-banner.png',
   kbd: '⌘B',
@@ -1170,7 +1170,7 @@ const res = await ui.steps([
         <div className="grid grid-cols-1 sm:grid-cols-[96px_1fr] items-center gap-3 pb-3.5 border-b border-[var(--site-border)]">
           <div className="flex items-center gap-1.5">
             <span className="h-2 w-2 rounded-full bg-purple-500 animate-pulse" aria-hidden="true" />
-            <span className="text-xs font-bold text-purple-500 uppercase tracking-wider">v0.3.0 New</span>
+            <span className="text-xs font-bold text-purple-500 uppercase tracking-wider">v0.3.1 New</span>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             {[

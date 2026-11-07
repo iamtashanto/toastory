@@ -29,6 +29,19 @@ export function Footer() {
               v0.3.1 · MIT License
             </span>
           </div>
+          <div className="pt-2">
+            <a
+              href="https://www.supportkori.com/iamtashanto"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500/20 hover:border-rose-500/40 transition-all shadow-sm group"
+            >
+              <svg className="w-3.5 h-3.5 text-rose-400 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+              </svg>
+              <span>Support the creator on SupportKori</span>
+            </a>
+          </div>
         </div>
 
         {/* Documentation Links */}
@@ -107,8 +120,13 @@ export function Footer() {
 
         {/* Community & Legal */}
         <div>
-          <h3 className="text-sm font-semibold text-[var(--site-fg)] tracking-wider uppercase mb-3">Trust & Security</h3>
+          <h3 className="text-sm font-semibold text-[var(--site-fg)] tracking-wider uppercase mb-3">Community &amp; Trust</h3>
           <ul className="space-y-2 text-sm">
+            <li>
+              <Link href="/about" className="hover:text-[var(--site-fg)] transition-colors">
+                About &amp; Mission
+              </Link>
+            </li>
             <li>
               <Link href="/changelog" className="hover:text-[var(--site-fg)] transition-colors">
                 Changelog (v0.3.1)
@@ -128,6 +146,17 @@ export function Footer() {
               <Link href="/privacy" className="hover:text-[var(--site-fg)] transition-colors">
                 Privacy Pledge
               </Link>
+            </li>
+            <li>
+              <a
+                href="https://www.supportkori.com/iamtashanto"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-rose-400 hover:text-rose-300 font-medium transition-colors flex items-center gap-1.5"
+              >
+                <span>Sponsor on SupportKori</span>
+                <span className="text-[10px]">↗</span>
+              </a>
             </li>
             <li>
               <a
