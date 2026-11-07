@@ -99,7 +99,7 @@ export function Header() {
               className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-500/10 text-blue-500 border border-blue-500/20 hover:bg-blue-500/20 transition-colors"
             >
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" aria-hidden="true" />
-              v0.3.1
+              v0.3.2
             </Link>
           </div>
 
@@ -217,7 +217,7 @@ export function Header() {
               </Link>
             ))}
             <div className="pt-2 border-t border-white/10 flex items-center justify-between text-xs text-gray-400 px-3">
-              <span>Version: v0.3.1 (MIT)</span>
+              <span>Version: v0.3.2 (MIT)</span>
               <a
                 href="https://www.supportkori.com/iamtashanto"
                 target="_blank"

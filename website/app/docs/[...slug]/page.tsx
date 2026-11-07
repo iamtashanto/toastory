@@ -20,6 +20,187 @@ export async function generateStaticParams() {
   return params;
 }
 
+interface MarkdownBlock {
+  type: 'heading' | 'code' | 'table' | 'list' | 'ordered-list' | 'callout' | 'paragraph' | 'divider';
+  level?: number;
+  text?: string;
+  code?: string;
+  language?: string;
+  filename?: string;
+  items?: string[];
+  calloutType?: 'note' | 'tip' | 'important' | 'warning';
+  tableHeaders?: string[];
+  tableRows?: string[][];
+}
+
+function parseMarkdownBlocks(content: string): MarkdownBlock[] {
+  const lines = content.split('\n');
+  const blocks: MarkdownBlock[] = [];
+  let i = 0;
+
+  while (i < lines.length) {
+    const line = lines[i];
+    const trimmed = line.trim();
+
+    if (!trimmed) {
+      i++;
+      continue;
+    }
+
+    if (trimmed === '---' || trimmed === '***') {
+      blocks.push({ type: 'divider' });
+      i++;
+      continue;
+    }
+
+    // Code block
+    if (trimmed.startsWith('```')) {
+      const header = trimmed.slice(3).trim();
+      let language = header || 'typescript';
+      let filename: string | undefined;
+      if (header.includes(':') || header.includes(' ')) {
+        const parts = header.split(/[:\s]+/);
+        language = parts[0];
+        filename = parts.slice(1).join(' ');
+      }
+      const codeLines: string[] = [];
+      i++;
+      while (i < lines.length && !lines[i].trim().startsWith('```')) {
+        codeLines.push(lines[i]);
+        i++;
+      }
+      if (i < lines.length) i++; // consume closing ```
+      blocks.push({
+        type: 'code',
+        code: codeLines.join('\n'),
+        language,
+        filename,
+      });
+      continue;
+    }
+
+    // Headings
+    if (trimmed.startsWith('#')) {
+      const match = trimmed.match(/^(#{1,6})\s+(.*)$/);
+      if (match) {
+        blocks.push({
+          type: 'heading',
+          level: match[1].length,
+          text: match[2],
+        });
+        i++;
+        continue;
+      }
+    }
+
+    // Callout / Blockquote
+    if (trimmed.startsWith('>')) {
+      const quoteLines: string[] = [];
+      while (i < lines.length && lines[i].trim().startsWith('>')) {
+        quoteLines.push(lines[i].trim().replace(/^>\s?/, ''));
+        i++;
+      }
+      let calloutType: 'note' | 'tip' | 'important' | 'warning' = 'note';
+      let calloutText = quoteLines.join('\n');
+      const alertMatch = calloutText.match(/^\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*(.*)$/i);
+      if (alertMatch) {
+        const tag = alertMatch[1].toLowerCase();
+        calloutType =
+          tag === 'tip'
+            ? 'tip'
+            : tag === 'warning' || tag === 'caution'
+              ? 'warning'
+              : tag === 'important'
+                ? 'important'
+                : 'note';
+        calloutText = alertMatch[2] + (quoteLines.length > 1 ? '\n' + quoteLines.slice(1).join('\n') : '');
+      }
+      blocks.push({
+        type: 'callout',
+        calloutType,
+        text: calloutText.trim(),
+      });
+      continue;
+    }
+
+    // Table
+    if (trimmed.startsWith('|')) {
+      const tableLines: string[] = [];
+      while (i < lines.length && lines[i].trim().startsWith('|')) {
+        tableLines.push(lines[i].trim());
+        i++;
+      }
+      if (tableLines.length >= 2) {
+        const rawHeaders = tableLines[0].split('|').slice(1, -1).map((c) => c.trim());
+        const dataRows = tableLines
+          .slice(1)
+          .filter((l) => !l.includes('---'))
+          .map((l) => l.split('|').slice(1, -1).map((c) => c.trim()));
+        blocks.push({
+          type: 'table',
+          tableHeaders: rawHeaders,
+          tableRows: dataRows,
+        });
+        continue;
+      }
+    }
+
+    // Unordered List
+    if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+      const listItems: string[] = [];
+      while (i < lines.length && (lines[i].trim().startsWith('- ') || lines[i].trim().startsWith('* '))) {
+        listItems.push(lines[i].trim().replace(/^[-*]\s+/, ''));
+        i++;
+      }
+      blocks.push({
+        type: 'list',
+        items: listItems,
+      });
+      continue;
+    }
+
+    // Ordered List
+    if (/^\d+\.\s/.test(trimmed)) {
+      const listItems: string[] = [];
+      while (i < lines.length && /^\d+\.\s/.test(lines[i].trim())) {
+        listItems.push(lines[i].trim().replace(/^\d+\.\s+/, ''));
+        i++;
+      }
+      blocks.push({
+        type: 'ordered-list',
+        items: listItems,
+      });
+      continue;
+    }
+
+    // Paragraph
+    const paragraphLines: string[] = [];
+    while (
+      i < lines.length &&
+      lines[i].trim().length > 0 &&
+      !lines[i].trim().startsWith('#') &&
+      !lines[i].trim().startsWith('```') &&
+      !lines[i].trim().startsWith('>') &&
+      !lines[i].trim().startsWith('|') &&
+      !lines[i].trim().startsWith('- ') &&
+      !lines[i].trim().startsWith('* ') &&
+      !/^\d+\.\s/.test(lines[i].trim()) &&
+      lines[i].trim() !== '---'
+    ) {
+      paragraphLines.push(lines[i].trim());
+      i++;
+    }
+    if (paragraphLines.length > 0) {
+      blocks.push({
+        type: 'paragraph',
+        text: paragraphLines.join(' '),
+      });
+    }
+  }
+
+  return blocks;
+}
+
 function renderInline(text: string): string {
   return text
     .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-[var(--site-fg)]">$1</strong>')
@@ -93,67 +274,127 @@ export default async function DocArticlePage({ params }: Props) {
 
       {/* Main Markdown Body Content */}
       <div className="space-y-6 text-sm sm:text-base text-[var(--site-muted)] leading-relaxed">
-        {article.content.split('\n\n').map((paragraph, idx) => {
-          const trimmed = paragraph.trim();
-          if (trimmed.startsWith('# ')) {
-            return null; // Skip main title as it is already rendered in header
-          }
-          if (trimmed.startsWith('### ')) {
-            const headingText = trimmed.replace('### ', '');
+        {parseMarkdownBlocks(article.content).map((block, idx) => {
+          if (block.type === 'heading') {
+            const headingText = block.text ?? '';
             const id = headingText.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-            return (
-              <h3 key={idx} id={id} className="text-xl sm:text-2xl font-bold text-[var(--site-fg)] pt-6 border-t border-[var(--site-border)]">
-                {headingText}
-              </h3>
-            );
-          }
-          if (trimmed.startsWith('```')) {
-            const lines = trimmed.split('\n');
-            const lang = lines[0].replace('```', '') || 'typescript';
-            const codeContent = lines.slice(1, -1).join('\n');
-            return <CodeSnippet key={idx} code={codeContent} language={lang} />;
-          }
-          if (trimmed.startsWith('|')) {
-            const lines = trimmed.split('\n').filter((l) => l.trim().length > 0);
-            if (lines.length >= 2) {
-              const rawHeaders = lines[0].split('|').slice(1, -1).map((c) => c.trim());
-              const dataRows = lines
-                .slice(1)
-                .filter((l) => !l.includes('---'))
-                .map((l) => l.split('|').slice(1, -1).map((c) => c.trim()));
-
+            if (block.level === 1) {
+              return null; // Skip main title as it is already rendered in header
+            }
+            if (block.level === 2) {
               return (
-                <div key={idx} className="overflow-x-auto my-6">
-                  <table className="doc-table">
-                    <thead>
-                      <tr>
-                        {rawHeaders.map((h, i) => (
-                          <th key={i}>{h}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {dataRows.map((row, rIdx) => (
-                        <tr key={rIdx}>
-                          {row.map((cell, cIdx) => (
-                            <td
-                              key={cIdx}
-                              dangerouslySetInnerHTML={{ __html: renderInline(cell) }}
-                            />
-                          ))}
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                <h2
+                  key={idx}
+                  id={id}
+                  className="text-2xl sm:text-3xl font-extrabold text-[var(--site-fg)] pt-8 pb-2 border-b border-[var(--site-border)] tracking-tight scroll-mt-24"
+                >
+                  <a href={`#${id}`} className="hover:underline">
+                    {headingText}
+                  </a>
+                </h2>
               );
             }
-          }
-          if (trimmed.startsWith('- ')) {
-            const listItems = trimmed.split('\n').map((li) => li.replace(/^[-\*]\s+/, ''));
+            if (block.level === 3) {
+              return (
+                <h3
+                  key={idx}
+                  id={id}
+                  className="text-lg sm:text-xl font-bold text-[var(--site-fg)] pt-4 scroll-mt-24"
+                >
+                  <a href={`#${id}`} className="hover:underline">
+                    {headingText}
+                  </a>
+                </h3>
+              );
+            }
             return (
-              <ul key={idx} className="list-disc list-inside space-y-1.5 pl-2">
-                {listItems.map((li, i) => (
+              <h4 key={idx} id={id} className="text-base font-semibold text-[var(--site-fg)] pt-2 scroll-mt-24">
+                {headingText}
+              </h4>
+            );
+          }
+
+          if (block.type === 'code') {
+            return (
+              <CodeSnippet
+                key={idx}
+                code={block.code ?? ''}
+                language={block.language ?? 'typescript'}
+                filename={block.filename}
+              />
+            );
+          }
+
+          if (block.type === 'callout') {
+            const alertTone =
+              block.calloutType === 'tip'
+                ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300'
+                : block.calloutType === 'warning'
+                  ? 'border-amber-500/40 bg-amber-500/10 text-amber-300'
+                  : block.calloutType === 'important'
+                    ? 'border-purple-500/40 bg-purple-500/10 text-purple-300'
+                    : 'border-blue-500/40 bg-blue-500/10 text-blue-300';
+
+            const badgeLabel =
+              block.calloutType === 'tip'
+                ? 'TIP'
+                : block.calloutType === 'warning'
+                  ? 'WARNING'
+                  : block.calloutType === 'important'
+                    ? 'IMPORTANT'
+                    : 'NOTE';
+
+            return (
+              <div
+                key={idx}
+                className={`p-4 rounded-xl border-l-4 border ${alertTone} my-4 text-xs sm:text-sm text-[var(--site-fg)]`}
+              >
+                <div className="font-bold text-xs uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                  <span>{badgeLabel}</span>
+                </div>
+                <div
+                  className="leading-relaxed opacity-90 whitespace-pre-line"
+                  dangerouslySetInnerHTML={{ __html: renderInline(block.text ?? '') }}
+                />
+              </div>
+            );
+          }
+
+          if (block.type === 'table') {
+            return (
+              <div key={idx} className="overflow-x-auto my-6 rounded-xl border border-[var(--site-border)]">
+                <table className="w-full text-left text-xs sm:text-sm border-collapse min-w-[500px]">
+                  <thead>
+                    <tr className="border-b border-[var(--site-border)] bg-[var(--site-surface-raised)]">
+                      {block.tableHeaders?.map((h, i) => (
+                        <th key={i} className="py-3 px-4 font-semibold text-[var(--site-fg)]">
+                          {h}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[var(--site-border-subtle)]">
+                    {block.tableRows?.map((row, rIdx) => (
+                      <tr key={rIdx} className="hover:bg-[var(--site-surface-raised)]/50">
+                        {row.map((cell, cIdx) => (
+                          <td
+                            key={cIdx}
+                            className="py-3 px-4 text-[var(--site-muted)]"
+                            dangerouslySetInnerHTML={{ __html: renderInline(cell) }}
+                          />
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            );
+          }
+
+          if (block.type === 'list') {
+            return (
+              <ul key={idx} className="list-disc list-inside space-y-1.5 pl-2 my-3">
+                {block.items?.map((li, i) => (
                   <li key={i} className="text-[var(--site-muted)]">
                     <span dangerouslySetInnerHTML={{ __html: renderInline(li) }} />
                   </li>
@@ -161,11 +402,28 @@ export default async function DocArticlePage({ params }: Props) {
               </ul>
             );
           }
+
+          if (block.type === 'ordered-list') {
+            return (
+              <ol key={idx} className="list-decimal list-inside space-y-1.5 pl-2 my-3">
+                {block.items?.map((li, i) => (
+                  <li key={i} className="text-[var(--site-muted)]">
+                    <span dangerouslySetInnerHTML={{ __html: renderInline(li) }} />
+                  </li>
+                ))}
+              </ol>
+            );
+          }
+
+          if (block.type === 'divider') {
+            return <hr key={idx} className="my-8 border-[var(--site-border)]" />;
+          }
+
           return (
             <p
               key={idx}
               className="text-[var(--site-muted)] leading-relaxed"
-              dangerouslySetInnerHTML={{ __html: renderInline(trimmed) }}
+              dangerouslySetInnerHTML={{ __html: renderInline(block.text ?? '') }}
             />
           );
         })}
