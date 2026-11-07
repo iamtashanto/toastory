@@ -1,7 +1,14 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { resetEngine } from '../../src/web';
-import { GlazeModule, GlazeService, GlazeToasterComponent, toast, ui } from '../../src/angular';
+import {
+  GlazeModule,
+  GlazeService,
+  GlazeToasterComponent,
+  provideToastory,
+  toast,
+  ui,
+} from '../../src/angular';
 import type { ToastRecord } from '../../src/core';
 
 beforeEach(() => {
@@ -69,5 +76,29 @@ describe('toastory/angular adapter', () => {
 
   it('GlazeModule is defined', () => {
     expect(GlazeModule).toBeDefined();
+  });
+
+  it('provideToastory configures settings and returns service provider', () => {
+    const providers = provideToastory({ position: 'center', sound: true, soundVolume: 0.6 });
+    expect(providers).toEqual([GlazeService]);
+    const cfg = ui.configure({});
+    expect(cfg.position).toBe('center');
+    expect(cfg.sound).toBe(true);
+    expect(cfg.soundVolume).toBe(0.6);
+  });
+
+  it('GlazeToasterComponent applies center position and sound inputs', () => {
+    const component = new GlazeToasterComponent();
+    component.position = 'center';
+    component.sound = 'ding';
+    component.soundVolume = 0.9;
+
+    component.ngOnInit();
+    const cfg = ui.configure({});
+    expect(cfg.position).toBe('center');
+    expect(cfg.sound).toBe('ding');
+    expect(cfg.soundVolume).toBe(0.9);
+
+    component.ngOnDestroy();
   });
 });

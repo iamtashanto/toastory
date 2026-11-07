@@ -16,6 +16,7 @@ import { icon, iconForType, PATHS } from './icons';
 import type { IconName } from './icons';
 import { safeUrl, sanitizeToFragment } from './sanitize';
 import { resolveVariant } from './variants';
+import { playSound, resolveToastSound } from './sound';
 
 const COLORS = ['#38bdf8', '#818cf8', '#ec4899', '#f97316', '#10b981', '#6366f1', '#eab308'];
 
@@ -86,6 +87,7 @@ const INTERACTIVE = 'button,a,input,select,textarea,[role=button]';
 
 /** Default swipe directions for a position: toward the nearest screen edge. */
 export function defaultSwipe(position: ToastPosition): SwipeDirection[] {
+  if (position === 'center' || position === 'middle') return ['up', 'down', 'left', 'right'];
   if (position.endsWith('left')) return ['left'];
   if (position.endsWith('right')) return ['right'];
   return position.startsWith('top') ? ['up'] : ['down'];
@@ -212,7 +214,10 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
     const rawItems = [...region.items.values()];
     const list = newestOnTop ? rawItems.reverse() : rawItems;
     const gap = cfg().gap;
-    const isTop = region.key.includes('top-');
+    const isTop =
+      region.key.includes('top-') ||
+      region.key.endsWith('|center') ||
+      region.key.endsWith('|middle');
     let offset = 0;
     let front = 0;
 
@@ -360,16 +365,21 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
     const c = cfg();
     const names = record.classNames ?? {};
     const unstyled = record.unstyled === true;
-    const k = (base: string, extra?: string): string =>
-      [unstyled ? '' : base, extra].filter(Boolean).join(' ');
+    const k = (base: string, extra?: string, short = base): string => {
+      const cls = unstyled ? '' : `gk-toast__${base} gk-${short}`;
+      return extra ? (cls ? `${cls} ${extra}` : extra) : cls;
+    };
     const node = item.el;
     node.replaceChildren();
-    node.className = k(
-      `gk-toast gk-toast--${record.type}`,
-      [names.toast, record.className].filter(Boolean).join(' '),
-    );
+    node.className = [
+      unstyled ? '' : `gk-toast gk-toast--${record.type}`,
+      names.toast,
+      record.className,
+    ]
+      .filter(Boolean)
+      .join(' ');
 
-    const content = el('div', k('gk-toast__content gk-content', names.content));
+    const content = el('div', k('content', names.content));
     if (record.custom) {
       fill(
         content,
@@ -384,7 +394,7 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
         const bObj =
           typeof record.badge === 'object' && record.badge !== null ? record.badge : undefined;
         const tone: string = bObj ? (bObj.tone ?? 'info') : (record.badge as string);
-        const badgeEl = el('div', k('gk-toast__badge gk-badge', names.badge), {
+        const badgeEl = el('div', k('badge', names.badge), {
           'aria-hidden': 'true',
           'data-tone': tone,
         });
@@ -400,7 +410,7 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
         const typeDef = store.types.get(record.type);
         const iconValue = customIcon === undefined ? typeDef?.icon : customIcon;
         if (customIcon !== false && (builtIn || iconValue !== undefined)) {
-          const holder = el('div', k('gk-toast__icon gk-icon', names.icon), {
+          const holder = el('div', k('icon', names.icon), {
             'aria-hidden': 'true',
           });
           if (builtIn) holder.append(icon(builtIn));
@@ -410,7 +420,7 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       }
 
       if (record.avatar !== undefined) {
-        const holder = el('div', k('gk-toast__avatar gk-avatar', names.avatar));
+        const holder = el('div', k('avatar', names.avatar));
         const av = record.avatar;
         if (typeof av === 'object' && av !== null && !('nodeType' in av)) {
           const opt = av as ToastAvatarOption;
@@ -443,12 +453,12 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       }
 
       if (record.title) {
-        const title = el('div', k('gk-toast__title gk-title', names.title));
+        const title = el('div', k('title', names.title));
         fill(title, record.title);
         content.append(title);
       }
       if (record.description || record.html) {
-        const desc = el('div', k('gk-toast__description gk-desc', names.description));
+        const desc = el('div', k('description', names.description, 'desc'));
         fill(desc, record.description);
         if (record.html) {
           const fragment = sanitizeToFragment(record.html);
@@ -479,12 +489,7 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
 
       if (record.count > 1) {
         content.append(
-          el(
-            'span',
-            k('gk-toast__count gk-count', names.count),
-            { 'aria-hidden': 'true' },
-            `${record.count}`,
-          ),
+          el('span', k('count', names.count), { 'aria-hidden': 'true' }, `${record.count}`),
         );
       }
     }
@@ -492,7 +497,7 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       record.href && safeUrl(record.href)
         ? el(
             'a',
-            k('gk-toast__link gk-link', names.link),
+            k('link', names.link),
             {
               href: record.href,
               target: record.target ?? '_self',
@@ -507,14 +512,14 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       node.append(
         el(
           'time',
-          k('gk-toast__time gk-time', names.time),
+          k('time', names.time),
           {},
           formatRelativeTime(record.timestamp, record.timestampLocale),
         ),
       );
     }
 
-    if (record.kbd) node.append(el('kbd', k('gk-toast__kbd gk-kbd', names.kbd), {}, record.kbd));
+    if (record.kbd) node.append(el('kbd', k('kbd', names.kbd), {}, record.kbd));
 
     if (record.toggle) {
       const tg = record.toggle;
@@ -548,7 +553,7 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
     }
 
     if (record.actions?.length) {
-      const actionsDiv = el('div', k('gk-toast__actions gk-actions', names.actions));
+      const actionsDiv = el('div', k('actions', names.actions));
       for (const act of record.actions) {
         const label = act.label ?? act.text ?? 'Action';
         const actBtn = el(
@@ -566,11 +571,11 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       }
       node.append(actionsDiv);
     } else if (record.action || record.cancel) {
-      const actions = el('div', k('gk-toast__actions gk-actions', names.actions));
+      const actions = el('div', k('actions', names.actions));
       if (record.cancel) {
         actions.append(
           button(
-            k('gk-toast__cancel gk-btn gk-cancel gk-cancel-btn', names.cancelButton),
+            k('cancel', names.cancelButton, 'btn gk-cancel gk-cancel-btn'),
             record.cancel,
             record,
             'cancel',
@@ -581,7 +586,7 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       if (record.action) {
         actions.append(
           button(
-            k('gk-toast__action gk-btn gk-action gk-action-btn', names.actionButton),
+            k('action', names.actionButton, 'btn gk-action gk-action-btn'),
             record.action,
             record,
             'action',
@@ -594,7 +599,7 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
     if (flag(record.closeButton, c.closeButton) && record.dismissible !== false) {
       const closeBtn = el(
         'button',
-        k('gk-toast__close gk-close', names.closeButton),
+        k('close', names.closeButton),
         {
           type: 'button',
           'aria-label': record.closeButtonLabel ?? c.closeLabel ?? 'Close notification',
@@ -620,14 +625,7 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
         '--gk-delay',
         `-${Math.max(0, record.duration - store.getRemaining(record.id))}ms`,
       );
-      node.append(
-        el(
-          'div',
-          k('gk-toast__progress gk-progress', names.progress),
-          { 'aria-hidden': 'true' },
-          bar,
-        ),
-      );
+      node.append(el('div', k('progress', names.progress), { 'aria-hidden': 'true' }, bar));
     }
     item.stamp = stampOf(record);
   };
@@ -640,12 +638,15 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       if (value === undefined) node.removeAttribute(name);
       else node.setAttribute(name, value);
     };
+    const toggle = (name: string, condition: unknown): void => {
+      if (condition) node.setAttribute(name, typeof condition === 'string' ? condition : '');
+      else node.removeAttribute(name);
+    };
 
     const hostEl =
       (record.container ? document.getElementById(record.container) : undefined) ??
       node.parentElement?.closest('[data-gk-theme]');
-    const containerTheme = hostEl?.getAttribute('data-gk-theme');
-    const themeName = record.theme ?? containerTheme ?? c.theme;
+    const themeName = record.theme ?? hostEl?.getAttribute('data-gk-theme') ?? c.theme;
     const activeVariant = resolveVariant(themeName, record.variant);
     set('data-gk-variant', activeVariant);
 
@@ -664,30 +665,31 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
     set('data-dir', record.dir ?? c.dir);
     set('dir', (record.dir ?? c.dir) === 'auto' ? undefined : (record.dir ?? c.dir));
     set('data-animation', record.animation ?? c.animation ?? 'slide');
-    if (record.shake || activeVariant === 'shake-error') set('data-shake', '');
-    if (record.glow) set('data-glow', '');
-    if (record.gradientBorder || activeVariant === 'gradient-border')
-      set('data-gradient-border', '');
-    if (record.group) set('data-group', record.group);
-    if (record.island || activeVariant === 'island') set('data-island', '');
+    toggle('data-shake', record.shake || activeVariant === 'shake-error');
+    toggle('data-glow', record.glow);
+    toggle('data-gradient-border', record.gradientBorder || activeVariant === 'gradient-border');
+    toggle('data-group', record.group);
+    toggle('data-island', record.island || activeVariant === 'island');
     const typeColor = store.types.get(record.type)?.color;
     if (typeColor) node.style.setProperty('--gk-type', typeColor);
-    set('data-rich', flag(record.richColors, c.richColors) ? '' : undefined);
-    set('data-dismissed', record.dismissed ? '' : undefined);
+    toggle('data-rich', flag(record.richColors, c.richColors));
+    toggle('data-dismissed', record.dismissed);
     set('data-state', record.dismissed ? 'exiting' : 'entered');
-    set('data-paused', record.pausedBy.length > 0 ? '' : undefined);
-    if (
+    toggle('data-paused', record.pausedBy.length > 0);
+    toggle(
+      'data-wrap',
       record.description ||
-      record.html ||
-      (record.action && record.cancel) ||
-      (record.actions && record.actions.length > 1)
-    )
-      set('data-wrap', '');
-    if (flag(record.closeButton, c.closeButton) && record.dismissible !== false)
-      set('data-has-close', '');
-    set(
+        record.html ||
+        (record.action && record.cancel) ||
+        (record.actions && record.actions.length > 1),
+    );
+    toggle(
+      'data-has-close',
+      flag(record.closeButton, c.closeButton) && record.dismissible !== false,
+    );
+    toggle(
       'data-clickable',
-      flag(record.closeOnClick, c.closeOnClick) && record.dismissible !== false ? '' : undefined,
+      flag(record.closeOnClick, c.closeOnClick) && record.dismissible !== false,
     );
     if (record.style) {
       for (const key of Object.keys(record.style))
@@ -846,6 +848,10 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
         resizeObserver?.observe(item.el);
         attachGestures(item);
         const created = item;
+        const cue = resolveToastSound(record.sound, c.sound, record.type);
+        if (cue) {
+          playSound(cue, record.soundVolume ?? c.soundVolume ?? 0.5);
+        }
         raf(() => {
           created.el.dataset.mounted = 'true';
         });

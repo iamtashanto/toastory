@@ -115,4 +115,25 @@ describe('toastory/vue adapter', () => {
 
     app.unmount();
   });
+
+  it('ToastoryToaster supports center position and sound props', async () => {
+    const app = createApp(
+      defineComponent({
+        setup() {
+          return () => h(ToastoryToaster, { position: 'center', sound: 'pop', soundVolume: 0.8 });
+        },
+      }),
+    );
+
+    const container = document.getElementById('app') as HTMLElement;
+    app.mount(container);
+    await nextTick();
+
+    const cfg = ui.configure({});
+    expect(cfg.position).toBe('center');
+    expect(cfg.sound).toBe('pop');
+    expect(cfg.soundVolume).toBe(0.8);
+
+    app.unmount();
+  });
 });

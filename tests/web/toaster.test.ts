@@ -382,6 +382,14 @@ describe('swipe', () => {
     expect(defaultSwipe('bottom-right')).toEqual(['right']);
     expect(defaultSwipe('top-center')).toEqual(['up']);
     expect(defaultSwipe('bottom-center')).toEqual(['down']);
+    expect(defaultSwipe('center')).toEqual(['up', 'down', 'left', 'right']);
+    expect(defaultSwipe('middle')).toEqual(['up', 'down', 'left', 'right']);
+  });
+
+  it('mounts toast in the center position', () => {
+    ui.toast('Centered message', { position: 'center' });
+    const r = document.querySelector('.gk-region[data-position="center"]');
+    expect(r).not.toBeNull();
   });
 });
 

@@ -100,8 +100,18 @@ export const ui = {
 };
 
 export interface NativeToasterProps {
-  /** Toast placement. Defaults to 'top'. */
-  position?: 'top' | 'bottom' | 'center';
+  /** Toast placement across 7 positions (top-left, top-center, top-right, center, bottom-left, bottom-center, bottom-right). Defaults to 'top-center'. */
+  position?:
+    | 'top'
+    | 'bottom'
+    | 'center'
+    | 'middle'
+    | 'top-left'
+    | 'top-center'
+    | 'top-right'
+    | 'bottom-left'
+    | 'bottom-center'
+    | 'bottom-right';
   /** Optional top/bottom inset offset. */
   offset?: number;
   /** Toast container style. */
@@ -137,13 +147,23 @@ export function Toaster(props: NativeToasterProps): React.JSX.Element | null {
 
   if (visibleToasts.length === 0) return null;
 
-  const position = props.position ?? 'top';
-  const posStyle: React.CSSProperties =
-    position === 'bottom'
-      ? { bottom: props.offset ?? 50 }
-      : position === 'center'
-        ? { top: '50%', transform: 'translateY(-50%)' }
-        : { top: props.offset ?? 50 };
+  const position = props.position ?? 'top-center';
+  const isBottom = position.startsWith('bottom');
+  const isCenter = position === 'center' || position === 'middle';
+  const isLeft = position.endsWith('left');
+  const isRight = position.endsWith('right');
+
+  const posStyle: React.CSSProperties = isBottom
+    ? { bottom: props.offset ?? 50 }
+    : isCenter
+      ? { top: '50%', transform: 'translateY(-50%)' }
+      : { top: props.offset ?? 50 };
+
+  const alignStyle: React.CSSProperties = isLeft
+    ? { alignItems: 'flex-start' }
+    : isRight
+      ? { alignItems: 'flex-end' }
+      : { alignItems: 'center' };
 
   return (
     <div
@@ -151,12 +171,12 @@ export function Toaster(props: NativeToasterProps): React.JSX.Element | null {
         {
           position: 'absolute',
           ...posStyle,
+          ...alignStyle,
           left: 16,
           right: 16,
           zIndex: 99999,
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'center',
           gap: 8,
           ...props.style,
         } as React.CSSProperties

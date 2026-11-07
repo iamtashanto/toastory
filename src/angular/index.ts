@@ -3,6 +3,7 @@ import {
   Injectable,
   Input,
   NgModule,
+  type Provider,
   type OnChanges,
   type OnDestroy,
   type OnInit,
@@ -13,8 +14,9 @@ import { canMountToaster, mountToaster } from '../web/toaster';
 import type { ToasterHandle } from '../web/toaster';
 import { getEngine, setAutoMount } from '../web/engine';
 import { toast, ui } from '../web/ui';
+import { playSound, chime } from '../web/sound';
 
-export { ui, toast };
+export { ui, toast, playSound, chime };
 export type { Ui } from '../web/ui';
 
 /** Injectable Angular service for toastory toast and feedback toolkit. */
@@ -69,6 +71,8 @@ export class GlazeToasterComponent implements OnInit, OnChanges, OnDestroy {
   @Input() richColors?: boolean;
   @Input() closeButton?: boolean;
   @Input() shadow?: boolean;
+  @Input() sound?: GlazeConfig['sound'];
+  @Input() soundVolume?: number;
 
   private handle?: ToasterHandle;
 
@@ -107,12 +111,25 @@ export class GlazeToasterComponent implements OnInit, OnChanges, OnDestroy {
     if (this.richColors !== undefined) patch.richColors = this.richColors;
     if (this.closeButton !== undefined) patch.closeButton = this.closeButton;
     if (this.shadow !== undefined) patch.shadow = this.shadow;
+    if (this.sound !== undefined) patch.sound = this.sound;
+    if (this.soundVolume !== undefined) patch.soundVolume = this.soundVolume;
 
     if (Object.keys(patch).length > 0) {
       ui.configure(patch);
     }
   }
 }
+
+/** Provide toastory configuration in modern standalone Angular applications. */
+export function provideToastory(config?: Partial<GlazeConfig>): Provider[] {
+  if (config) {
+    ui.configure(config);
+  }
+  return [GlazeService];
+}
+
+/** Backward compatibility alias for provideToastory. */
+export const provideGlaze = provideToastory;
 
 /** Optional Angular Module for non-standalone workflows. */
 @NgModule({

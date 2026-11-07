@@ -7,6 +7,11 @@ export function hasDom(): boolean {
   return typeof document !== 'undefined' && typeof document.createElement === 'function';
 }
 
+/** Asserts DOM availability, throwing in SSR or headless runtimes without document. */
+export function requireDom(): void {
+  if (typeof document === 'undefined') throw new Error('toastory: DOM required');
+}
+
 type Child = Node | string | null | undefined | false;
 
 /**

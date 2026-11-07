@@ -119,4 +119,22 @@ describe('toastory/react adapter', () => {
       root.unmount();
     });
   });
+
+  it('supports center position and sound configuration in Toaster', async () => {
+    const container = document.getElementById('root') as HTMLElement;
+    const root = createRoot(container);
+
+    await act(async () => {
+      root.render(<Toaster position="center" sound={true} soundVolume={0.7} />);
+    });
+
+    const config = ui.configure({});
+    expect(config.position).toBe('center');
+    expect(config.sound).toBe(true);
+    expect(config.soundVolume).toBe(0.7);
+
+    await act(async () => {
+      root.unmount();
+    });
+  });
 });

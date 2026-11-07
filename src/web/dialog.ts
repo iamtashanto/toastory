@@ -6,7 +6,7 @@ import type {
   DialogPromise,
   DialogState,
 } from '../core';
-import { cssLength, el, fill, nextId } from './dom';
+import { cssLength, el, fill, nextId, requireDom } from './dom';
 import { getEngine } from './engine';
 import { icon } from './icons';
 import type { IconName } from './icons';
@@ -36,9 +36,7 @@ function applyButton(
  * `handle`. Throws when no DOM is available.
  */
 export function openDialog(initial: DialogOptions): DialogPromise {
-  if (typeof document === 'undefined') {
-    throw new Error('toastory: DOM required');
-  }
+  requireDom();
   const config = getEngine().store.config.get();
   const controller: DialogController = createDialogController(initial);
   const titleId = nextId('gk-title');

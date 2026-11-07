@@ -2,8 +2,9 @@ import type { GlazeConfig, ToastRecord, Unsubscribe } from '../core';
 import { canMountToaster, mountToaster } from '../web/toaster';
 import { getEngine, setAutoMount } from '../web/engine';
 import { toast, ui } from '../web/ui';
+import { playSound, chime } from '../web/sound';
 
-export { ui, toast };
+export { ui, toast, playSound, chime };
 export type { Ui } from '../web/ui';
 
 /** Svelte Readable store interface. */

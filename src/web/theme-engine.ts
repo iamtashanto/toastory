@@ -1,26 +1,30 @@
 import { themeCss } from '../themes/css.ts';
 import type { ThemeDefinition, ThemeTokens } from '../themes/themes.ts';
 
+const W = '#ffffff';
+const R = '#b71c1c';
+const D = '#1c1c1e';
+
 const DEFAULT_LIGHT: ThemeTokens = {
-  bg: '#ffffff',
-  solid: '#ffffff',
+  bg: W,
+  solid: W,
   fg: '#1d1d1f',
   muted: '#515156',
   border: 'rgba(60,60,67,0.22)',
   shadow: '0 8px 28px rgba(0,0,0,0.14)',
   accent: '#0057c2',
-  accentFg: '#ffffff',
-  danger: '#b71c1c',
-  dangerFg: '#ffffff',
+  accentFg: W,
+  danger: R,
+  dangerFg: W,
   success: '#1a7f37',
-  error: '#b71c1c',
+  error: R,
   warning: '#8a5a00',
   info: '#0b5cc7',
 };
 
 const DEFAULT_DARK: ThemeTokens = {
-  bg: '#1c1c1e',
-  solid: '#1c1c1e',
+  bg: D,
+  solid: D,
   fg: '#f5f5f7',
   muted: '#b4b4bb',
   border: 'rgba(255,255,255,0.16)',
@@ -65,18 +69,16 @@ const customThemes = new Map<string, ThemeDefinition>();
  * @returns The compiled CSS string.
  */
 export function defineTheme(name: string, def: CustomThemeDefinition): string {
-  const tokenObj = def.tokens;
+  const t = def.tokens;
+  const tObj = typeof t === 'object' && t ? t : undefined;
   const lightInput =
     def.light ??
-    (tokenObj && typeof tokenObj === 'object' && 'light' in tokenObj
-      ? (tokenObj as { light?: Partial<ThemeTokens> }).light
-      : (tokenObj as Partial<ThemeTokens> | undefined));
-
+    (tObj && 'light' in tObj
+      ? (tObj as { light?: Partial<ThemeTokens> }).light
+      : (tObj as Partial<ThemeTokens> | undefined));
   const darkInput =
     def.dark ??
-    (tokenObj && typeof tokenObj === 'object' && 'dark' in tokenObj
-      ? (tokenObj as { dark?: Partial<ThemeTokens> }).dark
-      : undefined);
+    (tObj && 'dark' in tObj ? (tObj as { dark?: Partial<ThemeTokens> }).dark : undefined);
 
   const fullDef: ThemeDefinition = {
     name,

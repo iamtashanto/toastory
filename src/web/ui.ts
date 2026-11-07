@@ -8,6 +8,7 @@ import type {
   LoadingHandle,
   LoadingOptions,
   SheetOptions,
+  SoundCue,
   StepsResult,
   ToastApi,
   ToastStore,
@@ -16,6 +17,7 @@ import { openDialog } from './dialog';
 import { configure, getEngine } from './engine';
 import { openBottomSheet, openLoading, openSheet } from './sheets';
 import { defineTheme, type CustomThemeDefinition } from './theme-engine';
+import { chime, playSound } from './sound';
 
 /** The unified toastory API. */
 export interface Ui {
@@ -37,6 +39,8 @@ export interface Ui {
   loading(options?: LoadingOptions): LoadingHandle;
   /** Sets global configuration. Returns the resulting configuration. */
   configure(patch: Partial<GlazeConfig>): Readonly<GlazeConfig>;
+  /** Plays an audio feedback sound cue, synthesizer chime, or audio URL. */
+  sound(cue?: SoundCue | string | boolean, volume?: number): void;
   /** Defines a custom theme with tokens and optional CSS rules. */
   defineTheme(name: string, definition: CustomThemeDefinition): string;
   /** The underlying toast store. */
@@ -57,6 +61,7 @@ export function createUi(): Ui {
     bottomSheet: openBottomSheet,
     loading: openLoading,
     configure,
+    sound: (cue, volume) => playSound(cue, volume),
     defineTheme,
     get toastStore() {
       return getEngine().store;
@@ -69,3 +74,5 @@ export const ui: Ui = /* @__PURE__ */ createUi();
 
 /** Toast API on its own. Importing only this keeps dialog code out of your bundle. */
 export const toast: ToastApi = /* @__PURE__ */ getEngine().toast;
+
+export { playSound, chime };

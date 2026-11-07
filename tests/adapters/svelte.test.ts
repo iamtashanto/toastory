@@ -61,4 +61,16 @@ describe('toastory/svelte adapter', () => {
 
     action.destroy?.();
   });
+
+  it('glazeToaster action supports center position and sound configuration', () => {
+    const node = document.getElementById('app') as HTMLElement;
+    const action = glazeToaster(node, { position: 'center', sound: 'ding', soundVolume: 0.85 });
+
+    const cfg = ui.configure({});
+    expect(cfg.position).toBe('center');
+    expect(cfg.sound).toBe('ding');
+    expect(cfg.soundVolume).toBe(0.85);
+
+    action.destroy?.();
+  });
 });

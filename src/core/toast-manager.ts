@@ -19,7 +19,7 @@ import type {
 } from './types';
 
 /** Reasons that originate from a person and are blocked on non-dismissible toasts. */
-const USER_REASONS = new Set<CloseReason>(['user', 'swipe', 'click']);
+const isUserReason = (r: CloseReason): boolean => r === 'user' || r === 'swipe' || r === 'click';
 
 const safeCall = <A extends unknown[]>(
   fn: ((...args: A) => void) | undefined,
@@ -92,7 +92,7 @@ export type ToastStore = ToastManager;
 export function createToastManager(options: ToastManagerOptions = {}): ToastManager {
   const config = options.config ?? createConfigStore();
   const clock = options.clock ?? defaultClock;
-  const now = options.now ?? (() => clock.now());
+  const now = options.now ?? clock.now;
   const types = options.types ?? createTypeRegistry();
 
   const entries = new Map<ToastId, Entry>();
@@ -204,7 +204,7 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
 
   const dismissEntry = (entry: Entry, reason: CloseReason): void => {
     if (entry.record.dismissed) return;
-    if (entry.record.dismissible === false && USER_REASONS.has(reason)) return;
+    if (entry.record.dismissible === false && isUserReason(reason)) return;
     entry.reason = reason;
     entry.record = {
       ...entry.record,

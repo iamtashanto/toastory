@@ -3,8 +3,9 @@ import type { GlazeConfig, ToastApi, ToastRecord, ToastoryConfig } from '../core
 import { canMountToaster, mountToaster } from '../web/toaster';
 import { getEngine, setAutoMount } from '../web/engine';
 import { toast, ui } from '../web/ui';
+import { playSound, chime } from '../web/sound';
 
-export { ui, toast };
+export { ui, toast, playSound, chime };
 export type { Ui } from '../web/ui';
 export type { GlazeConfig, ToastoryConfig };
 
@@ -24,6 +25,8 @@ export const ToastoryToaster = defineComponent({
     richColors: { type: Boolean, default: undefined },
     closeButton: { type: Boolean, default: undefined },
     shadow: { type: Boolean, default: undefined },
+    sound: { type: [Boolean, String] as PropType<ToastoryConfig['sound']>, default: undefined },
+    soundVolume: { type: Number, default: undefined },
   },
   setup(props) {
     const engine = getEngine();

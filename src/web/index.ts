@@ -9,3 +9,12 @@ export { mountToaster } from './toaster';
 export type { ToasterHandle, ToasterOptions } from './toaster';
 export { defineTheme, clearCustomThemes } from './theme-engine';
 export type { CustomThemeDefinition } from './theme-engine';
+export {
+  playSound,
+  chime,
+  isAudioSupported,
+  getSoundCues,
+  registerSoundCue,
+  resolveToastSound,
+} from './sound';
+export type { SoundNote } from './sound';

@@ -1,0 +1,152 @@
+import type { BuiltInSoundCue, SoundCue, ToastType } from '../core';
+
+/** A single frequency note in a sound cue: [frequency in Hz, start offset in seconds, gain level 0..1]. */
+export type SoundNote = [frequency: number, offset: number, level: number];
+
+let audioCtx: AudioContext | undefined;
+
+/** Built-in melodic sound cues synthesized with Web Audio partials. */
+const CUES: Record<string, SoundNote[]> = {
+  success: [
+    [392, 0, 1],
+    [523.3, 0.1, 1],
+  ],
+  error: [
+    [233.1, 0, 1],
+    [185, 0.13, 1],
+  ],
+  warning: [
+    [349.2, 0, 0.8],
+    [349.2, 0.16, 0.6],
+  ],
+  info: [[466.2, 0, 0.9]],
+  ding: [
+    [659.3, 0, 0.9],
+    [880, 0.08, 1],
+  ],
+  pop: [
+    [440, 0, 0.7],
+    [880, 0.03, 0.9],
+  ],
+  chime: [
+    [523.3, 0, 0.8],
+    [659.3, 0.09, 0.85],
+    [784, 0.18, 1],
+  ],
+  bell: [
+    [587.3, 0, 1],
+    [1174.6, 0.04, 0.5],
+  ],
+  message: [
+    [440, 0, 0.8],
+    [659.3, 0.12, 0.9],
+  ],
+  bubble: [
+    [330, 0, 0.6],
+    [493.9, 0.06, 0.8],
+  ],
+};
+
+/** Returns whether Web Audio is available in the current environment. */
+export const isAudioSupported = (): boolean =>
+  typeof window !== 'undefined' &&
+  Boolean(
+    window.AudioContext ||
+    (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext,
+  );
+
+/** Returns the list of registered sound cue names. */
+export const getSoundCues = (): readonly string[] => Object.keys(CUES);
+
+/** Registers or overrides a sound cue with custom frequency partials. */
+export const registerSoundCue = (name: string, notes: SoundNote[]): void => {
+  CUES[name] = notes;
+};
+
+/** Synthesizes a soft tone. */
+function playTone(c: AudioContext, out: AudioNode, freq: number, at: number, level: number): void {
+  const t = c.currentTime + at;
+  const osc = c.createOscillator();
+  const g = c.createGain();
+  osc.frequency.value = freq;
+  g.gain.setValueAtTime(0.001, t);
+  g.gain.exponentialRampToValueAtTime(Math.max(0.001, level * 0.3), t + 0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + 0.35);
+  osc.connect(g).connect(out);
+  osc.start(t);
+  osc.stop(t + 0.4);
+}
+
+/**
+ * Plays an audio feedback sound cue, synthesizer tone, or custom audio URL.
+ * Completely safe in SSR, Node, or when browser autoplay is locked.
+ */
+export function playSound(cueOrType?: SoundCue | ToastType | boolean | string, volume = 0.5): void {
+  if (!cueOrType || typeof window === 'undefined') return;
+
+  const target = cueOrType === true ? 'info' : String(cueOrType);
+
+  if (/^(https?:|data:audio|blob:)/.test(target)) {
+    try {
+      const audio = new Audio(target);
+      audio.volume = Math.min(1, Math.max(0, volume));
+      void audio.play().catch(() => undefined);
+    } catch {
+      // Audio playback is an enhancement; never fail
+    }
+    return;
+  }
+
+  const notes = CUES[target];
+  if (!notes) return;
+
+  try {
+    const Ctx =
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    if (!Ctx) return;
+
+    audioCtx ??= new Ctx();
+    if (audioCtx.state === 'suspended') void audioCtx.resume();
+    if (audioCtx.state === 'closed') return;
+
+    const master = audioCtx.createGain();
+    master.gain.value = Math.min(1, Math.max(0, volume)) * 0.45;
+    master.connect(audioCtx.destination);
+
+    for (const [freq, offset, level] of notes) {
+      playTone(audioCtx, master, freq, offset, level);
+    }
+  } catch {
+    // Graceful degradation when audio is restricted
+  }
+}
+
+/** Alias for playSound for backward compatibility with chime references. */
+export const chime = playSound;
+
+/** Helper to resolve which sound to play for a toast record. */
+export function resolveToastSound(
+  recordSound: boolean | SoundCue | string | ((type: ToastType) => void) | undefined,
+  globalSound: boolean | SoundCue | undefined,
+  toastType: ToastType,
+): SoundCue | string | undefined {
+  if (recordSound === false) return undefined;
+  if (typeof recordSound === 'string') return recordSound;
+  if (typeof recordSound === 'function') {
+    try {
+      recordSound(toastType);
+    } catch {
+      // Ignore errors in custom generator
+    }
+    return undefined;
+  }
+  if (recordSound === true || globalSound === true) {
+    return CUES[toastType]
+      ? (toastType as BuiltInSoundCue)
+      : toastType === 'loading'
+        ? 'bubble'
+        : 'info';
+  }
+  return typeof globalSound === 'string' ? globalSound : undefined;
+}

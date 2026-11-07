@@ -135,4 +135,25 @@ describe('toastory/native adapter', () => {
       root.unmount();
     });
   });
+
+  it('supports center and aligned placements in Toaster', async () => {
+    const container = document.getElementById('root') as HTMLElement;
+    const root = createRoot(container);
+
+    await act(async () => {
+      root.render(<Toaster position="center" />);
+    });
+
+    await act(async () => {
+      toast('Centered Mobile Toast');
+    });
+
+    expect(container.textContent).toContain('Centered Mobile Toast');
+    const toastContainer = container.querySelector('div[style*="translateY(-50%)"]');
+    expect(toastContainer).not.toBeNull();
+
+    await act(async () => {
+      root.unmount();
+    });
+  });
 });

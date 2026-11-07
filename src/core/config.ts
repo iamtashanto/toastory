@@ -28,6 +28,8 @@ export const DEFAULT_CONFIG: Readonly<GlazeConfig> = Object.freeze({
   newestOnTop: true,
   dedupeWindow: 500,
   container: undefined,
+  sound: false,
+  soundVolume: 0.5,
 } satisfies GlazeConfig);
 
 /** Observable configuration container holding immutable snapshots. */

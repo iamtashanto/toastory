@@ -8,17 +8,11 @@ import type {
   LoadingOptions,
   SheetOptions,
 } from '../core';
-import { el, nextId } from './dom';
+import { el, nextId, requireDom } from './dom';
 import { getEngine } from './engine';
 import { icon } from './icons';
 import { openOverlay } from './overlay';
 import { sanitizeToFragment } from './sanitize';
-
-function requireDom(): void {
-  if (typeof document === 'undefined') {
-    throw new Error('toastory: DOM required');
-  }
-}
 
 /**
  * Opens an action sheet. Resolves with `isConfirmed: true` and the chosen action value, or a

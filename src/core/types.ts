@@ -20,9 +20,16 @@ export type BuiltInToastType =
 /** Toast type name: a built-in type or custom registered type string. */
 export type ToastType = BuiltInToastType | (string & {});
 
-/** Placements supported by toast regions (6 positions). */
+/** Placements supported by toast regions (7 positions: 3 top, 1 middle, 3 bottom). */
 export type ToastPosition =
-  'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right';
+  | 'top-left'
+  | 'top-center'
+  | 'top-right'
+  | 'center'
+  | 'middle'
+  | 'bottom-left'
+  | 'bottom-center'
+  | 'bottom-right';
 
 /** The five rows of the dialog placement grid. */
 export type DialogRow = 'top' | 'upper' | 'center' | 'lower' | 'bottom';
@@ -247,6 +254,22 @@ export interface ToastRenderContext {
 /** Custom renderer callback. */
 export type ToastCustomRenderer = (context: ToastRenderContext) => Renderable;
 
+/** Built-in sound cue names for audio feedback. */
+export type BuiltInSoundCue =
+  | 'success'
+  | 'error'
+  | 'warning'
+  | 'info'
+  | 'ding'
+  | 'pop'
+  | 'chime'
+  | 'bell'
+  | 'message'
+  | 'bubble';
+
+/** Audio feedback sound cue name or custom string. */
+export type SoundCue = BuiltInSoundCue | (string & {});
+
 /**
  * Options accepted by every toast creation call.
  */
@@ -299,6 +322,10 @@ export interface ToastOptions {
   duration?: number;
   /** Screen region placement. */
   position?: ToastPosition;
+  /** Play audio feedback cue, sound url, or custom generator. */
+  sound?: boolean | SoundCue | string | ((type: ToastType) => void);
+  /** Audio playback volume (0.0 to 1.0). Defaults to 0.5. */
+  soundVolume?: number;
   /** Primary action button. */
   action?: ToastAction;
   /** Secondary cancel button. */
@@ -426,6 +453,10 @@ export interface GlazeConfig {
   startPaused: boolean;
   newestOnTop: boolean;
   dedupeWindow: number;
+  /** Global audio cue sound toggle or default cue name. */
+  sound?: boolean | SoundCue;
+  /** Global sound volume between 0.0 and 1.0. Defaults to 0.5. */
+  soundVolume?: number;
   animation?: AnimationType;
   offset?: OffsetConfig;
   mobileOffset?: number | string;

@@ -59,17 +59,24 @@ export function buildInput(options: DialogOptions, labelId: string): InputContro
     applyAttributes(node, options.inputAttributes);
   };
 
+  const ctrl = (
+    node: HTMLElement,
+    target: HTMLElement,
+    fields: HTMLElement[],
+    read: () => unknown,
+  ): InputControl => ({
+    node,
+    focusTarget: target,
+    fields,
+    read,
+  });
+
   const makeCtrl = (
     child: HTMLElement,
     target: HTMLElement,
     fields: HTMLElement[],
     read: () => unknown,
-  ): InputControl => ({
-    node: wrap(labelNode, child),
-    focusTarget: target,
-    fields,
-    read,
-  });
+  ): InputControl => ctrl(wrap(labelNode, child), target, fields, read);
 
   if (type === 'textarea') {
     const area = el('textarea', '', { placeholder: options.placeholder, rows: '3' });
@@ -116,12 +123,12 @@ export function buildInput(options: DialogOptions, labelId: string): InputContro
       group.append(el('label', 'gk-choice', {}, radio, el('span', '', {}, choice.label)));
     }
     const first = radios.find((radio) => !radio.disabled) ?? group;
-    return {
-      node: wrap(group),
-      focusTarget: radios.find((radio) => radio.checked) ?? first,
-      fields: radios,
-      read: () => radios.find((radio) => radio.checked)?.value,
-    };
+    return ctrl(
+      wrap(group),
+      radios.find((radio) => radio.checked) ?? first,
+      radios,
+      () => radios.find((radio) => radio.checked)?.value,
+    );
   }
 
   if (type === 'checkbox') {
@@ -130,12 +137,12 @@ export function buildInput(options: DialogOptions, labelId: string): InputContro
     box.id = id;
     applyAttributes(box, options.inputAttributes);
     const text = label ?? options.placeholder ?? '';
-    return {
-      node: wrap(el('label', 'gk-choice', { for: id }, box, el('span', '', {}, text))),
-      focusTarget: box,
-      fields: [box],
-      read: () => box.checked,
-    };
+    return ctrl(
+      wrap(el('label', 'gk-choice', { for: id }, box, el('span', '', {}, text))),
+      box,
+      [box],
+      () => box.checked,
+    );
   }
 
   const input = el('input', '', { type, placeholder: options.placeholder });
@@ -146,12 +153,7 @@ export function buildInput(options: DialogOptions, labelId: string): InputContro
     input.addEventListener('input', () => {
       output.textContent = input.value;
     });
-    return {
-      node: wrap(labelNode, input, output),
-      focusTarget: input,
-      fields: [input],
-      read: () => Number(input.value),
-    };
+    return ctrl(wrap(labelNode, input, output), input, [input], () => Number(input.value));
   }
   if (type === 'otp') {
     const len = options.otpLength ?? 6;
@@ -233,12 +235,9 @@ export function buildInput(options: DialogOptions, labelId: string): InputContro
       footerNote = resendWrap;
     }
 
-    return {
-      node: wrap(labelNode, otpWrap, footerNote),
-      focusTarget: inputs[0] ?? otpWrap,
-      fields: inputs,
-      read: () => inputs.map((x) => x.value).join(''),
-    };
+    return ctrl(wrap(labelNode, otpWrap, footerNote), inputs[0] ?? otpWrap, inputs, () =>
+      inputs.map((x) => x.value).join(''),
+    );
   }
 
   return makeCtrl(input, input, [input], () =>

@@ -27,6 +27,8 @@ export default tseslint.config(
       'test-results/**',
       '.changeset/**',
       'website/**',
+      'ref-code/**',
+      'design-refs/**',
     ],
   },
   js.configs.recommended,
