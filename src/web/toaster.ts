@@ -30,10 +30,10 @@ function formatRelativeTime(ts: number | Date | string | boolean, locale = 'en')
   if (typeof ts === 'string') return ts;
   if (ts === true) return 'now';
   const min = Math.round(
-    (Date.now() - (ts instanceof Date ? ts.getTime() : Number(ts) || Date.now())) / 60000,
+    (Date.now() - (ts instanceof Date ? ts.getTime() : Number(ts) || Date.now())) / 6e4,
   );
   if (!min) return 'now';
-  const [val, unit] =
+  const [v, u] =
     min < 60
       ? [min, 'minute']
       : min < 1440
@@ -41,11 +41,11 @@ function formatRelativeTime(ts: number | Date | string | boolean, locale = 'en')
         : [Math.round(min / 1440), 'day'];
   try {
     return new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(
-      -val,
-      unit as Intl.RelativeTimeFormatUnit,
+      -v,
+      u as Intl.RelativeTimeFormatUnit,
     );
   } catch {
-    return `${val}${unit[0]} ago`;
+    return `${v}${u[0]} ago`;
   }
 }
 
@@ -411,6 +411,9 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
         }) as Renderable,
       );
     } else {
+      const char = record.character ?? record.robotVariant;
+      const hasMascot = Boolean(char || record.avatar);
+
       if (record.badge !== undefined) {
         const bObj =
           typeof record.badge === 'object' && record.badge !== null ? record.badge : undefined;
@@ -425,7 +428,7 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
           badgeEl.textContent = record.badge;
         else badgeEl.append(icon((PATHS[tone as IconName] ? tone : 'info') as IconName));
         node.append(badgeEl);
-      } else {
+      } else if (!hasMascot || record.icon !== undefined) {
         const customIcon = record.icon;
         const builtIn = customIcon === undefined ? iconForType(record.type) : undefined;
         const typeDef = store.types.get(record.type);
@@ -440,7 +443,6 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
         }
       }
 
-      const char = record.character ?? record.robotVariant;
       if (char) {
         const holder = el(
           'div',
@@ -466,15 +468,16 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
         const av = record.avatar;
         if (typeof av === 'object' && av !== null && !('nodeType' in av)) {
           const opt = av as ToastAvatarOption;
-          if (opt.src) {
+          const src = opt.src && safeUrl(opt.src) ? opt.src : '';
+          if (src) {
             holder.append(
               el('img', '', {
-                src: safeUrl(opt.src) ? opt.src : '',
+                src,
                 alt: opt.alt ?? opt.name ?? '',
               }),
             );
           } else {
-            const initials =
+            const init =
               opt.initials ??
               (opt.name
                 ? opt.name
@@ -484,9 +487,8 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
                     .slice(0, 2)
                     .toUpperCase()
                 : '?');
-            holder.textContent = initials;
-            holder.style.background = opt.color ?? deterministicColor(opt.name ?? initials);
-            holder.style.color = '#fff';
+            holder.textContent = init;
+            holder.style.cssText = `background:${opt.color ?? deterministicColor(opt.name ?? init)};color:#fff`;
           }
         } else if (typeof av === 'string') {
           holder.append(el('img', '', { src: safeUrl(av) ? av : '', alt: '' }));
@@ -550,18 +552,45 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
         : content;
     node.append(body);
 
-    if (record.timestamp) {
-      node.append(
-        el(
-          'time',
-          k('time', names.time),
-          {},
-          formatRelativeTime(record.timestamp, record.timestampLocale),
-        ),
-      );
-    }
+    const cText = record.closeText ?? record.discardText;
+    const cIcon = record.closeIcon ?? record.discardIcon;
+    const showClose =
+      (flag(record.closeButton, c.closeButton) || Boolean(cText || cIcon)) &&
+      record.dismissible !== false;
 
-    if (record.kbd) node.append(el('kbd', k('kbd', names.kbd), {}, record.kbd));
+    const onCloseClick = (e: MouseEvent): void => {
+      e.stopPropagation();
+      close(record.id, 'user');
+    };
+
+    if (record.timestamp || record.kbd || (showClose && cText)) {
+      const meta = el('div', k('meta', names.meta));
+      if (record.timestamp) {
+        meta.append(
+          el(
+            'time',
+            k('time', names.time),
+            {},
+            formatRelativeTime(record.timestamp, record.timestampLocale),
+          ),
+        );
+      }
+      if (record.kbd) meta.append(el('kbd', k('kbd', names.kbd), {}, record.kbd));
+      if (showClose && cText) {
+        const closeBtn = el(
+          'button',
+          k('close', names.closeButton, 'close gk-close--text'),
+          {
+            type: 'button',
+            'aria-label': record.closeButtonLabel ?? cText,
+          },
+          cText,
+        );
+        closeBtn.addEventListener('click', onCloseClick);
+        meta.append(closeBtn);
+      }
+      node.append(meta);
+    }
 
     if (record.toggle) {
       const tg = record.toggle;
@@ -591,7 +620,7 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       const dash = 100.5 * (1 - val);
       const div = document.createElement('div');
       const c = '<circle cx="18" cy="18" r="16" fill="none" stroke="currentColor" stroke-width="3"';
-      div.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" class="gk-ring-svg">${c} opacity="0.2"/>${c} stroke-dasharray="100.5" stroke-linecap="round" stroke-dashoffset="${dash}"/></svg>`;
+      div.innerHTML = `<svg viewBox="0 0 36 36" class="gk-ring-svg">${c} opacity="0.2"/>${c} stroke-dasharray="100.5" stroke-linecap="round" stroke-dashoffset="${dash}"/></svg>`;
       node.append(div.firstElementChild as Element);
     }
 
@@ -639,27 +668,15 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       }
       node.append(actions);
     }
-    const cText = record.closeText ?? record.discardText;
-    const cIcon = record.closeIcon ?? record.discardIcon;
-    const showClose =
-      (flag(record.closeButton, c.closeButton) || Boolean(cText || cIcon)) &&
-      record.dismissible !== false;
 
-    if (showClose) {
+    if (showClose && !cText) {
       const closeBtn = el('button', k('close', names.closeButton), {
         type: 'button',
-        'aria-label': record.closeButtonLabel ?? cText ?? c.closeLabel ?? 'Close notification',
+        'aria-label': record.closeButtonLabel ?? c.closeLabel ?? 'Close notification',
       });
-      if (cText) {
-        closeBtn.textContent = cText;
-        closeBtn.className += ' gk-close--text';
-      } else if (cIcon) fill(closeBtn, cIcon);
+      if (cIcon) fill(closeBtn, cIcon);
       else closeBtn.append(icon('close'));
-
-      closeBtn.addEventListener('click', (event) => {
-        event.stopPropagation();
-        close(record.id, 'user');
-      });
+      closeBtn.addEventListener('click', onCloseClick);
       node.append(closeBtn);
     }
     const showBar =
@@ -749,14 +766,12 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
 
   const attachGestures = (item: Item): void => {
     const node = item.el;
-    let start:
-      | { x: number; y: number; t: number; v: number; lt: number; lx: number; ly: number }
-      | undefined;
+    let start: { x: number; y: number; t: number } | undefined;
 
     const setS = (x: number, y: number, r = 0): void => {
       node.style.setProperty('--gk-sx', `${Math.round(x)}px`);
       node.style.setProperty('--gk-sy', `${Math.round(y)}px`);
-      node.style.setProperty('--gk-rot', `${r.toFixed(1)}deg`);
+      if (r) node.style.setProperty('--gk-rot', `${r.toFixed(1)}deg`);
     };
 
     const settings = () => ({
@@ -766,8 +781,8 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
     });
 
     const delta = (e: PointerEvent, dirs: SwipeDirection[]) => {
-      const rx = e.clientX - (start?.x ?? 0);
-      const ry = e.clientY - (start?.y ?? 0);
+      const rx = e.clientX - (start?.x ?? 0),
+        ry = e.clientY - (start?.y ?? 0);
       return {
         dx: dirs.includes(rx >= 0 ? 'right' : 'left') ? rx : rx * 0.18,
         dy: dirs.includes(ry >= 0 ? 'down' : 'up') ? ry : ry * 0.18,
@@ -792,20 +807,11 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
     });
     node.addEventListener('pointerdown', (e) => {
       if (!settings().on || e.button !== 0 || (e.target as Element).closest(INTERACTIVE)) return;
-      const t = performance.now();
-      start = { x: e.clientX, y: e.clientY, t, v: 0, lt: t, lx: e.clientX, ly: e.clientY };
+      start = { x: e.clientX, y: e.clientY, t: e.timeStamp };
     });
     node.addEventListener('pointermove', (e) => {
       if (!start) return;
       const { dx, dy } = delta(e, settings().dirs);
-      const t = performance.now();
-      const dt = t - start.lt;
-      if (dt > 8) {
-        start.v = Math.hypot(e.clientX - start.lx, e.clientY - start.ly) / dt;
-        start.lx = e.clientX;
-        start.ly = e.clientY;
-        start.lt = t;
-      }
       if (!item.swiping) {
         if (Math.hypot(dx, dy) < 3) return;
         item.swiping = true;
@@ -819,9 +825,8 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       if (!start) return;
       const { dirs, threshold } = settings();
       const { dx, dy, rx, ry } = delta(e, dirs);
-      const dt = performance.now() - start.t;
-      const dist = Math.hypot(dx, dy);
-      const speed = Math.max(start.v, dt >= 8 ? dist / dt : 0);
+      const duration = Math.max(1, (e.timeStamp || performance.now()) - start.t);
+      const speed = Math.hypot(dx, dy) / duration;
       const wasSwiping = item.swiping;
       start = undefined;
       delete node.dataset.swiping;
@@ -831,16 +836,19 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       const out: SwipeDirection = horiz ? (rx >= 0 ? 'right' : 'left') : ry >= 0 ? 'down' : 'up';
       const dim = horiz ? node.offsetWidth || 350 : node.offsetHeight || 60;
       const limit = threshold <= 1 && threshold > 0 ? threshold * dim : threshold;
+      const dist = Math.hypot(dx, dy);
 
-      if (wasSwiping && dirs.includes(out) && (dist >= limit || (speed > 0.32 && dist > 12))) {
+      if (
+        wasSwiping &&
+        dirs.includes(out) &&
+        (dist >= limit || (duration >= 40 && speed > 0.45 && dist > 15))
+      ) {
         node.dataset.swipeOut = out;
         node.dataset.flung = '';
-        const reach = Math.max(240, dist + Math.max(speed, 0.6) * 320) / (dist || 1);
-        setS(dx * reach, dy * reach, Math.max(-8, Math.min(8, dx * reach * 0.025)));
+        const r = Math.max(240, dist + Math.max(speed, 0.6) * 320) / (dist || 1);
+        setS(dx * r, dy * r, Math.max(-8, Math.min(8, dx * r * 0.025)));
         close(item.record.id, 'swipe');
-      } else {
-        setS(0, 0, 0);
-      }
+      } else setS(0, 0);
       setTimeout(() => {
         item.swiping = false;
       }, 50);

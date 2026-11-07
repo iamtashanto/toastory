@@ -18,9 +18,6 @@ import type {
   Unsubscribe,
 } from './types';
 
-/** Reasons that originate from a person and are blocked on non-dismissible toasts. */
-const isUser = (r: CloseReason): boolean => r === 'user' || r === 'swipe' || r === 'click';
-
 const safeCall = <A, B>(fn?: (a: A, b: B) => void, a?: A, b?: B): void => {
   try {
     fn?.(a as A, b as B);
@@ -115,11 +112,8 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
     if (!merged.actions && merged.buttons) {
       merged.actions = merged.buttons.map((b) => ({
         label: b.label,
-        onClick: (e: MouseEvent) =>
-          (b.onClick ?? b.onPress)?.({
-            preventDefault: () => e.preventDefault(),
-            defaultPrevented: e.defaultPrevented,
-          }),
+        onClick: (e: { preventDefault(): void; defaultPrevented: boolean }) =>
+          (b.onClick ?? b.onPress)?.(e),
         autoDismiss: b.autoDismiss,
         kind: b.kind,
       }));
@@ -161,9 +155,9 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
     if (typeof o.dedupe === 'string') return o.dedupe;
     const t = o.title ?? o.text1;
     const d = o.description ?? o.text2;
-    const ts = typeof t === 'string' ? t : '';
-    const ds = typeof d === 'string' ? d : '';
-    return ts || ds ? `${o.type ?? 'default'}|${ts}|${ds}` : undefined;
+    return typeof t === 'string' || typeof d === 'string'
+      ? `${o.type ?? 'default'}|${t ?? ''}|${d ?? ''}`
+      : undefined;
   };
 
   const promote = (): void => {
@@ -208,7 +202,11 @@ export function createToastManager(options: ToastManagerOptions = {}): ToastMana
 
   const dismissEntry = (entry: Entry, reason: CloseReason): void => {
     if (entry.record.dismissed) return;
-    if (entry.record.dismissible === false && isUser(reason)) return;
+    if (
+      entry.record.dismissible === false &&
+      (reason === 'user' || reason === 'swipe' || reason === 'click')
+    )
+      return;
     entry.reason = reason;
     entry.record = {
       ...entry.record,

@@ -224,6 +224,7 @@ export interface ToastClassNames {
   badge?: string;
   time?: string;
   kbd?: string;
+  meta?: string;
 }
 
 /** Stacking mode for toasts. */

@@ -1,4 +1,3 @@
-const NS = 'http://www.w3.org/2000/svg';
 const C = 'M12 3a9 9 0 1 0 0 18a9 9 0 0 0 0-18z';
 
 /** Built-in icon names. */
@@ -41,7 +40,7 @@ export function icon(name: IconName): SVGElement {
   const p = PATHS[name] ?? PATHS.info;
   const cls = name === 'loading' ? ' class="gk-spin"' : '';
   const div = document.createElement('div');
-  div.innerHTML = `<svg xmlns="${NS}" ${SVG_HEAD}${cls}><path d="${p}"/></svg>`;
+  div.innerHTML = `<svg ${SVG_HEAD}${cls}><path d="${p}"/></svg>`;
   return div.firstElementChild as SVGElement;
 }
 

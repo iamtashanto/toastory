@@ -133,9 +133,7 @@ export function playSound(cueOrType?: SoundCue | ToastType | boolean | string, v
     const soften = audioCtx.createBiquadFilter();
     soften.frequency.value = 1300;
     master.connect(soften).connect(audioCtx.destination);
-
     for (const [freq, offset, level] of notes) playTone(audioCtx, master, freq, offset, level);
-    setTimeout(() => soften.disconnect(), 900);
   } catch {
     // ignore
   }
