@@ -44,6 +44,9 @@ export type {
   ToastFn,
 } from './toast-api';
 
+export { springEasing } from './spring';
+export type { SpringConfig } from './spring';
+
 export type * from './types';
 
 import type { Clock } from './clock';

@@ -99,6 +99,18 @@ export const ui = {
   reset: resetNativeEngine,
 };
 
+/** Spring physics animation presets inspired by expo-dynamic-toast. */
+export const nativeSpring = {
+  glide: { damping: 32, stiffness: 170, mass: 1 },
+  snappy: { damping: 24, stiffness: 280, mass: 0.8 },
+} as const;
+
+/** Native timing presets for animations. */
+export const nativeTiming = {
+  normal: { duration: 300 },
+  exit: { duration: 200 },
+} as const;
+
 export interface NativeToasterProps {
   /** Toast placement across 7 positions (top-left, top-center, top-right, center, bottom-left, bottom-center, bottom-right). Defaults to 'top-center'. */
   position?:
@@ -114,8 +126,22 @@ export interface NativeToasterProps {
     | 'bottom-right';
   /** Optional top/bottom inset offset. */
   offset?: number;
+  /** Gap between stacked toasts in pixels. Defaults to 8. */
+  gap?: number;
+  /** Maximum number of visible toasts. Defaults to 4. */
+  visibleToasts?: number;
+  /** Whether stacked toasts expand on tap. */
+  expand?: boolean;
+  /** Whether close button is displayed. */
+  closeButton?: boolean;
+  /** Whether swipe to dismiss is enabled. Defaults to true. */
+  swipeToDismiss?: boolean;
+  /** Spring animation preset or configuration. */
+  spring?: 'glide' | 'snappy' | { damping: number; stiffness: number; mass: number };
   /** Toast container style. */
   style?: Record<string, unknown>;
+  /** Individual toast card style. */
+  toastStyle?: Record<string, unknown>;
 }
 
 export interface GlazeProviderProps {
@@ -165,6 +191,9 @@ export function Toaster(props: NativeToasterProps): React.JSX.Element | null {
       ? { alignItems: 'flex-end' }
       : { alignItems: 'center' };
 
+  const maxVisible = props.visibleToasts ?? 4;
+  const displayed = visibleToasts.slice(0, maxVisible);
+
   return (
     <div
       style={
@@ -177,12 +206,12 @@ export function Toaster(props: NativeToasterProps): React.JSX.Element | null {
           zIndex: 99999,
           display: 'flex',
           flexDirection: 'column',
-          gap: 8,
+          gap: props.gap ?? 8,
           ...props.style,
         } as React.CSSProperties
       }
     >
-      {visibleToasts.map((item) => (
+      {displayed.map((item) => (
         <div
           key={String(item.id)}
           style={
@@ -196,9 +225,34 @@ export function Toaster(props: NativeToasterProps): React.JSX.Element | null {
               display: 'flex',
               flexDirection: 'column',
               gap: 4,
+              position: 'relative',
+              ...props.toastStyle,
             } as React.CSSProperties
           }
         >
+          {props.closeButton || item.closeButton ? (
+            <button
+              type="button"
+              onClick={() => getNativeEngine().toast.dismiss(item.id)}
+              aria-label="Close notification"
+              style={
+                {
+                  position: 'absolute',
+                  top: 8,
+                  right: 10,
+                  background: 'transparent',
+                  border: 'none',
+                  color: 'rgba(255,255,255,0.6)',
+                  cursor: 'pointer',
+                  fontSize: 16,
+                  padding: 2,
+                  lineHeight: 1,
+                } as React.CSSProperties
+              }
+            >
+              ×
+            </button>
+          ) : null}
           {item.badge ? (
             <div
               style={
@@ -290,6 +344,7 @@ export function Toaster(props: NativeToasterProps): React.JSX.Element | null {
 }
 
 /** React Native hook for reactive toast state. */
+/** React Native hook for reactive toast state. */
 export function useNativeToast(): {
   toast: ToastApi;
   toasts: readonly ToastRecord[];
@@ -306,3 +361,6 @@ export function useNativeToast(): {
 
   return { toast, toasts: toastsList };
 }
+
+export { playSound, chime } from '../web/sound';
+export type { SoundNote } from '../web/sound';
