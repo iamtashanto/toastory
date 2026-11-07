@@ -20,7 +20,8 @@ const TAGS = new Set(
   ),
 );
 const ATTRS = new Set('href,src,alt,title,target,rel,width,height,lang,dir'.split(','));
-const SAFE_URL = /^(?:https?:|mailto:|tel:|\/|#|\.\/|\.\.\/|[^:]*$)/i;
+const SAFE_URL =
+  /^(?:https?:|mailto:|tel:|data:image\/(?:png|jpe?g|webp|gif|svg\+xml)[;,]|\/|#|\.\/|\.\.\/|[^:]*$)/i;
 
 /** Whether a URL is safe to place in `href` or `src`. Rejects `javascript:` and similar schemes. */
 export function safeUrl(url: string): boolean {
