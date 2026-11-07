@@ -8,13 +8,9 @@ export function Footer() {
         {/* Brand Column */}
         <div className="md:col-span-2 space-y-4">
           <Link href="/" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-cyan-400 p-[1px]">
-              <div className="w-full h-full bg-[var(--site-surface)] rounded-[7px] flex items-center justify-center">
-                <svg className="w-4 h-4 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <rect x="3" y="3" width="18" height="18" rx="5" />
-                  <circle cx="12" cy="12" r="3" />
-                </svg>
-              </div>
+            <div className="w-8 h-8 rounded-xl overflow-hidden shadow-sm flex items-center justify-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo.svg" alt="toastory logo" className="w-8 h-8" width={32} height={32} />
             </div>
             <span className="font-bold text-lg text-[var(--site-fg)]">toastory</span>
           </Link>

@@ -4,39 +4,59 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 
 export const metadata: Metadata = {
-  title: 'toastory — Complete UI feedback toolkit for modern web and mobile',
+  metadataBase: new URL('https://toastory.tashanto.com'),
+  title: {
+    default: 'toastory — All UI feedback in one package. Apple-style glass.',
+    template: '%s | toastory',
+  },
   description:
-    'Toast notifications, confirm / alert / prompt dialogs, bottom sheets, and loading overlays with an Apple-style frosted glass design. Zero runtime dependencies. 21 themes.',
+    'Complete UI feedback toolkit: toasts, confirm / alert / prompt dialogs, bottom sheets, and loading overlays. Zero runtime dependencies. 7 screen placements & harmonic Web Audio synthesis.',
   keywords: [
     'toastory',
-    'toast',
-    'notification',
-    'dialog',
-    'modal',
-    'confirm',
-    'prompt',
-    'bottom-sheet',
+    'toast notifications',
+    'dialogs',
+    'modals',
+    'sweetalert2 alternative',
+    'sonner alternative',
+    'react-hot-toast alternative',
+    'confirm dialog',
+    'bottom sheet',
     'apple glass',
-    'react',
-    'nextjs',
-    'vue',
-    'svelte',
-    'angular',
-    'react-native',
+    'frosted glass toast',
+    'web audio chime',
+    'react toast',
+    'nextjs toast',
+    'vue toast',
+    'svelte toast',
+    'angular toast',
+    'react-native toast',
   ],
-  authors: [{ name: 'toastory maintainers' }],
+  authors: [{ name: 'toastory maintainers', url: 'https://toastory.tashanto.com' }],
+  creator: 'toastory maintainers',
+  publisher: 'toastory',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   openGraph: {
     title: 'toastory — Complete UI Feedback Toolkit',
     description:
-      'Toast notifications, dialogs, bottom sheets, and loading overlays with Apple glass design and zero dependencies.',
+      'Toasts, dialogs, bottom sheets, and loading overlays with Apple-style glass and zero runtime dependencies. 7 screen placements & Web Audio synthesizer.',
     url: 'https://toastory.tashanto.com',
     siteName: 'toastory',
     images: [
       {
-        url: 'https://toastory.tashanto.com/og-image.png',
+        url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'toastory — Frosted glass UI feedback toolkit',
+        alt: 'toastory — Apple-style frosted glass UI feedback toolkit',
       },
     ],
     locale: 'en_US',
@@ -46,10 +66,38 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'toastory — Complete UI Feedback Toolkit',
     description:
-      'Toast notifications, dialogs, bottom sheets, and loading overlays with Apple glass design and zero dependencies.',
+      'Toasts, dialogs, bottom sheets, and loading overlays with Apple-style glass and zero runtime dependencies.',
+    images: ['/og-image.png'],
   },
   icons: {
-    icon: '/favicon.ico',
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.ico', sizes: '32x32' },
+    ],
+    apple: [{ url: '/apple-touch-icon.png', sizes: '180x180' }],
+    shortcut: '/favicon.ico',
+  },
+  manifest: '/site.webmanifest',
+};
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'toastory',
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Any (Web, React, Next.js, Vue, Angular, Svelte, React Native)',
+  description:
+    'Complete UI feedback toolkit shipping toasts, confirm / alert / prompt dialogs, bottom sheets, and loading overlays with Apple-style glass design and zero dependencies.',
+  url: 'https://toastory.tashanto.com',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+  },
+  author: {
+    '@type': 'Organization',
+    name: 'toastory',
+    url: 'https://toastory.tashanto.com',
   },
 };
 
@@ -61,6 +109,10 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full antialiased" suppressHydrationWarning>
       <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){

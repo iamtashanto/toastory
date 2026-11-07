@@ -1,0 +1,20 @@
+{
+  "name": "toastory",
+  "short_name": "toastory",
+  "icons": [
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "theme_color": "#0b0c12",
+  "background_color": "#0b0c12",
+  "display": "standalone"
+}
+

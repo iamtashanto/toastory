@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="toastory-grad" x1="4" y1="4" x2="60" y2="60" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#3b82f6" />
+      <stop offset="50%" stop-color="#8b5cf6" />
+      <stop offset="100%" stop-color="#06b6d4" />
+    </linearGradient>
+    <linearGradient id="toastory-surface" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1e2438" stop-opacity="0.95" />
+      <stop offset="100%" stop-color="#0c0f1d" stop-opacity="0.98" />
+    </linearGradient>
+    <linearGradient id="toastory-accent" x1="20" y1="20" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#60a5fa" />
+      <stop offset="100%" stop-color="#a855f7" />
+    </linearGradient>
+    <filter id="toastory-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  
+  <!-- Outer glowing border -->
+  <rect x="4" y="4" width="56" height="56" rx="16" fill="url(#toastory-grad)" />
+  
+  <!-- Frosted glass inner tile -->
+  <rect x="6" y="6" width="52" height="52" rx="14" fill="url(#toastory-surface)" />
+  
+  <!-- Subtle glass gloss highlight -->
+  <path d="M8 20 C8 12, 12 8, 20 8 L44 8 C30 14, 14 26, 8 40 Z" fill="#ffffff" fill-opacity="0.12" />
+  
+  <!-- Harmonic sound chime icon & toast bar -->
+  <rect x="18" y="22" width="28" height="6" rx="3" fill="#ffffff" fill-opacity="0.9" />
+  <rect x="18" y="32" width="18" height="4" rx="2" fill="url(#toastory-accent)" />
+  
+  <!-- Glowing harmonic chime badge -->
+  <circle cx="44" cy="40" r="5" fill="#f59e0b" filter="url(#toastory-glow)" />
+  <circle cx="44" cy="40" r="3" fill="#fef3c7" />
+</svg>
+

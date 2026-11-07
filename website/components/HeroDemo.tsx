@@ -1,11 +1,33 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useSyncExternalStore } from 'react';
 import Link from 'next/link';
 import { ui, toast } from 'toastory';
 import type { ToastPosition } from 'toastory';
 
-type FrameworkTab = 'React' | 'Svelte' | 'Vanilla' | 'Vue' | 'Angular' | 'Next.js' | 'Native';
+function subscribeToTheme(callback: () => void) {
+  if (typeof window === 'undefined') return () => {};
+  window.addEventListener('storage', callback);
+  const observer = new MutationObserver(callback);
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  return () => {
+    window.removeEventListener('storage', callback);
+    observer.disconnect();
+  };
+}
+
+function getThemeSnapshot(): 'light' | 'dark' {
+  if (typeof window === 'undefined') return 'dark';
+  const saved = localStorage.getItem('toastory-theme');
+  const docMode = document.documentElement.getAttribute('data-theme') as 'light' | 'dark' | null;
+  return (saved === 'light' || saved === 'dark' ? saved : docMode) || 'dark';
+}
+
+function getThemeServerSnapshot(): 'light' | 'dark' {
+  return 'dark';
+}
+
+type FrameworkTab = 'React' | 'Next.js' | 'Svelte' | 'Vue' | 'Angular' | 'Vanilla' | 'Native';
 
 const FRAMEWORK_INSTALL: Record<FrameworkTab, string> = {
   React: 'npm i toastory',
@@ -20,11 +42,11 @@ const FRAMEWORK_INSTALL: Record<FrameworkTab, string> = {
 const THEMES = [
   { id: 'ios-glass', name: 'iOS Glass' },
   { id: 'liquid-glass', name: 'Liquid Glass' },
+  { id: 'aurora', name: 'Aurora' },
   { id: 'essentials', name: 'Essentials' },
   { id: 'showcase', name: 'Showcase' },
-  { id: 'neon', name: 'Cyber Neon' },
-  { id: 'aurora', name: 'Aurora' },
   { id: 'sweet', name: 'Sweet Candy' },
+  { id: 'neon', name: 'Cyber Neon' },
   { id: 'brutal', name: 'Neo-Brutal' },
 ];
 
@@ -32,12 +54,14 @@ export function HeroDemo() {
   const [activeFw, setActiveFw] = useState<FrameworkTab>('React');
   const [activePosition, setActivePosition] = useState<ToastPosition>('top-center');
   const [soundEnabled, setSoundEnabled] = useState(true);
-  const [themeMode, setThemeMode] = useState<'light' | 'dark'>('dark');
+  const themeMode = useSyncExternalStore(subscribeToTheme, getThemeSnapshot, getThemeServerSnapshot);
   const [activeTheme, setActiveTheme] = useState('ios-glass');
   const [isStacked, setIsStacked] = useState(true);
   const [cmdCopied, setCmdCopied] = useState(false);
   const [showCode, setShowCode] = useState(false);
+  const [codeCopied, setCodeCopied] = useState(false);
   const [selectedDemoCode, setSelectedDemoCode] = useState<string>('Save');
+  const [lastClickedDemo, setLastClickedDemo] = useState<string>('');
 
   const handleCopyCmd = async () => {
     try {
@@ -79,7 +103,17 @@ export function HeroDemo() {
   };
 
   const toggleMode = (mode: 'light' | 'dark') => {
-    setThemeMode(mode);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('toastory-theme', mode);
+      document.documentElement.setAttribute('data-theme', mode);
+      if (mode === 'light') {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.add('light');
+      } else {
+        document.documentElement.classList.remove('light');
+        document.documentElement.classList.add('dark');
+      }
+    }
     ui.configure({ mode });
     if (soundEnabled) ui.sound('pop');
     toast.message(`Theme: ${mode} mode`, { id: 'theme-mode', duration: 1800, position: activePosition });
@@ -98,6 +132,11 @@ export function HeroDemo() {
     });
   };
 
+  const triggerAnimation = (name: string) => {
+    setLastClickedDemo(name);
+    setTimeout(() => setLastClickedDemo(''), 400);
+  };
+
   // Helper avatar SVG
   const avatarSvg = (initials: string, bg: string) =>
     `data:image/svg+xml,${encodeURIComponent(
@@ -106,6 +145,7 @@ export function HeroDemo() {
 
   // --- DEMO ACTIONS ---
   const fireSave = () => {
+    triggerAnimation('Save');
     setSelectedDemoCode('Save');
     toast.success('Changes saved', {
       position: activePosition,
@@ -114,6 +154,7 @@ export function HeroDemo() {
   };
 
   const fireError = () => {
+    triggerAnimation('Error');
     setSelectedDemoCode('Error');
     toast.error('Payment failed', {
       description: 'Your card was declined. Try another card.',
@@ -127,6 +168,7 @@ export function HeroDemo() {
   };
 
   const fireWarning = () => {
+    triggerAnimation('Warning');
     setSelectedDemoCode('Warning');
     toast.warning('Storage almost full', {
       description: 'Free up space or upgrade your plan.',
@@ -140,6 +182,7 @@ export function HeroDemo() {
   };
 
   const fireInfo = () => {
+    triggerAnimation('Info');
     setSelectedDemoCode('Info');
     toast.info('New version available', {
       position: activePosition,
@@ -148,6 +191,7 @@ export function HeroDemo() {
   };
 
   const fireDescription = () => {
+    triggerAnimation('Description');
     setSelectedDemoCode('Description');
     toast.success('Deployment ready', {
       description: 'my-app is live at my-app.vercel.app',
@@ -157,6 +201,7 @@ export function HeroDemo() {
   };
 
   const firePromise = () => {
+    triggerAnimation('Promise');
     setSelectedDemoCode('Promise');
     const fakeAsyncAction = new Promise<{ id: string }>((resolve, reject) => {
       setTimeout(() => {
@@ -181,6 +226,7 @@ export function HeroDemo() {
   };
 
   const fireSync = () => {
+    triggerAnimation('Sync');
     setSelectedDemoCode('Sync');
     const id = toast.loading('Syncing 3 files…', { position: activePosition, theme: activeTheme });
     setTimeout(() => {
@@ -193,6 +239,7 @@ export function HeroDemo() {
   };
 
   const fireUpload = () => {
+    triggerAnimation('Upload');
     setSelectedDemoCode('Upload');
     let percent = 0;
     const id = toast.loading('Uploading 0%', { position: activePosition, theme: activeTheme });
@@ -215,6 +262,7 @@ export function HeroDemo() {
   };
 
   const fireDownload = () => {
+    triggerAnimation('Download');
     setSelectedDemoCode('Download');
     let percent = 0;
     const id = toast.info('design-system.zip', {
@@ -254,6 +302,7 @@ export function HeroDemo() {
   };
 
   const fireOrder = () => {
+    triggerAnimation('Order');
     setSelectedDemoCode('Order');
     const id = toast.loading('Order confirmed', {
       description: 'The kitchen received your order',
@@ -284,6 +333,7 @@ export function HeroDemo() {
   };
 
   const fireSequence = () => {
+    triggerAnimation('Sequence');
     setSelectedDemoCode('Sequence');
     const steps = [
       () => toast.loading('Uploading photo…', { position: activePosition }),
@@ -295,6 +345,7 @@ export function HeroDemo() {
   };
 
   const fireMessage = () => {
+    triggerAnimation('Message');
     setSelectedDemoCode('Message');
     toast.info('Sarah Chen', {
       description: 'Can you review the PR before standup?',
@@ -320,6 +371,7 @@ export function HeroDemo() {
   };
 
   const fireMeeting = () => {
+    triggerAnimation('Meeting');
     setSelectedDemoCode('Meeting');
     toast.info('Design sync in 5 min', {
       description: 'Room 4 · 6 attendees',
@@ -342,6 +394,7 @@ export function HeroDemo() {
   };
 
   const fireInvite = () => {
+    triggerAnimation('Invite');
     setSelectedDemoCode('Invite');
     toast.info('Alex invited you to Atlas', {
       description: 'Product design workspace · 12 members',
@@ -367,6 +420,7 @@ export function HeroDemo() {
   };
 
   const fireMusic = () => {
+    triggerAnimation('Music');
     setSelectedDemoCode('Music');
     toast.info('Midnight City', {
       description: 'M83 · Hurry Up, We’re Dreaming',
@@ -393,6 +447,7 @@ export function HeroDemo() {
   };
 
   const fireCopy = () => {
+    triggerAnimation('Copy');
     setSelectedDemoCode('Copy');
     toast.success('Link copied', {
       description: 'URL added to your system clipboard (⌘V)',
@@ -403,6 +458,7 @@ export function HeroDemo() {
   };
 
   const fireUndo = () => {
+    triggerAnimation('Undo');
     setSelectedDemoCode('Undo');
     toast.success('Message deleted', {
       position: activePosition,
@@ -418,6 +474,7 @@ export function HeroDemo() {
   };
 
   const fireConfirmAction = () => {
+    triggerAnimation('Confirm');
     setSelectedDemoCode('Confirm');
     toast.warning('Discard unsaved changes?', {
       position: activePosition,
@@ -438,6 +495,7 @@ export function HeroDemo() {
   };
 
   const fireUpdate = () => {
+    triggerAnimation('Update');
     setSelectedDemoCode('Update');
     const id = 'upd-app';
     toast.info('Update available', {
@@ -472,6 +530,7 @@ export function HeroDemo() {
   };
 
   const fireOffline = () => {
+    triggerAnimation('Offline');
     setSelectedDemoCode('Offline');
     const id = 'offline-toast';
     toast.error('You’re offline', {
@@ -502,6 +561,7 @@ export function HeroDemo() {
 
   // Sound triggers
   const fireSoundCue = (cue: 'success' | 'error' | 'warning' | 'info' | 'chime' | 'ding' | 'pop' | 'bubble') => {
+    triggerAnimation(`Sound:${cue}`);
     setSelectedDemoCode(`Sound:${cue}`);
     ui.sound(cue);
     toast.message(`Audio Cue: ${cue}`, {
@@ -513,6 +573,7 @@ export function HeroDemo() {
 
   // Dialog triggers
   const fireConfirmModal = async () => {
+    triggerAnimation('Dialog:Confirm');
     setSelectedDemoCode('Dialog:Confirm');
     const res = await ui.confirm({
       title: 'Destroy Production Cluster?',
@@ -531,6 +592,7 @@ export function HeroDemo() {
   };
 
   const firePromptModal = async () => {
+    triggerAnimation('Dialog:Prompt');
     setSelectedDemoCode('Dialog:Prompt');
     const res = await ui.prompt({
       title: 'Rename Project Workspace',
@@ -549,6 +611,7 @@ export function HeroDemo() {
   };
 
   const fireBottomSheet = () => {
+    triggerAnimation('Dialog:BottomSheet');
     setSelectedDemoCode('Dialog:BottomSheet');
     ui.bottomSheet({
       title: 'Select Deployment Region',
@@ -612,10 +675,21 @@ const res = await ui.confirm({
 });`,
   };
 
+  const handleCopySnippet = async () => {
+    try {
+      const code = codeSnippets[selectedDemoCode] || codeSnippets.Save;
+      await navigator.clipboard.writeText(code);
+      setCodeCopied(true);
+      setTimeout(() => setCodeCopied(false), 2000);
+    } catch {
+      // fallback
+    }
+  };
+
   return (
     <div className="w-full max-w-4xl mx-auto space-y-6">
-      {/* 1. TOP HERO INTERACTION ROW (Framework Tabs + Install Command + llms.txt) */}
-      <div className="flex flex-wrap items-center justify-between gap-4 p-2 sm:p-3 rounded-2xl bg-[var(--site-surface-raised)] border border-[var(--site-border)] shadow-sm">
+      {/* 1. TOP INTERACTION ROW (Framework Tabs + Clean Command Pill + llms.txt) */}
+      <div className="flex flex-wrap items-center justify-between gap-3 p-2.5 sm:p-3 rounded-2xl bg-[var(--site-surface-raised)] border border-[var(--site-border)] shadow-sm backdrop-blur-xl">
         {/* Framework toggle tabs */}
         <div className="flex flex-wrap items-center gap-1">
           {(['React', 'Next.js', 'Svelte', 'Vue', 'Angular', 'Vanilla', 'Native'] as FrameworkTab[]).map((fw) => {
@@ -627,7 +701,7 @@ const res = await ui.confirm({
                 onClick={() => setActiveFw(fw)}
                 className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
                   isSelected
-                    ? 'bg-[var(--site-fg)] text-[var(--site-bg)] font-semibold shadow-sm'
+                    ? 'bg-[var(--site-fg)] text-[var(--site-bg)] font-semibold shadow-sm scale-102'
                     : 'text-[var(--site-muted)] hover:text-[var(--site-fg)] hover:bg-[var(--site-surface)]'
                 }`}
                 aria-pressed={isSelected}
@@ -640,14 +714,14 @@ const res = await ui.confirm({
 
         {/* Command Pill & Copy */}
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--site-surface)] border border-[var(--site-border)] text-xs font-mono text-[var(--site-fg)] shadow-inner">
-            <span>{FRAMEWORK_INSTALL[activeFw]}</span>
+          <div className="flex items-center gap-2.5 px-3.5 py-1 rounded-full bg-[var(--site-surface)] border border-[var(--site-border)] text-xs font-mono text-[var(--site-fg)] shadow-inner">
+            <span className="select-all">{FRAMEWORK_INSTALL[activeFw]}</span>
             <button
               type="button"
               onClick={handleCopyCmd}
               className="px-2.5 py-0.5 rounded-full bg-[var(--site-fg)] text-[var(--site-bg)] font-sans text-[11px] font-semibold transition-all hover:opacity-90 active:scale-95"
             >
-              {cmdCopied ? 'Copied' : 'Copy'}
+              {cmdCopied ? 'Copied ✓' : 'Copy'}
             </button>
           </div>
 
@@ -661,13 +735,13 @@ const res = await ui.confirm({
         </div>
       </div>
 
-      {/* 2. UNIFIED SETTINGS CARD (Position 3x3 Matrix, Sound, Theme, Dismiss All) */}
-      <div className="flex flex-wrap items-center justify-between gap-6 px-6 py-4 rounded-2xl bg-[var(--site-surface-raised)] border border-[var(--site-border)] shadow-md backdrop-blur-xl">
+      {/* 2. UNIFIED SETTINGS BAR (Position 3x3 Matrix, Sound, Theme, Stack, Dismiss All) */}
+      <div className="flex flex-wrap items-center justify-between gap-4 sm:gap-6 px-5 py-3 rounded-2xl bg-[var(--site-surface)]/70 dark:bg-[#12131d]/80 border border-[var(--site-border)] shadow-sm backdrop-blur-xl">
         {/* 7 Placements 3x3 Picker */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           <span className="text-xs font-semibold text-[var(--site-muted)] uppercase tracking-wider">Position</span>
           <div
-            className="grid grid-cols-3 gap-1 p-1 rounded-xl bg-[var(--site-surface)] border border-[var(--site-border)] shadow-inner"
+            className="grid grid-cols-3 gap-1 p-1 rounded-lg bg-[var(--site-surface-raised)] border border-[var(--site-border)] shadow-inner w-[76px] h-[76px]"
             role="group"
             aria-label="7 screen placement selector"
           >
@@ -677,10 +751,10 @@ const res = await ui.confirm({
               onClick={() => setPosition('top-left')}
               title="Top Left"
               aria-label="Top Left"
-              className={`w-6 h-6 rounded-md transition-all ${
+              className={`w-[20px] h-[20px] rounded-[4px] transition-all ${
                 activePosition === 'top-left'
                   ? 'bg-[var(--site-fg)] shadow-sm scale-105'
-                  : 'bg-[var(--site-surface-raised)] hover:bg-blue-500/20'
+                  : 'bg-[var(--site-surface)] hover:bg-blue-500/20'
               }`}
             />
             <button
@@ -688,10 +762,10 @@ const res = await ui.confirm({
               onClick={() => setPosition('top-center')}
               title="Top Center"
               aria-label="Top Center"
-              className={`w-6 h-6 rounded-md transition-all ${
+              className={`w-[20px] h-[20px] rounded-[4px] transition-all ${
                 activePosition === 'top-center'
                   ? 'bg-[var(--site-fg)] shadow-sm scale-105'
-                  : 'bg-[var(--site-surface-raised)] hover:bg-blue-500/20'
+                  : 'bg-[var(--site-surface)] hover:bg-blue-500/20'
               }`}
             />
             <button
@@ -699,29 +773,29 @@ const res = await ui.confirm({
               onClick={() => setPosition('top-right')}
               title="Top Right"
               aria-label="Top Right"
-              className={`w-6 h-6 rounded-md transition-all ${
+              className={`w-[20px] h-[20px] rounded-[4px] transition-all ${
                 activePosition === 'top-right'
                   ? 'bg-[var(--site-fg)] shadow-sm scale-105'
-                  : 'bg-[var(--site-surface-raised)] hover:bg-blue-500/20'
+                  : 'bg-[var(--site-surface)] hover:bg-blue-500/20'
               }`}
             />
 
-            {/* Row 2 (Spacer, Middle Center, Spacer) */}
-            <div className="w-6 h-6 opacity-0 pointer-events-none" />
+            {/* Row 2 (Spacer, Center, Spacer) */}
+            <div className="w-[20px] h-[20px] opacity-0 pointer-events-none" />
             <button
               type="button"
               onClick={() => setPosition('center')}
               title="Center (Middle Screen)"
               aria-label="Center (Middle Screen)"
-              className={`w-6 h-6 rounded-md transition-all flex items-center justify-center ${
+              className={`w-[20px] h-[20px] rounded-[4px] transition-all flex items-center justify-center ${
                 activePosition === 'center'
                   ? 'bg-[var(--site-fg)] shadow-sm scale-105'
-                  : 'bg-[var(--site-surface-raised)] hover:bg-blue-500/20'
+                  : 'bg-[var(--site-surface)] hover:bg-blue-500/20'
               }`}
             >
-              <span className={`w-2 h-2 rounded-full ${activePosition === 'center' ? 'bg-[var(--site-bg)]' : 'bg-[var(--site-muted)]'}`} />
+              <span className={`w-1.5 h-1.5 rounded-full ${activePosition === 'center' ? 'bg-[var(--site-bg)]' : 'bg-[var(--site-muted)]'}`} />
             </button>
-            <div className="w-6 h-6 opacity-0 pointer-events-none" />
+            <div className="w-[20px] h-[20px] opacity-0 pointer-events-none" />
 
             {/* Row 3 */}
             <button
@@ -729,10 +803,10 @@ const res = await ui.confirm({
               onClick={() => setPosition('bottom-left')}
               title="Bottom Left"
               aria-label="Bottom Left"
-              className={`w-6 h-6 rounded-md transition-all ${
+              className={`w-[20px] h-[20px] rounded-[4px] transition-all ${
                 activePosition === 'bottom-left'
                   ? 'bg-[var(--site-fg)] shadow-sm scale-105'
-                  : 'bg-[var(--site-surface-raised)] hover:bg-blue-500/20'
+                  : 'bg-[var(--site-surface)] hover:bg-blue-500/20'
               }`}
             />
             <button
@@ -740,10 +814,10 @@ const res = await ui.confirm({
               onClick={() => setPosition('bottom-center')}
               title="Bottom Center"
               aria-label="Bottom Center"
-              className={`w-6 h-6 rounded-md transition-all ${
+              className={`w-[20px] h-[20px] rounded-[4px] transition-all ${
                 activePosition === 'bottom-center'
                   ? 'bg-[var(--site-fg)] shadow-sm scale-105'
-                  : 'bg-[var(--site-surface-raised)] hover:bg-blue-500/20'
+                  : 'bg-[var(--site-surface)] hover:bg-blue-500/20'
               }`}
             />
             <button
@@ -751,10 +825,10 @@ const res = await ui.confirm({
               onClick={() => setPosition('bottom-right')}
               title="Bottom Right"
               aria-label="Bottom Right"
-              className={`w-6 h-6 rounded-md transition-all ${
+              className={`w-[20px] h-[20px] rounded-[4px] transition-all ${
                 activePosition === 'bottom-right'
                   ? 'bg-[var(--site-fg)] shadow-sm scale-105'
-                  : 'bg-[var(--site-surface-raised)] hover:bg-blue-500/20'
+                  : 'bg-[var(--site-surface)] hover:bg-blue-500/20'
               }`}
             />
           </div>
@@ -763,7 +837,7 @@ const res = await ui.confirm({
         {/* Sound Toggle */}
         <div className="flex items-center gap-2">
           <span className="text-xs font-semibold text-[var(--site-muted)] uppercase tracking-wider">Sound</span>
-          <div className="flex items-center p-0.5 rounded-full bg-[var(--site-surface)] border border-[var(--site-border)] shadow-inner">
+          <div className="flex items-center p-0.5 rounded-full bg-[var(--site-surface-raised)] border border-[var(--site-border)] shadow-inner">
             <button
               type="button"
               onClick={() => toggleSound(false)}
@@ -792,7 +866,7 @@ const res = await ui.confirm({
         {/* Theme Mode Toggle */}
         <div className="flex items-center gap-2">
           <span className="text-xs font-semibold text-[var(--site-muted)] uppercase tracking-wider">Theme</span>
-          <div className="flex items-center p-0.5 rounded-full bg-[var(--site-surface)] border border-[var(--site-border)] shadow-inner">
+          <div className="flex items-center p-0.5 rounded-full bg-[var(--site-surface-raised)] border border-[var(--site-border)] shadow-inner">
             <button
               type="button"
               onClick={() => toggleMode('light')}
@@ -827,7 +901,7 @@ const res = await ui.confirm({
               setIsStacked(next);
               ui.configure({ stack: next ? 'stacked' : 'expanded' });
             }}
-            className="text-xs px-2.5 py-1 rounded-full border border-[var(--site-border)] bg-[var(--site-surface)] text-[var(--site-muted)] hover:text-[var(--site-fg)] transition-colors"
+            className="text-xs px-3 py-1 rounded-full border border-[var(--site-border)] bg-[var(--site-surface-raised)] text-[var(--site-muted)] hover:text-[var(--site-fg)] transition-colors"
           >
             {isStacked ? 'Deck Stacked' : 'List Expanded'}
           </button>
@@ -847,185 +921,119 @@ const res = await ui.confirm({
       </div>
 
       {/* 3. CATEGORIZED INTERACTIVE DEMO ROWS */}
-      <div className="space-y-4 pt-2 text-left">
+      <div className="space-y-3.5 pt-1 text-left">
         {/* ROW 1: STATUS */}
-        <div className="grid grid-cols-1 sm:grid-cols-[100px_1fr] items-center gap-3">
-          <span className="text-xs font-semibold text-[var(--site-muted)]">Status</span>
+        <div className="grid grid-cols-1 sm:grid-cols-[88px_1fr] items-center gap-3">
+          <span className="text-xs font-semibold text-[var(--site-muted)] uppercase tracking-wider">Status</span>
           <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={fireSave}
-              className="px-4 py-2 rounded-full text-xs font-medium bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-[var(--site-fg)] hover:bg-[var(--site-surface)] hover:border-blue-500/40 active:scale-95 transition-all shadow-sm"
-            >
-              Save
-            </button>
-            <button
-              type="button"
-              onClick={fireError}
-              className="px-4 py-2 rounded-full text-xs font-medium bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-[var(--site-fg)] hover:bg-[var(--site-surface)] hover:border-rose-500/40 active:scale-95 transition-all shadow-sm"
-            >
-              Error
-            </button>
-            <button
-              type="button"
-              onClick={fireWarning}
-              className="px-4 py-2 rounded-full text-xs font-medium bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-[var(--site-fg)] hover:bg-[var(--site-surface)] hover:border-amber-500/40 active:scale-95 transition-all shadow-sm"
-            >
-              Warning
-            </button>
-            <button
-              type="button"
-              onClick={fireInfo}
-              className="px-4 py-2 rounded-full text-xs font-medium bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-[var(--site-fg)] hover:bg-[var(--site-surface)] hover:border-blue-500/40 active:scale-95 transition-all shadow-sm"
-            >
-              Info
-            </button>
-            <button
-              type="button"
-              onClick={fireDescription}
-              className="px-4 py-2 rounded-full text-xs font-medium bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-[var(--site-fg)] hover:bg-[var(--site-surface)] hover:border-emerald-500/40 active:scale-95 transition-all shadow-sm"
-            >
-              Description
-            </button>
+            {[
+              { label: 'Save', fn: fireSave },
+              { label: 'Error', fn: fireError },
+              { label: 'Warning', fn: fireWarning },
+              { label: 'Info', fn: fireInfo },
+              { label: 'Description', fn: fireDescription },
+            ].map(({ label, fn }) => (
+              <button
+                key={label}
+                type="button"
+                onClick={fn}
+                className={`px-4 py-1.5 rounded-full text-xs font-medium bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-[var(--site-fg)] hover:border-blue-500/40 hover:bg-[var(--site-surface)] active:scale-95 transition-all shadow-sm ${
+                  lastClickedDemo === label ? 'ring-2 ring-blue-500/50 scale-95' : ''
+                }`}
+              >
+                {label}
+              </button>
+            ))}
           </div>
         </div>
 
         {/* ROW 2: PROGRESS */}
-        <div className="grid grid-cols-1 sm:grid-cols-[100px_1fr] items-center gap-3">
-          <span className="text-xs font-semibold text-[var(--site-muted)]">Progress</span>
+        <div className="grid grid-cols-1 sm:grid-cols-[88px_1fr] items-center gap-3">
+          <span className="text-xs font-semibold text-[var(--site-muted)] uppercase tracking-wider">Progress</span>
           <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={firePromise}
-              className="px-4 py-2 rounded-full text-xs font-medium bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-[var(--site-fg)] hover:bg-[var(--site-surface)] hover:border-blue-500/40 active:scale-95 transition-all shadow-sm"
-            >
-              Promise
-            </button>
-            <button
-              type="button"
-              onClick={fireSync}
-              className="px-4 py-2 rounded-full text-xs font-medium bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-[var(--site-fg)] hover:bg-[var(--site-surface)] hover:border-blue-500/40 active:scale-95 transition-all shadow-sm"
-            >
-              Sync
-            </button>
-            <button
-              type="button"
-              onClick={fireUpload}
-              className="px-4 py-2 rounded-full text-xs font-medium bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-[var(--site-fg)] hover:bg-[var(--site-surface)] hover:border-blue-500/40 active:scale-95 transition-all shadow-sm"
-            >
-              Upload
-            </button>
-            <button
-              type="button"
-              onClick={fireDownload}
-              className="px-4 py-2 rounded-full text-xs font-medium bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-[var(--site-fg)] hover:bg-[var(--site-surface)] hover:border-blue-500/40 active:scale-95 transition-all shadow-sm"
-            >
-              Download
-            </button>
-            <button
-              type="button"
-              onClick={fireOrder}
-              className="px-4 py-2 rounded-full text-xs font-medium bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-[var(--site-fg)] hover:bg-[var(--site-surface)] hover:border-blue-500/40 active:scale-95 transition-all shadow-sm"
-            >
-              Order
-            </button>
-            <button
-              type="button"
-              onClick={fireSequence}
-              className="px-4 py-2 rounded-full text-xs font-medium bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-[var(--site-fg)] hover:bg-[var(--site-surface)] hover:border-blue-500/40 active:scale-95 transition-all shadow-sm"
-            >
-              Sequence
-            </button>
+            {[
+              { label: 'Promise', fn: firePromise },
+              { label: 'Sync', fn: fireSync },
+              { label: 'Upload', fn: fireUpload },
+              { label: 'Download', fn: fireDownload },
+              { label: 'Order', fn: fireOrder },
+              { label: 'Sequence', fn: fireSequence },
+            ].map(({ label, fn }) => (
+              <button
+                key={label}
+                type="button"
+                onClick={fn}
+                className={`px-4 py-1.5 rounded-full text-xs font-medium bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-[var(--site-fg)] hover:border-blue-500/40 hover:bg-[var(--site-surface)] active:scale-95 transition-all shadow-sm ${
+                  lastClickedDemo === label ? 'ring-2 ring-blue-500/50 scale-95' : ''
+                }`}
+              >
+                {label}
+              </button>
+            ))}
           </div>
         </div>
 
         {/* ROW 3: CONTENT */}
-        <div className="grid grid-cols-1 sm:grid-cols-[100px_1fr] items-center gap-3">
-          <span className="text-xs font-semibold text-[var(--site-muted)]">Content</span>
+        <div className="grid grid-cols-1 sm:grid-cols-[88px_1fr] items-center gap-3">
+          <span className="text-xs font-semibold text-[var(--site-muted)] uppercase tracking-wider">Content</span>
           <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={fireMessage}
-              className="px-4 py-2 rounded-full text-xs font-medium bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-[var(--site-fg)] hover:bg-[var(--site-surface)] hover:border-purple-500/40 active:scale-95 transition-all shadow-sm"
-            >
-              Message
-            </button>
-            <button
-              type="button"
-              onClick={fireMeeting}
-              className="px-4 py-2 rounded-full text-xs font-medium bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-[var(--site-fg)] hover:bg-[var(--site-surface)] hover:border-emerald-500/40 active:scale-95 transition-all shadow-sm"
-            >
-              Meeting
-            </button>
-            <button
-              type="button"
-              onClick={fireInvite}
-              className="px-4 py-2 rounded-full text-xs font-medium bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-[var(--site-fg)] hover:bg-[var(--site-surface)] hover:border-rose-500/40 active:scale-95 transition-all shadow-sm"
-            >
-              Invite
-            </button>
-            <button
-              type="button"
-              onClick={fireMusic}
-              className="px-4 py-2 rounded-full text-xs font-medium bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-[var(--site-fg)] hover:bg-[var(--site-surface)] hover:border-indigo-500/40 active:scale-95 transition-all shadow-sm"
-            >
-              Music
-            </button>
-            <button
-              type="button"
-              onClick={fireCopy}
-              className="px-4 py-2 rounded-full text-xs font-medium bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-[var(--site-fg)] hover:bg-[var(--site-surface)] hover:border-blue-500/40 active:scale-95 transition-all shadow-sm"
-            >
-              Copy
-            </button>
+            {[
+              { label: 'Message', fn: fireMessage },
+              { label: 'Meeting', fn: fireMeeting },
+              { label: 'Invite', fn: fireInvite },
+              { label: 'Music', fn: fireMusic },
+              { label: 'Copy', fn: fireCopy },
+            ].map(({ label, fn }) => (
+              <button
+                key={label}
+                type="button"
+                onClick={fn}
+                className={`px-4 py-1.5 rounded-full text-xs font-medium bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-[var(--site-fg)] hover:border-purple-500/40 hover:bg-[var(--site-surface)] active:scale-95 transition-all shadow-sm ${
+                  lastClickedDemo === label ? 'ring-2 ring-purple-500/50 scale-95' : ''
+                }`}
+              >
+                {label}
+              </button>
+            ))}
           </div>
         </div>
 
         {/* ROW 4: ACTIONS */}
-        <div className="grid grid-cols-1 sm:grid-cols-[100px_1fr] items-center gap-3">
-          <span className="text-xs font-semibold text-[var(--site-muted)]">Actions</span>
+        <div className="grid grid-cols-1 sm:grid-cols-[88px_1fr] items-center gap-3">
+          <span className="text-xs font-semibold text-[var(--site-muted)] uppercase tracking-wider">Actions</span>
           <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={fireUndo}
-              className="px-4 py-2 rounded-full text-xs font-medium bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-[var(--site-fg)] hover:bg-[var(--site-surface)] hover:border-emerald-500/40 active:scale-95 transition-all shadow-sm"
-            >
-              Undo
-            </button>
-            <button
-              type="button"
-              onClick={fireConfirmAction}
-              className="px-4 py-2 rounded-full text-xs font-medium bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-[var(--site-fg)] hover:bg-[var(--site-surface)] hover:border-amber-500/40 active:scale-95 transition-all shadow-sm"
-            >
-              Confirm
-            </button>
-            <button
-              type="button"
-              onClick={fireUpdate}
-              className="px-4 py-2 rounded-full text-xs font-medium bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-[var(--site-fg)] hover:bg-[var(--site-surface)] hover:border-blue-500/40 active:scale-95 transition-all shadow-sm"
-            >
-              Update
-            </button>
-            <button
-              type="button"
-              onClick={fireOffline}
-              className="px-4 py-2 rounded-full text-xs font-medium bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-[var(--site-fg)] hover:bg-[var(--site-surface)] hover:border-rose-500/40 active:scale-95 transition-all shadow-sm"
-            >
-              Offline
-            </button>
+            {[
+              { label: 'Undo', fn: fireUndo },
+              { label: 'Confirm', fn: fireConfirmAction },
+              { label: 'Update', fn: fireUpdate },
+              { label: 'Offline', fn: fireOffline },
+            ].map(({ label, fn }) => (
+              <button
+                key={label}
+                type="button"
+                onClick={fn}
+                className={`px-4 py-1.5 rounded-full text-xs font-medium bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-[var(--site-fg)] hover:border-emerald-500/40 hover:bg-[var(--site-surface)] active:scale-95 transition-all shadow-sm ${
+                  lastClickedDemo === label ? 'ring-2 ring-emerald-500/50 scale-95' : ''
+                }`}
+              >
+                {label}
+              </button>
+            ))}
           </div>
         </div>
 
         {/* ROW 5: SOUND */}
-        <div className="grid grid-cols-1 sm:grid-cols-[100px_1fr] items-center gap-3">
-          <span className="text-xs font-semibold text-[var(--site-muted)]">Sound</span>
+        <div className="grid grid-cols-1 sm:grid-cols-[88px_1fr] items-center gap-3">
+          <span className="text-xs font-semibold text-[var(--site-muted)] uppercase tracking-wider">Sound</span>
           <div className="flex flex-wrap items-center gap-2">
             {(['success', 'error', 'warning', 'info', 'chime', 'ding', 'pop', 'bubble'] as const).map((cue) => (
               <button
                 key={cue}
                 type="button"
                 onClick={() => fireSoundCue(cue)}
-                className="px-4 py-2 rounded-full text-xs font-medium bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-[var(--site-fg)] hover:bg-blue-500/10 hover:border-blue-500/40 active:scale-95 transition-all shadow-sm capitalize"
+                className={`px-4 py-1.5 rounded-full text-xs font-medium bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-[var(--site-fg)] hover:bg-blue-500/10 hover:border-blue-500/40 active:scale-95 transition-all shadow-sm capitalize ${
+                  lastClickedDemo === `Sound:${cue}` ? 'ring-2 ring-blue-500/50 scale-95' : ''
+                }`}
               >
                 {cue} ♫
               </button>
@@ -1033,28 +1041,28 @@ const res = await ui.confirm({
           </div>
         </div>
 
-        {/* ROW 6: DIALOGS & SHEETS (Unique toastory superpower) */}
-        <div className="grid grid-cols-1 sm:grid-cols-[100px_1fr] items-center gap-3 pt-2 border-t border-[var(--site-border)]">
-          <span className="text-xs font-semibold text-blue-500">Dialogs</span>
+        {/* ROW 6: DIALOGS & SHEETS */}
+        <div className="grid grid-cols-1 sm:grid-cols-[88px_1fr] items-center gap-3 pt-2 border-t border-[var(--site-border)]">
+          <span className="text-xs font-semibold text-blue-500 uppercase tracking-wider">Dialogs</span>
           <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
               onClick={fireConfirmModal}
-              className="px-4 py-2 rounded-full text-xs font-medium bg-purple-500/10 border border-purple-500/30 text-purple-700 dark:text-purple-300 hover:bg-purple-500/20 active:scale-95 transition-all shadow-sm"
+              className="px-4 py-1.5 rounded-full text-xs font-medium bg-purple-500/10 border border-purple-500/30 text-purple-700 dark:text-purple-300 hover:bg-purple-500/20 active:scale-95 transition-all shadow-sm"
             >
               Confirm Modal ↵
             </button>
             <button
               type="button"
               onClick={firePromptModal}
-              className="px-4 py-2 rounded-full text-xs font-medium bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-300 hover:bg-amber-500/20 active:scale-95 transition-all shadow-sm"
+              className="px-4 py-1.5 rounded-full text-xs font-medium bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-300 hover:bg-amber-500/20 active:scale-95 transition-all shadow-sm"
             >
               Prompt Input ✎
             </button>
             <button
               type="button"
               onClick={fireBottomSheet}
-              className="px-4 py-2 rounded-full text-xs font-medium bg-cyan-500/10 border border-cyan-500/30 text-cyan-700 dark:text-cyan-300 hover:bg-cyan-500/20 active:scale-95 transition-all shadow-sm"
+              className="px-4 py-1.5 rounded-full text-xs font-medium bg-cyan-500/10 border border-cyan-500/30 text-cyan-700 dark:text-cyan-300 hover:bg-cyan-500/20 active:scale-95 transition-all shadow-sm"
             >
               Bottom Sheet ⇡
             </button>
@@ -1062,7 +1070,7 @@ const res = await ui.confirm({
         </div>
       </div>
 
-      {/* 4. THEME TOKENS & CODE SNIPPET TOOLBAR */}
+      {/* 4. THEME PRESETS & CODE SNIPPET TOOLBAR */}
       <div className="pt-3 border-t border-[var(--site-border)] space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
           {/* Glass themes */}
@@ -1095,6 +1103,16 @@ const res = await ui.confirm({
 
         {showCode && (
           <div className="rounded-xl border border-[var(--site-border)] bg-[var(--site-card-bg)] overflow-hidden shadow-inner text-left">
+            <div className="flex items-center justify-between px-4 py-2 border-b border-[var(--site-border)] bg-[var(--site-surface)] text-xs text-[var(--site-muted)]">
+              <span>Code Snippet ({selectedDemoCode})</span>
+              <button
+                type="button"
+                onClick={handleCopySnippet}
+                className="hover:text-[var(--site-fg)] transition-colors font-medium"
+              >
+                {codeCopied ? 'Copied ✓' : 'Copy'}
+              </button>
+            </div>
             <pre className="p-4 text-xs font-mono overflow-x-auto text-[var(--site-fg)] leading-relaxed">
               <code>{codeSnippets[selectedDemoCode] || codeSnippets.Save}</code>
             </pre>

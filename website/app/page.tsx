@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { HeroDemo } from '@/components/HeroDemo';
 import { FrameworkQuickstart } from '@/components/FrameworkQuickstart';
@@ -8,27 +8,6 @@ import { FeatureDemos } from '@/components/FeatureDemos';
 import { ComparisonTable } from '@/components/ComparisonTable';
 
 export default function HomePage() {
-  const [pkgManager, setPkgManager] = useState<'npm' | 'pnpm' | 'yarn' | 'bun' | 'deno'>('npm');
-  const [installCopied, setInstallCopied] = useState(false);
-
-  const installCommands = {
-    npm: 'npm install toastory',
-    pnpm: 'pnpm add toastory',
-    yarn: 'yarn add toastory',
-    bun: 'bun add toastory',
-    deno: 'deno add npm:toastory',
-  };
-
-  const handleCopyInstall = async () => {
-    try {
-      await navigator.clipboard.writeText(installCommands[pkgManager]);
-      setInstallCopied(true);
-      setTimeout(() => setInstallCopied(false), 2000);
-    } catch {
-      // fallback
-    }
-  };
-
   return (
     <div className="relative overflow-hidden">
       {/* Background radial glows */}
@@ -78,67 +57,22 @@ export default function HomePage() {
             </Link>
           </div>
 
-          {/* Copyable install command */}
-          <div className="pt-4 max-w-md mx-auto">
-            <div className="flex items-center justify-between p-1.5 rounded-xl bg-[var(--site-card-bg)] border border-[var(--site-border)] shadow-sm">
-              {/* Package manager tabs */}
-              <div className="flex items-center gap-1">
-                {(['npm', 'pnpm', 'yarn', 'bun', 'deno'] as const).map((pm) => (
-                  <button
-                    key={pm}
-                    type="button"
-                    onClick={() => setPkgManager(pm)}
-                    className={`px-2.5 py-1 rounded-lg text-xs font-mono transition-colors ${
-                      pkgManager === pm
-                        ? 'bg-blue-600/10 text-blue-600 dark:bg-white/15 dark:text-white font-semibold'
-                        : 'text-[var(--site-muted)] hover:text-[var(--site-fg)]'
-                    }`}
-                  >
-                    {pm}
-                  </button>
-                ))}
-              </div>
-
-              {/* Command text & Copy */}
-              <div className="flex items-center gap-2 pr-1">
-                <span className="font-mono text-xs text-blue-600 dark:text-blue-400 font-medium">{installCommands[pkgManager]}</span>
-                <button
-                  type="button"
-                  onClick={handleCopyInstall}
-                  className="p-1.5 rounded-md hover:bg-[var(--site-surface-raised)] text-[var(--site-muted)] hover:text-[var(--site-fg)] transition-colors"
-                  aria-label="Copy install command"
-                >
-                  {installCopied ? (
-                    <svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
-                    </svg>
-                  ) : (
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <rect x="9" y="9" width="13" height="13" rx="2" strokeWidth="2" />
-                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" strokeWidth="2" />
-                    </svg>
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
-
           {/* Trust badges */}
-          <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-[var(--site-muted)] pt-2">
-            <span className="flex items-center gap-1.5">
-              <span className="text-emerald-500">✓</span> WCAG 2.2 AA (0 axe errors)
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-xs text-[var(--site-muted)] pt-3">
+            <span className="flex items-center gap-1.5 font-medium">
+              <span className="text-emerald-500 font-bold">✓</span> WCAG 2.2 AA (0 axe errors)
             </span>
-            <span className="text-[var(--site-muted)] opacity-60">•</span>
-            <span className="flex items-center gap-1.5">
-              <span className="text-blue-500">✓</span> TypeScript Strict
+            <span className="text-[var(--site-muted)] opacity-40">•</span>
+            <span className="flex items-center gap-1.5 font-medium">
+              <span className="text-blue-500 font-bold">✓</span> TypeScript Strict
             </span>
-            <span className="text-[var(--site-muted)] opacity-60">•</span>
-            <span className="flex items-center gap-1.5">
-              <span className="text-purple-500">✓</span> npm Provenance
+            <span className="text-[var(--site-muted)] opacity-40">•</span>
+            <span className="flex items-center gap-1.5 font-medium">
+              <span className="text-purple-500 font-bold">✓</span> npm Provenance
             </span>
-            <span className="text-[var(--site-muted)] opacity-60">•</span>
-            <span className="flex items-center gap-1.5">
-              <span className="text-cyan-500">✓</span> Tree-shakable CSS & JS
+            <span className="text-[var(--site-muted)] opacity-40">•</span>
+            <span className="flex items-center gap-1.5 font-medium">
+              <span className="text-cyan-500 font-bold">✓</span> Tree-shakable CSS & JS
             </span>
           </div>
         </div>

@@ -744,86 +744,132 @@ export default function NativeScreen() {
             </div>
 
             {/* Visual 7-Position Grid Picker */}
-            <div className="bg-[var(--site-input-bg)] border border-[var(--site-border)] rounded-2xl p-3 flex flex-col items-center gap-2 mb-3">
-              <div className="text-[10px] uppercase tracking-wider font-semibold text-[var(--site-muted)]">Interactive Screen Matrix</div>
-              <div className="grid grid-cols-3 gap-2 w-48 p-2 rounded-xl bg-[var(--site-surface-raised)] border border-[var(--site-border-subtle)]">
-                {/* Top Row */}
-                <button
-                  type="button"
-                  onClick={() => setPosition('top-left')}
-                  title="top-left"
-                  className={`h-7 rounded-lg transition-all text-[11px] font-medium ${
-                    position === 'top-left' ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30' : 'bg-[var(--site-input-bg)] hover:bg-blue-500/20 text-[var(--site-muted)]'
-                  }`}
-                >
-                  TL
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setPosition('top-center')}
-                  title="top-center"
-                  className={`h-7 rounded-lg transition-all text-[11px] font-medium ${
-                    position === 'top-center' ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30' : 'bg-[var(--site-input-bg)] hover:bg-blue-500/20 text-[var(--site-muted)]'
-                  }`}
-                >
-                  TC
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setPosition('top-right')}
-                  title="top-right"
-                  className={`h-7 rounded-lg transition-all text-[11px] font-medium ${
-                    position === 'top-right' ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30' : 'bg-[var(--site-input-bg)] hover:bg-blue-500/20 text-[var(--site-muted)]'
-                  }`}
-                >
-                  TR
-                </button>
+            <div className="bg-[var(--site-input-bg)] border border-[var(--site-border)] rounded-2xl p-3.5 flex flex-col items-center gap-2 mb-3 shadow-inner">
+              <div className="flex items-center justify-between w-full px-2 text-[11px] text-[var(--site-muted)]">
+                <span className="font-semibold uppercase tracking-wider">Device Viewport Matrix</span>
+                <span className="font-mono text-blue-500 font-medium">{position}</span>
+              </div>
+              <div className="w-56 p-2 rounded-xl bg-[var(--site-surface-raised)] border border-[var(--site-border)] shadow-md">
+                {/* Mini browser topbar */}
+                <div className="flex items-center gap-1 mb-2 px-1 pb-1.5 border-b border-[var(--site-border-subtle)]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-500/60" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500/60" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500/60" />
+                </div>
+                <div className="grid grid-cols-3 gap-1.5">
+                  {/* Top Row */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPosition('top-left');
+                      if (soundEnabled) ui.sound('pop');
+                    }}
+                    title="top-left"
+                    className={`h-8 rounded-lg transition-all text-xs font-semibold flex items-center justify-center ${
+                      position === 'top-left'
+                        ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30 scale-105'
+                        : 'bg-[var(--site-surface)] hover:bg-blue-500/20 text-[var(--site-muted)] border border-[var(--site-border-subtle)]'
+                    }`}
+                  >
+                    TL
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPosition('top-center');
+                      if (soundEnabled) ui.sound('pop');
+                    }}
+                    title="top-center"
+                    className={`h-8 rounded-lg transition-all text-xs font-semibold flex items-center justify-center ${
+                      position === 'top-center'
+                        ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30 scale-105'
+                        : 'bg-[var(--site-surface)] hover:bg-blue-500/20 text-[var(--site-muted)] border border-[var(--site-border-subtle)]'
+                    }`}
+                  >
+                    TC
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPosition('top-right');
+                      if (soundEnabled) ui.sound('pop');
+                    }}
+                    title="top-right"
+                    className={`h-8 rounded-lg transition-all text-xs font-semibold flex items-center justify-center ${
+                      position === 'top-right'
+                        ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30 scale-105'
+                        : 'bg-[var(--site-surface)] hover:bg-blue-500/20 text-[var(--site-muted)] border border-[var(--site-border-subtle)]'
+                    }`}
+                  >
+                    TR
+                  </button>
 
-                {/* Center Row */}
-                <div className="h-7 opacity-0 pointer-events-none" />
-                <button
-                  type="button"
-                  onClick={() => setPosition('center')}
-                  title="center"
-                  className={`h-7 rounded-lg transition-all text-[11px] font-medium ${
-                    position === 'center' || position === 'middle' ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30' : 'bg-[var(--site-input-bg)] hover:bg-blue-500/20 text-[var(--site-muted)]'
-                  }`}
-                >
-                  CTR
-                </button>
-                <div className="h-7 opacity-0 pointer-events-none" />
+                  {/* Center Row */}
+                  <div className="h-8 opacity-0 pointer-events-none" />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPosition('center');
+                      if (soundEnabled) ui.sound('pop');
+                    }}
+                    title="center (middle screen)"
+                    className={`h-8 rounded-lg transition-all text-xs font-semibold flex items-center justify-center ${
+                      position === 'center' || (position as string) === 'middle'
+                        ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30 scale-105'
+                        : 'bg-[var(--site-surface)] hover:bg-blue-500/20 text-[var(--site-muted)] border border-[var(--site-border-subtle)]'
+                    }`}
+                  >
+                    CTR
+                  </button>
+                  <div className="h-8 opacity-0 pointer-events-none" />
 
-                {/* Bottom Row */}
-                <button
-                  type="button"
-                  onClick={() => setPosition('bottom-left')}
-                  title="bottom-left"
-                  className={`h-7 rounded-lg transition-all text-[11px] font-medium ${
-                    position === 'bottom-left' ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30' : 'bg-[var(--site-input-bg)] hover:bg-blue-500/20 text-[var(--site-muted)]'
-                  }`}
-                >
-                  BL
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setPosition('bottom-center')}
-                  title="bottom-center"
-                  className={`h-7 rounded-lg transition-all text-[11px] font-medium ${
-                    position === 'bottom-center' ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30' : 'bg-[var(--site-input-bg)] hover:bg-blue-500/20 text-[var(--site-muted)]'
-                  }`}
-                >
-                  BC
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setPosition('bottom-right')}
-                  title="bottom-right"
-                  className={`h-7 rounded-lg transition-all text-[11px] font-medium ${
-                    position === 'bottom-right' ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30' : 'bg-[var(--site-input-bg)] hover:bg-blue-500/20 text-[var(--site-muted)]'
-                  }`}
-                >
-                  BR
-                </button>
+                  {/* Bottom Row */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPosition('bottom-left');
+                      if (soundEnabled) ui.sound('pop');
+                    }}
+                    title="bottom-left"
+                    className={`h-8 rounded-lg transition-all text-xs font-semibold flex items-center justify-center ${
+                      position === 'bottom-left'
+                        ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30 scale-105'
+                        : 'bg-[var(--site-surface)] hover:bg-blue-500/20 text-[var(--site-muted)] border border-[var(--site-border-subtle)]'
+                    }`}
+                  >
+                    BL
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPosition('bottom-center');
+                      if (soundEnabled) ui.sound('pop');
+                    }}
+                    title="bottom-center"
+                    className={`h-8 rounded-lg transition-all text-xs font-semibold flex items-center justify-center ${
+                      position === 'bottom-center'
+                        ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30 scale-105'
+                        : 'bg-[var(--site-surface)] hover:bg-blue-500/20 text-[var(--site-muted)] border border-[var(--site-border-subtle)]'
+                    }`}
+                  >
+                    BC
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPosition('bottom-right');
+                      if (soundEnabled) ui.sound('pop');
+                    }}
+                    title="bottom-right"
+                    className={`h-8 rounded-lg transition-all text-xs font-semibold flex items-center justify-center ${
+                      position === 'bottom-right'
+                        ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30 scale-105'
+                        : 'bg-[var(--site-surface)] hover:bg-blue-500/20 text-[var(--site-muted)] border border-[var(--site-border-subtle)]'
+                    }`}
+                  >
+                    BR
+                  </button>
+                </div>
               </div>
             </div>
 
