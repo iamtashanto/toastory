@@ -16,7 +16,7 @@ export function nextId(p = 'gk'): string {
  * @param prefix Prefix used when generating an id.
  */
 export function normalizeId(id: ToastId | undefined, p = 'gk'): ToastId {
-  return id !== undefined && id !== '' ? id : nextId(p);
+  return id != null && id !== '' ? id : nextId(p);
 }
 
 /**

@@ -470,7 +470,7 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
             alt: typeof record.image === 'object' ? (record.image.alt ?? '') : '',
           });
           imgEl.style.cssText =
-            'width:calc(100% + 2em);max-width:calc(100% + 2em);flex:0 0 calc(100% + 2em);height:96px;margin:-14px -1em 8px;object-fit:cover;display:block';
+            'width:calc(100% + 2em);flex:0 0 100%;height:96px;margin:-14px -1em 8px;object-fit:cover;display:block';
           node.prepend(imgEl);
         }
       }
@@ -513,25 +513,21 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
             renderInitials();
           }
         } else if (typeof av === 'string') {
+          const setInit = (t: string, col = 'var(--gk-accent)') => {
+            holder.textContent = t.slice(0, 2).toUpperCase();
+            holder.style.cssText = `background:${col};color:#fff`;
+          };
           if (/^(\w+:|\/)/.test(av)) {
             const imgEl = el('img', '', { src: safeUrl(av) ? av : '', alt: '' });
             imgEl.style.opacity = '0';
             imgEl.onload = () => (imgEl.style.opacity = '1');
             imgEl.onerror = () => {
               imgEl.remove();
-              if (!holder.textContent) {
-                const init =
-                  typeof record.title === 'string' ? record.title.slice(0, 2).toUpperCase() : '?';
-                holder.textContent = init;
-                holder.style.cssText = 'background:var(--gk-accent);color:#fff';
-              }
+              if (!holder.textContent)
+                setInit(typeof record.title === 'string' ? record.title : '?');
             };
             holder.append(imgEl);
-          } else {
-            const init = av.slice(0, 3).toUpperCase();
-            holder.textContent = init;
-            holder.style.cssText = `background:${deterministicColor(init)};color:#fff`;
-          }
+          } else setInit(av, deterministicColor(av));
         } else fill(holder, av as Renderable);
         node.append(holder);
       }
@@ -637,16 +633,16 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
 
     if (record.toggle) {
       const tg = record.toggle;
-      const sw = el('button', 'gk-toast__switch gk-sw', {
+      const sw = el('button', 'gk-sw', {
         type: 'button',
         role: 'switch',
-        'aria-checked': String(Boolean(tg.checked)),
-        'aria-label': tg.label ?? 'Toggle option',
+        'aria-checked': '' + !!tg.checked,
+        'aria-label': tg.label ?? 'Toggle',
       });
       sw.addEventListener('click', (e) => {
         e.stopPropagation();
         const next = sw.getAttribute('aria-checked') !== 'true';
-        sw.setAttribute('aria-checked', String(next));
+        sw.setAttribute('aria-checked', '' + next);
         tg.onChange?.(next);
       });
       node.append(sw);

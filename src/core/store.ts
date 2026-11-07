@@ -31,8 +31,7 @@ export function createStore<T>(initialValue: T): Store<T> {
     }
     if (batchScheduled) return;
     batchScheduled = true;
-    if (typeof queueMicrotask === 'function') queueMicrotask(notify);
-    else void Promise.resolve().then(notify);
+    void Promise.resolve().then(notify);
   };
 
   return {

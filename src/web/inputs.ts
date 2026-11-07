@@ -167,7 +167,7 @@ export function buildInput(options: DialogOptions, labelId: string): InputContro
         maxLength: '1',
         inputmode: isAlpha ? 'text' : 'numeric',
         autocomplete: i ? 'off' : 'one-time-code',
-        'aria-label': `Digit ${i + 1} of ${len}`,
+        'aria-label': `Digit ${i + 1}`,
       }) as HTMLInputElement;
       inputs.push(inp);
       otpWrap.append(inp);
@@ -181,8 +181,8 @@ export function buildInput(options: DialogOptions, labelId: string): InputContro
 
       inp.addEventListener('keydown', (e) => {
         if (e.key === 'Backspace' && !inp.value) inputs[i - 1]?.focus();
-        else if (e.key === 'ArrowLeft') inputs[i - 1]?.focus();
-        else if (e.key === 'ArrowRight') inputs[i + 1]?.focus();
+        else if (e.key === 'ArrowLeft' || e.key === 'ArrowRight')
+          inputs[i + (e.key === 'ArrowLeft' ? -1 : 1)]?.focus();
       });
 
       inp.addEventListener('paste', (e) => {
@@ -207,7 +207,7 @@ export function buildInput(options: DialogOptions, labelId: string): InputContro
     let footerNote: HTMLElement | null = null;
     if (options.resendCooldown !== undefined) {
       let cd = options.resendCooldown;
-      const resendBtn = el('button', 'gk-btn-resend', { type: 'button' }, 'Resend code');
+      const resendBtn = el('button', 'gk-btn-resend', {}, 'Resend code');
       const timerSpan = el('span', '', {}, cd > 0 ? ` (${cd}s)` : '');
       resendBtn.disabled = cd > 0;
       footerNote = el('p', 'gk-otp-resend', {}, "Didn't get it? ", resendBtn, timerSpan);
