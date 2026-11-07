@@ -12,7 +12,7 @@ export default defineConfig({
   },
   format: ['esm', 'cjs'],
   dts: true,
-  clean: false,
+  clean: true,
   minify: 'terser',
   sourcemap: true,
   treeshake: true,

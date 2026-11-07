@@ -15,4 +15,3 @@ describe('springEasing', () => {
     expect(res.duration).toBeGreaterThan(100);
   });
 });
-

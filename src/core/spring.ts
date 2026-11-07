@@ -39,4 +39,3 @@ export function springEasing(config: SpringConfig = {}): { easing: string; durat
   pts[steps] = '1';
   return { easing: `linear(${pts.join(',')})`, duration: Math.round(settle * 1000) };
 }
-

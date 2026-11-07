@@ -14,15 +14,42 @@ export default function ChangelogPage() {
       </div>
 
       <div className="space-y-12">
-        {/* Release v0.1.3 */}
+        {/* Release v0.2.0 */}
         <section className="relative pl-6 sm:pl-8 border-l-2 border-blue-500 space-y-4">
           <div className="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-blue-600 border-4 border-[var(--site-bg)]" />
 
           <div className="flex flex-wrap items-center gap-3">
-            <h2 className="text-2xl font-bold text-[var(--site-fg)]">v0.1.3 — Premium Glass Aesthetics & Button Micro-Interactions</h2>
+            <h2 className="text-2xl font-bold text-[var(--site-fg)]">v0.2.0 — 7 Placement Positions, Synthesized Sound Engine & Native Presets</h2>
             <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-semibold bg-blue-500/20 text-blue-500 border border-blue-500/30">
               Latest
             </span>
+            <span className="text-xs text-[var(--site-muted)] font-mono">November 2026</span>
+          </div>
+
+          <p className="text-sm text-[var(--site-muted)] leading-relaxed">
+            Full 7-position layout with center placement, zero-dependency Web Audio harmonic sound synthesizer, closed-form CSS spring easing curve generation, React Native/Expo spring presets and haptics, and complete multi-framework parity.
+          </p>
+
+          <div className="space-y-4 pt-2 text-sm text-[var(--site-muted)]">
+            <div>
+              <h3 className="font-semibold text-[var(--site-fg)] mb-2">Key Highlights:</h3>
+              <ul className="list-disc list-inside space-y-1 text-[var(--site-muted)] text-xs sm:text-sm pl-2">
+                <li><strong className="text-[var(--site-fg)]">7 Toast Positions</strong>: Complete support for `top-left`, `top-center`, `top-right`, `center` / `middle`, `bottom-left`, `bottom-center`, and `bottom-right`.</li>
+                <li><strong className="text-[var(--site-fg)]">Harmonic Sound Engine</strong>: Zero-dependency Web Audio API synthesizer with 10 built-in cues (`success`, `error`, `warning`, `info`, `ding`, `pop`, `chime`, `bell`, `message`, `bubble`) + custom notes and audio URLs.</li>
+                <li><strong className="text-[var(--site-fg)]">Closed-Form CSS Spring Easing</strong>: `springEasing({ stiffness, damping, mass })` in `toastory/core` baking physics into GPU-accelerated CSS `linear(...)` curves.</li>
+                <li><strong className="text-[var(--site-fg)]">4-Direction Swipe Dismissal</strong>: Center toasts support natural 4-way gesture flick (`up`, `down`, `left`, `right`).</li>
+                <li><strong className="text-[var(--site-fg)]">React Native & Expo Floating Island</strong>: `nativeSpring` (`glide`, `snappy`), `nativeTiming` (`normal`, `exit`), `gap`, `closeButton`, `visibleToasts`, and non-blocking `expo-haptics`.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* Release v0.1.3 */}
+        <section className="relative pl-6 sm:pl-8 border-l-2 border-[var(--site-border)] space-y-4">
+          <div className="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-[var(--site-border)] border-4 border-[var(--site-bg)]" />
+
+          <div className="flex flex-wrap items-center gap-3">
+            <h2 className="text-2xl font-bold text-[var(--site-fg)]">v0.1.3 — Premium Glass Aesthetics & Button Micro-Interactions</h2>
             <span className="text-xs text-[var(--site-muted)] font-mono">October 2026</span>
           </div>
 
