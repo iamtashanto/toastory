@@ -56,8 +56,8 @@ describe('Website Documentation Completeness', () => {
   it('verifies package version consistency across package.json and website', async () => {
     const { default: rootPkg } = await import('../package.json');
     const { default: websitePkg } = await import('../website/package.json');
-    expect(rootPkg.version).toBe('0.3.3');
-    expect(websitePkg.dependencies.toastory).toContain('0.3.3');
+    expect(rootPkg.version).toBe('0.3.4');
+    expect(websitePkg.dependencies.toastory).toContain('0.3.4');
   });
 
   it('ensures no static theme css files are dumped in website/public', async () => {

@@ -17,7 +17,7 @@
     "postcss": "^8.5.32",
     "react": "19.3.0",
     "react-dom": "19.3.0",
-    "toastory": "file:../toastory-0.3.3.tgz"
+    "toastory": "file:../toastory-0.3.4.tgz"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",

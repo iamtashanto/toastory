@@ -97,7 +97,7 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'SoftwareApplication',
   name: 'toastory',
-  softwareVersion: '0.3.3',
+  softwareVersion: '0.3.4',
   applicationCategory: 'DeveloperApplication',
   operatingSystem: 'Any (Web, React, Next.js, Vue, Angular, Svelte, React Native)',
   description:

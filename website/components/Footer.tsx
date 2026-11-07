@@ -26,7 +26,7 @@ export function Footer() {
               WCAG 2.2 AA Verified
             </span>
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-purple-500">
-              v0.3.3 · MIT License
+              v0.3.4 · MIT License
             </span>
           </div>
           <div className="pt-2">

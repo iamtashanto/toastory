@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.3.4
+
+### Patch Changes
+
+- **Layout & Visual Collision Fixes**:
+  - Decoupled text-based dismiss buttons (`.gk-close--text`) from absolute positioning so timestamp, keyboard shortcut badges (`kbd`), and discard actions never overlap.
+  - Implemented full-bleed header banner styling (`width: calc(100% + 2em)`) with automatic border clipping.
+- **Robust Avatar Safety & Fallbacks**:
+  - Image avatars now hide broken image placeholders during load (`opacity: 0`) and gracefully fall back to retina vector initials badges on fetch failure (`onerror`).
+  - Plain string initials (e.g. `'ER'`, `'DS'`) render as styled vector badges immediately without initiating failing HTTP requests.
+  - Automatically suppress redundant default status icons when an avatar or mascot character is present.
+- **Deduplication Counter Badge**:
+  - Clean inline pill badge styling inside `.gk-title` with proper directional start margin.
+- **Terser Boolean Optimization Fix**:
+  - Disabled `booleans_as_integers` to ensure strict boolean equality contracts (`res.isConfirmed === true`) and DOM dataset string serializations (`data-expanded="false"`).
+
 ## 0.3.3
 
 ### Patch Changes
