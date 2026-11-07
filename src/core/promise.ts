@@ -1,8 +1,7 @@
 import type { PromiseHandle, PromiseMessages, ToastId, ToastOptions, ToastPatch } from './types';
 import type { ToastStore } from './toast-manager';
 
-const toPatch = (m: string | ToastPatch): ToastPatch =>
-  typeof m === 'string' ? { title: m } : m;
+const toPatch = (m: string | ToastPatch): ToastPatch => (typeof m === 'string' ? { title: m } : m);
 
 const errorText = (e: unknown): string => (e instanceof Error ? e.message : String(e));
 

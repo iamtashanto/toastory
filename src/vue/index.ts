@@ -30,6 +30,7 @@ export const ToastoryToaster = defineComponent({
   },
   setup(props) {
     const engine = getEngine();
+    let handle: ReturnType<typeof mountToaster> | undefined;
 
     onMounted(() => {
       const patch: Partial<ToastoryConfig> = {};
@@ -42,12 +43,14 @@ export const ToastoryToaster = defineComponent({
 
       setAutoMount(false);
       if (canMountToaster()) {
-        const handle = mountToaster(engine.store);
-        onUnmounted(() => {
-          handle.destroy();
-          setAutoMount(true);
-        });
+        handle = mountToaster(engine.store);
       }
+    });
+
+    onUnmounted(() => {
+      handle?.destroy();
+      handle = undefined;
+      setAutoMount(true);
     });
 
     return () => null;

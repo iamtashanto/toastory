@@ -1,4 +1,4 @@
-import { createDialogController } from '../core';
+import { createDialogController, decideDialogRole } from '../core';
 import type {
   DialogButton,
   DialogController,
@@ -105,6 +105,17 @@ export function openDialog(initial: DialogOptions): DialogPromise {
 
   let lastTimer = -1;
   let autoPaused = false;
+  const checkMatch = (): void => {
+    const st = controller.getState();
+    const target = st.options.confirmText;
+    if (!target) return;
+    const cur = String(input ? input.read() : '');
+    const match = st.options.caseSensitive
+      ? cur === target
+      : cur.trim().toLowerCase() === target.toLowerCase();
+    confirmBtn.disabled = !match || st.loading !== null;
+    confirmBtn.setAttribute('aria-disabled', String(!match));
+  };
 
   const sync = (state: DialogState): void => {
     const o = state.options;
@@ -121,10 +132,7 @@ export function openDialog(initial: DialogOptions): DialogPromise {
     overlay.root.dataset.col = col;
     panel.style.width = o.width === undefined ? '' : cssLength(o.width);
     panel.style.padding = o.padding === undefined ? '' : cssLength(o.padding);
-    panel.setAttribute(
-      'role',
-      !o.input && (o.tone === 'danger' || o.tone === 'warning') ? 'alertdialog' : 'dialog',
-    );
+    panel.setAttribute('role', decideDialogRole(o));
     title.textContent = o.title ?? '';
     title.hidden = !o.title;
     if (o.title) panel.setAttribute('aria-labelledby', titleId);
@@ -212,6 +220,7 @@ export function openDialog(initial: DialogOptions): DialogPromise {
           }
         }
         for (const field of input.fields) {
+          field.addEventListener('input', checkMatch);
           field.addEventListener('keydown', (event) => {
             const target = event.target as HTMLElement;
             const multiline = target instanceof HTMLTextAreaElement;
@@ -263,21 +272,7 @@ export function openDialog(initial: DialogOptions): DialogPromise {
     denyBtn.dataset.loading = String(isD);
     panel.setAttribute('aria-busy', String(ld !== null));
 
-    if (o.confirmText) {
-      const checkMatch = (): void => {
-        const current = String(input ? input.read() : '');
-        const target = o.confirmText ?? '';
-        const match = o.caseSensitive
-          ? current === target
-          : current.trim().toLowerCase() === target.toLowerCase();
-        confirmBtn.disabled = !match || state.loading !== null;
-        confirmBtn.setAttribute('aria-disabled', String(!match));
-      };
-      checkMatch();
-      for (const field of input?.fields ?? []) {
-        field.addEventListener('input', checkMatch);
-      }
-    }
+    if (o.confirmText) checkMatch();
 
     footer.replaceChildren();
     if (o.footer) {

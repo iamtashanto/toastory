@@ -216,7 +216,7 @@ describe('toastory/native adapter', () => {
     });
 
     expect(container.querySelector('img[src="https://example.com/banner.jpg"]')).not.toBeNull();
-    expect(container.textContent).toContain('🤖');
+    expect(container.textContent).toContain('[wave]');
     expect(container.textContent).toContain('Dismiss');
 
     await act(async () => {

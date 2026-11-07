@@ -20,7 +20,6 @@ const TAGS = new Set(
   ),
 );
 const ATTRS = new Set('href,src,alt,title,target,rel,width,height,lang,dir'.split(','));
-const URL_ATTRS = new Set(['href', 'src']);
 const SAFE_URL = /^(?:https?:|mailto:|tel:|\/|#|\.\/|\.\.\/|[^:]*$)/i;
 
 /** Whether a URL is safe to place in `href` or `src`. Rejects `javascript:` and similar schemes. */
@@ -39,19 +38,17 @@ function walk(parent: Node): void {
     const element = node as Element;
     const tag = element.tagName.toLowerCase();
     if (!TAGS.has(tag)) {
-      if (/^(script|style|iframe|object|template)$/.test(tag)) {
-        parent.removeChild(node);
-      } else {
+      if (!/^(script|style|iframe|object|template)$/.test(tag)) {
         walk(element);
         while (element.firstChild) parent.insertBefore(element.firstChild, element);
-        parent.removeChild(element);
       }
+      parent.removeChild(element);
       continue;
     }
     for (const attr of [...element.attributes]) {
       const name = attr.name.toLowerCase();
-      const unsafeUrl = URL_ATTRS.has(name) && !safeUrl(attr.value);
-      if (!ATTRS.has(name) || unsafeUrl) element.removeAttribute(attr.name);
+      if (!ATTRS.has(name) || ((name === 'href' || name === 'src') && !safeUrl(attr.value)))
+        element.removeAttribute(attr.name);
     }
     if (element.getAttribute('target') === '_blank')
       element.setAttribute('rel', 'noopener noreferrer');

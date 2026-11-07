@@ -21,9 +21,9 @@ import type {
 /** Reasons that originate from a person and are blocked on non-dismissible toasts. */
 const isUser = (r: CloseReason): boolean => r === 'user' || r === 'swipe' || r === 'click';
 
-const safeCall = (fn?: (...args: any[]) => void, a?: unknown, b?: unknown): void => {
+const safeCall = <A, B>(fn?: (a: A, b: B) => void, a?: A, b?: B): void => {
   try {
-    fn?.(a, b);
+    fn?.(a as A, b as B);
   } catch (err) {
     console.error(err);
   }

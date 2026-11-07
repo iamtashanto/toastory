@@ -4,40 +4,68 @@ import type { ThemeDefinition, ThemeTokens } from '../themes/themes.ts';
 const W = '#ffffff';
 const R = '#b71c1c';
 const D = '#1c1c1e';
+const sh = (a: number) => `0 8px 28px rgba(0,0,0,${a})`;
+const mk = (
+  bg: string,
+  fg: string,
+  muted: string,
+  border: string,
+  s: number,
+  accent: string,
+  accentFg: string,
+  danger: string,
+  dangerFg: string,
+  success: string,
+  error: string,
+  warning: string,
+  info: string,
+): ThemeTokens => ({
+  bg,
+  solid: bg,
+  fg,
+  muted,
+  border,
+  shadow: sh(s),
+  accent,
+  accentFg,
+  danger,
+  dangerFg,
+  success,
+  error,
+  warning,
+  info,
+});
 
-const DEFAULT_LIGHT: ThemeTokens = {
-  bg: W,
-  solid: W,
-  fg: '#1d1d1f',
-  muted: '#515156',
-  border: 'rgba(60,60,67,0.22)',
-  shadow: '0 8px 28px rgba(0,0,0,0.14)',
-  accent: '#0057c2',
-  accentFg: W,
-  danger: R,
-  dangerFg: W,
-  success: '#1a7f37',
-  error: R,
-  warning: '#8a5a00',
-  info: '#0b5cc7',
-};
-
-const DEFAULT_DARK: ThemeTokens = {
-  bg: D,
-  solid: D,
-  fg: '#f5f5f7',
-  muted: '#b4b4bb',
-  border: 'rgba(255,255,255,0.16)',
-  shadow: '0 8px 28px rgba(0,0,0,0.5)',
-  accent: '#4da3ff',
-  accentFg: '#00152e',
-  danger: '#ff8a8a',
-  dangerFg: '#2b0000',
-  success: '#4ade80',
-  error: '#ff7b7b',
-  warning: '#ffc857',
-  info: '#6cb6ff',
-};
+const DEFAULT_LIGHT = mk(
+  W,
+  '#1d1d1f',
+  '#515156',
+  'rgba(60,60,67,0.22)',
+  0.14,
+  '#0057c2',
+  W,
+  R,
+  W,
+  '#1a7f37',
+  R,
+  '#8a5a00',
+  '#0b5cc7',
+);
+const DEFAULT_DARK = mk(
+  D,
+  '#f5f5f7',
+  '#b4b4bb',
+  'rgba(255,255,255,0.16)',
+  0.5,
+  '#4da3ff',
+  '#00152e',
+  '#ff8a8a',
+  '#2b0000',
+  '#4ade80',
+  '#ff7b7b',
+  '#ffc857',
+  '#6cb6ff',
+);
 
 /** Options for registering a custom theme via `ui.defineTheme()`. */
 export interface CustomThemeDefinition {
@@ -69,37 +97,27 @@ const customThemes = new Map<string, ThemeDefinition>();
  * @returns The compiled CSS string.
  */
 export function defineTheme(name: string, def: CustomThemeDefinition): string {
-  const t = def.tokens;
-  const tObj = typeof t === 'object' && t ? t : undefined;
+  const t = def.tokens as { light?: Partial<ThemeTokens>; dark?: Partial<ThemeTokens> } | undefined;
   const lightInput =
-    def.light ??
-    (tObj && 'light' in tObj
-      ? (tObj as { light?: Partial<ThemeTokens> }).light
-      : (tObj as Partial<ThemeTokens> | undefined));
-  const darkInput =
-    def.dark ??
-    (tObj && 'dark' in tObj ? (tObj as { dark?: Partial<ThemeTokens> }).dark : undefined);
+    def.light ?? (t && ('light' in t || 'dark' in t) ? t.light : (t as Partial<ThemeTokens>));
+  const darkInput = def.dark ?? (t && 'dark' in t ? t.dark : undefined);
 
   const fullDef: ThemeDefinition = {
+    radius: '16px',
+    blur: '16px',
+    saturate: '160%',
+    ...def,
     name,
-    radius: def.radius ?? '16px',
-    blur: def.blur ?? '16px',
-    saturate: def.saturate ?? '160%',
-    font: def.font,
-    ease: def.ease,
-    duration: def.duration,
-    borderWidth: def.borderWidth,
     light: { ...DEFAULT_LIGHT, ...lightInput },
     dark: { ...DEFAULT_DARK, ...darkInput },
-    css: def.css,
-    supportedVariants: def.supportedVariants,
   };
 
   customThemes.set(name, fullDef);
   const css = themeCss(fullDef);
 
   if (typeof document !== 'undefined') {
-    let styleEl = document.querySelector<HTMLStyleElement>(`style[data-gk-theme="${name}"]`);
+    const sel = `style[data-gk-theme="${name}"]`;
+    let styleEl = document.querySelector<HTMLStyleElement>(sel);
     if (!styleEl) {
       styleEl = document.createElement('style');
       styleEl.setAttribute('data-gk-theme', name);

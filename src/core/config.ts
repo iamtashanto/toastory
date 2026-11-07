@@ -70,8 +70,11 @@ export function createConfigStore(initial: Partial<GlazeConfig> = {}): ConfigSto
   return {
     get: () => current,
     set(patch) {
-      current = Object.freeze({ ...current, ...stripUndefined(patch) });
-      emit();
+      const next = { ...current, ...stripUndefined(patch) };
+      if ((Object.keys(next) as (keyof GlazeConfig)[]).some((k) => next[k] !== current[k])) {
+        current = Object.freeze(next);
+        emit();
+      }
       return current;
     },
     reset() {

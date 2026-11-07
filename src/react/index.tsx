@@ -48,6 +48,9 @@ export function Toaster(props: ToasterProps): JSX.Element | null {
   return null;
 }
 
+const EMPTY_TOASTS: readonly ToastRecord[] = [];
+const getEmptyToasts = (): readonly ToastRecord[] => EMPTY_TOASTS;
+
 /** Hook returning the toast API and the list of currently active toasts. */
 export function useToast(): {
   toast: ToastApi;
@@ -57,7 +60,7 @@ export function useToast(): {
   const toasts = useSyncExternalStore(
     (onStoreChange) => engine.store.subscribe(onStoreChange),
     () => engine.store.getToasts(),
-    () => [],
+    getEmptyToasts,
   );
 
   return useMemo(() => ({ toast: engine.toast, toasts }), [engine, toasts]);
@@ -74,7 +77,7 @@ export function useToastory(): {
   const toasts = useSyncExternalStore(
     (onStoreChange) => engine.store.subscribe(onStoreChange),
     () => engine.store.getToasts(),
-    () => [],
+    getEmptyToasts,
   );
   const config = useSyncExternalStore(
     (onStoreChange) => engine.store.config.subscribe(onStoreChange),

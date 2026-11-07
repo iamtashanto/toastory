@@ -67,3 +67,6 @@ export function glazeToaster(
     },
   };
 }
+
+/** Alias for `glazeToaster`. */
+export const toastoryToaster = glazeToaster;

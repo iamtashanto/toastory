@@ -82,74 +82,62 @@ export const registerSoundCue = (name: string, notes: SoundNote[]): void => {
   CUES[name] = notes;
 };
 
-const MALLET_PARTIALS = [
+const MALLET = [
   [1, 0.6, 0.5],
   [2, 0.06, 0.15],
 ] as const;
 
-/**
- * Synthesizes an acoustic mallet tone: a warm fundamental with faint octave partial,
- * subtle micro-detuning for physical authenticity, and smooth exponential decay.
- */
 function playTone(c: AudioContext, out: AudioNode, freq: number, at: number, level: number): void {
   const t = c.currentTime + at;
   const f = freq * (1 + (Math.random() - 0.5) * 0.008);
-  for (const [mult, gain, decay] of MALLET_PARTIALS) {
+  for (const [m, gain, decay] of MALLET) {
     const osc = c.createOscillator();
     const g = c.createGain();
-    osc.frequency.value = f * mult;
-    g.gain.setValueAtTime(0.0001, t);
+    osc.frequency.value = f * m;
+    g.gain.setValueAtTime(1e-4, t);
     g.gain.linearRampToValueAtTime(gain * level, t + 0.015);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + decay);
+    g.gain.exponentialRampToValueAtTime(1e-4, t + decay);
     osc.connect(g).connect(out);
     osc.start(t);
     osc.stop(t + decay + 0.05);
   }
 }
 
-/**
- * Plays an audio feedback sound cue, synthesizer tone, or custom audio URL.
- * Completely safe in SSR, Node, or when browser autoplay is locked.
- */
 export function playSound(cueOrType?: SoundCue | ToastType | boolean | string, volume = 0.5): void {
   if (!cueOrType || typeof window === 'undefined') return;
-
   const target = cueOrType === true ? 'info' : String(cueOrType);
+  const vol = Math.min(1, Math.max(0, volume));
 
   if (/^(https?:|data:audio|blob:)/.test(target)) {
     try {
-      const audio = new Audio(target);
-      audio.volume = Math.min(1, Math.max(0, volume));
-      void audio.play().catch(() => undefined);
+      const a = new Audio(target);
+      a.volume = vol;
+      void a.play().catch(() => undefined);
     } catch {
-      // Audio playback is an enhancement; never fail
+      // ignore
     }
     return;
   }
 
   const notes = CUES[target];
-  if (!notes) return;
+  const Ctx = notes && getAudioCtxClass();
+  if (!notes || !Ctx) return;
 
   try {
-    const Ctx = getAudioCtxClass();
-    if (!Ctx) return;
-
     audioCtx ??= new Ctx();
     if (audioCtx.state === 'suspended') void audioCtx.resume();
     if (audioCtx.state === 'closed') return;
 
     const master = audioCtx.createGain();
-    master.gain.value = Math.min(1, Math.max(0, volume)) * 0.45;
-
+    master.gain.value = vol * 0.45;
     const soften = audioCtx.createBiquadFilter();
     soften.frequency.value = 1300;
     master.connect(soften).connect(audioCtx.destination);
 
-    for (const [freq, offset, level] of notes) {
-      playTone(audioCtx, master, freq, offset, level);
-    }
+    for (const [freq, offset, level] of notes) playTone(audioCtx, master, freq, offset, level);
+    setTimeout(() => soften.disconnect(), 900);
   } catch {
-    // Graceful degradation when audio is restricted
+    // ignore
   }
 }
 

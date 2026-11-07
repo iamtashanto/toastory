@@ -141,17 +141,16 @@ export function createUI(options: CreateUIOptions = {}): CoreUI {
   const toast = createToastApi(toastStore);
   const dialogManager = createDialogManager(clock);
 
-  let activeRenderer: Renderer | undefined;
-  const replayQueue: (() => void)[] = [];
+  let renderer: Renderer | undefined;
+  const q: (() => void)[] = [];
+  const toOpts = (o: DialogOptions | string): DialogOptions =>
+    typeof o === 'string' ? { title: o } : { ...o };
 
-  const toDialogOptions = (opts: DialogOptions | string): DialogOptions =>
-    typeof opts === 'string' ? { title: opts } : { ...opts };
-
-  const runDlg = (merged: DialogOptions): Promise<DialogResult> => {
-    const handle = dialogManager.open(merged);
-    if (activeRenderer?.openDialog) void activeRenderer.openDialog(merged, handle);
-    else replayQueue.push(() => void activeRenderer?.openDialog?.(merged, handle));
-    return handle.result;
+  const runDlg = (m: DialogOptions): Promise<DialogResult> => {
+    const h = dialogManager.open(m);
+    if (renderer?.openDialog) void renderer.openDialog(m, h);
+    else q.push(() => void renderer?.openDialog?.(m, h));
+    return h.result;
   };
 
   const DISMISSED: DialogResult = {
@@ -167,47 +166,33 @@ export function createUI(options: CreateUIOptions = {}): CoreUI {
     config,
     toastStore,
     dialogManager,
-
-    confirm: (opts) =>
-      runDlg({
-        confirmButton: { show: true },
-        cancelButton: { show: true },
-        ...toDialogOptions(opts),
-      }),
-
-    alert: (opts) =>
+    confirm: (o) =>
+      runDlg({ confirmButton: { show: true }, cancelButton: { show: true }, ...toOpts(o) }),
+    alert: (o) =>
       runDlg({
         confirmButton: { show: true },
         cancelButton: { show: false },
         denyButton: { show: false },
-        ...toDialogOptions(opts),
+        ...toOpts(o),
       }),
-
-    prompt: (opts) =>
+    prompt: (o) =>
       runDlg({
         input: 'text',
         confirmButton: { show: true },
         cancelButton: { show: true },
-        ...toDialogOptions(opts),
+        ...toOpts(o),
       }),
-
-    steps(stepList, backLabel = 'Back') {
-      return runSteps(stepList, (s) => ui.confirm(s), backLabel);
-    },
-
-    sheet: (opts) =>
-      activeRenderer?.openSheet
-        ? activeRenderer.openSheet(opts)
+    steps: (list, back = 'Back') => runSteps(list, (s) => ui.confirm(s), back),
+    sheet: (o) =>
+      renderer?.openSheet
+        ? renderer.openSheet(o)
         : new Promise((res) => {
-            replayQueue.push(() =>
-              activeRenderer?.openSheet
-                ? void activeRenderer.openSheet(opts).then(res)
-                : res(DISMISSED),
+            q.push(() =>
+              renderer?.openSheet ? void renderer.openSheet(o).then(res) : res(DISMISSED),
             );
           }),
-
-    bottomSheet(opts) {
-      if (activeRenderer?.openBottomSheet) return activeRenderer.openBottomSheet(opts);
+    bottomSheet(o) {
+      if (renderer?.openBottomSheet) return renderer.openBottomSheet(o);
       let live: BottomSheetHandle | undefined;
       return {
         body: undefined,
@@ -215,26 +200,23 @@ export function createUI(options: CreateUIOptions = {}): CoreUI {
         snapTo: (i) => live?.snapTo(i),
         update: (p) => live?.update(p),
         result: new Promise((res) => {
-          replayQueue.push(() =>
-            activeRenderer?.openBottomSheet
-              ? void (live = activeRenderer.openBottomSheet(opts)).result.then(res)
+          q.push(() =>
+            renderer?.openBottomSheet
+              ? void (live = renderer.openBottomSheet(o)).result.then(res)
               : res(DISMISSED),
           );
         }),
       };
     },
-
     loading(loadingOpts = {}) {
-      const opts = typeof loadingOpts === 'string' ? { text: loadingOpts } : loadingOpts;
-      if (activeRenderer?.openLoading) return activeRenderer.openLoading(opts);
+      const o = typeof loadingOpts === 'string' ? { text: loadingOpts } : loadingOpts;
+      if (renderer?.openLoading) return renderer.openLoading(o);
       let live: LoadingHandle | undefined, done: () => void;
       const closed = new Promise<void>((res) => {
         done = res;
       });
-      replayQueue.push(() =>
-        activeRenderer?.openLoading
-          ? void (live = activeRenderer.openLoading(opts)).closed.then(done)
-          : done(),
+      q.push(() =>
+        renderer?.openLoading ? void (live = renderer.openLoading(o)).closed.then(done) : done(),
       );
       return {
         update: (p) => live?.update(p),
@@ -245,25 +227,18 @@ export function createUI(options: CreateUIOptions = {}): CoreUI {
         closed,
       };
     },
-
-    configure: (patch) => config.set(patch),
+    configure: (p) => config.set(p),
     getConfig: () => config.get(),
-
     clear() {
       toastStore.clear();
       dialogManager.clear();
-      replayQueue.length = 0;
+      q.length = 0;
     },
-
-    registerRenderer(renderer) {
-      activeRenderer = renderer;
-      while (replayQueue.length > 0) {
-        const replay = replayQueue.shift();
-        replay?.();
-      }
+    registerRenderer(r) {
+      renderer = r;
+      while (q.length) q.shift()?.();
     },
-
-    getRenderer: () => activeRenderer,
+    getRenderer: () => renderer,
   };
 
   return ui;

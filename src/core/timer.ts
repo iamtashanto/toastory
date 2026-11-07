@@ -48,151 +48,125 @@ export function createTimer(
   onDone: () => void,
   clock: Clock = defaultClock,
 ): PausableTimer {
-  let totalDuration = duration;
-  let remainingMs = duration;
+  let total = duration;
+  let remMs = duration;
   let startedAt = 0;
-  let cancelTimeout: (() => void) | undefined;
-  let cancelInterval: (() => void) | undefined;
+  let cancelT: (() => void) | undefined;
+  let cancelI: (() => void) | undefined;
   let started = false;
   let done = false;
 
-  // Reference-counted pause reasons: reason -> count
-  const pauseReasons = new Map<string, number>();
-  const tickListeners = new Set<(remaining: number, fraction: number) => void>();
+  const reasons = new Map<string, number>();
+  const ticks = new Set<(remaining: number, fraction: number) => void>();
 
-  const isLive = (): boolean => Number.isFinite(remainingMs) && remainingMs > 0;
+  const isLive = (): boolean => Number.isFinite(remMs) && remMs > 0;
+  const active = (): boolean => started && !reasons.size;
+
+  const getRem = (): number =>
+    done ? 0 : active() ? Math.max(0, remMs - (clock.now() - startedAt)) : remMs;
 
   const notifyTick = (): void => {
-    if (!tickListeners.size) return;
-    const rem = getRemaining();
-    const frac = totalDuration > 0 ? Math.max(0, Math.min(1, rem / totalDuration)) : 0;
-    for (const listener of tickListeners) {
+    if (!ticks.size) return;
+    const r = getRem();
+    const f = total > 0 ? Math.max(0, Math.min(1, r / total)) : 0;
+    for (const cb of ticks) {
       try {
-        listener(rem, frac);
+        cb(r, f);
       } catch (err) {
         console.error(err);
       }
     }
   };
 
-  const getRemaining = (): number => {
-    if (done) return 0;
-    if (started && !pauseReasons.size) {
-      return Math.max(0, remainingMs - (clock.now() - startedAt));
-    }
-    return remainingMs;
-  };
-
-  const stopTimers = (): void => {
-    cancelTimeout?.();
-    cancelTimeout = undefined;
-    cancelInterval?.();
-    cancelInterval = undefined;
+  const stop = (): void => {
+    cancelT?.();
+    cancelI?.();
+    cancelT = cancelI = undefined;
   };
 
   const arm = (): void => {
-    stopTimers();
-    if (!isLive() || pauseReasons.size || done) return;
-
+    stop();
+    if (!isLive() || reasons.size || done) return;
     startedAt = clock.now();
-    cancelTimeout = clock.setTimeout(() => {
-      stopTimers();
-      remainingMs = 0;
+    cancelT = clock.setTimeout(() => {
+      stop();
+      remMs = 0;
       done = true;
       started = false;
       notifyTick();
       onDone();
-    }, remainingMs);
-
-    if (tickListeners.size) {
-      cancelInterval = clock.setInterval(() => {
-        notifyTick();
-      }, 50);
-    }
-  };
-
-  const pauseTimer = (reason = 'manual'): void => {
-    if (done) return;
-    pauseReasons.set(reason, (pauseReasons.get(reason) ?? 0) + 1);
-
-    if (started && pauseReasons.size === 1) {
-      remainingMs = Math.max(0, remainingMs - (clock.now() - startedAt));
-      stopTimers();
-      notifyTick();
-    }
-  };
-
-  const resumeTimer = (reason = 'manual'): void => {
-    if (done) return;
-    const count = pauseReasons.get(reason);
-    if (!count) return;
-
-    if (count <= 1) pauseReasons.delete(reason);
-    else pauseReasons.set(reason, count - 1);
-
-    if (started && !pauseReasons.size && isLive()) {
-      arm();
-      notifyTick();
-    }
+    }, remMs);
+    if (ticks.size) cancelI = clock.setInterval(notifyTick, 50);
   };
 
   return {
     start() {
       if (done || !isLive()) return;
       started = true;
-      pauseReasons.clear();
+      reasons.clear();
       arm();
       notifyTick();
     },
-    pause: pauseTimer,
-    resume: resumeTimer,
+    pause(reason = 'manual') {
+      if (done) return;
+      reasons.set(reason, (reasons.get(reason) ?? 0) + 1);
+      if (started && reasons.size === 1) {
+        remMs = Math.max(0, remMs - (clock.now() - startedAt));
+        stop();
+        notifyTick();
+      }
+    },
+    resume(reason = 'manual') {
+      const c = !done && reasons.get(reason);
+      if (!c) return;
+      if (c <= 1) reasons.delete(reason);
+      else reasons.set(reason, c - 1);
+      if (active() && isLive()) {
+        arm();
+        notifyTick();
+      }
+    },
     clearReasons() {
-      pauseReasons.clear();
+      reasons.clear();
       if (started && isLive()) arm();
     },
     add(ms: number) {
-      if (done || !Number.isFinite(remainingMs)) return;
-      const live = started && !pauseReasons.size;
-      remainingMs = Math.max(
-        1,
-        (live ? remainingMs - (clock.now() - startedAt) : remainingMs) + ms,
-      );
-      totalDuration = Math.max(totalDuration, remainingMs);
+      if (done || !Number.isFinite(remMs)) return;
+      const live = active();
+      remMs = Math.max(1, getRem() + ms);
+      total = Math.max(total, remMs);
       if (live) arm();
       notifyTick();
     },
     reset(ms?: number) {
       done = false;
-      remainingMs = totalDuration = ms !== undefined ? ms : totalDuration;
-      if (started && !pauseReasons.size) {
+      remMs = total = ms ?? total;
+      if (active()) {
         if (isLive()) arm();
-        else stopTimers();
+        else stop();
       }
       notifyTick();
     },
     cancel() {
-      stopTimers();
+      stop();
+      ticks.clear();
       started = false;
       done = true;
-      remainingMs = 0;
+      remMs = 0;
     },
-    remaining: getRemaining,
-    elapsed() {
-      return Math.max(0, totalDuration - getRemaining());
-    },
-    isRunning: () => started && !done && !pauseReasons.size && isLive(),
-    isPaused: () => pauseReasons.size > 0,
-    pausedReasons: () => [...pauseReasons.keys()],
-    onTick(callback) {
-      tickListeners.add(callback);
-      if (started && !pauseReasons.size && !cancelInterval) {
-        cancelInterval = clock.setInterval(notifyTick, 50);
-      }
+    remaining: getRem,
+    elapsed: () => Math.max(0, total - getRem()),
+    isRunning: () => active() && !done && isLive(),
+    isPaused: () => reasons.size > 0,
+    pausedReasons: () => [...reasons.keys()],
+    onTick(cb) {
+      ticks.add(cb);
+      if (active() && !cancelI) cancelI = clock.setInterval(notifyTick, 50);
       return () => {
-        tickListeners.delete(callback);
-        if (!tickListeners.size && cancelInterval) {
-          cancelInterval();
-          cancelInterval = undefined;
+        ticks.delete(cb);
+        if (!ticks.size && cancelI) {
+          cancelI();
+          cancelI = undefined;
         }
       };
     },

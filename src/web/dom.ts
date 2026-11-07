@@ -43,12 +43,7 @@ export function fill(target: HTMLElement, value: Renderable): void {
   else target.append(String(value));
 }
 
-let uid = 0;
-/** Returns a document-unique id with the given prefix. */
-export function nextId(prefix: string): string {
-  uid += 1;
-  return `${prefix}-${uid}`;
-}
+export { nextId } from '../core';
 
 /** Whether the user asked for reduced motion. */
 export function prefersReducedMotion(): boolean {

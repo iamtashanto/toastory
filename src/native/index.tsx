@@ -364,7 +364,20 @@ export function Toaster(props: NativeToasterProps): React.JSX.Element | null {
             </button>
           ) : null}
           {item.character || item.robotVariant ? (
-            <div style={{ fontSize: 18, lineHeight: 1, marginBottom: 2 }}>🤖</div>
+            <div
+              style={
+                {
+                  fontSize: 11,
+                  fontWeight: '700',
+                  color: '#a78bfa',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  marginBottom: 2,
+                } as React.CSSProperties
+              }
+            >
+              [{item.character ?? item.robotVariant}]
+            </div>
           ) : null}
           {item.badge ? (
             <div
@@ -456,7 +469,6 @@ export function Toaster(props: NativeToasterProps): React.JSX.Element | null {
   );
 }
 
-/** React Native hook for reactive toast state. */
 /** React Native hook for reactive toast state. */
 export function useNativeToast(): {
   toast: ToastApi;

@@ -31,11 +31,24 @@ export interface Overlay {
   close(): Promise<void>;
 }
 
+type HiddenNode = { node: Element; inert: boolean; aria: string | null };
 const stack: Overlay[] = [];
-const traps = new WeakMap<Overlay, { trap: boolean; onEscape?: () => void }>();
+const traps = new WeakMap<
+  Overlay,
+  { trap: boolean; onEscape?: () => void; hidden: HiddenNode[] }
+>();
 let locks = 0;
 let savedOverflow = '';
 let savedPadding = '';
+
+function restoreHidden(list: HiddenNode[]): void {
+  for (const saved of list) {
+    if (!saved.inert) saved.node.removeAttribute('inert');
+    if (saved.aria === null) saved.node.removeAttribute('aria-hidden');
+    else saved.node.setAttribute('aria-hidden', saved.aria);
+  }
+  list.length = 0;
+}
 
 function lockScroll(): void {
   if (locks++ > 0) return;
@@ -145,11 +158,8 @@ export function openOverlay(options: OverlayOptions): Overlay {
         if (index >= 0) stack.splice(index, 1);
         if (stack.length === 0) document.removeEventListener('keydown', onKeydown, true);
         root.dataset.state = 'closing';
-        for (const saved of hidden) {
-          if (!saved.inert) saved.node.removeAttribute('inert');
-          if (saved.aria === null) saved.node.removeAttribute('aria-hidden');
-          else saved.node.setAttribute('aria-hidden', saved.aria);
-        }
+        restoreHidden(hidden);
+        traps.delete(overlay);
         unlockScroll();
         if (previous instanceof HTMLElement && previous.isConnected) previous.focus();
         const done = (): void => {
@@ -162,7 +172,7 @@ export function openOverlay(options: OverlayOptions): Overlay {
       return closing;
     },
   };
-  traps.set(overlay, { trap: options.trap !== false, onEscape: options.onEscape });
+  traps.set(overlay, { trap: options.trap !== false, onEscape: options.onEscape, hidden });
   if (stack.length === 0) document.addEventListener('keydown', onKeydown, true);
   stack.push(overlay);
   return overlay;
@@ -172,12 +182,19 @@ export function openOverlay(options: OverlayOptions): Overlay {
 export function resetOverlays(): void {
   while (stack.length > 0) {
     const o = stack.pop();
-    o?.root.remove();
+    if (o) {
+      const info = traps.get(o);
+      if (info) restoreHidden(info.hidden);
+      traps.delete(o);
+      o.root.remove();
+    }
   }
   document.removeEventListener('keydown', onKeydown, true);
-  locks = 0;
-  if (savedOverflow) document.body.style.overflow = savedOverflow;
-  if (savedPadding) document.body.style.paddingRight = savedPadding;
+  if (locks > 0) {
+    locks = 0;
+    document.body.style.overflow = savedOverflow;
+    document.body.style.paddingRight = savedPadding;
+  }
   savedOverflow = '';
   savedPadding = '';
 }

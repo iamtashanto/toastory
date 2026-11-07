@@ -322,12 +322,11 @@ export function openLoading(options: LoadingOptions = {}): LoadingHandle {
     current = patch;
     label.textContent = patch.text ?? '';
     label.hidden = !patch.text;
+    track.hidden = patch.progress === undefined;
     if (patch.progress === undefined) {
-      track.hidden = true;
       track.removeAttribute('aria-valuenow');
     } else {
       const pct = Math.round(Math.min(1, Math.max(0, patch.progress)) * 100);
-      track.hidden = false;
       track.setAttribute('aria-valuenow', String(pct));
       if (patch.text) track.setAttribute('aria-label', patch.text);
       fillBar.style.width = `${pct}%`;

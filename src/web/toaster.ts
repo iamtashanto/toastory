@@ -107,7 +107,8 @@ function getRobotSvg(char: string): string {
   } else if (char === 'sleep') inner = '<path d="M10 18h4M18 18h4M16 4v6"/>';
   else if (char === 'shock')
     inner = `${dot(12, 16)}${dot(20, 16)}${dot(16, 22)}<path d="M16 4v6"/>`;
-  else if (char === 'search') inner = '<circle cx="14" cy="18" r="4"/><path d="M17 21l4 4M16 4v6"/>';
+  else if (char === 'search')
+    inner = '<circle cx="14" cy="18" r="4"/><path d="M17 21l4 4M16 4v6"/>';
   else if (char === 'headPalm') inner = `${dot(12, 18)}<path d="M18 16h6v6M16 4v6"/>`;
   return `<svg viewBox="0 0 32 32" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"${cls}><rect x="6" y="10" width="20" height="16" rx="4"/>${inner}</svg>`;
 }

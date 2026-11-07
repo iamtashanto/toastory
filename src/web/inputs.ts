@@ -180,19 +180,14 @@ export function buildInput(options: DialogOptions, labelId: string): InputContro
       });
 
       inp.addEventListener('keydown', (e) => {
-        const prev = inputs[i - 1],
-          next = inputs[i + 1];
-        if ((e.key === 'Backspace' && !inp.value && prev) || (e.key === 'ArrowLeft' && prev))
-          prev.focus();
-        else if (e.key === 'ArrowRight' && next) next.focus();
+        if (e.key === 'Backspace' && !inp.value) inputs[i - 1]?.focus();
+        else if (e.key === 'ArrowLeft') inputs[i - 1]?.focus();
+        else if (e.key === 'ArrowRight') inputs[i + 1]?.focus();
       });
 
       inp.addEventListener('paste', (e) => {
         const raw = e.clipboardData?.getData('text') || '';
-        const cleaned = (isAlpha ? raw.replace(/[^a-zA-Z0-9]/g, '') : raw.replace(/\D/g, '')).slice(
-          0,
-          len,
-        );
+        const cleaned = raw.replace(isAlpha ? /[^a-zA-Z0-9]/g : /\D/g, '').slice(0, len);
         if (!cleaned) return;
         e.preventDefault();
         inputs.forEach((x, j) => {
@@ -203,36 +198,31 @@ export function buildInput(options: DialogOptions, labelId: string): InputContro
       });
     }
 
-    if (typeof options.inputValue === 'string') {
-      const chars = options.inputValue.slice(0, len);
+    if (typeof initial === 'string') {
       inputs.forEach((inp, idx) => {
-        inp.value = chars[idx] || '';
+        inp.value = initial[idx] || '';
       });
     }
 
     let footerNote: HTMLElement | null = null;
     if (options.resendCooldown !== undefined) {
-      let cooldown = options.resendCooldown;
-      const resendWrap = el('p', 'gk-otp-resend');
+      let cd = options.resendCooldown;
       const resendBtn = el('button', 'gk-btn-resend', { type: 'button' }, 'Resend code');
-      const timerSpan = el('span', '', {}, cooldown > 0 ? ` (${cooldown}s)` : '');
-      resendBtn.disabled = cooldown > 0;
-      resendWrap.append("Didn't get it? ", resendBtn, timerSpan);
-      if (cooldown > 0) {
-        const interval = setInterval(() => {
-          if (--cooldown <= 0) {
-            clearInterval(interval);
+      const timerSpan = el('span', '', {}, cd > 0 ? ` (${cd}s)` : '');
+      resendBtn.disabled = cd > 0;
+      footerNote = el('p', 'gk-otp-resend', {}, "Didn't get it? ", resendBtn, timerSpan);
+      if (cd > 0) {
+        const iv = setInterval(() => {
+          if (!resendBtn.isConnected || --cd <= 0) {
+            clearInterval(iv);
             timerSpan.textContent = '';
             resendBtn.disabled = false;
-          } else {
-            timerSpan.textContent = ` (${cooldown}s)`;
-          }
+          } else timerSpan.textContent = ` (${cd}s)`;
         }, 1000);
       }
       resendBtn.addEventListener('click', () => {
         if (!resendBtn.disabled) options.onResend?.();
       });
-      footerNote = resendWrap;
     }
 
     return ctrl(wrap(labelNode, otpWrap, footerNote), inputs[0] ?? otpWrap, inputs, () =>

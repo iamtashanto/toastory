@@ -106,6 +106,7 @@ export function createDialogController(initial: DialogOptions): DialogController
     open = false;
     timer?.cancel();
     emit();
+    listeners.clear();
     resolveResult(final);
   };
 
