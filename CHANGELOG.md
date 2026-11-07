@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.3.1
+
+### Patch Changes
+
+- **Visual & Sanitization Fixes**:
+  - Allowed `data:image/(?:png|jpe?g|webp|gif|svg\+xml)` URIs in `safeUrl()`, fixing broken `<img src="">` icons when passing SVG data-URIs or base64 avatars.
+  - Grouped timestamp, keyboard badge (`kbd`), and close/discard text in `.gk-meta` container to prevent overlapping text collisions (`now ⌘BDiscard`).
+  - Suppressed redundant type status icon when robot mascot / character avatar is active.
+- **Ding-Style Physics & Fling Polish**:
+  - Implemented 1:1 pointer gesture tracking with edge resistance and release vector momentum flinging.
+  - Configured native spring curve `--gk-ease: cubic-bezier(0.18, 1.25, 0.35, 1)` and Ding-style entrance overshoot.
+  - Added acoustic mallet 1300Hz lowpass filtering to Web Audio synthesizer.
+- **Bundle Size Optimization**:
+  - Shaved core and theme bytes to guarantee `< 6.00 KB` core+toast+theme budget and `< 22.00 KB` full web bundle budget.
+
 ## 0.3.0
 
 ### Minor Changes

@@ -26,7 +26,7 @@ export function Footer() {
               WCAG 2.2 AA Verified
             </span>
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[var(--site-surface-raised)] border border-[var(--site-border)] text-purple-500">
-              v0.3.0 · MIT License
+              v0.3.1 · MIT License
             </span>
           </div>
         </div>
@@ -111,7 +111,7 @@ export function Footer() {
           <ul className="space-y-2 text-sm">
             <li>
               <Link href="/changelog" className="hover:text-[var(--site-fg)] transition-colors">
-                Changelog (v0.3.0)
+                Changelog (v0.3.1)
               </Link>
             </li>
             <li>
