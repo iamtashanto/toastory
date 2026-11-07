@@ -14,17 +14,46 @@ export default function ChangelogPage() {
       </div>
 
       <div className="space-y-12">
-        {/* Release v0.3.4 */}
+        {/* Release v0.3.5 */}
         <section className="relative pl-6 sm:pl-8 border-l-2 border-emerald-500 space-y-4">
           <div className="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-emerald-500 border-4 border-[var(--site-bg)]" />
 
           <div className="flex flex-wrap items-center gap-3">
             <h2 className="text-2xl font-bold text-[var(--site-fg)]">
-              v0.3.4 — Avatar Safety, Header Collision Fixes &amp; Serialization Polish
+              v0.3.5 — Dynamic Stacking, Frosted Pills &amp; Dialog Polish
             </h2>
             <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
               Latest Release
             </span>
+            <span className="text-xs text-[var(--site-muted)] font-mono">November 2026</span>
+          </div>
+
+          <p className="text-sm text-[var(--site-muted)] leading-relaxed">
+            Layout and visual stability release fixing stacked toast height recalculation on dynamic state updates, custom frosted discard pill badge styling, OTP input border visibility and alignment, and rounded corner clipping on dialog progress bars.
+          </p>
+
+          <div className="space-y-4 pt-2 text-sm text-[var(--site-muted)]">
+            <div>
+              <h3 className="font-semibold text-[var(--site-fg)] mb-2">Key Highlights:</h3>
+              <ul className="list-disc list-inside space-y-1.5 text-[var(--site-muted)] text-xs sm:text-sm pl-2">
+                <li><strong className="text-[var(--site-fg)]">Dynamic Stacking Height</strong>: Resolved toast stacking collisions when front toast transitions dynamically (e.g. promise resolution), smoothly updating offsets and preventing height corruption in collapsed mode.</li>
+                <li><strong className="text-[var(--site-fg)]">Frosted Discard Pill</strong>: Upgraded text-based dismiss controls to a clean frosted glass pill badge with visible border, pill radius, and proper horizontal spacing.</li>
+                <li><strong className="text-[var(--site-fg)]">Banner Image Containment</strong>: Prevented banner image flex-shrink so status badges and mascot icons stay cleanly aligned below the hero graphic.</li>
+                <li><strong className="text-[var(--site-fg)]">OTP Input &amp; Resend Timer</strong>: Added solid backgrounds, borders, focus rings, and centered countdown alignment to two-factor verification dialogs.</li>
+                <li><strong className="text-[var(--site-fg)]">Dialog Corner Clipping</strong>: Applied overflow clipping to confirm/alert dialog containers, eliminating rectangular timer progress bar overflow at rounded corners.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* Release v0.3.4 */}
+        <section className="relative pl-6 sm:pl-8 border-l-2 border-white/20 space-y-4">
+          <div className="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-white/40 border-4 border-[var(--site-bg)]" />
+
+          <div className="flex flex-wrap items-center gap-3">
+            <h2 className="text-2xl font-bold text-[var(--site-fg)]">
+              v0.3.4 — Avatar Safety, Header Collision Fixes &amp; Serialization Polish
+            </h2>
             <span className="text-xs text-[var(--site-muted)] font-mono">November 2026</span>
           </div>
 

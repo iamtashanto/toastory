@@ -104,7 +104,7 @@ import 'toastory/themes/ios-glass.css';
 
 | Library | Toast Gzip Size | Dialog Gzip Size | Total Combined Size |
 | :--- | :--- | :--- | :--- |
-| **toastory (v0.3.4)** | **6.00 KB** | **Included** | **21.78 KB (Full Kit)** |
+| **toastory (v0.3.5)** | **6.00 KB** | **Included** | **21.78 KB (Full Kit)** |
 | Sonner + SweetAlert2 | 5.2 KB | 42.1 KB | 47.3 KB |
 | React-Toastify + Swal2 | 31.4 KB | 42.1 KB | 73.5 KB |
 | react-hot-toast + Swal2 | 5.1 KB | 42.1 KB | 47.2 KB |

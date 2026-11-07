@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.3.5
+
+### Patch Changes
+
+- **Layout & Visual Collision Fixes**:
+  - Decoupled text-based dismiss buttons (`.gk-close--text`) from absolute positioning, styled with frosted pill borders and padding so timestamp, keyboard shortcut badges (`kbd`), and discard actions never overlap.
+  - Resolved toast stacking collision on dynamic updates: non-front toasts in collapsed mode prevent height corruption, updating natural heights smoothly when toasts transition states.
+  - Implemented full-bleed header banner styling (`width: calc(100% + 2em); flex: 0 0 100%`) with automatic border clipping, preventing status icons from flexing onto the banner row.
+  - Added clean OTP input styling with solid background, border, focus rings, and centered resend code timer.
+  - Fixed dialog timer progress bar overflow by applying `overflow: hidden` to `.gk-dialog` and `.gk-loading`.
+
 ## 0.3.4
 
 ### Patch Changes
