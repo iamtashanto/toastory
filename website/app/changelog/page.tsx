@@ -14,9 +14,40 @@ export default function ChangelogPage() {
       </div>
 
       <div className="space-y-12">
-        {/* Release v0.3.2 */}
+        {/* Release v0.3.3 */}
         <section className="relative pl-6 sm:pl-8 border-l-2 border-emerald-500 space-y-4">
           <div className="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-emerald-500 border-4 border-[var(--site-bg)]" />
+
+          <div className="flex flex-wrap items-center gap-3">
+            <h2 className="text-2xl font-bold text-[var(--site-fg)]">
+              v0.3.3 — Documentation Overhaul, Code Copy Formatting &amp; SEO Engine
+            </h2>
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+              Latest Release
+            </span>
+            <span className="text-xs text-[var(--site-muted)] font-mono">November 2026</span>
+          </div>
+
+          <p className="text-sm text-[var(--site-muted)] leading-relaxed">
+            Major developer experience release featuring a custom block-level documentation markdown parser, pristine multi-line code copy formatting, enhanced Google and AI search metadata, and flicker-free hover expansion.
+          </p>
+
+          <div className="space-y-4 pt-2 text-sm text-[var(--site-muted)]">
+            <div>
+              <h3 className="font-semibold text-[var(--site-fg)] mb-2">Key Highlights:</h3>
+              <ul className="list-disc list-inside space-y-1.5 text-[var(--site-muted)] text-xs sm:text-sm pl-2">
+                <li><strong className="text-[var(--site-fg)]">Documentation Block Parser</strong>: Multi-line code snippets with interior blank lines now render with pristine structure, language headers, and one-click copy buttons.</li>
+                <li><strong className="text-[var(--site-fg)]">SEO &amp; AI Discoverability</strong>: Comprehensive Schema.org JSON-LD structured data, high-intent keywords, and synchronized <code>/llms.txt</code> endpoints for AI agents.</li>
+                <li><strong className="text-[var(--site-fg)]">Flicker-Free Hover Stacking</strong>: Pointer events are smoothly bridged across expanded toast cards, ensuring rock-solid Sonner-style hover expansion.</li>
+                <li><strong className="text-[var(--site-fg)]">Resilient Vector Fallbacks</strong>: Avatars gracefully fall back to retina vector initials if external image URLs fail to load.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* Release v0.3.2 */}
+        <section className="relative pl-6 sm:pl-8 border-l-2 border-[var(--site-border)] space-y-4">
+          <div className="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-[var(--site-border)] border-4 border-[var(--site-bg)]" />
 
           <div className="flex flex-wrap items-center gap-3">
             <h2 className="text-2xl font-bold text-[var(--site-fg)]">

@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.3.3
+
+### Patch Changes
+
+- **Documentation Overhaul & Code Formatting**:
+  - Implemented a robust block-level Markdown parser for documentation pages, preventing multi-line code snippets with empty lines from breaking.
+  - Formatted one-click code copy buttons with exact whitespace preservation, language labels, and visual feedback.
+  - Rendered GitHub-style frosted glass callout cards (`> [!NOTE]`, `> [!TIP]`, `> [!IMPORTANT]`, `> [!WARNING]`).
+- **SEO & AI Search Discoverability**:
+  - Enhanced OpenGraph, Twitter cards, and Schema.org `SoftwareApplication` structured data.
+  - Expanded search keywords for high-intent queries (React toast, Next.js toast, Sonner alternative, SweetAlert2 alternative, etc.).
+  - Added SupportKori creator links and synced documentation endpoints (`/llms.txt`, `/llms-full.txt`) for ChatGPT, Claude, and Perplexity.
+- **Stack Interaction & Visual Polish**:
+  - Bridged pointer events across expanded toast gaps to ensure flicker-free Sonner-style hover expansion.
+  - Automatic graceful fallback from broken avatar URLs to retina vector initials badges.
+
 ## 0.3.2
 
 ### Patch Changes

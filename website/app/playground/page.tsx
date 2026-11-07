@@ -169,7 +169,7 @@ export default function PlaygroundPage() {
       setDiscardText('Discard');
       setShowTimestamp(true);
       setShowToggle(true);
-      setTitle('toastory v0.3.2 Engine');
+      setTitle('toastory v0.3.3 Engine');
       setDescription('Full-bleed header banner, custom discard label, and inline switch.');
       setActionLabel('Explore');
       setCancelLabel('');

@@ -4,7 +4,7 @@ import { getArticleBySlug } from '@/lib/docs/articles';
 export async function GET() {
   let fullOutput = `# toastory — Full Reference Documentation (llms-full.txt)
 Package: toastory
-Version: 0.3.2
+Version: 0.3.3
 License: MIT
 Repository: https://github.com/iamtashanto/toastory
 
