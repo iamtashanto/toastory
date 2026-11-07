@@ -231,7 +231,11 @@ export interface ToastClassNames {
 export type StackMode = boolean | 'stacked' | 'expanded' | 'list';
 
 /** Built-in animation presets for toast enter/exit. */
-export type AnimationType = 'slide' | 'bounce' | 'zoom' | 'flip' | 'spring' | 'fade' | 'none';
+export type AnimationType =
+  'slide' | 'bounce' | 'zoom' | 'flip' | 'spring' | 'fade' | 'pop' | 'none';
+
+/** Micro-animation presets for built-in toast icons. */
+export type IconAnimation = 'pop' | 'pulse' | 'bounce' | 'spin' | 'none';
 
 /** Region offset configuration. */
 export type OffsetConfig =
@@ -403,6 +407,10 @@ export interface ToastOptions {
   onPress?: (toast?: ToastRecord) => void;
   /** Enter/exit animation preset. */
   animation?: AnimationType;
+  /** Built-in icon micro-animation preset. Defaults to 'pop' ('spin' for loading). */
+  iconAnimation?: IconAnimation;
+  /** Whether the toast icon animates on enter. Defaults to true. */
+  animateIcon?: boolean;
   /** Allow user dismissal. */
   dismissible?: boolean;
   /** Dismiss on body click. */
@@ -529,6 +537,8 @@ export interface GlazeConfig {
   /** Global sound volume between 0.0 and 1.0. Defaults to 0.5. */
   soundVolume?: number;
   animation?: AnimationType;
+  iconAnimation?: IconAnimation;
+  animateIcon?: boolean;
   offset?: OffsetConfig;
   mobileOffset?: number | string;
 }

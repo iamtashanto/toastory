@@ -14,17 +14,45 @@ export default function ChangelogPage() {
       </div>
 
       <div className="space-y-12">
-        {/* Release v0.3.1 */}
+        {/* Release v0.3.2 */}
         <section className="relative pl-6 sm:pl-8 border-l-2 border-emerald-500 space-y-4">
           <div className="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-emerald-500 border-4 border-[var(--site-bg)]" />
 
           <div className="flex flex-wrap items-center gap-3">
             <h2 className="text-2xl font-bold text-[var(--site-fg)]">
-              v0.3.1 — Visual Defect Remediation, Spring Fling Polish &amp; Multi-Framework Studio
+              v0.3.2 — Micro-Animations, Icon Micro-Springs &amp; Dedupe Layout Polish
             </h2>
             <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
               Latest Release
             </span>
+            <span className="text-xs text-[var(--site-muted)] font-mono">November 2026</span>
+          </div>
+
+          <p className="text-sm text-[var(--site-muted)] leading-relaxed">
+            Professional animation release featuring micro-spring entrance animations for all icons, comprehensive animation presets (pop, fade, slide, zoom, none), inline title deduplication badges, and zero-leak layout styling.
+          </p>
+
+          <div className="space-y-4 pt-2 text-sm text-[var(--site-muted)]">
+            <div>
+              <h3 className="font-semibold text-[var(--site-fg)] mb-2">Key Highlights:</h3>
+              <ul className="list-disc list-inside space-y-1.5 text-[var(--site-muted)] text-xs sm:text-sm pl-2">
+                <li><strong className="text-[var(--site-fg)]">Icon Micro-Animations</strong>: All icons feature spring-pop entrances with full customization via <code>animateIcon</code> and <code>iconAnimation</code> (<code>pop</code>, <code>spin</code>, <code>pulse</code>, <code>bounce</code>, <code>none</code>).</li>
+                <li><strong className="text-[var(--site-fg)]">Inline Deduplication Badges</strong>: Deduplication count pills are now seamlessly integrated inside the toast title header, mirroring iOS and macOS system notifications.</li>
+                <li><strong className="text-[var(--site-fg)]">Zero-Leak Image Fallbacks</strong>: Added automatic image error handlers to permanently suppress broken image icons if external network resources fail.</li>
+                <li><strong className="text-[var(--site-fg)]">Engine Size Preservation</strong>: Maintained complete library under the strict 6.00 KB Core+Toast+Theme and 22.00 KB full web bundle limits.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* Release v0.3.1 */}
+        <section className="relative pl-6 sm:pl-8 border-l-2 border-[var(--site-border)] space-y-4">
+          <div className="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-[var(--site-border)] border-4 border-[var(--site-bg)]" />
+
+          <div className="flex flex-wrap items-center gap-3">
+            <h2 className="text-2xl font-bold text-[var(--site-fg)]">
+              v0.3.1 — Visual Defect Remediation, Spring Fling Polish &amp; Multi-Framework Studio
+            </h2>
             <span className="text-xs text-[var(--site-muted)] font-mono">November 2026</span>
           </div>
 

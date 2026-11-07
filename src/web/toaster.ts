@@ -437,6 +437,12 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
           const holder = el('div', k('icon', names.icon), {
             'aria-hidden': 'true',
           });
+          const a = record.iconAnimation ?? c.iconAnimation;
+          const anim =
+            record.animateIcon === false
+              ? 'none'
+              : (a ?? (record.type === 'loading' ? 'spin' : 'pop'));
+          if (anim !== 'none') holder.dataset.iconAnim = anim;
           if (builtIn) holder.append(icon(builtIn));
           else fill(holder, iconValue);
           node.append(holder);
@@ -469,16 +475,7 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
         if (typeof av === 'object' && av !== null && !('nodeType' in av)) {
           const opt = av as ToastAvatarOption;
           const src = opt.src && safeUrl(opt.src) ? opt.src : '';
-          if (src) {
-            const imgEl = el('img', '', {
-              src,
-              alt: opt.alt ?? opt.name ?? '',
-            });
-            imgEl.addEventListener('error', () => {
-              imgEl.style.display = 'none';
-            });
-            holder.append(imgEl);
-          } else {
+          const renderInitials = (): void => {
             const init =
               opt.initials ??
               (opt.name
@@ -488,14 +485,35 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
                     .join('')
                     .slice(0, 2)
                     .toUpperCase()
-                : '?');
+                : typeof record.title === 'string'
+                  ? record.title.slice(0, 2).toUpperCase()
+                  : '?');
             holder.textContent = init;
             holder.style.cssText = `background:${opt.color ?? deterministicColor(opt.name ?? init)};color:#fff`;
+          };
+          if (src) {
+            const imgEl = el('img', '', {
+              src,
+              alt: opt.alt ?? opt.name ?? '',
+            });
+            imgEl.addEventListener('error', () => {
+              imgEl.remove();
+              renderInitials();
+            });
+            holder.append(imgEl);
+          } else {
+            renderInitials();
           }
         } else if (typeof av === 'string') {
           const imgEl = el('img', '', { src: safeUrl(av) ? av : '', alt: '' });
           imgEl.addEventListener('error', () => {
             imgEl.style.display = 'none';
+            if (!holder.textContent) {
+              const init =
+                typeof record.title === 'string' ? record.title.slice(0, 2).toUpperCase() : '?';
+              holder.textContent = init;
+              holder.style.cssText = 'background:var(--gk-accent);color:#fff';
+            }
           });
           holder.append(imgEl);
         } else fill(holder, av as Renderable);
@@ -756,7 +774,9 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
     );
     toggle(
       'data-has-close',
-      flag(record.closeButton, c.closeButton) && record.dismissible !== false,
+      flag(record.closeButton, c.closeButton) &&
+        record.dismissible !== false &&
+        !(record.closeText ?? record.discardText),
     );
     toggle(
       'data-clickable',
@@ -854,11 +874,9 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
         node.dataset.flung = '';
         const len = dist || 1;
         const reach = Math.max(280, speed * 360);
-        setS(
-          (dx / len) * reach,
-          (dy / len) * reach,
-          Math.max(-10, Math.min(10, (dx / len) * reach * 0.02)),
-        );
+        const fx = (dx / len) * reach;
+        const fy = (dy / len) * reach;
+        setS(fx, fy, Math.max(-10, Math.min(10, fx * 0.02)));
         close(item.record.id, 'swipe');
       } else setS(0, 0);
       setTimeout(() => {

@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.3.2
+
+### Patch Changes
+
+- **Micro-Animations & Icon Physics**:
+  - Added micro-animation presets for toast icons (`animateIcon`, `iconAnimation`: `pop`, `spin`, `pulse`, `bounce`, `none`).
+  - Added built-in pop micro-spring entrance for all status icons.
+  - Enhanced enter/exit animation presets with `pop`, `fade`, `slide`, `zoom`, and `none`.
+- **UI & Layout Refinement**:
+  - Re-anchored deduplication counter badge inline inside the toast title (`.gk-title`) instead of trailing below descriptions.
+  - Suppressed default type icon when custom `avatar` or `character` mascot is active.
+  - Added automatic broken image hiding (`onerror`) to prevent broken image placeholders when image URLs fail.
+  - Separated header timestamp, keyboard shortcuts (`kbd`), and discard button into dedicated, styled flex elements.
+- **Gesture Fling Polish & Size Budget**:
+  - Refined omnidirectional 2D momentum fling physics with velocity normalization.
+  - Kept complete package within strict size budgets (< 6.00 KB Core+Toast+Theme, < 21.75 KB Full Web bundle).
+
 ## 0.3.1
 
 ### Patch Changes
