@@ -65,36 +65,6 @@ export default function HomePage() {
               Explore 21 Glass Themes
             </Link>
           </div>
-
-          {/* Trust & Ecosystem Metrics Strip */}
-          <div className="pt-4">
-            <div className="inline-grid grid-cols-2 sm:grid-cols-6 gap-2 sm:gap-3 p-2 rounded-2xl bg-[var(--site-surface)] border border-[var(--site-border)] shadow-sm text-left">
-              <div className="px-3 py-2 rounded-xl bg-[var(--site-surface-raised)]/60">
-                <div className="text-sm font-extrabold text-[var(--site-fg)] font-mono">5.97 KB</div>
-                <div className="text-[11px] text-[var(--site-muted)]">Core + Toast Gzip</div>
-              </div>
-              <div className="px-3 py-2 rounded-xl bg-[var(--site-surface-raised)]/60">
-                <div className="text-sm font-extrabold text-emerald-500 font-mono">WCAG 2.2 AA</div>
-                <div className="text-[11px] text-[var(--site-muted)]">0 axe-core violations</div>
-              </div>
-              <div className="px-3 py-2 rounded-xl bg-[var(--site-surface-raised)]/60">
-                <div className="text-sm font-extrabold text-blue-500 font-mono">14 Cues</div>
-                <div className="text-[11px] text-[var(--site-muted)]">Web Audio Synth</div>
-              </div>
-              <div className="px-3 py-2 rounded-xl bg-[var(--site-surface-raised)]/60">
-                <div className="text-sm font-extrabold text-purple-500 font-mono">46 Releases</div>
-                <div className="text-[11px] text-[var(--site-muted)]">v2.5.2 RN Compat</div>
-              </div>
-              <div className="px-3 py-2 rounded-xl bg-[var(--site-surface-raised)]/60">
-                <div className="text-sm font-extrabold text-amber-500 font-mono">33K+ Used By</div>
-                <div className="text-[11px] text-[var(--site-muted)]">Ecosystem API Parity</div>
-              </div>
-              <div className="px-3 py-2 rounded-xl bg-[var(--site-surface-raised)]/60">
-                <div className="text-sm font-extrabold text-cyan-500 font-mono">45 Contributors</div>
-                <div className="text-[11px] text-[var(--site-muted)]">Community Patterns</div>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* 2. LIVE HERO DEMO */}

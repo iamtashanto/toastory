@@ -249,6 +249,7 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       item.el.style.setProperty('--gk-offset', `${offset}px`);
       item.el.style.setProperty('--gk-height', `${height}px`);
       item.el.style.zIndex = String(1000 - index);
+      item.el.toggleAttribute('data-front', index === 0);
 
       if (index > 2) {
         item.el.dataset.far = '';
@@ -280,6 +281,8 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
           for (const item of r.items.values()) {
             if (item.el === target) {
               const h = entry.borderBoxSize?.[0]?.blockSize ?? entry.contentRect.height;
+              if (r.el.dataset.expanded === 'false' && !item.el.hasAttribute('data-front'))
+                continue;
               if (Math.abs(item.height - h) > 1) {
                 item.height = h;
                 item.measured = true;
@@ -467,7 +470,7 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
             alt: typeof record.image === 'object' ? (record.image.alt ?? '') : '',
           });
           imgEl.style.cssText =
-            'width:calc(100% + 2em);height:96px;margin:-14px -1em 8px;object-fit:cover;display:block';
+            'width:calc(100% + 2em);max-width:calc(100% + 2em);flex:0 0 calc(100% + 2em);height:96px;margin:-14px -1em 8px;object-fit:cover;display:block';
           node.prepend(imgEl);
         }
       }
@@ -967,7 +970,10 @@ export function mountToaster(store: ToastStore, options?: ToasterOptions): Toast
       }
       item.record = record;
       syncAttrs(item);
-      if (item.stamp !== stampOf(record)) build(item);
+      if (item.stamp !== stampOf(record)) {
+        build(item);
+        item.height = item.el.offsetHeight || item.height;
+      }
     }
     for (const region of regions.values()) {
       for (const [id, item] of region.items) {

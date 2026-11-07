@@ -79,6 +79,7 @@
   text-align: center;
   border-radius: var(--gk-radius);
   transform: scale(0.94) translateY(8px);
+  overflow: hidden;
 }
 .gk-dialog[data-grow='row'] {
   width: 100%;
@@ -220,6 +221,52 @@
   margin-top: 4px;
   font-size: 13px;
   color: var(--gk-muted);
+}
+.gk-otp {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin: 16px 0 8px;
+}
+.gk-otp input {
+  width: 44px;
+  height: 52px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+  border-radius: calc(var(--gk-radius) / 2);
+  border: 1px solid color-mix(in srgb, var(--gk-fg) 22%, transparent);
+  background: var(--gk-bg-solid);
+  color: var(--gk-fg);
+  padding: 0;
+  transition: all 0.16s ease;
+}
+.gk-otp input:focus-visible {
+  border-color: var(--gk-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--gk-accent) 25%, transparent);
+  outline: none;
+}
+.gk-otp-resend {
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: var(--gk-muted);
+  text-align: center;
+}
+.gk-btn-resend {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: var(--gk-accent);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.gk-btn-resend:disabled {
+  color: var(--gk-muted);
+  text-decoration: none;
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 .gk-sr {
   position: absolute;
